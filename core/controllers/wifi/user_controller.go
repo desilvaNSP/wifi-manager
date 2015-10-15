@@ -1,8 +1,8 @@
 package wifi
 
 import (
-	"dashboard-core/utils"
-	"dashboard-core/dao"
+	"wifi-manager/core/utils"
+	"wifi-manager/core/dao"
 	log "github.com/Sirupsen/logrus"
 	"database/sql"
 )

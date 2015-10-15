@@ -1,9 +1,9 @@
 package handlers
 
 import(
-	"dashboard-core/dao"
-	"dashboard-core/utils"
-	"dashboard-core/common"
+	"wifi-manager/core/dao"
+	"wifi-manager/core/utils"
+	"wifi-manager/core/common"
 	"net/http"
 	"encoding/json"
 	"strconv"

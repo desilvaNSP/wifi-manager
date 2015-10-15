@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"dashboard-core/controllers/wifi"
-	"dashboard-core/dao"
+	"wifi-manager/core/controllers/wifi"
+	"wifi-manager/core/dao"
 	"encoding/json"
 	"net/http"
 	_ "github.com/go-sql-driver/mysql"

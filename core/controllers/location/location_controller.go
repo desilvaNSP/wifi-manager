@@ -1,7 +1,7 @@
 package location
 
 import (
-	"dashboard-core/utils"
+	"wifi-manager/core/utils"
 	log "github.com/Sirupsen/logrus"
 )
 

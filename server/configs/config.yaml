@@ -1,0 +1,42 @@
+radiusDBConfigs:
+ username : root
+ password : root
+ DBName : radius_tmp
+ host : localhost
+ port : 3306
+
+radsummaryDBConfigs:
+ username : root
+ password : root
+ DBName : radsummary
+ host : localhost
+ port : 3306
+
+dashboardDBConfigs:
+ username : root
+ password : root
+ DBName : dashboard
+ host : localhost
+ port : 3306
+
+portalDBConfigs:
+ username : root
+ password : root
+ DBName : portal
+ host : localhost
+ port : 3306
+
+serverConfigs:
+ httpPort : 8081
+ httpsPort : 9443
+ readTimeOut : 20
+ writeTimeOut : 20
+
+accountingConfigs:
+ validityPeriod : 3600
+
+# log configurations
+logsDirectory : logs
+httpAccessLogs : true
+httpAccessLogFileName : http-access.log
+serverLogFileName : server.log

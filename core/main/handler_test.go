@@ -1,8 +1,8 @@
 package main
 
 import (
-	"dashboard-core/dao"
-	"dashboard-core/routes"
+	"wifi-manager/core/dao"
+	"wifi-manager/core/routes"
 	"encoding/json"
 	"net/http"
 	"github.com/gorilla/mux"
@@ -20,7 +20,7 @@ var username string
 
 func setup() {
 
-	loadConfigs("/home/anuruddha/git/dashboard-web")
+	loadConfigs("/home/anuruddha/git/wifi-manager/server")
     username = "anu124f43"
 	//mux router with added question routes
 	m = routes.NewRouter()

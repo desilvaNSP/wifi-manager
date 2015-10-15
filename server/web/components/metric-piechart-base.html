@@ -1,0 +1,49 @@
+<div class="ibox-title">
+    <span class="label label-{{{style}}} pull-right">Today</span>
+    <h5>{{{caption}}}</h5>
+</div>
+<div class="ibox-content">
+    <div id="chart-container-{{{id}}}"></div>
+</div>
+<script>
+    $(function () {
+        $('#chart-container-{{{id}}}').highcharts({
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie',
+
+            },
+            title: {
+                style : {
+                    display : 'none'
+                }
+            },
+            credits: {
+                enabled: false
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                        style: {
+                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                        }
+                    }
+                }
+            },
+            series: [{
+                name: "Brands",
+                colorByPoint: true,
+                data: {{{data}}}
+            }]
+        });
+    });
+</script>

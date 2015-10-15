@@ -1,0 +1,66 @@
+<div class="row">
+    <div class="col-md-offset-1 col-lg-7" style="margin-bottom: 50px;">
+        <input type="text" id="range" value="" name="range" />
+    </div>
+    <div class=" col-md-offset-1 col-lg-2" style="margin-bottom: 50px;">
+        <div class="ibox-title">
+            <p> Site </p>
+            <select class="form-control" id="select-wifilocation">
+                {{#locations}}
+                <option>{{locationid}}</option>
+                {{/locations}}
+            </select>
+
+        </div>
+    </div>
+</div>
+
+<div id="dashboard-metric-content">
+
+</div>
+
+<script src="js/moment.min.js"></script>
+<script src="js/plugins/chartJs/Chart.min.js"></script>
+
+<script>
+    from_ = 0, to_ = 0;
+
+    var saveResult = function (data) {
+        from_ = moment(data.from,"X").format('YYYY-MM-DD');
+        to_ = moment(data.to,"X").format('YYYY-MM-DD');
+    };
+
+    var slider =  $("#range").ionRangeSlider({
+        min: +moment().subtract(1, "years").format("X"),
+        max: +moment().format("X"),
+        from: +moment().subtract(6, "months").format("X"),
+        grid : true,
+        type: "double",
+        prettify: function (num) {
+            return moment(num, "X").format("LL");
+        },
+        onStart: function (data) {
+           saveResult(data);
+            renderMetrics()
+        },
+        onChange: saveResult,
+        onFinish: function(data){
+            saveResult(data);
+            renderMetrics()
+        }
+    });
+
+    function renderMetrics() {
+        var payload = {from:from_, to :to_}
+        $.get('components/dashboard-metrics.html', function (template) {
+            var rendered = Mustache.render(template, {});
+            $('#dashboard-metric-content').html(rendered)
+        })
+    }
+
+    $('#select-wifilocation').on('change', function (e) {
+        var optionSelected = $("option:selected", this);
+        window.wifilocation = this.value;
+        renderMetrics()
+    });
+</script>

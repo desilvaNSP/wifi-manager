@@ -1,6 +1,6 @@
 package routes
 
-import (//"dashboard-core/handlers"
+import (//"wifi-manager/core/handlers"
 	"net/http"
 	"github.com/gorilla/mux"
 )

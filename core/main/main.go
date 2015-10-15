@@ -1,10 +1,10 @@
 package main
 
 import (
-	"dashboard-core/dao"
-	"dashboard-core/routes"
-	"dashboard-core/utils"
-	"dashboard-core/common"
+	"wifi-manager/core/dao"
+	"wifi-manager/core/routes"
+	"wifi-manager/core/utils"
+	"wifi-manager/core/common"
 	"fmt"
 	"net/http"
 	"os"
