@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"github.com/spf13/viper"
 	"fmt"
+	"encoding/json"
 )
 
 type DBConfigs struct{
@@ -77,4 +78,12 @@ func SetDBConfigs(dbConfigs map[string] DBConfigs){
 
 func AddDBConfig(name string, dbConfig DBConfigs){
 		dbConfigs[name] = dbConfig
+}
+
+type NullString struct {
+	sql.NullString
+}
+
+func (r NullString) MarshalJSON() ([]byte, error) {
+	return json.Marshal(r.String)
 }

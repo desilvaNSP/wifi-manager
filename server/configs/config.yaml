@@ -1,7 +1,7 @@
 radiusDBConfigs:
  username : root
  password : root
- DBName : radius_tmp
+ DBName : radius
  host : localhost
  port : 3306
 

@@ -18,7 +18,7 @@ import (
 */
 func AddUserHandler(w http.ResponseWriter, r *http.Request){
 	decoder := json.NewDecoder(r.Body)
-	var user dao.RadiusUser
+	var user dao.PortalUser
 	decoder.Decode(&user)
 	wifi_controller.AddWiFiUser(&user)
 
@@ -39,7 +39,11 @@ func GetUsersHandler(w http.ResponseWriter, r *http.Request){
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 
-	if err := json.NewEncoder(w).Encode(users); err != nil {
+	b, err := json.Marshal(users)
+	if err != nil {
+		panic(err)
+	}
+	if err := json.NewEncoder(w).Encode(string(b)); err != nil {
 		panic(err)
 	}
 }

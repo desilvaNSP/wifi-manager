@@ -21,15 +21,15 @@ export GOBIN=$GOPATH_/bin
 cd $GOPATH_
 rm -f $GOPATH_/bin/main
 
-go test -v $PROJECT_NAME/core/main
-go install $PROJECT_NAME/core/dao
-go install $PROJECT_NAME/core/utils
-go install $PROJECT_NAME/core/controllers/location
-go install $PROJECT_NAME/core/controllers/wifi
-go install $PROJECT_NAME/core/handlers
-go install $PROJECT_NAME/core/routes
-go install $PROJECT_NAME/core/common
-go install $PROJECT_NAME/core/main
+#go test -v $PROJECT_NAME/core/main
+go build -ldflags "-s" $PROJECT_NAME/core/dao
+go build -ldflags "-s" $PROJECT_NAME/core/utils
+go build -ldflags "-s" $PROJECT_NAME/core/controllers/location
+go build -ldflags "-s" $PROJECT_NAME/core/controllers/wifi
+go build -ldflags "-s" $PROJECT_NAME/core/handlers
+go build -ldflags "-s" $PROJECT_NAME/core/routes
+go build -ldflags "-s" $PROJECT_NAME/core/common
+go install -ldflags "-s" $PROJECT_NAME/core/main
 
 cp -f $GOPATH_/bin/main $PROJECT_ROOT_DIR/$PROJECT_NAME/server/bin/server.bin
 

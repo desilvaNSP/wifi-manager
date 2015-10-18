@@ -2,4 +2,5 @@
 *.iml
 *.log
 *.zip
-server/bin/server.bin
+server/bin/*.bin
+server/logs/*.log

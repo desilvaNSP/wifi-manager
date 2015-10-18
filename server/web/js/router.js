@@ -17,8 +17,7 @@ function renderTable(){
 $.get('components/tables.html', function(template) {
         var users;
         $.get('/wifi/users', function(result){
-            users = JSON.stringify(result);
-            var rendered = Mustache.render(template, {data: users});
+            var rendered = Mustache.render(template, {data: result});
             $('#content-main').html(rendered);
         })
     }

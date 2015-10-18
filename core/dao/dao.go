@@ -1,4 +1,7 @@
 package dao
+import (
+	"wifi-manager/core/utils"
+)
 
 type NameValue struct{
 	Name string  `db:"name"json:"name"`
@@ -11,15 +14,14 @@ type User struct {
 	Email string `db:"email"json:"email"`
 }
 
-type RadiusUser struct{
-	Id      int64  `db:"id"json:"id"`
+type PortalUser struct{
 	Username string `db:"username"json:"username"`
 	Password string `json:"password"`
-	Acctstarttime string `db:"acctstarttime"json:"acctstarttime"`
-	Acctlastupdatedtime string `db:"acctlastupdatedtime"json:"acctlastupdatedtime"`
-	Acctactivationtime string `db:"acctactivationtime"json:"acctactivationtime"`
-	Acctstoptime string `db:"acctstoptime"json:"acctstoptime"`
-	Location string  `db:"location"json:"location"`
+	Acctstarttime utils.NullString `db:"acctstarttime"json:"acctstarttime"`
+	Acctlastupdatedtime utils.NullString `db:"acctlastupdatedtime"json:"acctlastupdatedtime"`
+	Acctactivationtime utils.NullString `db:"acctactivationtime"json:"acctactivationtime"`
+	Acctstoptime utils.NullString `db:"acctstoptime"json:"acctstoptime"`
+	Location utils.NullString  `db:"location"json:"location"`
 	Visits int64     `db:"visits"json:"visits"`
 }
 
