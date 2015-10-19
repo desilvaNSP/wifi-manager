@@ -15,7 +15,7 @@ $(document).ready(function () {
     }
 
     // Collapse ibox function
-    $('.collapse-link').click( function() {
+    $(document).on('click','.collapse-link', function() {
         var ibox = $(this).closest('div.ibox');
         var button = $(this).find('i');
         var content = ibox.find('div.ibox-content');
@@ -29,7 +29,7 @@ $(document).ready(function () {
     });
 
     // Close ibox function
-    $('.close-link').click( function() {
+    $(document).on('click', '.close-link', function() {
         var content = $(this).closest('div.ibox');
         content.remove();
     });

@@ -5,7 +5,6 @@
 function renderSidebar(username){
     $.get('components/sidebar.html', function(template) {
             $.get('/dashboard/users/' + username , function(result){
-                console.log(result)
                 var rendered = Mustache.render(template, {data: result});
                 $('#side-navigation').html(rendered);
             });
