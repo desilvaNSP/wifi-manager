@@ -26,10 +26,12 @@
                 <thead>
                 <tr>
                     <th>Username</th>
+                    <th>Location</th>
+                    <th>Visit count</th>
                     <th>Acct start Time</th>
                     <th>Acct Last Updated Time</th>
                     <th>Acct Stop Time</th>
-                    <th>Visit count</th>
+
                     <th>Settings</th>
                 </tr>
                 </thead>
@@ -62,13 +64,15 @@
         orderCellsTop: true,
         data: {{{data}}},
         columns: [
-            { "data": "username" , "width": "20%"},
+            { "data": "username" , "width": "15%"},
+            { "data": "location" , "width": "10%"},
+            { "data": "visits" , "width": "5%"},
             { "data": "acctstarttime" , "width": "20%"},
             { "data": "acctlastupdatedtime" , "width": "20%"},
             { "data": "acctstoptime" , "width": "20%"},
-            { "data": "visits" , "width": "%"},
             {"data": null,
-            "defaultContent": "<button class='btn btn-white btn-circle'><i class='fa fa-times'></i></button>"},
+            "defaultContent": "<button class='btn btn-white btn-circle'><i class='fa fa-times'></i></button>",
+             "width" : "5%"},
         ],
         dom: 'T<"clear">lfrtip',
         tableTools: {
@@ -105,7 +109,6 @@
 
     $('.dataTables-user tbody').on( 'click', 'button', function () {
         selectedUser = userTable.row( $(this).parents('tr') ).data();
-        console.log(selectedUser)
         $('#confirm-delete-modal').modal()
     });
  </script>

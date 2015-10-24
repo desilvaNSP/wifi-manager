@@ -12,6 +12,7 @@ type User struct {
 	Username string `db:"username"json:"username"`
 	Password string `db:"password"json:"password"`
 	Email string `db:"email"json:"email"`
+	Activated string `db:"activated"json:"activated"`
 }
 
 type PortalUser struct{

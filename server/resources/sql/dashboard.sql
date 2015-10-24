@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS `dashboarduser` (
   `username` varchar(255) DEFAULT NULL,
   `password` VARCHAR(255) DEFAULT NULL,
   `email` VARCHAR(255) DEFAULT NULL,
+  `activated` BIT DEFAULT 0,
   PRIMARY KEY(`username`)
 ) ENGINE=InnoDB;
 

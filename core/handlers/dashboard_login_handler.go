@@ -21,7 +21,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 	var count int64
-	count, err = dbMap.SelectInt("SELECT COUNT(*) FROM dashboarduser where username =  ? AND password = ?", u.Username, u.Password)
+	count, err = dbMap.SelectInt("SELECT COUNT(*) FROM dashboarduser where username =  ? AND password = ? AND activated=1", u.Username, u.Password)
 	checkErr(err, "Select failed")
 
 	cookie := http.Cookie{}

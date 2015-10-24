@@ -14,36 +14,10 @@ $(document).ready(function () {
         $('body').removeClass('body-small')
     }
 
-    // Collapse ibox function
-    $(document).on('click','.collapse-link', function() {
-        var ibox = $(this).closest('div.ibox');
-        var button = $(this).find('i');
-        var content = ibox.find('div.ibox-content');
-        content.slideToggle(200);
-        button.toggleClass('fa-chevron-up').toggleClass('fa-chevron-down');
-        ibox.toggleClass('').toggleClass('border-bottom');
-        setTimeout(function () {
-            ibox.resize();
-            ibox.find('[id^=map-]').resize();
-        }, 50);
-    });
-
-    // Close ibox function
-    $(document).on('click', '.close-link', function() {
-        var content = $(this).closest('div.ibox');
-        content.remove();
-    });
-
     // Close menu in canvas mode
     $('.close-canvas-menu').click( function() {
         $("body").toggleClass("mini-navbar");
         SmoothlyMenu();
-    });
-
-    // Open close small chat
-    $('.open-small-chat').click(function(){
-        $(this).children().toggleClass('fa-comments').toggleClass('fa-remove');
-        $('.small-chat-box').toggleClass('active');
     });
 
     // Initialize slimscroll for small chat
@@ -52,20 +26,10 @@ $(document).ready(function () {
         railOpacity: 0.4
     });
 
-    // Small todo handler
-    $('.check-link').click( function(){
-        var button = $(this).find('i');
-        var label = $(this).next('span');
-        button.toggleClass('fa-check-square').toggleClass('fa-square-o');
-        label.toggleClass('todo-completed');
-        return false;
-    });
-
     // Minimalize menu
     $('.navbar-minimalize').click(function () {
         $("body").toggleClass("mini-navbar");
         SmoothlyMenu();
-
     });
 
     // Tooltips demo
