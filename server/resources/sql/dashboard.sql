@@ -9,26 +9,51 @@ USE `dashboard`;
 
 -- --------------------------------------------------------
 --
--- Table structure for table `accounting`
+-- Table structures for dashboard
 --
 
-DROP TABLE IF EXISTS `login`;
+DROP TABLE IF EXISTS `users`;
 
-CREATE TABLE IF NOT EXISTS `dashboarduser` (
+CREATE TABLE IF NOT EXISTS `users` (
+  `tenantid` int(10) DEFAULT NULL,
   `username` varchar(255) DEFAULT NULL,
   `password` VARCHAR(255) DEFAULT NULL,
   `email` VARCHAR(255) DEFAULT NULL,
-  `activated` BIT DEFAULT 0,
+  `status` VARCHAR(255) DEFAULT NULL,
+  `lastupdatedtime` TIMESTAMP,
   PRIMARY KEY(`username`)
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS `roles` (
+  `name` varchar(255) DEFAULT NULL,
+  `tenantid` int(10) DEFAULT 0,
+  PRIMARY KEY(`name`, `tenantid`)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE IF NOT EXISTS `permissions` (
+  `tenantid` int(10) DEFAULT 0,
+  `resourceid` int(10) DEFAULT 0,
+  `action` VARCHAR(255) DEFAULT NULL,
+  PRIMARY KEY(`tenantid`,`resourceid`)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `usersroles` (
+  `username` varchar(255) DEFAULT NULL,
+  `password` VARCHAR(255) DEFAULT NULL,
+  `email` VARCHAR(255) DEFAULT NULL,
+  `activate` BIT DEFAULT 0,
+  PRIMARY KEY(`username`)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `userpermissions` (
+  `username` varchar(255) DEFAULT NULL,
+  `tenantid` int(10) DEFAULT 0,
+  `resourceid` int(10) DEFAULT 0,
+  `action` VARCHAR(255) DEFAULT NULL,
+  PRIMARY KEY(`username`)
+) ENGINE=InnoDB;
 -- --------------------------------------------------------
-
-INSERT INTO dashboarduser (username, password, email)
-VALUES('anu','anu123', 'anuruddha@gmail.com');
-
-
-
 --
 -- INSERT int(11)O radcheck (username,attribute,op,value) VALUES ('test','CLeartext-Password',':=','test')
 --

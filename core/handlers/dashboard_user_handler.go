@@ -2,42 +2,35 @@ package handlers
 
 import(
 	"wifi-manager/core/dao"
-	"wifi-manager/core/utils"
 	"wifi-manager/core/common"
+	"wifi-manager/core/controllers/dashboard"
 	"net/http"
 	"encoding/json"
-	"strconv"
 	"github.com/gorilla/mux"
+	"strconv"
 )
 
-func Login(w http.ResponseWriter, r *http.Request) {
+func AuthenticateUser(w http.ResponseWriter, r *http.Request){
 	decoder := json.NewDecoder(r.Body)
-	var u dao.User
-	err := decoder.Decode(&u)
+	var user dao.User
+	err := decoder.Decode(&user)
 	if err != nil {
 		panic("Error while decoding json")
 	}
 
-	dbMap := utils.GetDBConnection("dashboard");
-	defer dbMap.Db.Close()
-	var count int64
-	count, err = dbMap.SelectInt("SELECT COUNT(*) FROM dashboarduser where username =  ? AND password = ? AND activated=1", u.Username, u.Password)
-	checkErr(err, "Select failed")
-
 	cookie := http.Cookie{}
-	cookie.Name = "status"
+	cookie.Name = "failed"
 	cookie.Value="success"
-	response := dao.Response{}
-	response.Status = "success"
 
-	if(count!=1){
-		cookie.Value = "fail"
-		response.Status = "fail"
-		response.Message = strconv.FormatInt(count,10) + u.Username
+	response := dao.Response{}
+	response.Status = "failed"
+	if(dashboard.IsUserAuthenticated(user)){
+		cookie.Value = "success"
+		response.Status = "success"
+		response.Message = user.Username
 	}
 
 	r.AddCookie(&cookie)
-
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(response); err != nil {
@@ -46,33 +39,20 @@ func Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func RegisterUser(w http.ResponseWriter, r *http.Request) {
-
 	decoder := json.NewDecoder(r.Body)
 	var user dao.User
 	err := decoder.Decode(&user)
 	if err != nil {
 		panic("Error while decoding json")
 	}
-
-	dbMap := utils.GetDBConnection("dashboard");
-	defer dbMap.Db.Close()
-
-	stmtIns, err := dbMap.Db.Prepare("INSERT INTO dashboarduser (username, password, email) VALUES( ?, ?, ? )")
-	if err != nil {
-		panic(err.Error()) // proper error handling instead of panic in your app
-	}
-	_, err = stmtIns.Exec(user.Username, user.Password, user.Email)
-	if err != nil {
-		panic(err.Error()) // proper error handling instead of panic in your app
-	}
-	defer stmtIns.Close()
+	err = dashboard.RegisterUser(user)
 
 	response := dao.Response{}
 	cookie := http.Cookie{}
 	if err == nil {
 		cookie.Name = "status"
 		cookie.Value="success"
-		response.Status = "success"
+		response.Status = "pending"
 	}else{
 		cookie.Value = "fail"
 		response.Status = "fail"
@@ -86,21 +66,48 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func GetUserInfo(w http.ResponseWriter, r *http.Request) {
+func DeleteDashboardUsersHandler(w http.ResponseWriter, r *http.Request){
 	vars := mux.Vars(r)
+	tenantId := vars["tenantid"]
 	username := vars["username"]
-
-	dbMap := utils.GetDBConnection("dashboard");
-	defer dbMap.Db.Close()
-	var user dao.User
-
-	err := dbMap.SelectOne(&user, "SELECT username,password,email FROM dashboarduser where username = ?",username)
-	checkErr(err, "Select failed")
+	tenantIdInt,_ := strconv.Atoi(tenantId)
+	dashboard.DeleteUser(tenantIdInt, username)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 
+}
+
+func GetUserProfile(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	tenantId := vars["tenantid"]
+	username := vars["username"]
+    var user dao.User
+	tenantIdInt, _ := strconv.Atoi(tenantId)
+
+	user = dashboard.GetUser(tenantIdInt, username)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+
 	if err := json.NewEncoder(w).Encode(user); err != nil {
+		panic(err)
+	}
+}
+
+func GetDashboardUsersHandler(w http.ResponseWriter, r *http.Request){
+	vars := mux.Vars(r)
+	tenantId := vars["tenantid"]
+	tenantIdInt,_ := strconv.Atoi(tenantId)
+	users := dashboard.GetAllUsers(tenantIdInt)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+
+	b, err := json.Marshal(users)
+	if err != nil {
+		panic(err)
+	}
+	if err := json.NewEncoder(w).Encode(string(b)); err != nil {
 		panic(err)
 	}
 }

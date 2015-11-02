@@ -267,14 +267,11 @@
             });
 
             timeSeriesData = []
-            $.each(window.wifilocationlist, function(i,val){
-                var payload2 = payload
-                payload2.locationid = val.locationid
-                $.post('/wifi/usage/dailytotaldownloads',JSON.stringify(payload2),function(data,status){
-                    var locationDist = { type: 'spline', name: val.locationname, data: convertToHighChartSeries(data)}
-                    timeSeriesData.push(locationDist);
-                });
+            $.post('/wifi/usage/dailytotaldownloads',JSON.stringify(payload),function(data,status){
+                var locationDist = { type: 'spline', name: payload.locationid, data: convertToHighChartSeries(data)}
+                timeSeriesData.push(locationDist);
             });
+
             $.post('/wifi/usage/dailytotaldownloads',JSON.stringify(payload),function(data,status){
                   $.get('components/metric-timeserieschart-base.html', function (template) {
                     var rendered = Mustache.render(template, {id: 1, caption:'Users by Device Type', style: 'success', data : JSON.stringify(timeSeriesData)})

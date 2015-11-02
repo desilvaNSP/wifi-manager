@@ -39,7 +39,7 @@ func main() {
 		MaxHeaderBytes: 1 << 20,
 	}
 	log.Info("Starting server on port : " + strconv.Itoa(serverConfigs.HttpPort))
-	log.Fatal("HTTP Server error: ", s.ListenAndServe())
+	log.Fatal("HTTP Server error: ", s.ListenAndServeTLS(ServerHome + "/resources/security/server.pem", ServerHome + "/resources/security/server.key"))
 }
 
 func loadConfigs(serverHome string) {

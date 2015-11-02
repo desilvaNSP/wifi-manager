@@ -21,7 +21,7 @@ func GetLocations(w http.ResponseWriter, r *http.Request){
 	defer dbMap.Db.Close()
 	var locations []dao.Location
 
-	_, err := dbMap.Select(&locations, "SELECT locationid, locationname, nasip, ipfrom, ipto FROM aplocation group by(locationid)")
+	_, err := dbMap.Select(&locations, "SELECT locationid, locationname, nasip, ipfrom, ipto FROM aplocation")
 	checkErr(err, "Select failed")
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")

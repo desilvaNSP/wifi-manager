@@ -9,10 +9,11 @@ type NameValue struct{
 }
 
 type User struct {
+	TenantId int `db:"tenantid"json:"tenantid"`
 	Username string `db:"username"json:"username"`
 	Password string `db:"password"json:"password"`
 	Email string `db:"email"json:"email"`
-	Activated string `db:"activated"json:"activated"`
+	Status string `db:"status"json:"status"`
 }
 
 type PortalUser struct{

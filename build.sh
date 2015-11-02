@@ -10,6 +10,7 @@ PROJECT_ROOT_DIR=`pwd`
 
 echo 'Getting the required dependencies...'
 go get github.com/gorilla/mux
+go get golang.org/x/crypto/bcrypt
 
 
 if [ ! -d $GOPATH_/src/$PROJECT_NAME/core ] ; then
@@ -40,8 +41,8 @@ cd $PROJECT_ROOT_DIR/$PROJECT_NAME/build
 
 echo "Removing existing distribution"
 rm -rf build/$PROJECT_NAME.zip
-echo "Writing version information to versioninfo.md"
 
+echo "Writing version information to versioninfo.md"
 DATE_COMMAND=$(which date)
 TIME_STAMP=`${DATE_COMMAND} '+%Y-%m-%d.%H:%M:%S'`
 

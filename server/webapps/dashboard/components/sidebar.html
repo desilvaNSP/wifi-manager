@@ -20,7 +20,8 @@
             <li>
                 <a href="#"><i class="fa fa-table"></i> <span class="nav-label">Tables</span><span class="fa arrow"></span> </a>
                 <ul class="nav nav-second-level">
-                    <li ><a href="#" id="href-user-tables">Users</a></li>
+                    <li ><a href="#" id="href-wifiuser-tables">Users</a></li>
+                    <li ><a href="#" id="href-dashboarduser-tables">Dashboard Users</a></li>
                     <li ><a href="#">Managed APs</a></li>
                     <li ><a href="#">Downloads</a></li>
                     <li ><a href="#">Alarms</a></li>
@@ -62,8 +63,12 @@
         renderDashBoard()
     });
 
-    $("#href-user-tables").click(function(){
-        renderTable()
+    $("#href-wifiuser-tables").click(function(){
+        renderWifiUserTable()
+    });
+
+    $("#href-dashboarduser-tables").click(function(){
+        renderDashboardUserTable()
     });
 
     $("#href-locations").click(function(){
