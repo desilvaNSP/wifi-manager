@@ -76,7 +76,9 @@
          {
              Cookies.set("username",$("#username").val())
              Cookies.set("status", result.status)
+             Cookies.set("tenantId", 1)
              if(result.status === "success"){
+                 window.tenantId = result.tenantId
                  window.location.href = "/dashboard/"
              }else
              {

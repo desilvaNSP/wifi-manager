@@ -3325,7 +3325,7 @@ code {
     -moz-border-left-colors: none;
     -moz-border-right-colors: none;
     -moz-border-top-colors: none;
-    background-color: #ffffff;
+    background-color: #3C719E;
     border-color: #e7eaec;
     border-image: none;
     border-style: solid solid none;
@@ -3388,6 +3388,7 @@ table.table-mail tr td {
     padding: 0;
     text-overflow: ellipsis;
     float: left;
+    color :white;
 }
 .ibox-title .label {
     float: left;
@@ -6416,4 +6417,8 @@ body.skin-3 {
     .welcome-message {
         display: none;
     }
+}
+
+.center{
+    text-align: center;
 }

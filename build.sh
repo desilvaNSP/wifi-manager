@@ -22,7 +22,7 @@ export GOBIN=$GOPATH_/bin
 cd $GOPATH_
 rm -f $GOPATH_/bin/main
 
-#go test -v $PROJECT_NAME/core/main
+go test -v $PROJECT_NAME/core/main
 go install $PROJECT_NAME/core/dao
 go install $PROJECT_NAME/core/utils
 go install $PROJECT_NAME/core/controllers/location

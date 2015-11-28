@@ -64,14 +64,18 @@
 
         $("#btn-register").on('click',function(e){
             e.preventDefault();
-            var payload = {username :$("#username").val(), password : $("#password").val(), email: $("#email").val(), tenantid :1  }
+            var payload = {username :$("#username").val(), password : $("#password").val(), email: $("#email").val(), tenantid : parseInt(Cookies.get('tenantId')), status: 'pending' }
             $.post("/dashboard/register",JSON.stringify(payload) ,function(result)
             {
                 Cookies.set("username",$("#username").val())
                 Cookies.set("status", result.status)
                 if(result.status === "success"){
                     window.location.href = "/dashboard/"
-                }else
+                }else if(result.status === "pending")
+                {
+                    window.location.href = "/dashboard/login"
+                }
+                else
                 {
                     console.log("registration failure")
                 }

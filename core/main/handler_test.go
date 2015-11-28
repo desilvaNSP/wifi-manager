@@ -10,6 +10,8 @@ import (
 	"testing"
 	"strings"
 	log "github.com/Sirupsen/logrus"
+	"wifi-manager/core/utils"
+	"database/sql"
 )
 
 var m *mux.Router
@@ -30,11 +32,13 @@ func setup() {
 
 func TestCreateUser(t *testing.T){
 	setup()
-	radiusUser := dao.RadiusUser{}
+	radiusUser := dao.PortalUser{}
 	radiusUser.Username = username
+	radiusUser.Location = utils.NullString{sql.NullString{"default", true}}
 	//Testing get of non existent question type
 
 	b, err := json.Marshal(radiusUser)
+	print(string(b))
 
 	req, err = http.NewRequest("POST", "/wifi/users", strings.NewReader(string(b)))
 	if err != nil {

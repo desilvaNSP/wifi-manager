@@ -34,6 +34,12 @@ var routes = Routes{
 		dashboard_handlers.GetDashboardUsersHandler,
 	},
 	Route{
+		"Get dashboard user roles",
+		"GET",
+		"/dashboard/{tenantid}/roles",
+		dashboard_handlers.GetTenantRolesHandler,
+	},
+	Route{
 		"Login",
 		"POST",
 		"/dashboard/login",
@@ -42,7 +48,7 @@ var routes = Routes{
 	Route{
 		"Register Dashboard user",
 		"POST",
-		"/dashboard/register",
+		"/dashboard/users",
 		dashboard_handlers.RegisterUser,
 	},
 	Route{
@@ -50,6 +56,12 @@ var routes = Routes{
 		"GET",
 		"/dashboard/users/{tenantid}/{username}",
 		dashboard_handlers.GetUserProfile,
+	},
+	Route{
+		"Delete Dashboard user",
+		"DELETE",
+		"/dashboard/users/{tenantid}/{username}",
+		dashboard_handlers.DeleteDashboardUsersHandler,
 	},
 	Route{
 		"Create WIFI user",

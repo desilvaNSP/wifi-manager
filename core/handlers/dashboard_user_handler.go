@@ -12,7 +12,7 @@ import(
 
 func AuthenticateUser(w http.ResponseWriter, r *http.Request){
 	decoder := json.NewDecoder(r.Body)
-	var user dao.User
+	var user dao.DashboardUser
 	err := decoder.Decode(&user)
 	if err != nil {
 		panic("Error while decoding json")
@@ -40,7 +40,7 @@ func AuthenticateUser(w http.ResponseWriter, r *http.Request){
 
 func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
-	var user dao.User
+	var user dao.DashboardUser
 	err := decoder.Decode(&user)
 	if err != nil {
 		panic("Error while decoding json")
@@ -75,14 +75,16 @@ func DeleteDashboardUsersHandler(w http.ResponseWriter, r *http.Request){
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-
+	if err := json.NewEncoder(w).Encode("{}"); err != nil {
+		panic(err)
+	}
 }
 
 func GetUserProfile(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	tenantId := vars["tenantid"]
 	username := vars["username"]
-    var user dao.User
+    var user dao.DashboardUser
 	tenantIdInt, _ := strconv.Atoi(tenantId)
 
 	user = dashboard.GetUser(tenantIdInt, username)
@@ -104,6 +106,24 @@ func GetDashboardUsersHandler(w http.ResponseWriter, r *http.Request){
 	w.WriteHeader(http.StatusOK)
 
 	b, err := json.Marshal(users)
+	if err != nil {
+		panic(err)
+	}
+	if err := json.NewEncoder(w).Encode(string(b)); err != nil {
+		panic(err)
+	}
+}
+
+func GetTenantRolesHandler(w http.ResponseWriter, r *http.Request){
+	vars := mux.Vars(r)
+	tenantId := vars["tenantid"]
+	tenantIdInt,_ := strconv.Atoi(tenantId)
+	roles := dashboard.GetRoles(tenantIdInt)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+
+	b, err := json.Marshal(roles)
 	if err != nil {
 		panic(err)
 	}

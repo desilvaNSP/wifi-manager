@@ -24,14 +24,21 @@ function renderWifiUserTable(){
 }
 
 function renderDashboardUserTable(){
-    $.get('components/dashboard-usertable.html', function(template) {
-            var users;
-            $.get('/dashboard/1/users', function(result){
-                var rendered = Mustache.render(template, {data: result});
+    var tenantRoles, tenantUsers;
+    var roles = $.get('/dashboard/'+ Cookies.get('tenantId') +'/roles', function(result){
+        tenantRoles = result;
+    });
+    var users = $.get('/dashboard/'+ Cookies.get('tenantId') +'/users', function(result){
+        tenantUsers = result
+    });
+
+    $.when(roles,users).done(function(){
+        $.get('components/dashboard-usertable.html', function(template) {
+                var rendered = Mustache.render(template, {data: tenantUsers, roles : JSON.parse(tenantRoles)});
                 $('#content-main').html(rendered);
-            })
-        }
-    );
+            }
+        );
+    });
 }
 
 function renderDashBoard() {

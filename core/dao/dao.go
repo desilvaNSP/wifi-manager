@@ -8,12 +8,13 @@ type NameValue struct{
 	Value int  `db:"value"json:"value"`
 }
 
-type User struct {
+type DashboardUser struct {
 	TenantId int `db:"tenantid"json:"tenantid"`
 	Username string `db:"username"json:"username"`
 	Password string `db:"password"json:"password"`
 	Email string `db:"email"json:"email"`
 	Status string `db:"status"json:"status"`
+	Roles []string `json:"roles"`
 }
 
 type PortalUser struct{
@@ -24,12 +25,13 @@ type PortalUser struct{
 	Acctactivationtime utils.NullString `db:"acctactivationtime"json:"acctactivationtime"`
 	Acctstoptime utils.NullString `db:"acctstoptime"json:"acctstoptime"`
 	Location utils.NullString  `db:"location"json:"location"`
+	WhiteListed utils.NullString  `db:"whitelisted"json:"whitelisted"`
 	Visits int64     `db:"visits"json:"visits"`
 }
 
 type Role struct{
-   BitMask int `json:"bitMask"`
-   Title string `json:"title"`
+   Name string `json:"name"`
+   TenantId string `json:"tenantId"`
 }
 
 type AuthUser struct {

@@ -53,6 +53,10 @@ CREATE TABLE IF NOT EXISTS `userpermissions` (
   `action` VARCHAR(255) DEFAULT NULL,
   PRIMARY KEY(`username`)
 ) ENGINE=InnoDB;
+
+INSERT INTO roles (name,tenantid)
+VALUES ('admin',1),
+('user',1);
 -- --------------------------------------------------------
 --
 -- INSERT int(11)O radcheck (username,attribute,op,value) VALUES ('test','CLeartext-Password',':=','test')

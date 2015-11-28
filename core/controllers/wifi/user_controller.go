@@ -44,7 +44,7 @@ func AddWiFiUser(user *dao.PortalUser){
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
-	_, err = stmtIns.Exec(user.Username, user.Location)
+	_, err = stmtIns.Exec(user.Username, user.Location.String)
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
@@ -56,7 +56,7 @@ func GetAllWiFiUsers() []dao.PortalUser{
 	defer dbMap.Db.Close()
 	var users []dao.PortalUser
 
-	_, err := dbMap.Select(&users, "SELECT username,acctstarttime,acctlastupdatedtime,acctstoptime,location,visits FROM accounting order by username")
+	_, err := dbMap.Select(&users, "SELECT username,acctstarttime,acctlastupdatedtime,acctstoptime,location,visits,whitelisted FROM accounting order by username")
 	checkErr(err, "Select failed")
 	return users
 }
