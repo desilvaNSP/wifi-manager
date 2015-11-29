@@ -13,3 +13,7 @@
 ** Execute wifi-manager/server/resources/scripts/setup.sh
 * Configure server parameters in  wifi-manager/server/configs/config.yaml
 * To run the server execute wifi-manager/server/server.sh
+
+#### IDE support for go-lang
+
+** https://github.com/golang/go/wiki/IDEsAndTextEditorPlugins
