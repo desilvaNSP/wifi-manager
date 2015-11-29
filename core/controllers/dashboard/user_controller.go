@@ -50,6 +50,21 @@ func RegisterUser(user dao.DashboardUser) error{
 	return err
 }
 
+func UpdateUser(user dao.DashboardUser) error{
+	dbMap := utils.GetDBConnection("dashboard");
+	defer dbMap.Db.Close()
+
+	stmtIns, err := dbMap.Db.Prepare("UPDATE users SET email=?, status=? WHERE username=? and tenantid=?")
+	defer stmtIns.Close()
+
+	if err != nil {
+		return err
+	}
+	_, err = stmtIns.Exec(user.Email, user.Status, user.Username, user.TenantId)
+	return err
+}
+
+
 func DeleteUser(tenantId int, username string){
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()

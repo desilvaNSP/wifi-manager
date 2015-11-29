@@ -10,10 +10,7 @@
                     <i class="fa fa-wrench"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-user">
-                    <li><a href="#" id="add-user-opt">Add User</a>
-                    </li>
-                    <li><a href="#">Config option 2</a>
-                    </li>
+                    <li><a href="#" id="add-user-opt">Add User</a></li>
                 </ul>
                 <a class="close-link">
                     <i class="fa fa-times"></i>
@@ -42,10 +39,10 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title">Delete User</h4>
+                <h4 class="modal-title" style="text-align: center">Delete User</h4>
             </div>
             <div class="modal-body">
-                <p><strong>Are you sure you want to delete the user?</strong></p>
+                <p id="message"><strong>Are you sure you want to delete the user?</strong></p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-white" data-dismiss="modal">No</button>
@@ -107,6 +104,50 @@
     </div>
 </div>
 
+<div class="modal inmodal" id="edituser-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content animated fadeIn">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <i class="fa fa-user-md modal-icon"></i>
+                <h4 class="modal-title">Edit User</h4>
+                <small class="font-bold">Edit system users and assign privileges</small>
+            </div>
+            <div class="modal-body">
+                <hr>
+                <form role="form" id="edituser-form">
+                    <div class="form-group">
+                        <label for="inputEditUsername">Username</label>
+                        <input type="text" class="form-control" id="inputEditUsername" name="editusername" placeholder="Username" required readonly="readonly">
+                    </div>
+                    <div class="form-group">
+                        <label for="inputEditEmail">Email address</label>
+                        <input type="email" class="form-control" id="inputEditEmail" name="editemail" placeholder="Email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputPassword">Roles</label>
+                        <div class="checkbox">
+                            {{#roles}}
+                            <label class="radio inline control-label"><input type="radio" class="radio" name="role-select" value="{{name}}">{{name}}</label><br/>
+                            {{/roles}}
+                        </div>
+                    </div>
+                    <div class="checkbox">
+                        <hr/>
+                        <label>
+                            <input type="checkbox" id="chkEditIsActive"> Activate
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="btn-edit-user">Update User</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="js/plugins/validate/jquery.validate.min.js"></script>
 <script>
     var userTable = $('.dataTables-user').DataTable({
@@ -116,11 +157,46 @@
             { "data": "username" , "width": "15%"},
             { "data": "email" , "width": "10%"},
             { "data": "status" , "width": "5%"},
-            {"data": null,"defaultContent": "<div class='btn-group'><button class='btn btn-white btn-xs dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fa fa-gear'></i></button><ul class='dropdown-menu'><li><a href='#' id='setting-delete-user'>Delete</a></li><li><a href='#'>Edit</a></li></ul></div>", "width" : "1%", "className" :'center'},
+            {"data": null,"defaultContent": "<div class='btn-group'><button class='btn btn-white btn-xs dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fa fa-gear'></i></button><ul class='dropdown-menu'><li><a href='#' id='setting-edit-user'>Edit</a></li><li><a href='#' id='setting-change-password'>Change Password</a></li><li><a href='#' id='setting-delete-user'>Delete</a></li></ul></div>", "width" : "1%", "className" :'center'},
         ],
         dom: 'T<"clear">lfrtip',
         tableTools: {
             "sSwfPath": "js/plugins/dataTables/swf/copy_csv_xls_pdf.swf"
+        }
+    });
+
+    var adduserFromValidator =  $("#adduser-form").validate({
+        rules: {
+            password: {
+                required: true,
+                minlength: 5
+            },
+            confirmpassword : {
+                required: true,
+                equalTo : "#inputPassword",
+                minlength: 5
+            },
+            username : {
+                required: true,
+                minlength: 3
+            },
+            email: {
+                required: true,
+                email: true
+            }
+        }
+    });
+
+    var editUserFromValidator =  $("#edituser-form").validate({
+        rules: {
+            editusername : {
+                required: true,
+                minlength: 3
+            },
+            editemail: {
+                required: true,
+                email: true
+            }
         }
     });
 
@@ -151,12 +227,58 @@
     });
 
     $('.dataTables-user tbody').on( 'click', '#setting-delete-user', function () {
-        rawTodelete =$(this).closest('tr')
+        rawTodelete =$(this).closest('tr');
         selectedUser = userTable.row( $(this).parents('tr') ).data();
         $('#confirm-delete-modal').modal()
+        $('#message').html('<i class="fa fa-warning fa-3x" style="vertical-align: middle;margin-right: 10%"></i>Are you sure you want to delete the user? <strong>' + selectedUser.username  +'</strong>' );
+    });
+
+    $('.dataTables-user tbody').on( 'click', '#setting-edit-user', function () {
+        selectedUser = userTable.row( $(this).parents('tr') ).data();
+        editUserFromValidator.resetForm();
+        $('#edituser-modal').modal()
+        $("#inputEditUsername").val(selectedUser.username);
+        $("#inputEditEmail").val(selectedUser.email);
+        if(selectedUser.status == 'active'){
+            $("#chkEditIsActive").prop('checked',true);
+        }else{
+            $("#chkEditIsActive").prop('checked',false);
+        }
+    });
+
+    $('#btn-edit-user').on("click", function(event){
+        if($("#editser-form").valid()){
+            var newUserStatus = 'pending';
+            if($('#chkEditIsActive').is(":checked")){
+                newUserStatus = 'active';
+            }
+            var payload = {
+                tenantid : parseInt(Cookies.get('tenantId')),
+                username : $('#inputEditUsername').val(),
+                email : $('#inputEditEmail').val(),
+                roles : [$('.radio:checked').val()],
+                status : newUserStatus
+            }
+
+            $.ajax({
+                url: '/dashboard/users',
+                type: 'PUT',
+                contentType: "application/json",
+                data : JSON.stringify(payload),
+                success: function(result) {
+                    $('#edituser-modal').modal('hide');
+                },
+                error: function(e){
+                    console.log(e)
+                }
+            });
+        }
+        return false;
     });
 
     $('body').on( 'click', '#add-user-opt', function () {
+        $('#adduser-form').trigger('reset');
+        adduserFromValidator.resetForm();
         $('#adduser-modal').modal()
     });
 
@@ -179,27 +301,5 @@
             });
         }
         return false;
-    });
-
-    $("#adduser-form").validate({
-        rules: {
-            password: {
-                required: true,
-                minlength: 5
-            },
-            confirmpassword : {
-                required: true,
-                equalTo : "#inputPassword",
-                minlength: 5
-            },
-            username : {
-                required: true,
-                minlength: 3
-            },
-            email: {
-                required: true,
-                email: true
-            }
-        }
     });
  </script>

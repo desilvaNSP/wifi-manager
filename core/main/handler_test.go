@@ -23,7 +23,7 @@ var username string
 func setup() {
 
 	loadConfigs("/home/anuruddha/git/wifi-manager/server")
-    username = "anu124f43"
+    username = "anueesdseer"
 	//mux router with added question routes
 	m = routes.NewRouter()
 	//The response recorder used to record HTTP responses
@@ -38,8 +38,6 @@ func TestCreateUser(t *testing.T){
 	//Testing get of non existent question type
 
 	b, err := json.Marshal(radiusUser)
-	print(string(b))
-
 	req, err = http.NewRequest("POST", "/wifi/users", strings.NewReader(string(b)))
 	if err != nil {
 		t.Fatal("Creating 'POST /questions/1/SC' request failed!")

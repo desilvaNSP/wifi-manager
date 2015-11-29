@@ -51,12 +51,27 @@ func AddWiFiUser(user *dao.PortalUser){
 	defer stmtIns.Close()
 }
 
+func UpdateWiFiUser(user *dao.PortalUser){
+	dbMap := utils.GetDBConnection("portal");
+	defer dbMap.Db.Close()
+
+	stmtIns, err := dbMap.Db.Prepare("UPDATE accounting SET acl=? WHERE username=?") // ? = placeholder
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	_, err = stmtIns.Exec(user.ACL.String, user.Username)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	defer stmtIns.Close()
+}
+
 func GetAllWiFiUsers() []dao.PortalUser{
 	dbMap := utils.GetDBConnection("portal");
 	defer dbMap.Db.Close()
 	var users []dao.PortalUser
 
-	_, err := dbMap.Select(&users, "SELECT username,acctstarttime,acctlastupdatedtime,acctstoptime,location,visits,whitelisted FROM accounting order by username")
+	_, err := dbMap.Select(&users, "SELECT username,acctstarttime,acctlastupdatedtime,acctstoptime,location,visits,acl FROM accounting order by username")
 	checkErr(err, "Select failed")
 	return users
 }

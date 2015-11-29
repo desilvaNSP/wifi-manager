@@ -84,8 +84,17 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request){
 * POST
 * @path /users
 */
-func UpdateUserHandler(){
+func UpdateUserHandler(w http.ResponseWriter, r *http.Request){
+	decoder := json.NewDecoder(r.Body)
+	var user dao.PortalUser
+	decoder.Decode(&user)
+	wifi_controller.UpdateWiFiUser(&user)
 
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode("{}"); err != nil {
+		panic(err)
+	}
 }
 
 /**

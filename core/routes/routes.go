@@ -52,6 +52,12 @@ var routes = Routes{
 		dashboard_handlers.RegisterUser,
 	},
 	Route{
+		"Update Dashboard user",
+		"PUT",
+		"/dashboard/users",
+		dashboard_handlers.UpdateUser,
+	},
+	Route{
 		"Get Dashboard user Info",
 		"GET",
 		"/dashboard/users/{tenantid}/{username}",
@@ -74,6 +80,12 @@ var routes = Routes{
 		"GET",
 		"/wifi/users",
 		dashboard_handlers.GetUsersHandler,
+	},
+	Route{
+		"UpdateWiFiUsers",
+		"PUT",
+		"/wifi/users",
+		dashboard_handlers.UpdateUserHandler,
 	},
 	Route{
 		"DeleteWiFiUser",

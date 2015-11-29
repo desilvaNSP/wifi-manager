@@ -87,3 +87,11 @@ type NullString struct {
 func (r NullString) MarshalJSON() ([]byte, error) {
 	return json.Marshal(r.String)
 }
+
+func (r *NullString) UnmarshalJSON(data []byte) error{
+	if string(data) == "null" {
+		return nil
+	}
+	r.Valid = true
+	return json.Unmarshal(data, (*string)(&r.String))
+}

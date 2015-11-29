@@ -18,15 +18,15 @@ type DashboardUser struct {
 }
 
 type PortalUser struct{
-	Username string `db:"username"json:"username"`
-	Password string `json:"password"`
-	Acctstarttime utils.NullString `db:"acctstarttime"json:"acctstarttime"`
+	Username string                      `db:"username"json:"username"`
+	Password string                      `json:"password"`
+	Acctstarttime utils.NullString       `db:"acctstarttime"json:"acctstarttime"`
 	Acctlastupdatedtime utils.NullString `db:"acctlastupdatedtime"json:"acctlastupdatedtime"`
-	Acctactivationtime utils.NullString `db:"acctactivationtime"json:"acctactivationtime"`
-	Acctstoptime utils.NullString `db:"acctstoptime"json:"acctstoptime"`
-	Location utils.NullString  `db:"location"json:"location"`
-	WhiteListed utils.NullString  `db:"whitelisted"json:"whitelisted"`
-	Visits int64     `db:"visits"json:"visits"`
+	Acctactivationtime utils.NullString  `db:"acctactivationtime"json:"acctactivationtime"`
+	Acctstoptime utils.NullString        `db:"acctstoptime"json:"acctstoptime"`
+	Location utils.NullString            `db:"location"json:"location"`
+	ACL utils.NullString        		 `db:"acl"json:"acl"`
+	Visits int64                         `db:"visits"json:"visits"`
 }
 
 type Role struct{

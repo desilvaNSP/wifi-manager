@@ -1,7 +1,3 @@
-/**
- * Created by anuruddha on 9/13/15.
- */
-
 function renderSidebar(username){
     $.get('components/sidebar.html', function(template) {
             $.get('/dashboard/users/1/' + username , function(result){
@@ -13,14 +9,22 @@ function renderSidebar(username){
 }
 
 function renderWifiUserTable(){
-    $.get('components/wifi-usertable.html', function(template) {
-            var users;
-            $.get('/wifi/users', function(result){
-                var rendered = Mustache.render(template, {data: result});
-                $('#content-main').html(rendered);
-            })
+    var loading = $.get('components/loading.html', function(template) {
+            var rendered = Mustache.render(template);
+            $('#content-main').html(rendered);
         }
     );
+
+    $.when(loading).done(function(){
+        $.get('components/wifi-usertable.html', function(template) {
+                var users;
+                $.get('/wifi/users', function(result){
+                    var rendered = Mustache.render(template, {data: result});
+                    $('#content-main').html(rendered);
+                })
+            }
+        );
+    });
 }
 
 function renderDashboardUserTable(){
