@@ -12,4 +12,4 @@
 ** Update the wifi-manager/server/resources/scripts/setup_config.sh with your mysql parameters
 ** Execute wifi-manager/server/resources/scripts/setup.sh
 * Configure server parameters in  wifi-manager/server/configs/config.yaml
-* To run the server execute wifi-manager/server/server.sh 
+* To run the server execute wifi-manager/server/server.sh
