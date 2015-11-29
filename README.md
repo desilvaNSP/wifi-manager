@@ -1,29 +1,15 @@
-# README #
+####How to setup the  Dashboard development environment
 
-This README would normally document whatever steps are necessary to get your application up and running.
-
-### What is this repository for? ###
-
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
-
-### How do I get set up? ###
-
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
-
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
+* Install go-lang https://golang.org/
+* checkout the source code available at 
+** https://apremalal@bitbucket.org/apremalal/wifi-manager.git	
+* Edit wifi-manager/build.sh parameters
+* Change the GOPATH_ to your desired GOPATH
+* Execute wifi-manager/build.sh 
+** This will create a distribution pack (wifi-manager.zip)
+* Installing the DataBase
+** Create a Db with name ‘dashboard’
+** Update the wifi-manager/server/resources/scripts/setup_config.sh with your mysql parameters
+** Execute wifi-manager/server/resources/scripts/setup.sh
+* Configure server parameters in  wifi-manager/server/configs/config.yaml
+* To run the server execute wifi-manager/server/server.sh 
