@@ -65,7 +65,7 @@
         $("#btn-register").on('click',function(e){
             e.preventDefault();
             var payload = {username :$("#username").val(), password : $("#password").val(), email: $("#email").val(), tenantid : parseInt(Cookies.get('tenantId')), status: 'pending' }
-            $.post("/dashboard/register",JSON.stringify(payload) ,function(result)
+            $.post("/dashboard/users",JSON.stringify(payload) ,function(result)
             {
                 Cookies.set("username",$("#username").val())
                 Cookies.set("status", result.status)

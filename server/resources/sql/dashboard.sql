@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `email` VARCHAR(255) DEFAULT NULL,
   `status` VARCHAR(255) DEFAULT NULL,
   `lastupdatedtime` TIMESTAMP,
-  PRIMARY KEY(`username`)
+  PRIMARY KEY(`username`, `tenantid`)
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `roles` (
@@ -54,9 +54,13 @@ CREATE TABLE IF NOT EXISTS `userpermissions` (
   PRIMARY KEY(`username`)
 ) ENGINE=InnoDB;
 
+INSERT INTO users (tenantid, username, password, email, status)
+VALUES (1,'admin','$2a$10$FesfnIBKqhH2MuF1hmss0umXNrrx28AW1E4re9OCAwib3cIOKBz3C', 'admin@wsilabs.com', 'active'),
+
 INSERT INTO roles (name,tenantid)
 VALUES ('admin',1),
-('user',1);
+       ('user',1);
+
 -- --------------------------------------------------------
 --
 -- INSERT int(11)O radcheck (username,attribute,op,value) VALUES ('test','CLeartext-Password',':=','test')
