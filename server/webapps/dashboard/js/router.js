@@ -71,4 +71,12 @@ function renderLocations() {
     })
 }
 
+function renderDashboardList() {
+    $.get('components/dashboard-list.html', function (template) {
+
+            var rendered = Mustache.render(template, {});
+            $('#content-main').html(rendered)
+    })
+}
+
 

@@ -14,7 +14,7 @@
 
 <script>
     $(function () {
-        $('#lineChart').highcharts({
+       var lineChart = $('#lineChart').highcharts({
             chart: {
                 zoomType: 'x'
             },
@@ -52,6 +52,13 @@
                     }
                 }
             },
+           exporting: {
+               sourceWidth: 1600,
+               sourceHeight: 500,
+               chartOptions: {
+                   subtitle: null
+               }
+           },
             series: {{{data}}}
         });
     });

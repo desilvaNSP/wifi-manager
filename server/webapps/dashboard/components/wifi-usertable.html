@@ -23,13 +23,23 @@
                 <thead>
                 <tr>
                     <th>Username</th>
+                    <th>ACL</th>
                     <th>Location</th>
                     <th>Visit count</th>
                     <th>Acct start Time</th>
-                    <th>Acct Last Updated Time</th>
                     <th>Acct Stop Time</th>
-                    <th>ACL</th>
+                    <th>Acct Last Updated Time</th>
                     <th>Settings</th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th>ACL</th>
+                    <th>Location</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
                 </tr>
                 </thead>
             </table>
@@ -140,22 +150,37 @@
 <script src="js/plugins/validate/jquery.validate.min.js"></script>
 <script>
     var userTable = $('.dataTables-user').DataTable({
-        orderCellsTop: true,
-        data: {{{data}}},
-        columns: [
-            { "data": "username" , "width": "15%"},
-            { "data": "location" , "width": "10%"},
-            { "data": "visits" , "width": "5%"},
-            { "data": "acctstarttime" , "width": "10%"},
-            { "data": "acctlastupdatedtime" , "width": "10%"},
-            { "data": "acctstoptime" , "width": "10%"},
-            { "data": "acl" , "width": "7%"},
-            {"data": null,"defaultContent": "<div class='btn-group'><button class='btn btn-white btn-xs dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fa fa-gear'></i></button><ul class='dropdown-menu'><li><a href='#' id='setting-edit-user'>Edit</a></li><li><a href='#' id='setting-change-password'>Change Password</a></li><li><a href='#' id='setting-delete-user'>Delete</a></li></ul></div>", "width" : "1%", "className" :'center'},
-        ],
-        dom: 'T<"clear">lfrtip',
-        tableTools: {
-            "sSwfPath": "js/plugins/dataTables/swf/copy_csv_xls_pdf.swf"
-        }
+            responsive : true,
+            orderCellsTop: true,
+            data: {{{data}}},
+            columns: [
+                { "data": "username" , "width": "15%"},
+                { "data": "acl" , "width": "7%"},
+                { "data": "location" , "width": "10%"},
+                { "data": "visits" , "width": "5%"},
+                { "data": "acctstarttime" , "width": "10%"},
+                { "data": "acctstoptime" , "width": "10%"},
+                { "data": "acctlastupdatedtime" , "width": "10%"},
+                {"data": null,"defaultContent": "<div class='btn-group'><button class='btn btn-white btn-xs dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fa fa-gear'></i></button><ul class='dropdown-menu'><li><a href='#' id='setting-edit-user'>Edit</a></li><li><a href='#' id='setting-change-password'>Change Password</a></li><li><a href='#' id='setting-delete-user'>Delete</a></li></ul></div>", "width" : "1%", "className" :'center', "sortable" : false},
+            ],
+             dom: 'T<"clear">lfrtip',
+             tableTools: {
+                "sSwfPath": "js/plugins/dataTables/swf/copy_csv_xls_pdf.swf"
+            }
+        });
+
+    $('.dataTables-user').dataTable().columnFilter({
+        sPlaceHolder: "head:before",
+        aoColumns: [
+            null,
+            { type: "select", values: [ 'whitelisted', 'blacklisted', 'normaluser'] },
+            { type: "select", values: [ '4.0.0', '3.0.0', '2.0.0', '1.0.0'] },
+            {"bSortable": false },
+            {"bSortable": false },
+            {"bSortable": false },
+            {"bSortable": false },
+            null
+        ]
     });
 
     $('.dataTables-user tbody').on( 'click', 'tr', function () {

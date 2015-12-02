@@ -14,11 +14,16 @@
                     WIFI+
                 </div>
             </li>
-            <li class="active">
-                <a href="#" id="href-dashboard"><i class="fa fa-th-large"></i> <span class="nav-label">Dashboard</span></a>
+            <li>
+                <a href="#" id="href-dashboard"><i class="fa fa-th-large"></i> <span class="nav-label">Dashboard</span></span><span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level">
+                    <li ><a href="#" id="href-main-dashboard">Main</a></li>
+                    <li ><a href="#" id="href-list-dashboard">List All</a></li>
+                    <li ><a href="#" id="href-add-new">Add New</a></li>
+                </ul>
             </li>
             <li>
-                <a href="#"><i class="fa fa-table"></i> <span class="nav-label">Tables</span><span class="fa arrow"></span> </a>
+                <a href="#"><i class="fa fa-table"></i> <span class="nav-label">Tables</span><span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level">
                     <li ><a href="#" id="href-wifiuser-tables">WiFi Users</a></li>
                     <li ><a href="#" id="href-dashboarduser-tables">Dashboard Users</a></li>
@@ -75,6 +80,9 @@
         renderLocations()
     });
 
+    $("#href-list-dashboard").click(function(){
+        renderDashboardList()
+    });
     $(".logout").on('click',function(){
         Cookies.remove();
         window.location.href = "/dashboard/login"
