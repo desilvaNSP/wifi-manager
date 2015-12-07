@@ -95,3 +95,20 @@ func (r *NullString) UnmarshalJSON(data []byte) error{
 	r.Valid = true
 	return json.Unmarshal(data, (*string)(&r.String))
 }
+
+/* NullInt*/
+type NullInt struct {
+	sql.NullInt64
+}
+
+func (r NullInt) MarshalJSON() ([]byte, error) {
+	return json.Marshal(r.Int64)
+}
+
+func (r *NullInt) UnmarshalJSON(data []byte) error{
+	if string(data) == "null" {
+		return nil
+	}
+	r.Valid = true
+	return json.Unmarshal(data, (*int64)(&r.Int64))
+}

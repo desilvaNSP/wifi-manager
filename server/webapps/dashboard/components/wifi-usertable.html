@@ -213,7 +213,7 @@
         selectedUser = userTable.row( $(this).parents('tr') ).data();
         rawTodelete =$(this).closest('tr');
         $('#confirm-delete-modal').modal()
-        $('#message').html('<i class="fa fa-warning fa-3x" style="vertical-align: middle;margin-right: 10%"></i>Are you sure you want to delete the user? <strong>' + selectedUser.username  +'</strong>' );
+        $('#message').html('<i class="fa fa-warning fa-3x" style="vertical-align: middle;margin-right: 10%"></i>Are you sure you want to delete the user? <strong>' + selectedUser.username  +'</strong>');
     });
 
     $('.dataTables-user tbody').on('click', '#setting-edit-user', function () {

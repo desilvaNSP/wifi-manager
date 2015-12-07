@@ -40,11 +40,11 @@ func AddWiFiUser(user *dao.PortalUser){
 	dbMap := utils.GetDBConnection("portal");
 	defer dbMap.Db.Close()
 
-	stmtIns, err := dbMap.Db.Prepare("INSERT INTO accounting (username, acctstarttime, acctlastupdatedtime, acctstoptime, location) VALUES( ?, NOW(),NOW(),NOW()+ INTERVAL 1 HOUR, ? )") // ? = placeholder
+	stmtIns, err := dbMap.Db.Prepare("INSERT INTO accounting (username, acctstarttime, acctlastupdatedtime, acctstoptime, locationid) VALUES( ?, NOW(),NOW(),NOW()+ INTERVAL 1 HOUR, ? )") // ? = placeholder
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
-	_, err = stmtIns.Exec(user.Username, user.Location.String)
+	_, err = stmtIns.Exec(user.Username, user.Location.Int64)
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
@@ -71,7 +71,7 @@ func GetAllWiFiUsers() []dao.PortalUser{
 	defer dbMap.Db.Close()
 	var users []dao.PortalUser
 
-	_, err := dbMap.Select(&users, "SELECT username,acctstarttime,acctlastupdatedtime,acctstoptime,location,visits,acl FROM accounting order by username")
+	_, err := dbMap.Select(&users, "SELECT username,acctstarttime,acctlastupdatedtime,acctstoptime,locationid,visits,acl FROM accounting order by username")
 	checkErr(err, "Select failed")
 	return users
 }
@@ -107,7 +107,7 @@ func GetUsersCountFromTo(from string, to string, location string) int64{
 	dbMap := utils.GetDBConnection("portal");
 	defer dbMap.Db.Close()
 	var count int64
-	count, err := dbMap.SelectInt("SELECT COUNT(DISTINCT username) FROM accounting where acctstarttime >= ? AND acctstarttime < ? AND location = ?", from, to, location)
+	count, err := dbMap.SelectInt("SELECT COUNT(DISTINCT username) FROM accounting where acctstarttime >= ? AND acctstarttime < ? AND locationid = ?", from, to, location)
 	checkErr(err, "Select failed")
 	return count
 }
@@ -119,7 +119,7 @@ func GetReturningUsers(from string, to string, location string) int64{
 	dbMap := utils.GetDBConnection("portal");
 	defer dbMap.Db.Close()
 	var count int64
-	count, err := dbMap.SelectInt("SELECT COUNT(DISTINCT username) FROM accounting where acctstarttime >= ? AND acctstarttime < ? AND location = ? AND visits > 1", from, to, location)
+	count, err := dbMap.SelectInt("SELECT COUNT(DISTINCT username) FROM accounting where acctstarttime >= ? AND acctstarttime < ? AND locationid = ? AND visits > 1", from, to, location)
 	checkErr(err, "Select failed")
 	return count
 }

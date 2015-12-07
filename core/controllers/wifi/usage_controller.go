@@ -32,7 +32,7 @@ func GetDownloadsFromTo(constrains dao.Constrains) int64{
     var err error
 	var count sql.NullInt64
 	if len(constrains.LocationId) >0 {
-		smtOut, err := dbMap.Db.Prepare("SELECT SUM(inputoctets) FROM dailyacct where date >= ? AND date < ? AND location = ?")
+		smtOut, err := dbMap.Db.Prepare("SELECT SUM(inputoctets) FROM dailyacct where date >= ? AND date < ? AND locationid = ?")
 		defer  smtOut.Close()
 		err = smtOut.QueryRow( constrains.From, constrains.To, constrains.LocationId).Scan(&count) // WHERE number = 13
 		if err != nil {
@@ -61,7 +61,7 @@ func GetUploadsFromTo(constrains dao.Constrains) int64{
 	var err error
 	var count sql.NullInt64
 	if len(constrains.LocationId) >0 {
-		smtOut, err := dbMap.Db.Prepare("SELECT SUM(outputoctets) FROM dailyacct where date >= ? AND date < ? AND location = ?")
+		smtOut, err := dbMap.Db.Prepare("SELECT SUM(outputoctets) FROM dailyacct where date >= ? AND date < ? AND locationid = ?")
 		defer  smtOut.Close()
 		err = smtOut.QueryRow( constrains.From, constrains.To, constrains.LocationId).Scan(&count) // WHERE number = 13
 		if err != nil {
@@ -90,7 +90,7 @@ func GetTotalSessionsCountFromTo(constrains dao.Constrains) int64{
 	var err error
 	var count sql.NullInt64
 	if len(constrains.LocationId) >0 {
-		smtOut, err := dbMap.Db.Prepare("SELECT SUM(noofsessions) FROM dailyacct where date >= ? AND date < ? AND location = ?")
+		smtOut, err := dbMap.Db.Prepare("SELECT SUM(noofsessions) FROM dailyacct where date >= ? AND date < ? AND locationid = ?")
 		defer  smtOut.Close()
 		err = smtOut.QueryRow( constrains.From, constrains.To, constrains.LocationId).Scan(&count) // WHERE number = 13
 		if err != nil {
@@ -119,7 +119,7 @@ func GetAvgSessionsFromTo(constrains dao.Constrains) float64{
 	var err error
 	var count sql.NullFloat64
 	if len(constrains.LocationId) >0 {
-		smtOut, err := dbMap.Db.Prepare("SELECT AVG(sessionavgduration) FROM dailyacct where date >= ? AND date < ? AND location = ?")
+		smtOut, err := dbMap.Db.Prepare("SELECT AVG(sessionavgduration) FROM dailyacct where date >= ? AND date < ? AND locationid = ?")
 		defer  smtOut.Close()
 		err = smtOut.QueryRow( constrains.From, constrains.To, constrains.LocationId).Scan(&count) // WHERE number = 13
 		if err != nil {

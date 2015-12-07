@@ -23,7 +23,7 @@ var username string
 func setup() {
 
 	loadConfigs("/home/anuruddha/git/wifi-manager/server")
-    username = "anueesdseer"
+    username = "erty"
 	//mux router with added question routes
 	m = routes.NewRouter()
 	//The response recorder used to record HTTP responses
@@ -34,7 +34,7 @@ func TestCreateUser(t *testing.T){
 	setup()
 	radiusUser := dao.PortalUser{}
 	radiusUser.Username = username
-	radiusUser.Location = utils.NullString{sql.NullString{"default", true}}
+	radiusUser.Location = utils.NullInt{sql.NullInt64{2, true}}
 	//Testing get of non existent question type
 
 	b, err := json.Marshal(radiusUser)

@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS `userpermissions` (
 ) ENGINE=InnoDB;
 
 INSERT INTO users (tenantid, username, password, email, status)
-VALUES (1,'admin','$2a$10$FesfnIBKqhH2MuF1hmss0umXNrrx28AW1E4re9OCAwib3cIOKBz3C', 'admin@wsilabs.com', 'active'),
+VALUES (1,'admin','$2a$10$FesfnIBKqhH2MuF1hmss0umXNrrx28AW1E4re9OCAwib3cIOKBz3C', 'admin@wsilabs.com', 'active');
 
 INSERT INTO roles (name,tenantid)
 VALUES ('admin',1),

@@ -24,7 +24,7 @@ type PortalUser struct{
 	Acctlastupdatedtime utils.NullString `db:"acctlastupdatedtime"json:"acctlastupdatedtime"`
 	Acctactivationtime utils.NullString  `db:"acctactivationtime"json:"acctactivationtime"`
 	Acctstoptime utils.NullString        `db:"acctstoptime"json:"acctstoptime"`
-	Location utils.NullString            `db:"location"json:"location"`
+	Location utils.NullInt               `db:"locationid"json:"locationid"`
 	ACL utils.NullString        		 `db:"acl"json:"acl"`
 	Visits int64                         `db:"visits"json:"visits"`
 }
