@@ -1,9 +1,9 @@
 package location
 
 import (
-	"wifi-manager/core/utils"
+	"wifi-manager/utils"
 	log "github.com/Sirupsen/logrus"
-	"wifi-manager/core/dao"
+	"wifi-manager/dao"
 )
 
 func GetLocationFromIP(ip string) string{

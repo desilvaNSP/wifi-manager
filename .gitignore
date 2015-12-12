@@ -2,6 +2,6 @@
 *.iml
 *.log
 *.zip
-server/bin/*.bin
-server/logs/*.log
 target
+src/wifi-manager/main/_vendor
+server/bin/server.bin

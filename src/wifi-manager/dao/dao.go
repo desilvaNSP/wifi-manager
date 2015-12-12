@@ -1,6 +1,6 @@
 package dao
 import (
-	"wifi-manager/core/utils"
+	"wifi-manager/utils"
 )
 
 type NameValue struct{

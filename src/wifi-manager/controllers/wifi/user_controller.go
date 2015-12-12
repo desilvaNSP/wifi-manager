@@ -1,9 +1,9 @@
 package wifi
 
 import (
-	"wifi-manager/core/utils"
-	"wifi-manager/core/dao"
-	"wifi-manager/core/common"
+	"wifi-manager/utils"
+	"wifi-manager/dao"
+	"wifi-manager/common"
 	log "github.com/Sirupsen/logrus"
 	"database/sql"
 )

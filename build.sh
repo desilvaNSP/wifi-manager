@@ -1,43 +1,30 @@
 #!/bin/bash
 set -e
-echo 'Exporting GO variables.'
-DEPENDENCY_DIR='dependencies'
+
 PROJECT_NAME='wifi-manager'
-GOPATH_=/home/anuruddha/go-workspace
+PROJECT_ROOT=`pwd`
 
-cd ..
-PROJECT_ROOT_DIR=`pwd`
+echo 'Installing Gom'
+go get github.com/mattn/gom
 
-echo 'Getting the required dependencies...'
-go get github.com/gorilla/mux
-go get golang.org/x/crypto/bcrypt
+echo 'Exporting GO variables.'
+export GOPATH=$GOPATH:$PROJECT_ROOT
 
+cd src/wifi-manager/main
+echo 'Gom install dependencies. This might take some time...'
+gom install
 
-if [ ! -d $GOPATH_/src/$PROJECT_NAME/core ] ; then
- ln -s $PROJECT_ROOT_DIR/$PROJECT_NAME $GOPATH_/src
-fi
+gom build
 
-echo 'Running GO build'
-export GOBIN=$GOPATH_/bin
-cd $GOPATH_
-rm -f $GOPATH_/bin/main
+echo "Executing test"
+gom test -v
 
-go test -v $PROJECT_NAME/core/main
-go install $PROJECT_NAME/core/dao
-go install $PROJECT_NAME/core/utils
-go install $PROJECT_NAME/core/controllers/location
-go install $PROJECT_NAME/core/controllers/wifi
-go install $PROJECT_NAME/core/handlers
-go install $PROJECT_NAME/core/routes
-go install $PROJECT_NAME/core/common
-go install $PROJECT_NAME/core/main
-
-cp -f $GOPATH_/bin/main $PROJECT_ROOT_DIR/$PROJECT_NAME/server/bin/server.bin
+mv main $PROJECT_ROOT/server/bin/server.bin
 
 echo 'GO build complete.'
 
-mkdir -p $PROJECT_ROOT_DIR/$PROJECT_NAME/target
-cd $PROJECT_ROOT_DIR/$PROJECT_NAME/target
+mkdir -p $PROJECT_ROOT/target
+cd $PROJECT_ROOT/target
 
 echo "Removing existing distribution"
 rm -rf $PROJECT_NAME.zip

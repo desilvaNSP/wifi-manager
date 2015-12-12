@@ -2,8 +2,8 @@ package wifi
 
 
 import (
-	"wifi-manager/core/utils"
-	"wifi-manager/core/dao"
+	"wifi-manager/utils"
+	"wifi-manager/dao"
 )
 
 func GetUsersByOS(constrains dao.Constrains) []dao.NameValue{

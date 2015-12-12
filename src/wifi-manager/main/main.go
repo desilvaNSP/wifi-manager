@@ -9,10 +9,10 @@ import (
 	"os"
 	"strconv"
 	"time"
-	"wifi-manager/core/common"
-	"wifi-manager/core/dao"
-	"wifi-manager/core/routes"
-	"wifi-manager/core/utils"
+	"wifi-manager/common"
+	"wifi-manager/dao"
+	"wifi-manager/routes"
+	"wifi-manager/utils"
 )
 
 var ServerHome string

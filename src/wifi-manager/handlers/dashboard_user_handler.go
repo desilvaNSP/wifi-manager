@@ -1,9 +1,9 @@
 package handlers
 
 import(
-	"wifi-manager/core/dao"
-	"wifi-manager/core/common"
-	"wifi-manager/core/controllers/dashboard"
+	"wifi-manager/dao"
+	"wifi-manager/common"
+	"wifi-manager/controllers/dashboard"
 	"net/http"
 	"encoding/json"
 	"github.com/gorilla/mux"

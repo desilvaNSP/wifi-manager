@@ -2,7 +2,7 @@ package routes
 
 import (
 	"net/http"
-	dashboard_handlers "wifi-manager/core/handlers"
+	dashboard_handlers "wifi-manager/handlers"
 )
 
 type Route struct {

@@ -1,8 +1,8 @@
 package dashboard
 
 import (
-	"wifi-manager/core/utils"
-	"wifi-manager/core/dao"
+	"wifi-manager/utils"
+	"wifi-manager/dao"
 	log "github.com/Sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 	"database/sql"

@@ -9,9 +9,9 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
-	"wifi-manager/core/dao"
-	"wifi-manager/core/routes"
-	"wifi-manager/core/utils"
+	"wifi-manager/dao"
+	"wifi-manager/routes"
+	"wifi-manager/utils"
 )
 
 var m *mux.Router
