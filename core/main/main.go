@@ -1,18 +1,18 @@
 package main
 
 import (
-	"wifi-manager/core/dao"
-	"wifi-manager/core/routes"
-	"wifi-manager/core/utils"
-	"wifi-manager/core/common"
 	"fmt"
+	log "github.com/Sirupsen/logrus"
+	"github.com/gorilla/handlers"
+	"github.com/spf13/viper"
 	"net/http"
 	"os"
 	"strconv"
 	"time"
-	log "github.com/Sirupsen/logrus"
-	"github.com/gorilla/handlers"
-	"github.com/spf13/viper"
+	"wifi-manager/core/common"
+	"wifi-manager/core/dao"
+	"wifi-manager/core/routes"
+	"wifi-manager/core/utils"
 )
 
 var ServerHome string
@@ -39,7 +39,7 @@ func main() {
 		MaxHeaderBytes: 1 << 20,
 	}
 	log.Info("Starting server on port : " + strconv.Itoa(serverConfigs.HttpPort))
-	log.Fatal("HTTP Server error: ", s.ListenAndServeTLS(ServerHome + "/resources/security/server.pem", ServerHome + "/resources/security/server.key"))
+	log.Fatal("HTTP Server error: ", s.ListenAndServeTLS(ServerHome+"/resources/security/server.pem", ServerHome+"/resources/security/server.key"))
 }
 
 func loadConfigs(serverHome string) {

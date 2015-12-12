@@ -1,17 +1,17 @@
 package main
 
 import (
+	"database/sql"
+	"encoding/json"
+	log "github.com/Sirupsen/logrus"
+	"github.com/gorilla/mux"
+	"net/http"
+	"net/http/httptest"
+	"strings"
+	"testing"
 	"wifi-manager/core/dao"
 	"wifi-manager/core/routes"
-	"encoding/json"
-	"net/http"
-	"github.com/gorilla/mux"
-	"net/http/httptest"
-	"testing"
-	"strings"
-	log "github.com/Sirupsen/logrus"
 	"wifi-manager/core/utils"
-	"database/sql"
 )
 
 var m *mux.Router
@@ -23,14 +23,14 @@ var username string
 func setup() {
 
 	loadConfigs("/home/anuruddha/git/wifi-manager/server")
-    username = "erty"
+	username = "erty"
 	//mux router with added question routes
 	m = routes.NewRouter()
 	//The response recorder used to record HTTP responses
 	respRec = httptest.NewRecorder()
 }
 
-func TestCreateUser(t *testing.T){
+func TestCreateUser(t *testing.T) {
 	setup()
 	radiusUser := dao.PortalUser{}
 	radiusUser.Username = username
@@ -51,7 +51,7 @@ func TestCreateUser(t *testing.T){
 
 }
 
-func TestGetUsers(t *testing.T){
+func TestGetUsers(t *testing.T) {
 	setup()
 	//Testing get of non existent question type
 	req, err = http.NewRequest("GET", "/wifi/users", nil)
@@ -60,16 +60,16 @@ func TestGetUsers(t *testing.T){
 	}
 
 	m.ServeHTTP(respRec, req)
-    log.Info(respRec)
+	log.Info(respRec)
 	if respRec.Code != http.StatusOK {
 		t.Fatal("Server error: Returned ", respRec.Code, " instead of ", http.StatusBadRequest)
 	}
 }
 
-func TestDeleteUser(t *testing.T){
+func TestDeleteUser(t *testing.T) {
 	setup()
 	//Testing get of non existent question type
-	req, err = http.NewRequest("DELETE", "/wifi/users/" + username, nil)
+	req, err = http.NewRequest("DELETE", "/wifi/users/"+username, nil)
 	if err != nil {
 		t.Fatal("Creating 'GET /questions/1/SC' request failed!")
 	}
