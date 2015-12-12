@@ -36,21 +36,23 @@ cp -f $GOPATH_/bin/main $PROJECT_ROOT_DIR/$PROJECT_NAME/server/bin/server.bin
 
 echo 'GO build complete.'
 
-mkdir -p $PROJECT_ROOT_DIR/$PROJECT_NAME/build
-cd $PROJECT_ROOT_DIR/$PROJECT_NAME/build
+mkdir -p $PROJECT_ROOT_DIR/$PROJECT_NAME/target
+cd $PROJECT_ROOT_DIR/$PROJECT_NAME/target
 
 echo "Removing existing distribution"
-rm -rf build/$PROJECT_NAME.zip
+rm -rf $PROJECT_NAME.zip
 
-echo "Writing version information to versioninfo.md"
-DATE_COMMAND=$(which date)
-TIME_STAMP=`${DATE_COMMAND} '+%Y-%m-%d.%H:%M:%S'`
+if [ "$1" = "--release" ];then
+ echo "Writing version information to versioninfo.md"
+ DATE_COMMAND=$(which date)
+ TIME_STAMP=`${DATE_COMMAND} '+%Y-%m-%d.%H:%M:%S'`
 
-echo "Time Stamp : ${TIME_STAMP}" > ../server/versioninfo.md
-LAST_COMMIT_ID=$(git log | head -1 | sed s/'commit '//)
-echo "Last Commit ID : ${LAST_COMMIT_ID}" >> ../server/versioninfo.md
-GIT_BRANCH=$(git branch)
-echo "Branch : ${GIT_BRANCH}" >> ../server/versioninfo.md
+ echo "Time Stamp : ${TIME_STAMP}" > ../server/versioninfo.md
+ LAST_COMMIT_ID=$(git log | head -1 | sed s/'commit '//)
+ echo "Last Commit ID : ${LAST_COMMIT_ID}" >> ../server/versioninfo.md
+ GIT_BRANCH=$(git branch)
+ echo "Branch : ${GIT_BRANCH}" >> ../server/versioninfo.md
+fi
 
 echo "Start creating new distribution"
 mkdir $PROJECT_NAME

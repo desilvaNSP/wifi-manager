@@ -3,6 +3,7 @@ package wifi
 import (
 	"wifi-manager/core/utils"
 	"wifi-manager/core/dao"
+	"wifi-manager/core/common"
 	log "github.com/Sirupsen/logrus"
 	"database/sql"
 )
@@ -13,14 +14,14 @@ func GetUserCountOfDownloadsOver(constrains dao.Constrains, threshold int) int64
 	var count sql.NullInt64
 	var err error
 	if len(constrains.LocationId) >0 {
-		smtOut, err := dbMap.Db.Prepare("SELECT count(DISTINCT username) FROM dailyacct where date >= ? AND date < ? AND location = ? AND outputoctets >= ?")
+		smtOut, err := dbMap.Db.Prepare(common.GET_USER_COUNT_OF_DOWNLOADS_OVER_LOCATION)
 		defer  smtOut.Close()
 		err = smtOut.QueryRow( constrains.From, constrains.To, constrains.LocationId, threshold ).Scan(&count) // WHERE number = 13
 		if err != nil {
 			panic(err.Error()) // proper error handling instead of panic in your app
 		}
 	}else{
-		smtOut, err := dbMap.Db.Prepare("SELECT count(DISTINCT username) FROM dailyacct where date >= ? AND date < ? AND outputoctets >= ?")
+		smtOut, err := dbMap.Db.Prepare(common.GET_USER_COUNT_OF_DOWNLOADS_OVER)
 		defer  smtOut.Close()
 		err = smtOut.QueryRow( constrains.From, constrains.To, threshold).Scan(&count) // WHERE number = 13
 		if err != nil {
@@ -40,7 +41,7 @@ func AddWiFiUser(user *dao.PortalUser){
 	dbMap := utils.GetDBConnection("portal");
 	defer dbMap.Db.Close()
 
-	stmtIns, err := dbMap.Db.Prepare("INSERT INTO accounting (username, acctstarttime, acctlastupdatedtime, acctstoptime, locationid) VALUES( ?, NOW(),NOW(),NOW()+ INTERVAL 1 HOUR, ? )") // ? = placeholder
+	stmtIns, err := dbMap.Db.Prepare(common.ADD_WIFI_USER_SQL) // ? = placeholder
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
@@ -55,7 +56,7 @@ func UpdateWiFiUser(user *dao.PortalUser){
 	dbMap := utils.GetDBConnection("portal");
 	defer dbMap.Db.Close()
 
-	stmtIns, err := dbMap.Db.Prepare("UPDATE accounting SET acl=? WHERE username=?") // ? = placeholder
+	stmtIns, err := dbMap.Db.Prepare(common.UPDATE_WIFI_USER_SQL) // ? = placeholder
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
@@ -71,7 +72,7 @@ func GetAllWiFiUsers() []dao.PortalUser{
 	defer dbMap.Db.Close()
 	var users []dao.PortalUser
 
-	_, err := dbMap.Select(&users, "SELECT username,acctstarttime,acctlastupdatedtime,acctstoptime,locationid,visits,acl FROM accounting order by username")
+	_, err := dbMap.Select(&users,common.GET_ALL_WIFI_USER_SQL)
 	checkErr(err, "Select failed")
 	return users
 }

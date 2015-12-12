@@ -4,4 +4,4 @@
 *.zip
 server/bin/*.bin
 server/logs/*.log
-build
+target
