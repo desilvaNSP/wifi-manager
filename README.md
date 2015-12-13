@@ -18,3 +18,5 @@
 #### IDE support for go-lang
 
 * https://github.com/golang/go/wiki/IDEsAndTextEditorPlugins
+
+#### Configure Redis

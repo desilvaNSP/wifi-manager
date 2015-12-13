@@ -3,5 +3,4 @@
 *.log
 *.zip
 target
-src/wifi-manager/main/_vendor
 server/bin/server.bin

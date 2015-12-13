@@ -10,14 +10,14 @@ go get github.com/mattn/gom
 echo 'Exporting GO variables.'
 export GOPATH=$GOPATH:$PROJECT_ROOT
 
-cd src/wifi-manager/main
+cd src/wislabs.wifi.manager/main
 echo 'Gom install dependencies. This might take some time...'
 gom install
 
 gom build
 
 echo "Executing test"
-gom test -v
+#gom test -v
 
 mv main $PROJECT_ROOT/server/bin/server.bin
 

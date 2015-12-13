@@ -32,6 +32,12 @@ serverConfigs:
  readTimeOut : 20
  writeTimeOut : 20
 
+redisConfigs:
+ serverUrl : localhost
+ serverPort : 6379
+ password : root
+ db : 0
+
 accountingConfigs:
  validityPeriod : 3600
 
