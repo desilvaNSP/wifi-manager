@@ -1,20 +1,20 @@
 package authenticator
 
-import(
+import (
 	"wislabs.wifi.manager/common"
 	"net/http"
 	"encoding/json"
-	"github.com/dgrijalva/jwt-go"
+	jwt "github.com/dgrijalva/jwt-go"
 )
 
 type TokenAuthentication struct {
 	Token string `json:"token" form:"token"`
 }
 
-func Login(requestUser *common.User) (int, []byte) {
+func Login(requestUser *common.SystemUser) (int, []byte) {
 	authEngine := InitJWTAuthenticationEngine()
 	if authEngine.Authenticate(requestUser) {
-		token, err := authEngine.GenerateToken(requestUser.UUID)
+		token, err := authEngine.GenerateToken(requestUser)
 		if err != nil {
 			return http.StatusInternalServerError, []byte("")
 		} else {
@@ -25,9 +25,9 @@ func Login(requestUser *common.User) (int, []byte) {
 	return http.StatusUnauthorized, []byte("")
 }
 
-func RefreshToken(requestUser *common.User) []byte {
+func RefreshToken(requestUser *common.SystemUser) []byte {
 	authEngine := InitJWTAuthenticationEngine()
-	token, err := authEngine.GenerateToken(requestUser.UUID)
+	token, err := authEngine.GenerateToken(requestUser)
 	if err != nil {
 		panic(err)
 	}
@@ -50,7 +50,7 @@ func Logout(req *http.Request) error {
 	return authEngine.Logout(tokenString, tokenRequest)
 }
 
-func RequireTokenAuthentication(inner http.Handler) http.Handler{
+func RequireTokenAuthentication(inner http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authBackend := InitJWTAuthenticationEngine()
 		token, err := jwt.ParseFromRequest(
@@ -58,10 +58,17 @@ func RequireTokenAuthentication(inner http.Handler) http.Handler{
 			func(token *jwt.Token) (interface{}, error) {
 				return authBackend.PublicKey, nil
 			})
-
 		if err != nil || !token.Valid || authBackend.IsInBlacklist(r.Header.Get("Authorization")) {
+			print("token not valid",err.Error())
+			print(token.Valid)
 			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}else {
+			print("ffff")
+			sClaims, _ := json.Marshal(token.Claims["scopes"])
+			print(sClaims)
+			r.Header.Set("scopes", string(sClaims))
 		}
-		inner.ServeHTTP(w,r)
+		inner.ServeHTTP(w, r)
 	})
 }

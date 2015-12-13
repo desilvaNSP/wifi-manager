@@ -9,10 +9,12 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"os"
 	"time"
-	"github.com/satori/go.uuid"
 	"wislabs.wifi.manager/common"
 	"wislabs.wifi.manager/redis"
 	"strconv"
+	"wislabs.wifi.manager/utils"
+	"database/sql"
+	log "github.com/Sirupsen/logrus"
 )
 
 type JWTAuthenticationBackend struct {
@@ -22,7 +24,7 @@ type JWTAuthenticationBackend struct {
 
 const (
 	tokenDuration = 72
-	expireOffset  = 3600
+	expireOffset = 3600
 )
 
 var authBackendInstance *JWTAuthenticationBackend = nil
@@ -37,12 +39,15 @@ func InitJWTAuthenticationEngine() *JWTAuthenticationBackend {
 	return authBackendInstance
 }
 
-func (backend *JWTAuthenticationBackend) GenerateToken(userUUID string) (string, error) {
+func (backend *JWTAuthenticationBackend) GenerateToken(user *common.SystemUser) (string, error) {
 	token := jwt.New(jwt.SigningMethodRS512)
-	i , _ := strconv.Atoi(os.Getenv(common.JWT_EXPIRATION_DELTA))
+	i, _ := strconv.Atoi(os.Getenv(common.JWT_EXPIRATION_DELTA))
 	token.Claims["exp"] = time.Now().Add(time.Hour * time.Duration(i)).Unix()
 	token.Claims["iat"] = time.Now().Unix()
-	token.Claims["sub"] = userUUID
+	token.Claims["sub"] = user.Password
+	token.Claims["userid"] = getUserId(user)
+	sample := getUserScopes(user)
+	token.Claims["scopes"] = sample
 	tokenString, err := token.SignedString(backend.privateKey)
 	if err != nil {
 		panic(err)
@@ -51,15 +56,73 @@ func (backend *JWTAuthenticationBackend) GenerateToken(userUUID string) (string,
 	return tokenString, nil
 }
 
-func (backend *JWTAuthenticationBackend) Authenticate(user *common.User) bool {
-	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("123"), 10)
-	testUser := common.User{
-		UUID:     uuid.NewV4().String(),
-		Username: "anu",
-		Password: string(hashedPassword),
+func getUserId(user *common.SystemUser) int64{
+	dbMap := utils.GetDBConnection("dashboard");
+	defer dbMap.Db.Close()
+	var userId sql.NullInt64
+	smtOut, err := dbMap.Db.Prepare("SELECT userid FROM users WHERE username=? ANd tenantid=?")
+	defer smtOut.Close()
+	err = smtOut.QueryRow(user.Username, user.TenantId).Scan(&userId)
+	if err != nil {
+		log.Debug("User authentication failed " + user.Username)
+		return -1
+	}else {
+		user.UserId = userId.Int64
+		return userId.Int64
 	}
+	return -1
+}
 
-	return user.Username == testUser.Username && bcrypt.CompareHashAndPassword([]byte(testUser.Password), []byte(user.Password)) == nil
+func getUserScopes(user *common.SystemUser) map[string][]string{
+	dbMap := utils.GetDBConnection("dashboard");
+	defer dbMap.Db.Close()
+	rows, err := dbMap.Db.Query("select name,action from permissions where permissionid in (select userpermissions.permissionid from userpermissions where userpermissions.userid = ?) order by name", user.UserId)
+	defer rows.Close()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+	var(
+		name string
+		action string
+	)
+
+	scopes := make(map[string][]string)
+	for rows.Next() {
+		err := rows.Scan(&name, &action)
+		if err != nil {
+			log.Fatal(err)
+		}
+		scopes[name] = append(scopes[name],action)
+	}
+	err = rows.Err()
+	if err != nil {
+		log.Fatal(err)
+	}
+	return scopes
+}
+
+func (backend *JWTAuthenticationBackend) Authenticate(user *common.SystemUser) bool {
+	dbMap := utils.GetDBConnection("dashboard");
+	defer dbMap.Db.Close()
+
+	var hashedPassword sql.NullString
+	smtOut, err := dbMap.Db.Prepare("SELECT password FROM users where username=? ANd tenantid=? and status='active'")
+	defer smtOut.Close()
+	err = smtOut.QueryRow(user.Username, user.TenantId).Scan(&hashedPassword)
+	if err == nil && hashedPassword.Valid {
+		if (len(hashedPassword.String) > 0) {
+			err = bcrypt.CompareHashAndPassword([]byte(hashedPassword.String), []byte(user.Password))
+			if err == nil {
+				log.Debug("User authenticated successfully " + user.Username)
+				return true
+			}
+		}
+	}else {
+		log.Debug("User authentication failed " + user.Username)
+		return false
+	}
+	return false
 }
 
 func (backend *JWTAuthenticationBackend) getTokenRemainingValidity(timestamp interface{}) int {

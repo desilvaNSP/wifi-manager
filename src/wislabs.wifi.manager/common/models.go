@@ -1,6 +1,7 @@
 package common
 
 type SystemUser struct {
+	UserId int64 `db:"userid"json:"userid"`
 	TenantId int `db:"tenantid"json:"tenantid"`
 	Username string `db:"username"json:"username"`
 	Password string `db:"password"json:"password"`

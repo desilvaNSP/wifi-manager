@@ -8,7 +8,7 @@ import (
 )
 
 func Login(w http.ResponseWriter, r *http.Request) {
-	requestUser := new(common.User)
+	requestUser := new(common.SystemUser)
 	decoder := json.NewDecoder(r.Body)
 	decoder.Decode(&requestUser)
 
@@ -19,7 +19,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func RefreshToken(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-	requestUser := new(common.User)
+	requestUser := new(common.SystemUser)
 	decoder := json.NewDecoder(r.Body)
 	decoder.Decode(&requestUser)
 

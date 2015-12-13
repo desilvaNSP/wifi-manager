@@ -3,6 +3,7 @@ package handlers
 import (
 	"wislabs.wifi.manager/dao"
 	"wislabs.wifi.manager/utils"
+	"wislabs.wifi.manager/authenticator"
 	"encoding/json"
 	"net/http"
 	_ "github.com/go-sql-driver/mysql"
@@ -10,17 +11,17 @@ import (
 	"log"
 )
 
-/**
-* GET
-* @path /locatoins
-* return [{"id":0,"username":"anu","password":"","acctstarttime":"2015-09-20 18:49:32",
-*         "acctlastupdatedtime":"2015-09-20 18:49:32","acctactivationtime":"","acctstoptime":"2015-09-20 19:49:32"}]
-*/
+
 func GetLocations(w http.ResponseWriter, r *http.Request){
+
+	if(!authenticator.IsAutherized("wifi_location", authenticator.ACTION_READ,r)){
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
 	dbMap := utils.GetDBConnection("portal");
 	defer dbMap.Db.Close()
 	var locations []dao.Location
-
 	_, err := dbMap.Select(&locations, "SELECT locationid, locationname, nasip, ipfrom, ipto FROM aplocation")
 	checkErr(err, "Select failed")
 

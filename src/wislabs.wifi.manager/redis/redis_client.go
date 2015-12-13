@@ -21,7 +21,7 @@ func Connect() (conn *RedisCli) {
 			panic(err)
 		}
 
-		if _, err := instanceRedisCli.conn.Do("AUTH", "Brainattica"); err != nil {
+		if _, err := instanceRedisCli.conn.Do("AUTH", "123"); err != nil {
 			instanceRedisCli.conn.Close()
 			panic(err)
 		}

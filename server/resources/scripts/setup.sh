@@ -4,7 +4,7 @@ set -e
 source setup_configs.sh
 
 function default_(){
- echo "Installing portal databse..."
+ echo "Installing dashboard databse..."
  mysql -u $DASHBOARD_DB_USERNAME -p$DASHBOARD_DB_PASSWORD -h $DASHBOARD_DB_HOST < ../sql/dashboard.sql
  echo "Portal DB installed successfully."
 }

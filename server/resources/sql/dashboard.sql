@@ -11,57 +11,58 @@ USE `dashboard`;
 --
 -- Table structures for dashboard
 --
-
-DROP TABLE IF EXISTS `users`;
+CREATE TABLE IF NOT EXISTS `tenants` (
+  `tenantid` INT NOT NULL AUTO_INCREMENT,
+  `domain` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `status` varchar(255) DEFAULT NULL,
+  `createdon` TIMESTAMP,
+  PRIMARY KEY(`tenantid`)
+) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `users` (
-  `tenantid` int(10) DEFAULT NULL,
+  `userid` BIGINT NOT NULL AUTO_INCREMENT,
+  `tenantid` INT,
   `username` varchar(255) DEFAULT NULL,
   `password` VARCHAR(255) DEFAULT NULL,
   `email` VARCHAR(255) DEFAULT NULL,
   `status` VARCHAR(255) DEFAULT NULL,
   `lastupdatedtime` TIMESTAMP,
-  PRIMARY KEY(`username`, `tenantid`)
+  PRIMARY KEY(`userid`),
+  FOREIGN KEY(tenantid) REFERENCES tenants(tenantid) ON DELETE CASCADE
 ) ENGINE=InnoDB;
-
-CREATE TABLE IF NOT EXISTS `roles` (
-  `name` varchar(255) DEFAULT NULL,
-  `tenantid` int(10) DEFAULT 0,
-  PRIMARY KEY(`name`, `tenantid`)
-) ENGINE=InnoDB;
-
 
 CREATE TABLE IF NOT EXISTS `permissions` (
-  `tenantid` int(10) DEFAULT 0,
-  `resourceid` int(10) DEFAULT 0,
+  `permissionid` BIGINT NOT NULL AUTO_INCREMENT,
+  `tenantid` INT,
+  `name`  VARCHAR(255) DEFAULT NULL,
   `action` VARCHAR(255) DEFAULT NULL,
-  PRIMARY KEY(`tenantid`,`resourceid`)
-) ENGINE=InnoDB;
-
-CREATE TABLE IF NOT EXISTS `usersroles` (
-  `username` varchar(255) DEFAULT NULL,
-  `password` VARCHAR(255) DEFAULT NULL,
-  `email` VARCHAR(255) DEFAULT NULL,
-  `activate` BIT DEFAULT 0,
-  PRIMARY KEY(`username`)
+  PRIMARY KEY(`permissionid`),
+  FOREIGN KEY(tenantid) REFERENCES tenants(tenantid) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `userpermissions` (
-  `username` varchar(255) DEFAULT NULL,
-  `tenantid` int(10) DEFAULT 0,
-  `resourceid` int(10) DEFAULT 0,
-  `action` VARCHAR(255) DEFAULT NULL,
-  PRIMARY KEY(`username`)
+  `permissionid` BIGINT,
+  `userid` BIGINT,
+  PRIMARY KEY(`permissionid`, `userid`),
+  FOREIGN KEY(userid) REFERENCES users(userid) ON DELETE CASCADE,
+  FOREIGN KEY(permissionid) REFERENCES permissions(permissionid) ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+INSERT INTO tenants (domain, email, status)
+VALUES ('wislabs.com','admin@wislabs.com','active');
 
 INSERT INTO users (tenantid, username, password, email, status)
 VALUES (1,'admin','$2a$10$FesfnIBKqhH2MuF1hmss0umXNrrx28AW1E4re9OCAwib3cIOKBz3C', 'admin@wsilabs.com', 'active');
 
-INSERT INTO roles (name,tenantid)
-VALUES ('admin',1),
-       ('user',1);
+INSERT INTO permissions (tenantid, name, action)
+VALUES (1, 'wifi_location', 'read'),
+       (1, 'wifi_location', 'write'),
+       (1, 'wifi_location', 'execute')
+       ;
 
--- --------------------------------------------------------
---
--- INSERT int(11)O radcheck (username,attribute,op,value) VALUES ('test','CLeartext-Password',':=','test')
---
+INSERT INTO userpermissions (userid, permissionid)
+VALUES (1, 1),
+       (1, 2),
+       (1, 3)
+       ;
