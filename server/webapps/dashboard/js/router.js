@@ -1,6 +1,6 @@
 function renderSidebar(username){
     $.get('components/sidebar.html', function(template) {
-            $.get('/dashboard/users/1/' + username , function(result){
+            $.get('/dashboard/users/'+Cookies.get('tenantId')+ '/' + username , function(result){
                 var rendered = Mustache.render(template, {data: result});
                 $('#side-navigation').html(rendered);
             });

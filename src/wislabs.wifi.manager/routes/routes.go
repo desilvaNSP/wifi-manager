@@ -17,9 +17,9 @@ type Routes []Route
 
 var routes = Routes{
 	Route{
-		"GetAuthToken",
+		"Login",
 		"POST",
-		"/dashboard/xxx",
+		"/dashboard/login",
 		false,
 		dashboard_handlers.Login,
 	},
@@ -54,7 +54,7 @@ var routes = Routes{
 	Route{
 		"Login",
 		"POST",
-		"/dashboard/login",
+		"/dashboard/login2",
 		false,
 		dashboard_handlers.AuthenticateUser,
 	},

@@ -2,10 +2,9 @@
 <html>
 
 <head>
-
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <base href="/dashboard/"/>
+    <base href="/dashboard/"/>
     <title>Wifi+ | Login</title>
 
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -14,89 +13,101 @@
 
     <link href="css/animate.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
-
 </head>
 
 <body class="gray-bg">
-<div  class="middle-box text-center animated fadeInDown">
+<div class="middle-box text-center animated fadeInDown">
 
     <h1 class="logo-name">WiFi+</h1>
 
 </div>
-    <div class="middle-box text-center loginscreen animated fadeInDown">
-        <div>
+<div class="middle-box text-center loginscreen animated fadeInDown">
+    <div>
 
-            <h3>Welcome to Wifi+</h3>
-            <p> Generate dashboards from managed access points.</p>
-            <p>Login in. To see it in action.</p>
-            <form class="m-t" id="login-form">
-                <div class="form-group">
-                    <input type="username" id="username" name="username" class="form-control" placeholder="Username" required>
-                </div>
-                <div class="form-group">
-                    <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
-                </div>
-                <button class="btn btn-primary block full-width m-b" id="login-btn">Login</button>
+        <h3>Welcome to Wifi+</h3>
 
-                <a href="#"><small>Forgot password?</small></a>
-                <p class="text-muted text-center"><small>Do not have an account?</small></p>
-                <a class="btn btn-sm btn-white btn-block" href="register">Create an account</a>
-            </form>
-            <p class="m-t"> <small>Wifi solutions &copy; 2015</small> </p>
-        </div>
+        <p> Generate dashboards from managed access points.</p>
+
+        <p>Login in. To see it in action.</p>
+
+        <form class="m-t" id="login-form">
+            <div class="form-group">
+                <input type="username" id="username" name="username" class="form-control" placeholder="Username"
+                       required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="password" name="password" class="form-control" placeholder="Password"
+                       required>
+            </div>
+            <button class="btn btn-primary block full-width m-b" id="login-btn">Login</button>
+
+            <a href="#">
+                <small>Forgot password?</small>
+            </a>
+
+            <p class="text-muted text-center">
+                <small>Do not have an account?</small>
+            </p>
+            <a class="btn btn-sm btn-white btn-block" href="register">Create an account</a>
+        </form>
+        <p class="m-t">
+            <small>Wifi solutions &copy; 2015</small>
+        </p>
     </div>
+</div>
 
-    <!-- Mainly scripts -->
-    <script src="js/jquery-2.1.1.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/plugins/cookie/js.cookie.js"></script>
-    <script src="js/plugins/toastr/toastr.min.js"></script>
-    <script src="js/plugins/validate/jquery.validate.min.js"></script>
-    <script>
-        $("#login-form").validate({
-            rules: {
-                password: {
-                    required: true
-                },
-                username : {
-                    required: true
-                }
-            }
-        });
-        toastr.options = {
-            "closeButton": true,
-            "debug": false,
-            "progressBar": true,
-            "positionClass": "toast-bottom-center",
-            "onclick": null,
-            "showDuration": "400",
-            "hideDuration": "1000",
-            "timeOut": "7000",
-            "extendedTimeOut": "1000",
-            "showEasing": "swing",
-            "hideEasing": "linear",
-            "showMethod": "fadeIn",
-            "hideMethod": "fadeOut"
+<!-- Mainly scripts -->
+<script src="js/jquery-2.1.1.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/plugins/cookie/js.cookie.js"></script>
+<script src="js/plugins/toastr/toastr.min.js"></script>
+<script src="js/plugins/validate/jquery.validate.min.js"></script>
+<script>
+    $(document).ajaxError(function(event, jqxhr, settings, thrownError ){
+        if(thrownError == 'Unauthorized'){
+            toastr.error("Please check your username and password")
+            window.location.href = "/dashboard/login"
         }
-     $("#login-btn").on('click',function(e){
-         e.preventDefault();
-         if($("#login-form").valid()) {
-             var payload = {username: $("#username").val(), password: $("#password").val(), tenantid: 1}
-             $.post("/dashboard/login", JSON.stringify(payload), function (result) {
-                 Cookies.set("username", $("#username").val())
-                 Cookies.set("status", result.status)
-                 Cookies.set("tenantId", 1)
-                 if (result.status === "success") {
-                     window.tenantId = result.tenantId
-                     window.location.href = "/dashboard/"
-                 } else {
-                     toastr.error("Please check your username and password")
-                     console.log("authentication failure")
-                 }
-             });
-         }
-     })
-    </script>
+    });
+    $("#login-form").validate({
+        rules: {
+            password: {
+                required: true
+            },
+            username: {
+                required: true
+            }
+        }
+    });
+    toastr.options = {
+        "closeButton": true,
+        "debug": false,
+        "progressBar": true,
+        "positionClass": "toast-bottom-center",
+        "onclick": null,
+        "showDuration": "400",
+        "hideDuration": "1000",
+        "timeOut": "7000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    }
+    $("#login-btn").on('click', function (e) {
+        e.preventDefault();
+        if ($("#login-form").valid()) {
+            userRealm = $("#username").val().split('@');
+            var payload = {username: userRealm[0] , password: $("#password").val(), tenantdomain: userRealm[1]}
+            $.post("/dashboard/login", JSON.stringify(payload), function (result) {
+                Cookies.set("username", userRealm[0])
+                Cookies.set("tenantId", result.tenantid)
+                Cookies.set("jwt", result.token)
+                window.location.href = "/dashboard/"
+            });
+        }
+    })
+</script>
 </body>
 
 </html>

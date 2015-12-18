@@ -1,9 +1,16 @@
 
-$(document).ready(function () {
-    if(!Cookies.get("username") || Cookies.get("status") != "success"){
+$(document).ajaxError(function(event, jqxhr, settings, thrownError ){
+    if(thrownError == 'Unauthorized'){
+        toastr.error("Please check your username and password")
         window.location.href = "/dashboard/login"
-        return
     }
+});
+
+$(document).ajaxSend(function(event, request, settings){
+    request.setRequestHeader("Authorization","Bearer " + Cookies.get("jwt"));
+});
+
+$(document).ready(function () {
     renderSidebar(Cookies.get("username"))
     renderDashBoard();
 

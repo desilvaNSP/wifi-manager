@@ -2,8 +2,9 @@ package common
 
 type SystemUser struct {
 	UserId int64 `db:"userid"json:"userid"`
-	TenantId int `db:"tenantid"json:"tenantid"`
+	TenantId int64 `db:"tenantid"json:"tenantid"`
 	Username string `db:"username"json:"username"`
+	TenantDomain string `db:"domain"json:"tenantdomain"`
 	Password string `db:"password"json:"password"`
 	Email string `db:"email"json:"email"`
 	Status string `db:"status"json:"status"`

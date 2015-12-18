@@ -14,3 +14,6 @@ const DELETE_RADACCT_USER string = "DELETE FROM radacct WHERE username = ?";
 const GET_USER_COUNT_FROM_TO_LOCATION string = "SELECT COUNT(DISTINCT username) FROM accounting where acctstarttime >= ? AND acctstarttime < ? AND locationid = ?";
 const GET_RETURNING_USERS_LOCATION string = "SELECT COUNT(DISTINCT username) FROM accounting where acctstarttime >= ? AND acctstarttime < ? AND locationid = ? AND visits > 1";
 
+/* AP locations */
+
+const GET_LOCATIONS string = "SELECT "

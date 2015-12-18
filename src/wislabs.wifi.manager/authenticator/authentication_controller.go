@@ -5,20 +5,24 @@ import (
 	"net/http"
 	"encoding/json"
 	jwt "github.com/dgrijalva/jwt-go"
+	"wislabs.wifi.manager/utils"
+	log "github.com/Sirupsen/logrus"
 )
 
 type TokenAuthentication struct {
 	Token string `json:"token" form:"token"`
+	TenantId int64 `json:"tenantid" form:"tenantid"`
 }
 
 func Login(requestUser *common.SystemUser) (int, []byte) {
 	authEngine := InitJWTAuthenticationEngine()
+	requestUser.TenantId = getTenantId(requestUser)
 	if authEngine.Authenticate(requestUser) {
 		token, err := authEngine.GenerateToken(requestUser)
 		if err != nil {
 			return http.StatusInternalServerError, []byte("")
 		} else {
-			response, _ := json.Marshal(TokenAuthentication{token})
+			response, _ := json.Marshal(TokenAuthentication{token, requestUser.TenantId})
 			return http.StatusOK, response
 		}
 	}
@@ -31,7 +35,8 @@ func RefreshToken(requestUser *common.SystemUser) []byte {
 	if err != nil {
 		panic(err)
 	}
-	response, err := json.Marshal(TokenAuthentication{token})
+	requestUser.TenantId = getTenantId(requestUser)
+	response, err := json.Marshal(TokenAuthentication{token, requestUser.TenantId})
 	if err != nil {
 		panic(err)
 	}
@@ -59,16 +64,27 @@ func RequireTokenAuthentication(inner http.Handler) http.Handler {
 				return authBackend.PublicKey, nil
 			})
 		if err != nil || !token.Valid || authBackend.IsInBlacklist(r.Header.Get("Authorization")) {
-			print("token not valid",err.Error())
-			print(token.Valid)
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}else {
-			print("ffff")
 			sClaims, _ := json.Marshal(token.Claims["scopes"])
-			print(sClaims)
 			r.Header.Set("scopes", string(sClaims))
 		}
 		inner.ServeHTTP(w, r)
 	})
+}
+
+func getTenantId(user *common.SystemUser) int64{
+	dbMap := utils.GetDBConnection("dashboard");
+	defer dbMap.Db.Close()
+
+	tenantId, err := dbMap.SelectInt("SELECT tenantid FROM tenants WHERE domain=?", user.TenantDomain)
+	checkErr(err, "Select failed")
+	return tenantId
+}
+
+func checkErr(err error, msg string) {
+	if err != nil {
+		log.Fatalln(msg, err)
+	}
 }
