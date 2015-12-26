@@ -24,7 +24,7 @@ type PortalUser struct{
 	Acctlastupdatedtime utils.NullString `db:"acctlastupdatedtime"json:"acctlastupdatedtime"`
 	Acctactivationtime utils.NullString  `db:"acctactivationtime"json:"acctactivationtime"`
 	Acctstoptime utils.NullString        `db:"acctstoptime"json:"acctstoptime"`
-	Location utils.NullInt               `db:"locationid"json:"locationid"`
+	Location utils.NullInt64             `db:"locationid"json:"locationid"`
 	ACL utils.NullString        		 `db:"acl"json:"acl"`
 	Visits int64                         `db:"visits"json:"visits"`
 }
@@ -45,13 +45,12 @@ type Constrains struct {
 	LocationId string    `json:"locationid"`
 }
 
-type Location struct {
-	LocationId string    `json:"locationid"`
-	LocationName string  `json:"locationname"`
-	NasIP string         `json:"nasip"`
-	IPFrom string        `json:"ipfrom"`
-	IPTo string          `json:"ipto"`
-
+type ApLocation struct {
+	LocationId int64    		  `db:"locationid"json:"locationid"`
+	SSID string 				  `db:"ssid"json:"ssid"`
+	MAC string   				  `db:"mac"json:"mac"`
+	Longitude utils.NullFloat64   `db:"longitude"json:"longitude"`
+	Latitude utils.NullFloat64    `db:"latitude"json:"latitude"`
 }
 
 type Response struct {

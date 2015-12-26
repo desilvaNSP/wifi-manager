@@ -11,6 +11,11 @@ $(document).ajaxSend(function(event, request, settings){
 });
 
 $(document).ready(function () {
+    if(!Cookies.get("jwt")){
+        //toastr.error("Unauthorised please login")
+        window.location.href = "/dashboard/login"
+        return
+    }
     renderSidebar(Cookies.get("username"))
     renderDashBoard();
 

@@ -97,18 +97,35 @@ func (r *NullString) UnmarshalJSON(data []byte) error{
 }
 
 /* NullInt*/
-type NullInt struct {
+type NullInt64 struct {
 	sql.NullInt64
 }
 
-func (r NullInt) MarshalJSON() ([]byte, error) {
+func (r NullInt64) MarshalJSON() ([]byte, error) {
 	return json.Marshal(r.Int64)
 }
 
-func (r *NullInt) UnmarshalJSON(data []byte) error{
+func (r *NullInt64) UnmarshalJSON(data []byte) error{
 	if string(data) == "null" {
 		return nil
 	}
 	r.Valid = true
 	return json.Unmarshal(data, (*int64)(&r.Int64))
+}
+
+/* NullFloat64*/
+type NullFloat64 struct {
+	sql.NullFloat64
+}
+
+func (r NullFloat64) MarshalJSON() ([]byte, error) {
+	return json.Marshal(r.Float64)
+}
+
+func (r *NullFloat64) UnmarshalJSON(data []byte) error{
+	if string(data) == "null" {
+		return nil
+	}
+	r.Valid = true
+	return json.Unmarshal(data, (*float64)(&r.Float64))
 }

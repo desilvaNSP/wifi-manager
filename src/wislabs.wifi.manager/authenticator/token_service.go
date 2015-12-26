@@ -107,9 +107,12 @@ func (backend *JWTAuthenticationBackend) Authenticate(user *common.SystemUser) b
 	defer dbMap.Db.Close()
 
 	var hashedPassword sql.NullString
-	smtOut, err := dbMap.Db.Prepare("SELECT password FROM users where username=? ANd tenantid=? and status='active'")
+	smtOut, err := dbMap.Db.Prepare("SELECT password FROM users where username=? AND tenantid=? AND status='active'")
 	defer smtOut.Close()
 	err = smtOut.QueryRow(user.Username, user.TenantId).Scan(&hashedPassword)
+	print(hashedPassword.String)
+	print(hashedPassword.Valid)
+	print(user.Username)
 	if err == nil && hashedPassword.Valid {
 		if (len(hashedPassword.String) > 0) {
 			err = bcrypt.CompareHashAndPassword([]byte(hashedPassword.String), []byte(user.Password))

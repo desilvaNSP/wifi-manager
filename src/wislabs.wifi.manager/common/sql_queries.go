@@ -15,5 +15,7 @@ const GET_USER_COUNT_FROM_TO_LOCATION string = "SELECT COUNT(DISTINCT username) 
 const GET_RETURNING_USERS_LOCATION string = "SELECT COUNT(DISTINCT username) FROM accounting where acctstarttime >= ? AND acctstarttime < ? AND locationid = ? AND visits > 1";
 
 /* AP locations */
-
-const GET_LOCATIONS string = "SELECT "
+const ADD_APLOCATION string = "INSERT INTO aplocation (ssid, mac, longitude, latitude) VALUES( ?, ?, ?, ? )";
+const GET_APLOCATIONS string = "SELECT locationid, ssid, mac, longitude, latitude FROM aplocation"
+const DELETE_APLOCATION string = "DELETE FROM aplocation WHERE ssid=? AND mac=?"
+const DELETE_AP string = "DELETE FROM aplocation WHERE mac=?"

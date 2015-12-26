@@ -187,14 +187,21 @@ var routes = Routes{
 	Route{
 		"DeleteLocationAccessPoints",
 		"DELETE",
-		"/wifi/locations/{locationid}/{mac}",
+		"/wifi/locations/{mac}/{ssid}",
 		true,
 		dashboard_handlers.DeleteLocation,
 	},
 	Route{
+		"DeleteLocationAccessPoints",
+		"DELETE",
+		"/wifi/locations/{mac}",
+		true,
+		dashboard_handlers.DeleteAccessPoint,
+	},
+	Route{
 		"AddLocationAccessPoints",
 		"POST",
-		"/wifi/locations/{locationid}/{mac}",
+		"/wifi/locations",
 		true,
 		dashboard_handlers.AddLocation,
 	},

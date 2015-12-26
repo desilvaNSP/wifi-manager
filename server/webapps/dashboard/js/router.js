@@ -46,21 +46,19 @@ function renderDashboardUserTable(){
 }
 
 function renderDashBoard() {
-
     $.get('components/dashboard.html', function (template) {
-        $.get('/wifi/locations',function(result){
-            if (result){
-                window.wifilocation = result[0].locationid;
-                window.wifilocationlist = result
-            }else{
-                window.wifilocation = "default";
-            }
-            var rendered = Mustache.render(template, {locations:result});
-            $('#content-main').html(rendered)
-        });
-    })
+        //$.get('/wifi/locations',function(result){
+        //    if (result){
+        //        window.wifilocation = result[0].locationid;
+        //        window.wifilocationlist = result
+        //    }else{
+        //        window.wifilocation = "default";
+        //    }
+        //    var rendered = Mustache.render(template, {locations:result});
+        //    $('#content-main').html(rendered)
+        //});
+    });
 }
-
 
 function renderLocations() {
     $.get('components/locations.html', function (template) {
@@ -73,7 +71,6 @@ function renderLocations() {
 
 function renderDashboardList() {
     $.get('components/dashboard-list.html', function (template) {
-
             var rendered = Mustache.render(template, {});
             $('#content-main').html(rendered)
     })
