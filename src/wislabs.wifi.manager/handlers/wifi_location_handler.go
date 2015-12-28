@@ -45,18 +45,38 @@ func AddLocation(w http.ResponseWriter, r *http.Request){
 
 /**
 * DELETE
-* @path /locations/{mac}/{ssid}/
+* @path /locations/{mac}/{ssid}/{groupname}
 * return
 */
 func DeleteLocation(w http.ResponseWriter, r *http.Request){
 	vars := mux.Vars(r)
 	ssid := vars["ssid"]
 	mac := vars["mac"]
-	err :=location.DeleteApLocation(ssid, mac)
+	groupname := vars["groupname"]
+	err :=location.DeleteApLocation(ssid, mac, groupname)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	if err != nil {
 		log.Fatalln("Error while deleting location " + ssid +" from DB ", err)
+		w.WriteHeader(http.StatusNotFound)
+	}else{
+		w.WriteHeader(http.StatusOK)
+	}
+}
+
+/**
+* DELETE
+* @path /locations/{groupname}
+* return
+*/
+func DeleteLocationGroup(w http.ResponseWriter, r *http.Request){
+	vars := mux.Vars(r)
+	groupname := vars["groupname"]
+	err :=location.DeleteApGroup(groupname)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	if err != nil {
+		log.Fatalln("Error while deleting location " + groupname +" from DB ", err)
 		w.WriteHeader(http.StatusNotFound)
 	}else{
 		w.WriteHeader(http.StatusOK)

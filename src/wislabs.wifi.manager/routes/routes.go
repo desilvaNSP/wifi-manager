@@ -187,7 +187,7 @@ var routes = Routes{
 	Route{
 		"DeleteLocationAccessPoints",
 		"DELETE",
-		"/wifi/locations/{mac}/{ssid}",
+		"/wifi/locations/{mac}/{ssid}/{groupname}",
 		true,
 		dashboard_handlers.DeleteLocation,
 	},

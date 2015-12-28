@@ -67,12 +67,13 @@ VALUES (1, 1),
        (1, 3)
        ;
 
-CREATE TABLE IF NOT EXISTS `aplocation` (
+CREATE TABLE IF NOT EXISTS `aplocations` (
   `locationid` BIGINT NOT NULL AUTO_INCREMENT,
   `ssid`  VARCHAR(255) NOT NULL,
   `mac` VARCHAR(255) DEFAULT NULL,
   `longitude` FLOAT ,
   `latitude` FLOAT ,
+  `groupname` varchar(255) NOT NULL,
   PRIMARY KEY(`locationid`, `ssid`, `mac`)
 ) ENGINE=InnoDB;
 
@@ -81,7 +82,7 @@ CREATE TABLE IF NOT EXISTS `apgroups` (
   `locationid` BIGINT,
   `groupname` VARCHAR(255) DEFAULT NULL,
   PRIMARY KEY (`groupid`),
-  FOREIGN KEY(`locationid`) REFERENCES aplocation(locationid) ON DELETE CASCADE
+  FOREIGN KEY(`locationid`) REFERENCES aplocations(locationid) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `useragentinfo` (
@@ -93,24 +94,24 @@ CREATE TABLE IF NOT EXISTS `useragentinfo` (
   `os` varchar(200) DEFAULT NULL,
   `ua` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`username`, `ua`, `locationid`),
-  FOREIGN KEY(locationid) REFERENCES aplocation(locationid) ON DELETE CASCADE
+  FOREIGN KEY(locationid) REFERENCES aplocations(locationid) ON DELETE CASCADE
 )ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `ipexclusion` (
   `locationid` BIGINT,
   `excludeip` varchar(255) DEFAULT NULL,
   PRIMARY KEY(`locationid`,`excludeip`),
-  FOREIGN KEY(locationid) REFERENCES aplocation(locationid) ON DELETE CASCADE
+  FOREIGN KEY(locationid) REFERENCES aplocations(locationid) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 --
 -- Adding sample dataset
 --
 
-INSERT INTO aplocation (locationid, ssid, mac)
+INSERT INTO aplocations (locationid, ssid, mac, groupname)
 VALUES
-  (1, 'Free_Darebin_Wi-Fi', 'f0:b0:52:37:ed:d0'),
-  (2, 'Free_Darebin_Wi-Fi', 'd4:68:4d:03:83:20');
+  (1, 'Free_Darebin_Wi-Fi', 'f0:b0:52:37:ed:d0', 'Preston'),
+  (2, 'Free_Darebin_Wi-Fi', 'd4:68:4d:03:83:20', 'Preston');
 
 INSERT INTO apgroups(groupid, locationid, groupname)
 VALUES

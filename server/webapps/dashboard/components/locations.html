@@ -38,11 +38,10 @@
                     <tr>
                         <th>Location Id</th>
                         <th>Location Group</th>
-                        <th>Location Name</th>
-                        <th>NAS IP</th>
-                        <th>IP From</th>
-                        <th>IP To</th>
-                        <th>Exclude</th>
+                        <th>MAC</th>
+                        <th>SSID</th>
+                        <th>Longitude</th>
+                        <th>Latitude</th>
                         <th>Settings</th>
                     </tr>
                     </thead>
@@ -110,89 +109,104 @@
 </div>
 
 <script>
-    var mapData = {
-        "US": 498,
-        "SA": 200,
-        "CA": 1300,
-        "DE": 220,
-        "FR": 540,
-        "CN": 120,
-        "AU": 760,
-        "BR": 550,
-        "IN": 200,
-        "GB": 120,
-        "RU": 2000
-    };
+    $(document).ready(function() {
+        var serverOriginUrl = window.location.origin;
+        var mapData = {
+            "US": 498,
+            "SA": 200,
+            "CA": 1300,
+            "DE": 220,
+            "FR": 540,
+            "CN": 120,
+            "AU": 760,
+            "BR": 550,
+            "IN": 200,
+            "GB": 120,
+            "RU": 2000
+        };
 
-    $('#world-map').vectorMap({
-        map: 'world_mill_en',
-        backgroundColor: "transparent",
-        regionStyle: {
-            initial: {
-                fill: '#e4e4e4',
-                "fill-opacity": 1,
-                stroke: 'none',
-                "stroke-width": 0,
-                "stroke-opacity": 0
-            }
-        },
-        series: {
-            regions: [{
-                values: mapData,
-                scale: ["#1ab394", "#22d6b1"],
-                normalizeFunction: 'polynomial'
-            }]
-        },
-    });
-
-    var locationTable = $('.dataTables-location').DataTable({
-        responsive : true,
-        orderCellsTop: true,
-        data: {{{data}}},
-        columns: [
-            { "data": "locationid" , "width": "10%"},
-            { "data": "locationgroup" , "width": "10%"},
-            { "data": "locationname" , "width": "10%"},
-            { "data": "nasip" , "width": "10%"},
-            { "data": "ipfrom" , "width": "10%"},
-            { "data": "ipto" , "width": "10%"},
-            {"data": null, "defaultContent": "<div class='btn-group'><button class='btn btn-white btn-xs dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fa fa-gear'></i></button><ul class='dropdown-menu'><li><a href='#' id='setting-edit-location'>Edit</a></li><li><a href='#' id='setting-delete-location'>Delete</a></li></ul></div>", "width" : "1%", "className" :'center', "sortable" : false},
-        ],
-        dom: 'T<"clear">lfrtip',
-        tableTools: {
-            "sSwfPath": "js/plugins/dataTables/swf/copy_csv_xls_pdf.swf"
-        }
-    });
-
-    $('.dataTables-location tbody').on( 'click', 'tr', function () {
-        if ( $(this).hasClass('selected') ) {
-            $(this).removeClass('selected');
-        }
-        else {
-            locationTable.$('tr.selected').removeClass('selected');
-            $(this).addClass('selected');
-        }
-    });
-
-    var selectedLocation;
-
-    $('#delete-location').on("click", function(event){
-        $.ajax({
-            url: '/wifi/locations/'+ selectedLocation.locationid,
-            type: 'DELETE',
-            success: function(result) {
-                $('#confirm-delete-modal').modal('hide')
-                locationTable.row('.selected').remove().draw( false );
+        $('#world-map').vectorMap({
+            map: 'world_mill_en',
+            backgroundColor: "transparent",
+            regionStyle: {
+                initial: {
+                    fill: '#e4e4e4',
+                    "fill-opacity": 1,
+                    stroke: 'none',
+                    "stroke-width": 0,
+                    "stroke-opacity": 0
+                }
             },
-            error: function(e){
-                console.log(e)
+            series: {
+                regions: [{
+                    values: mapData,
+                    scale: ["#1ab394", "#22d6b1"],
+                    normalizeFunction: 'polynomial'
+                }]
+            },
+        });
+
+        var locationTable = $('.dataTables-location').DataTable({
+            responsive: true,
+            orderCellsTop: true,
+            "ajax": {
+                "url": serverOriginUrl + "/wifi/locations",
+                "type": "GET",
+                "dataSrc": function (d) {
+                    return d
+                }
+            },
+            columns: [
+                {"data": "locationid", "width": "3%"},
+                {"data": "groupname", "width": "10%"},
+                {"data": "mac", "width": "10%"},
+                {"data": "ssid", "width": "10%"},
+                {"data": "longitude", "width": "10%"},
+                {"data": "latitude", "width": "10%"},
+                {
+                    "data": null,
+                    "defaultContent": "<div class='btn-group'><button class='btn btn-white btn-xs dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fa fa-gear'></i></button><ul class='dropdown-menu'><li><a href='#' id='setting-edit-location'>Edit</a></li><li><a href='#' id='setting-delete-location'>Delete</a></li></ul></div>",
+                    "width": "1%",
+                    "className": 'center',
+                    "sortable": false
+                },
+            ],
+            dom: 'T<"clear">lfrtip',
+            tableTools: {
+                "sSwfPath": "js/plugins/dataTables/swf/copy_csv_xls_pdf.swf"
             }
         });
-        return false;
-    });
 
-    $('.dataTables-location tbody').on( 'click', '#setting-delete-location', function () {
-        selectedLocation = locationTable.row( $(this).parents('tr') ).data();
-        $('#confirm-delete-modal').modal()
+        $('.dataTables-location tbody').on('click', 'tr', function () {
+            if ($(this).hasClass('selected')) {
+                $(this).removeClass('selected');
+            }
+            else {
+                locationTable.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            }
+        });
+
+        var selectedLocation;
+
+        $('#delete-location').on("click", function (event) {
+            $.ajax({
+                url: '/wifi/locations/' + selectedLocation.mac +'/' + selectedLocation.ssid + '/' + selectedLocation.groupname,
+                type: 'DELETE',
+                success: function (result) {
+                    $('#confirm-delete-modal').modal('hide')
+                    locationTable.row('.selected').remove().draw(false);
+                },
+                error: function (e) {
+                    console.log(e)
+                }
+            });
+            return false;
+        });
+
+        $('.dataTables-location tbody').on('click', '#setting-delete-location', function () {
+            selectedLocation = locationTable.row($(this).parents('tr')).data();
+            $('#confirm-delete-modal').modal()
+        });
     });
 </script>

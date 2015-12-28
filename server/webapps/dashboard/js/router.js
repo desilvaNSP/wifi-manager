@@ -62,10 +62,8 @@ function renderDashBoard() {
 
 function renderLocations() {
     $.get('components/locations.html', function (template) {
-        $.get('/wifi/locations',function(result){
-            var rendered = Mustache.render(template, {data: JSON.stringify(result)});
+            var rendered = Mustache.render(template, {});
             $('#content-main').html(rendered)
-        });
     })
 }
 

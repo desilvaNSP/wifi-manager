@@ -6422,3 +6422,98 @@ body.skin-3 {
 .center{
     text-align: center;
 }
+
+/* Dashboard App Listing */
+.app-listing {
+    position: relative;
+    top: 3em;
+}
+.app-sort-bar .search i {
+    color: #303030;
+    position: absolute;
+    top: 6px;
+    right: 22px;
+    cursor: pointer;
+}
+.app-sort-bar .sort i {
+    color: #fff;
+}
+.cloud-app-listing {
+    width: 100%;
+    position: relative;
+    margin-bottom: 2em;
+    cursor: pointer;
+}
+.cloud-app-listing i {
+    position: absolute;
+    z-index: 98;
+    right: 16px;
+    padding: 6px;
+    background-color: #383d44;
+    top: 0;
+    color:#fff;
+}
+.app-thumb span {
+    padding: 7px;
+    background-color: #626262;
+    border-radius: 19px;
+    width: 33px;
+    z-index: 99;
+    position: absolute;
+    left: 130px;
+    top: 135px;
+}
+.app-thumb span i {
+    padding-left: 4px;
+}
+.app-icon {
+    border: none;
+    margin: 0;
+    background: #2c313b;
+    color: #fff;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.app-icon:before {
+    display: block;
+    content: "";
+    width: 100%;
+    padding-top: 100%;
+}
+.app-icon > .square-element {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+.app-icon img {
+    width: 100%;
+}
+.app-icon .square-element:before {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+.app-name {
+    position: absolute;
+    color:#fff;
+    bottom: 0;
+    padding: 9px 5px 2px;
+    width: 100%;
+    min-height: 3em;
+    font-size: 13px;
+    text-align: center;
+    background-color: #2f4050;
+    font-weight: 300;
+}
+
+.app-name i{
+    position: relative;
+}

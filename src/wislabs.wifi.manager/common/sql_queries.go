@@ -15,7 +15,15 @@ const GET_USER_COUNT_FROM_TO_LOCATION string = "SELECT COUNT(DISTINCT username) 
 const GET_RETURNING_USERS_LOCATION string = "SELECT COUNT(DISTINCT username) FROM accounting where acctstarttime >= ? AND acctstarttime < ? AND locationid = ? AND visits > 1";
 
 /* AP locations */
-const ADD_APLOCATION string = "INSERT INTO aplocation (ssid, mac, longitude, latitude) VALUES( ?, ?, ?, ? )";
-const GET_APLOCATIONS string = "SELECT locationid, ssid, mac, longitude, latitude FROM aplocation"
-const DELETE_APLOCATION string = "DELETE FROM aplocation WHERE ssid=? AND mac=?"
-const DELETE_AP string = "DELETE FROM aplocation WHERE mac=?"
+const ADD_AP_LOCATION string = "INSERT INTO aplocations (ssid, mac, longitude, latitude, groupname) VALUES( ?, ?, ?, ?, ? )";
+const GET_ALL_AP_LOCATIONS string = "SELECT locationid, ssid, mac, longitude, latitude, groupname FROM aplocations"
+const DELETE_AP_LOCATION string = "DELETE FROM aplocations WHERE ssid=? AND mac=? AND groupname=?"
+const DELETE_AP_GROUP string = "DELETE FROM aplocations WHERE groupname=?"
+const DELETE_AP string = "DELETE FROM aplocations WHERE mac=?"
+
+
+///* AP Groups */
+//const ADD_AP_GROUP string = "INSERT INTO apgroups (locationid, groupname) VALUES( ?, ? )";
+//const GET_AP_GROUPS string = "SELECT groupid, locationid, groupname FROM apgroups"
+//const DELETE_AP_GROUPS string = "DELETE FROM apgroups WHERE groupname = ?"
+//const DELETE_AP_GROUP string = "DELETE FROM apgroup WHERE groupname = ?"

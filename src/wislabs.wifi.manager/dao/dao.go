@@ -51,6 +51,7 @@ type ApLocation struct {
 	MAC string   				  `db:"mac"json:"mac"`
 	Longitude utils.NullFloat64   `db:"longitude"json:"longitude"`
 	Latitude utils.NullFloat64    `db:"latitude"json:"latitude"`
+	GroupName string			  `db:"groupname"json:"groupname"`
 }
 
 type Response struct {
