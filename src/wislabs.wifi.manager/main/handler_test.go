@@ -34,7 +34,7 @@ func TestCreateUser(t *testing.T) {
 	setup()
 	radiusUser := dao.PortalUser{}
 	radiusUser.Username = username
-	radiusUser.Location = utils.NullInt64{sql.NullInt64{2, true}}
+	radiusUser.GroupName = utils.NullInt64{sql.NullInt64{2, true}}
 	//Testing get of non existent question type
 
 	b, err := json.Marshal(radiusUser)

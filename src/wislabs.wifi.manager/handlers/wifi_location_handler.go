@@ -9,6 +9,7 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"wislabs.wifi.manager/controllers/location"
+	"strconv"
 )
 
 func GetLocations(w http.ResponseWriter, r *http.Request){
@@ -17,7 +18,12 @@ func GetLocations(w http.ResponseWriter, r *http.Request){
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
-	locations := location.GetAllLocations()
+	vars := mux.Vars(r)
+	tenantid, err := strconv.Atoi(vars["tenantid"])
+	if(err!= nil){
+		log.Fatalln("Error while reading tenantid", err)
+	}
+	locations := location.GetAllLocations(tenantid)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
@@ -28,7 +34,7 @@ func GetLocations(w http.ResponseWriter, r *http.Request){
 
 /**
 * POST
-* @path /locations
+* @path /{tenantid}/locations
 * return
 */
 func AddLocation(w http.ResponseWriter, r *http.Request){
@@ -45,15 +51,19 @@ func AddLocation(w http.ResponseWriter, r *http.Request){
 
 /**
 * DELETE
-* @path /locations/{mac}/{ssid}/{groupname}
+* @path /{tenantid}/locations/{mac}/{ssid}/{groupname}
 * return
 */
 func DeleteLocation(w http.ResponseWriter, r *http.Request){
 	vars := mux.Vars(r)
+	tenantid, err := strconv.Atoi(vars["tenantid"])
+	if(err!= nil){
+		log.Fatalln("Error while reading tenantid", err)
+	}
 	ssid := vars["ssid"]
 	mac := vars["mac"]
 	groupname := vars["groupname"]
-	err :=location.DeleteApLocation(ssid, mac, groupname)
+	err =location.DeleteApLocation(tenantid, ssid, mac, groupname)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	if err != nil {
@@ -66,13 +76,17 @@ func DeleteLocation(w http.ResponseWriter, r *http.Request){
 
 /**
 * DELETE
-* @path /locations/{groupname}
+* @path /{tenantid}/locations/{groupname}
 * return
 */
 func DeleteLocationGroup(w http.ResponseWriter, r *http.Request){
 	vars := mux.Vars(r)
+	tenantid, err := strconv.Atoi(vars["tenantid"])
+	if(err!= nil){
+		log.Fatalln("Error while reading tenantid", err)
+	}
 	groupname := vars["groupname"]
-	err :=location.DeleteApGroup(groupname)
+	err =location.DeleteApGroup(groupname, tenantid)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	if err != nil {
@@ -85,14 +99,19 @@ func DeleteLocationGroup(w http.ResponseWriter, r *http.Request){
 
 /**
 * DELETE
-* @path /locations/{mac}
+* @path /{tenantid}/locations/{mac}
 * return
 */
 func DeleteAccessPoint(w http.ResponseWriter, r *http.Request){
 	vars := mux.Vars(r)
+
+	tenantid, err := strconv.Atoi(vars["tenantid"])
+	if(err!= nil){
+		log.Fatalln("Error while reading tenantid", err)
+	}
 	mac := vars["mac"]
 
-	err := location.DeleteAccessPoint(mac)
+	err = location.DeleteAccessPoint(mac, tenantid)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
 	if err != nil {

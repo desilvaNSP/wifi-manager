@@ -6,6 +6,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 	"database/sql"
+	"wislabs.wifi.manager/common"
 )
 
 func IsUserAuthenticated(user dao.DashboardUser) bool{
@@ -65,11 +66,11 @@ func UpdateUser(user dao.DashboardUser) error{
 }
 
 
-func DeleteUser(tenantId int, username string){
+func DeleteDashboardUser(tenantId int, username string){
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 
-	stmtIns, err := dbMap.Db.Prepare("DELETE FROM users WHERE tenantid=? AND username=?")
+	stmtIns, err := dbMap.Db.Prepare(common.DELETE_DASHBOARD_USER)
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
@@ -85,10 +86,12 @@ func GetUser(tenantId int, username string) dao.DashboardUser{
 	defer dbMap.Db.Close()
 
 	var user dao.DashboardUser
-	err := dbMap.SelectOne(&user, "SELECT username,password,email FROM users WHERE username=? AND tenantid=?", username, tenantId)
+	err := dbMap.SelectOne(&user, common.GET_DASHBOARD_USER, username, tenantId)
 	if err != nil {
-		panic(err.Error()) // proper error handling instead of panic in your app
+		//panic(err.Error()) // proper error handling instead of panic in your app
+		return user
 	}
+	user.TenantId = tenantId
 	return user
 }
 
@@ -96,7 +99,7 @@ func GetAllUsers(tenantId int) []dao.DashboardUser{
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 	var users []dao.DashboardUser
-	_,err := dbMap.Select(&users, "SELECT username, email, status FROM users WHERE tenantid=?",tenantId)
+	_,err := dbMap.Select(&users, common.GET_ALL_DASHBOARD_USERS ,tenantId)
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}

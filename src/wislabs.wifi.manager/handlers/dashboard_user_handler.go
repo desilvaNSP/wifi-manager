@@ -1,6 +1,6 @@
 package handlers
 
-import(
+import (
 	"wislabs.wifi.manager/dao"
 	"wislabs.wifi.manager/common"
 	"wislabs.wifi.manager/controllers/dashboard"
@@ -8,9 +8,10 @@ import(
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"strconv"
+	log "github.com/Sirupsen/logrus"
 )
 
-func AuthenticateUser(w http.ResponseWriter, r *http.Request){
+func AuthenticateUser(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var user dao.DashboardUser
 	err := decoder.Decode(&user)
@@ -20,11 +21,11 @@ func AuthenticateUser(w http.ResponseWriter, r *http.Request){
 
 	cookie := http.Cookie{}
 	cookie.Name = "failed"
-	cookie.Value="success"
+	cookie.Value = "success"
 
 	response := dao.Response{}
 	response.Status = "failed"
-	if(dashboard.IsUserAuthenticated(user)){
+	if (dashboard.IsUserAuthenticated(user)) {
 		cookie.Value = "success"
 		response.Status = "success"
 		response.Message = user.Username
@@ -46,24 +47,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 		panic("Error while decoding json")
 	}
 	err = dashboard.RegisterUser(user)
-
-	response := dao.Response{}
-	cookie := http.Cookie{}
-	if err == nil {
-		cookie.Name = "status"
-		cookie.Value="success"
-		response.Status = "pending"
-	}else{
-		cookie.Value = "fail"
-		response.Status = "fail"
-		response.Message = "Error while registering the user"
-	}
-	r.AddCookie(&cookie)
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(response); err != nil {
-		panic(err)
-	}
 }
 
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
@@ -81,68 +65,63 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 }
-func DeleteDashboardUsersHandler(w http.ResponseWriter, r *http.Request){
+func DeleteDashboardUsersHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	tenantId := vars["tenantid"]
 	username := vars["username"]
-	tenantIdInt,_ := strconv.Atoi(tenantId)
-	dashboard.DeleteUser(tenantIdInt, username)
-
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode("{}"); err != nil {
-		panic(err)
+	tenantid, err := strconv.Atoi(vars["tenantid"])
+	if (err != nil) {
+		log.Fatalln("Error while reading tenantid", err)
 	}
+	dashboard.DeleteDashboardUser(tenantid, username)
+	w.WriteHeader(http.StatusOK)
 }
 
 func GetUserProfile(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	tenantId := vars["tenantid"]
+	tenantid, err := strconv.Atoi(vars["tenantid"])
+	if (err != nil) {
+		log.Fatalln("Error while reading tenantid", err)
+	}
 	username := vars["username"]
-    var user dao.DashboardUser
+	var user dao.DashboardUser
+
+	user = dashboard.GetUser(tenantid, username)
+	if (user.Username!="") {
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusOK)
+
+		if err := json.NewEncoder(w).Encode(user); err != nil {
+			panic(err)
+		}
+	}else{
+		w.WriteHeader(http.StatusNotFound)
+	}
+}
+
+func GetDashboardUsersHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	tenantid, err := strconv.Atoi(vars["tenantid"])
+	if (err != nil) {
+		log.Fatalln("Error while reading tenantid", err)
+	}
+	users := dashboard.GetAllUsers(tenantid)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(users); err != nil {
+		panic(err)
+	}
+}
+
+func GetTenantRolesHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	tenantId := vars["tenantid"]
 	tenantIdInt, _ := strconv.Atoi(tenantId)
-
-	user = dashboard.GetUser(tenantIdInt, username)
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-
-	if err := json.NewEncoder(w).Encode(user); err != nil {
-		panic(err)
-	}
-}
-
-func GetDashboardUsersHandler(w http.ResponseWriter, r *http.Request){
-	vars := mux.Vars(r)
-	tenantId := vars["tenantid"]
-	tenantIdInt,_ := strconv.Atoi(tenantId)
-	users := dashboard.GetAllUsers(tenantIdInt)
-
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-
-	b, err := json.Marshal(users)
-	if err != nil {
-		panic(err)
-	}
-	if err := json.NewEncoder(w).Encode(string(b)); err != nil {
-		panic(err)
-	}
-}
-
-func GetTenantRolesHandler(w http.ResponseWriter, r *http.Request){
-	vars := mux.Vars(r)
-	tenantId := vars["tenantid"]
-	tenantIdInt,_ := strconv.Atoi(tenantId)
 	roles := dashboard.GetRoles(tenantIdInt)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-
-	b, err := json.Marshal(roles)
-	if err != nil {
-		panic(err)
-	}
-	if err := json.NewEncoder(w).Encode(string(b)); err != nil {
+	if err := json.NewEncoder(w).Encode(roles); err != nil {
 		panic(err)
 	}
 }

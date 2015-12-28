@@ -150,7 +150,7 @@
             responsive: true,
             orderCellsTop: true,
             "ajax": {
-                "url": serverOriginUrl + "/wifi/locations",
+                "url": serverOriginUrl + "/wifi/"+ Cookies.get("tenantid")+"/locations",
                 "type": "GET",
                 "dataSrc": function (d) {
                     return d

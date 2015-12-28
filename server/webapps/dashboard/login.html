@@ -101,7 +101,7 @@
             var payload = {username: userRealm[0] , password: $("#password").val(), tenantdomain: userRealm[1]}
             $.post("/dashboard/login", JSON.stringify(payload), function (result) {
                 Cookies.set("username", userRealm[0])
-                Cookies.set("tenantId", result.tenantid)
+                Cookies.set("tenantid", result.tenantid)
                 Cookies.set("jwt", result.token)
                 window.location.href = "/dashboard/"
             });

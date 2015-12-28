@@ -45,7 +45,7 @@ func AddWiFiUser(user *dao.PortalUser){
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
-	_, err = stmtIns.Exec(user.Username, user.Location.Int64)
+	_, err = stmtIns.Exec(user.TenantId, user.Username, user.GroupName.String)
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
@@ -56,49 +56,48 @@ func UpdateWiFiUser(user *dao.PortalUser){
 	dbMap := utils.GetDBConnection("portal");
 	defer dbMap.Db.Close()
 
-	stmtIns, err := dbMap.Db.Prepare(common.UPDATE_WIFI_USER_SQL) // ? = placeholder
+	stmtIns, err := dbMap.Db.Prepare(common.UPDATE_WIFI_USER) // ? = placeholder
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
-	_, err = stmtIns.Exec(user.ACL.String, user.Username)
+	_, err = stmtIns.Exec(user.ACL.String, user.Username, user.TenantId)
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
 	defer stmtIns.Close()
 }
 
-func GetAllWiFiUsers() []dao.PortalUser{
+func GetAllWiFiUsers(tenantid int) []dao.PortalUser{
 	dbMap := utils.GetDBConnection("portal");
 	defer dbMap.Db.Close()
 	var users []dao.PortalUser
-
-	_, err := dbMap.Select(&users,common.GET_ALL_WIFI_USER_SQL)
+	_, err := dbMap.Select(&users,common.GET_ALL_WIFI_USERS, tenantid)
 	checkErr(err, "Select failed")
 	return users
 }
 
-func DeleteUserAccountingSession(username string) error{
+func DeleteUserAccountingSession(username string, tenantid int) error{
 	dbMap := utils.GetDBConnection("portal");
 	defer dbMap.Db.Close()
 
-	_, err := dbMap.Exec("DELETE FROM accounting where username=?", username)
+	_, err := dbMap.Exec(common.DELETE_WIFI_USER, username, tenantid)
    return err
 }
 
-func DeleteUserFromRadCheck(username string) error{
+func DeleteUserFromRadCheck(username string, tenantid int) error{
 	dbMap := utils.GetDBConnection("radius");
 	defer dbMap.Db.Close()
 
-	_, err := dbMap.Exec("DELETE FROM radcheck WHERE username = ?", username)
+	_, err := dbMap.Exec(common.DELETE_RADCHECk_USER, username, tenantid)
 
 	return err
 }
 
-func DeleteUserFromRadAcct(username string) error{
+func DeleteUserFromRadAcct(username string, tenantid int) error{
 	dbMap := utils.GetDBConnection("radius");
 	defer dbMap.Db.Close()
 
-	_, err := dbMap.Exec("DELETE FROM radacct WHERE username = ?", username)
+	_, err := dbMap.Exec(common.DELETE_RADACCT_USER, username, tenantid)
 
 	return err
 }

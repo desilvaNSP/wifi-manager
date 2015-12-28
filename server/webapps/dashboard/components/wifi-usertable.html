@@ -11,6 +11,7 @@
                 </a>
                 <ul class="dropdown-menu dropdown-user">
                     <li><a href="#" id="add-user-opt">Add User</a></li>
+                    <li><a id="change-clo-visibility" role="button"  data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">Change Column Visibility</a></li>
                 </ul>
                 <a class="close-link">
                     <i class="fa fa-times"></i>
@@ -24,7 +25,7 @@
                 <tr>
                     <th>Username</th>
                     <th>ACL</th>
-                    <th>Location</th>
+                    <th>Group</th>
                     <th>Visit count</th>
                     <th>Acct start Time</th>
                     <th>Acct Stop Time</th>
@@ -149,150 +150,166 @@
 
 <script src="js/plugins/validate/jquery.validate.min.js"></script>
 <script>
-    var userTable = $('.dataTables-user').DataTable({
-            responsive : true,
+    $(document).ready(function() {
+        var serverOriginUrl = window.location.origin;
+        var userTable = $('.dataTables-user').DataTable({
+            responsive: true,
             orderCellsTop: true,
-            data: {{{data}}},
+            autoWidth: false,
+            "ajax": {
+                "url": serverOriginUrl + "/wifi/"+ Cookies.get("tenantid")+"/users",
+                "type": "GET",
+                "dataSrc": function (d) {
+                    return d
+                }
+            },
             columns: [
-                { "data": "username" , "width": "15%"},
-                { "data": "acl" , "width": "7%"},
-                { "data": "location" , "width": "10%"},
-                { "data": "visits" , "width": "5%"},
-                { "data": "acctstarttime" , "width": "10%"},
-                { "data": "acctstoptime" , "width": "10%"},
-                { "data": "acctlastupdatedtime" , "width": "10%"},
-                {"data": null,"defaultContent": "<div class='btn-group'><button class='btn btn-white btn-xs dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fa fa-gear'></i></button><ul class='dropdown-menu'><li><a href='#' id='setting-edit-user'>Edit</a></li><li><a href='#' id='setting-change-password'>Change Password</a></li><li><a href='#' id='setting-delete-user'>Delete</a></li></ul></div>", "width" : "1%", "className" :'center', "sortable" : false},
+                {"data": "username", "width": "15%"},
+                {"data": "acl", "width": "7%"},
+                {"data": "groupname", "width": "10%"},
+                {"data": "visits", "width": "5%"},
+                {"data": "acctstarttime", "width": "10%"},
+                {"data": "acctstoptime", "width": "10%"},
+                {"data": "acctlastupdatedtime", "width": "10%"},
+                {
+                    "data": null,
+                    "defaultContent": "<div class='btn-group'><button class='btn btn-white btn-xs dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fa fa-gear'></i></button><ul class='dropdown-menu'><li><a href='#' id='setting-edit-user'>Edit</a></li><li><a href='#' id='setting-change-password'>Change Password</a></li><li><a href='#' id='setting-delete-user'>Delete</a></li></ul></div>",
+                    "width": "1%",
+                    "className": 'center',
+                    "sortable": false
+                },
             ],
-             dom: 'T<"clear">lfrtip',
-             tableTools: {
+            dom: 'T<"clear">lfrtip',
+            tableTools: {
                 "sSwfPath": "js/plugins/dataTables/swf/copy_csv_xls_pdf.swf"
             }
         });
 
-    $('.dataTables-user').dataTable().columnFilter({
-        sPlaceHolder: "head:before",
-        aoColumns: [
-            null,
-            { type: "select", values: [ 'whitelisted', 'blacklisted', 'normaluser'] },
-            { type: "select", values: [ '4.0.0', '3.0.0', '2.0.0', '1.0.0'] },
-            {"bSortable": false },
-            {"bSortable": false },
-            {"bSortable": false },
-            {"bSortable": false },
-            null
-        ]
-    });
+        $('.dataTables-user').dataTable().columnFilter({
+            sPlaceHolder: "head:before",
+            aoColumns: [
+                null,
+                {type: "select", values: ['whitelisted', 'blacklisted', 'normaluser']},
+                {type: "select", values: ['4.0.0', '3.0.0', '2.0.0', '1.0.0']},
+                {"bSortable": false},
+                {"bSortable": false},
+                {"bSortable": false},
+                {"bSortable": false},
+                null
+            ]
+        });
 
-    $('.dataTables-user tbody').on( 'click', 'tr', function () {
-        if ( $(this).hasClass('selected') ) {
-            $(this).removeClass('selected');
-        }
-        else {
-            userTable.$('tr.selected').removeClass('selected');
-            $(this).addClass('selected');
-        }
-    } );
-
-    var selectedUser,rowToDelete;
-    $('#delete-user').on("click", function(event){
-        $.ajax({
-            url: '/wifi/users/'+ selectedUser.username,
-            type: 'DELETE',
-            success: function(result) {
-                $('#confirm-delete-modal').modal('hide')
-                rawTodelete.remove();
-            },
-            error: function(e){
-                console.log(e)
+        $('.dataTables-user tbody').on('click', 'tr', function () {
+            if ($(this).hasClass('selected')) {
+                $(this).removeClass('selected');
+            }
+            else {
+                userTable.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
             }
         });
-        return false;
-    });
 
-    $('.dataTables-user tbody').on( 'click', '#setting-delete-user', function () {
-        selectedUser = userTable.row( $(this).parents('tr') ).data();
-        rawTodelete =$(this).closest('tr');
-        $('#confirm-delete-modal').modal()
-        $('#message').html('<i class="fa fa-warning fa-3x" style="vertical-align: middle;margin-right: 10%"></i>Are you sure you want to delete the user? <strong>' + selectedUser.username  +'</strong>');
-    });
-
-    $('.dataTables-user tbody').on('click', '#setting-edit-user', function () {
-        selectedUser = userTable.row( $(this).parents('tr') ).data();
-        //editUserFromValidator.resetForm();
-        $('#edituser-modal').modal();
-        $("#inputEditUsername").val(selectedUser.username);
-        $("#inputEditEmail").val(selectedUser.email);
-        if(selectedUser.whitelisted == 'active'){
-            $("#chkEditIsWhiteListed").prop('checked',true);
-        }else{
-            $("#chkEditIsWhiteListed").prop('checked',false);
-        }
-    });
-
-    $('#btn-edit-user').on("click", function(event){
-        if($("#edituser-form").valid()){
-            var newUserStatus = 'pending';
-            if($('#chkEditIsActive').is(":checked")){
-                newUserStatus = 'active';
-            }
-            var payload = {
-                username : selectedUser.username,
-                acl : $('.radio:checked').val()
-            }
-
+        var selectedUser, rowToDelete;
+        $('#delete-user').on("click", function (event) {
             $.ajax({
-                url: '/wifi/users',
-                type: 'PUT',
-                contentType: "application/json",
-                data : JSON.stringify(payload),
-                success: function(result) {
-                    $('#edituser-modal').modal('hide');
+                url: '/wifi/users/' + selectedUser.username,
+                type: 'DELETE',
+                success: function (result) {
+                    $('#confirm-delete-modal').modal('hide')
+                    rawTodelete.remove();
                 },
-                error: function(e){
+                error: function (e) {
                     console.log(e)
                 }
             });
-        }
-        return false;
-    });
+            return false;
+        });
 
-    var adduserFromValidator =  $("#adduser-form").validate({
-        rules: {
-            password: {
-                required: true,
-                minlength: 5
-            },
-            username : {
-                required: true,
-                minlength: 3
-            }
-        }
-    });
+        $('.dataTables-user tbody').on('click', '#setting-delete-user', function () {
+            selectedUser = userTable.row($(this).parents('tr')).data();
+            rawTodelete = $(this).closest('tr');
+            $('#confirm-delete-modal').modal()
+            $('#message').html('<i class="fa fa-warning fa-3x" style="vertical-align: middle;margin-right: 10%"></i>Are you sure you want to delete the user? <strong>' + selectedUser.username + '</strong>');
+        });
 
-    $('body').on( 'click', '#add-user-opt', function () {
-        $('#adduser-form').trigger('reset');
-        adduserFromValidator.resetForm();
-        $('#adduser-modal').modal()
-    });
+        $('.dataTables-user tbody').on('click', '#setting-edit-user', function () {
+            selectedUser = userTable.row($(this).parents('tr')).data();
+            //editUserFromValidator.resetForm();
+            $('#edituser-modal').modal();
+            $("#inputEditUsername").val(selectedUser.username);
+            $("#inputEditEmail").val(selectedUser.email);
+            if (selectedUser.whitelisted == 'active') {
+                $("#chkEditIsWhiteListed").prop('checked', true);
+            } else {
+                $("#chkEditIsWhiteListed").prop('checked', false);
+            }
+        });
 
-    $('#btn-add-user').on("click", function(event){
-        if($("#adduser-form").valid()){
-            var newUserStatus = 'pending';
-            if($('#chkIsActive').is(":checked")){
-                newUserStatus = 'active';
+        $('#btn-edit-user').on("click", function (event) {
+            if ($("#edituser-form").valid()) {
+                var newUserStatus = 'pending';
+                if ($('#chkEditIsActive').is(":checked")) {
+                    newUserStatus = 'active';
+                }
+                var payload = {
+                    username: selectedUser.username,
+                    acl: $('.radio:checked').val()
+                }
+
+                $.ajax({
+                    url: '/wifi/users',
+                    type: 'PUT',
+                    contentType: "application/json",
+                    data: JSON.stringify(payload),
+                    success: function (result) {
+                        $('#edituser-modal').modal('hide');
+                    },
+                    error: function (e) {
+                        console.log(e)
+                    }
+                });
             }
-            var payload = {
-                tenantid : parseInt(Cookies.get('tenantId')),
-                username : $('#inputUsername').val(),
-                password : $('#inputPassword').val(),
-                email : $('#inputEmail').val(),
-                roles : [$('.radio:checked').val()],
-                status : newUserStatus
+            return false;
+        });
+
+        var adduserFromValidator = $("#adduser-form").validate({
+            rules: {
+                password: {
+                    required: true,
+                    minlength: 5
+                },
+                username: {
+                    required: true,
+                    minlength: 3
+                }
             }
-            $.post('/wifi/users',JSON.stringify(payload), function(result) {
-                $('#adduser-modal').modal('hide');
-            });
-        }
-        return false;
+        });
+
+        $('body').on('click', '#add-user-opt', function () {
+            $('#adduser-form').trigger('reset');
+            adduserFromValidator.resetForm();
+            $('#adduser-modal').modal()
+        });
+
+        $('#btn-add-user').on("click", function (event) {
+            if ($("#adduser-form").valid()) {
+                var newUserStatus = 'pending';
+                if ($('#chkIsActive').is(":checked")) {
+                    newUserStatus = 'active';
+                }
+                var payload = {
+                    tenantid: parseInt(Cookies.get('tenantId')),
+                    username: $('#inputUsername').val(),
+                    password: $('#inputPassword').val(),
+                    email: $('#inputEmail').val(),
+                    roles: [$('.radio:checked').val()],
+                    status: newUserStatus
+                }
+                $.post('/wifi/users', JSON.stringify(payload), function (result) {
+                    $('#adduser-modal').modal('hide');
+                });
+            }
+            return false;
+        });
     });
  </script>

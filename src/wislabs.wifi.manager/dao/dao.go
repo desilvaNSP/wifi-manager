@@ -9,22 +9,23 @@ type NameValue struct{
 }
 
 type DashboardUser struct {
-	TenantId int `db:"tenantid"json:"tenantid"`
+	TenantId int 	`db:"tenantid"json:"tenantid"`
 	Username string `db:"username"json:"username"`
 	Password string `db:"password"json:"password"`
-	Email string `db:"email"json:"email"`
-	Status string `db:"status"json:"status"`
-	Roles []string `json:"roles"`
+	Email string 	`db:"email"json:"email"`
+	Status string	`db:"status"json:"status"`
+	Roles []string  `json:"roles"`
 }
 
 type PortalUser struct{
+	TenantId int 				 		 `db:"tenantid"json:"tenantid"`
 	Username string                      `db:"username"json:"username"`
 	Password string                      `json:"password"`
 	Acctstarttime utils.NullString       `db:"acctstarttime"json:"acctstarttime"`
 	Acctlastupdatedtime utils.NullString `db:"acctlastupdatedtime"json:"acctlastupdatedtime"`
 	Acctactivationtime utils.NullString  `db:"acctactivationtime"json:"acctactivationtime"`
 	Acctstoptime utils.NullString        `db:"acctstoptime"json:"acctstoptime"`
-	Location utils.NullInt64             `db:"locationid"json:"locationid"`
+	GroupName utils.NullString           `db:"groupname"json:"groupname"`
 	ACL utils.NullString        		 `db:"acl"json:"acl"`
 	Visits int64                         `db:"visits"json:"visits"`
 }
@@ -46,6 +47,7 @@ type Constrains struct {
 }
 
 type ApLocation struct {
+	TenantId int 				  `db:"tenantid"json:"tenantid"`
 	LocationId int64    		  `db:"locationid"json:"locationid"`
 	SSID string 				  `db:"ssid"json:"ssid"`
 	MAC string   				  `db:"mac"json:"mac"`
