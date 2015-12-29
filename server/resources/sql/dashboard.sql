@@ -85,9 +85,11 @@ CREATE TABLE IF NOT EXISTS `useragentinfo` (
 -- Metrics
 --
 CREATE TABLE IF NOT EXISTS `metrics` (
+  `tenantid` INT,
   `metricid` INT NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
-  PRIMARY KEY(`metricid`)
+  PRIMARY KEY(`metricid`),
+  FOREIGN KEY(tenantid) REFERENCES users(tenantid) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 --
@@ -109,9 +111,11 @@ CREATE TABLE IF NOT EXISTS `appgroups` (
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `appusers` (
+  `tenantid` INT,
   `appid` INT,
   `username` varchar(255) DEFAULT NULL,
-  FOREIGN KEY(appid) REFERENCES apps(appid) ON DELETE CASCADE
+  FOREIGN KEY(appid) REFERENCES apps(appid) ON DELETE CASCADE,
+  FOREIGN KEY(tenantid) REFERENCES users(tenantid) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `appmetrics` (
@@ -142,22 +146,3 @@ VALUES (1, 1),
   (1, 3)
 ;
 
-INSERT INTO aplocations (tenantid, locationid, ssid, mac, groupname)
-VALUES
-  (1, 1, 'Free_Darebin_Wi-Fi', 'f0:b0:52:37:ed:d0', 'Preston'),
-  (1, 2, 'Free_Darebin_Wi-Fi', 'd4:68:4d:03:83:20', 'Preston');
-
-INSERT INTO apgroups(groupid, locationid, groupname)
-VALUES
-  (1, 2, 'ISL'),
-  (2, 2, 'ISL');
-
-INSERT INTO useragentinfo (date, username, locationid, device, browser, os, ua)
-VALUES
-  (NOW() - INTERVAL 3 MONTH, 'anu123',1,'Android','Chrome', 'Linux', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.125 Safari/537.36'),
-  (NOW() - INTERVAL 3 DAY, 'samee',2,'Apple','Chrome', 'IOS', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.125 Safari/537.36');
-
-INSERT INTO metrics(metricid, name)
-VALUES
-  (1, 'Total Downloads'),
-  (2, 'Total Uploads');

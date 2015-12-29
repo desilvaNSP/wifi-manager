@@ -56,6 +56,43 @@ type ApLocation struct {
 	GroupName string			  `db:"groupname"json:"groupname"`
 }
 
+type DashboardMetric struct {
+	TenantId int 				  `db:"tenantid"json:"tenantid"`
+	MetricId int 				  `db:"metricid"json:"metricid"`
+	Name string			 		  `db:"name"json:"name"`
+}
+
+type DashboardAppInfo struct {
+	AppId int 				 	  `db:"appid"json:"appid"`
+	TenantId int 				  `db:"tenantid"json:"tenantid"`
+	Name string			 		  `db:"name"json:"name"`
+	Users []DashboardAppUser	  `db:"users"json:"users"`
+	Groups []DashboardAppGroup	  `db:"groups"json:"groups"`
+	Metrics []DashboardAppMetric  `db:"metrics"json:"metrics"`
+}
+
+type DashboardApp struct {
+	AppId int 				 	  `db:"appid"json:"appid"`
+	TenantId int 				  `db:"tenantid"json:"tenantid"`
+	Name string			 		  `db:"name"json:"name"`
+}
+
+type DashboardAppUser struct {
+	TenantId int 				  `db:"tenantid"json:"tenantid"`
+	AppId int 				 	  `db:"appid"json:"appid"`
+	UserName string			 	  `db:"name"json:"name"`
+}
+
+type DashboardAppMetric struct {
+	AppId int 				 	  `db:"appid"json:"appid"`
+	MetricId int			 	  `db:"metricid"json:"metricid"`
+}
+
+type DashboardAppGroup struct {
+	AppId int 				 	  `db:"appid"json:"appid"`
+	GroupName string			  `db:"groupname"json:"groupname"`
+}
+
 type Response struct {
 	Status string `json:"status"`
 	Message string `json:"message"`

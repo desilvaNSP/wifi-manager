@@ -67,3 +67,7 @@ ul.tagit input[type="text"] {
     background-color: inherit;
     outline: none;
 }
+
+.ui-autocomplete {
+    z-index: 5000 !important;
+}

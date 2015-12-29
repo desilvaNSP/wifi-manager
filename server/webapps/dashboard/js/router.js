@@ -1,6 +1,6 @@
 function renderSidebar(username) {
     $.get('components/sidebar.html', function (template) {
-            $.get('/dashboard/users/' + Cookies.get('tenantid') + '/' + username, function (result) {
+            $.get('/dashboard/' + Cookies.get('tenantid') + '/users/' + username, function (result) {
                 var rendered = Mustache.render(template, {data: result});
                 $('#side-navigation').html(rendered);
             });
@@ -25,17 +25,14 @@ function renderWifiUserTable() {
 }
 
 function renderDashboardUserTable() {
-    var tenantRoles, tenantUsers;
-    var roles = $.get('/dashboard/' + Cookies.get('tenantid') + '/roles', function (result) {
-        tenantRoles = result;
-    });
+    var tenantUsers;
     var users = $.get('/dashboard/' + Cookies.get('tenantid') + '/users', function (result) {
         tenantUsers = result
     });
 
-    $.when(roles, users).done(function () {
+    $.when(users).done(function () {
         $.get('components/dashboard-usertable.html', function (template) {
-                var rendered = Mustache.render(template, {data: tenantUsers, roles: JSON.parse(tenantRoles)});
+                var rendered = Mustache.render(template, {data: JSON.stringify(tenantUsers)});
                 $('#content-main').html(rendered);
             }
         );

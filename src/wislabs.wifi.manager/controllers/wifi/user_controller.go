@@ -41,7 +41,7 @@ func AddWiFiUser(user *dao.PortalUser){
 	dbMap := utils.GetDBConnection("portal");
 	defer dbMap.Db.Close()
 
-	stmtIns, err := dbMap.Db.Prepare(common.ADD_WIFI_USER_SQL) // ? = placeholder
+	stmtIns, err := dbMap.Db.Prepare(common.ADD_WIFI_USER_SQL)
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
@@ -56,7 +56,7 @@ func UpdateWiFiUser(user *dao.PortalUser){
 	dbMap := utils.GetDBConnection("portal");
 	defer dbMap.Db.Close()
 
-	stmtIns, err := dbMap.Db.Prepare(common.UPDATE_WIFI_USER) // ? = placeholder
+	stmtIns, err := dbMap.Db.Prepare(common.UPDATE_WIFI_USER)
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}

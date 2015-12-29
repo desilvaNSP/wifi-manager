@@ -32,6 +32,26 @@ func GetLocations(w http.ResponseWriter, r *http.Request){
 	}
 }
 
+func GetLocationGroups(w http.ResponseWriter, r *http.Request){
+	if(!authenticator.IsAutherized("wifi_location", authenticator.ACTION_READ,r)){
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+	vars := mux.Vars(r)
+	tenantid, err := strconv.Atoi(vars["tenantid"])
+	if(err!= nil){
+		log.Fatalln("Error while reading tenantid", err)
+	}
+	locationGroups := location.GetAllLocationGroups(tenantid)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(locationGroups); err != nil {
+		panic(err)
+	}
+}
+
 /**
 * POST
 * @path /{tenantid}/locations

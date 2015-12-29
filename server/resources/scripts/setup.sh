@@ -7,6 +7,10 @@ function default_(){
  echo "Installing dashboard databse..."
  mysql -u $DASHBOARD_DB_USERNAME -p$DASHBOARD_DB_PASSWORD -h $DASHBOARD_DB_HOST < ../sql/dashboard.sql
  echo "Dashboard DB installed successfully."
+
+ echo "Adding initial dataset.."
+ mysql -u $DASHBOARD_DB_USERNAME -p$DASHBOARD_DB_PASSWORD -h $DASHBOARD_DB_HOST < ../sql/data.sql
+ echo "Initial dataset added successfully."
 }
 
 function clean_(){

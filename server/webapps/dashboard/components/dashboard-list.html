@@ -1,5 +1,3 @@
-<link href="css/plugins/tag-it/jquery.tagit.css" rel="stylesheet" type="text/css">
-<link href="css/jquery-ui.css" rel="stylesheet" type="text/css">
 <div class="container-fluid">
     <div class="row row-centered app-sort-bar">
         <div class="col-lg-1">
@@ -11,8 +9,10 @@
               <span class="input-group-btn">
                 <button class="btn btn-default" type="button">Go!</button>
               </span>
-            </div><!-- /input-group -->
-        </div><!-- /.col-lg-6 -->
+            </div>
+            <!-- /input-group -->
+        </div>
+        <!-- /.col-lg-6 -->
     </div>
 
     <div class="row row-centered app-listing" id="grid2">
@@ -23,7 +23,7 @@
                     <div class="app-icon">
                         <img src="img/dark-app-iconx256.jpg" class="square-element">
                     </div>
-                    <div class="app-name" >JAVA Web Application</div>
+                    <div class="app-name">JAVA Web Application</div>
                 </div>
             </a>
         </div>
@@ -33,7 +33,7 @@
                     <div class="app-icon">
                         <img src="img/dark-app-iconx256.jpg" class="square-element">
                     </div>
-                    <div class="app-name" >Anu</div>
+                    <div class="app-name">Anu</div>
                 </div>
             </a>
         </div>
@@ -43,7 +43,7 @@
                     <div class="app-icon">
                         <img src="img/dark-app-iconx256.jpg" class="square-element">
                     </div>
-                    <div class="app-name" >JAVA Web Application</div>
+                    <div class="app-name">JAVA Web Application</div>
                 </div>
             </a>
         </div>
@@ -53,7 +53,7 @@
                     <div class="app-icon">
                         <img src="img/dark-app-iconx256.jpg" class="square-element">
                     </div>
-                    <div class="app-name" >JAVA Web Application</div>
+                    <div class="app-name">JAVA Web Application</div>
                 </div>
             </a>
         </div>
@@ -63,18 +63,20 @@
                     <div class="app-icon">
                         <img src="img/dark-app-iconx256.jpg" class="square-element">
                     </div>
-                    <div class="app-name" >JAVA Web Application</div>
+                    <div class="app-name">JAVA Web Application</div>
                 </div>
             </a>
         </div>
         <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2" data-groups='["photography6"]'>
             <a href="009_cloud_app_details_initial.html">
                 <div class="cloud-app-listing app-color-one">
-                    <i class="fw fw-java fw-2x" data-toggle="tooltip" data-placement="right" title="Java Application"></i>
+                    <i class="fw fw-java fw-2x" data-toggle="tooltip" data-placement="right"
+                       title="Java Application"></i>
+
                     <div class="app-icon">
                         <img src="img/dark-app-iconx256.jpg" class="square-element">
                     </div>
-                    <div class="app-name" >JAVA Web Application</div>
+                    <div class="app-name">JAVA Web Application</div>
                 </div>
             </a>
         </div>
@@ -84,7 +86,7 @@
                     <div class="app-icon">
                         <img src="img/dark-app-iconx256.jpg" class="square-element">
                     </div>
-                    <div class="app-name" >JAVA Web Application</div>
+                    <div class="app-name">JAVA Web Application</div>
                 </div>
             </a>
         </div>
@@ -94,11 +96,10 @@
                     <div class="app-icon">
                         <img src="img/dark-app-iconx256.jpg" class="square-element">
                     </div>
-                    <div class="app-name" >JAVA Web Application</div>
+                    <div class="app-name">JAVA Web Application</div>
                 </div>
             </a>
         </div>
-
     </div>
 </div>
 
@@ -106,37 +107,69 @@
     <div class="modal-dialog">
         <div class="modal-content animated fadeIn">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <i class="fa fa-user-md modal-icon"></i>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
+                        class="sr-only">Close</span></button>
+                <i class="fa fa-dashboard modal-icon"></i>
                 <h4 class="modal-title">Add Dashboard</h4>
                 <small class="font-bold">Add wifi users and configure Access Control</small>
             </div>
             <div class="modal-body">
-                <hr>
                 <form role="form" id="add-dashboard-form">
                     <div class="form-group">
                         <label for="input-dashboard-name">Name</label>
-                        <input type="text" class="form-control" id="input-dashboard-name" name="input-dashboard-name" placeholder="Name" required>
+                        <input type="text" class="form-control" id="input-dashboard-name" name="input-dashboard-name"
+                               placeholder="Name" required>
                     </div>
                     <div class="form-group">
-                        <label for="inputEditPassword">Password</label>
-                        <input type="text" class="form-control" id="inputtPassword" name="editpassword" placeholder="Password" required>
+                        <label for="exampleInputFile">Icon</label>
+                        <input type="file" id="exampleInputFile">
+
+                        <p class="help-block">Example block-level help text here.</p>
                     </div>
                     <div class="form-group">
-                        <label for="radioIsBlackListed">Access Control</label>
+                        <label>Wifi Groups</label>
                     </div>
                     <div class="checkbox">
-                        <ul id="myTags">
-                            <!-- Existing list items will be pre-added to the tags -->
-                            <li>Tag1</li>
-                            <li>Tag2</li>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label>
+                                    <input type="checkbox" id="checkboxError" value="option1">
+                                    Checkbox with error
+                                </label>
+                            </div>
+                            <div class="col-sm-6">
+                                <label>
+                                    <input type="checkbox" id="checkboxError" value="option1">
+                                    Checkbox with error
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Metrics</label>
+                    </div>
+                    <div class="checkbox">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label>
+                                    <input type="checkbox" id="checkboxError" value="option1">
+                                    Checkbox with error
+                                </label>
+                            </div>
+                            <div class="col-sm-6">
+                                <label>
+                                    <input type="checkbox" id="checkboxError" value="option1">
+                                    Checkbox with error
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Users</label>
+                    </div>
+                    <div class="checkbox">
+                        <ul id="username-tags">
                         </ul>
-                    </div>
-                    <div class="checkbox">
-                        <hr/>
-                        <label>
-                            <input type="checkbox" id="chkEditIsActive"> Start Accounting
-                        </label>
                     </div>
                 </form>
             </div>
@@ -148,36 +181,85 @@
     </div>
 </div>
 
-<script src="js/plugins/shuffle/jquery.shuffle.modernizr.min.js"></script>
-<script src="js/jquery-ui-1.10.4.min.js"></script>
-<script src="js/plugins/tag-it/tag-it.min.js"></script>
+
 <script>
-    $(document).ready(function() {
+    var usernames = [];
+    $(document).ready(function () {
+        getTenantUsers();
         var $grid = $('#grid2'),
-        $sizer = $grid.find('.shuffle__sizer');
+                $sizer = $grid.find('.shuffle__sizer');
 
         $grid.shuffle({
             itemSelector: '.col-xs-6',
             sizer: $sizer
         });
 
-        $('#search-dashboard-app').on('keyup change', function() {
+        $('#search-dashboard-app').on('keyup change', function () {
             var val = this.value.toLowerCase();
-            $grid.shuffle('shuffle', function($el, shuffle) {
+            $grid.shuffle('shuffle', function ($el, shuffle) {
 
                 // Only search elements in the current group
                 if (shuffle.group !== 'all' && $.inArray(shuffle.group, $el.data('groups')) === -1) {
                     return false;
                 }
 
-                var text = $.trim( $el.find('.app-name').text() ).toLowerCase();
+                var text = $.trim($el.find('.app-name').text()).toLowerCase();
                 return text.indexOf(val) !== -1;
             });
         });
+        $("#username-tags").tagit({
+            availableTags: ["saman", "samara", "admin"],
+            autocomplete: {delay: 0, minLength: 1},
+            beforeTagAdded: function (event, ui) {
+                if (usernames.indexOf(ui.tagLabel) == -1) {
+                    return false;
+                }
+                if (ui.tagLabel == "not found") {
+                    return false;
+                }
+            },
+        });
 
-        $("#add-dashboard-btn").on('click', function(){
+        $("#add-dashboard-btn").on('click', function () {
             $('#add-dashboard-modal').modal();
-            $("#myTags").tagit();
+            $("#username-tags").tagit({
+                availableTags: usernames,
+                autocomplete: {delay: 0, minLength: 1},
+                beforeTagAdded: function (event, ui) {
+                    if (usernames.indexOf(ui.tagLabel) == -1) {
+                        return false;
+                    }
+                    if (ui.tagLabel == "not found") {
+                        return false;
+                    }
+                },
+            });
         });
     });
+
+    function getTenantUsers() {
+        var users;
+        $.get('/dashboard/' + Cookies.get('tenantid') + '/users', function (result) {
+            users = result
+            for (var i = users.length; i--;) {
+                usernames.push(users[i].username)
+            }
+        });
+    }
+
+    function getLocationGroups() {
+        var locationGroups
+        $.get('/dashboard/' + Cookies.get('tenantid') + '/locations/groups', function (result) {
+            locationGroups = result
+        });
+        return locationGroups
+    }
+
+    function getDashboardMetrics(){
+        var dashboardMetrics
+        $.get('/dashboard/' + Cookies.get('tenantid') + '/metrics', function (result) {
+            dashboardMetrics = result
+        });
+        return dashboardMetrics
+    }
 </script>

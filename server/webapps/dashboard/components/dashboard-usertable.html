@@ -126,11 +126,11 @@
                     </div>
                     <div class="form-group">
                         <label for="inputPassword">Roles</label>
-                        <div class="checkbox">
-                            {{#roles}}
-                            <label class="radio inline control-label"><input type="radio" class="radio" name="role-select" value="{{name}}">{{name}}</label><br/>
-                            {{/roles}}
-                        </div>
+                        <!--<div class="checkbox">-->
+                            <!--{{#roles}}-->
+                            <!--<label class="radio inline control-label"><input type="radio" class="radio" name="role-select" value="{{name}}">{{name}}</label><br/>-->
+                            <!--{{/roles}}-->
+                        <!--</div>-->
                     </div>
                     <div class="checkbox">
                         <hr/>
@@ -150,156 +150,164 @@
 
 <script src="js/plugins/validate/jquery.validate.min.js"></script>
 <script>
-    var userTable = $('.dataTables-user').DataTable({
-        orderCellsTop: true,
-        data: {{{data}}},
-        columns: [
-            { "data": "username" , "width": "15%"},
-            { "data": "email" , "width": "10%"},
-            { "data": "status" , "width": "5%"},
-            {"data": null,"defaultContent": "<div class='btn-group'><button class='btn btn-white btn-xs dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fa fa-gear'></i></button><ul class='dropdown-menu'><li><a href='#' id='setting-edit-user'>Edit</a></li><li><a href='#' id='setting-change-password'>Change Password</a></li><li><a href='#' id='setting-delete-user'>Delete</a></li></ul></div>", "width" : "1%", "className" :'center'},
-        ],
-        dom: 'T<"clear">lfrtip',
-        tableTools: {
-            "sSwfPath": "js/plugins/dataTables/swf/copy_csv_xls_pdf.swf"
-        }
-    });
-
-    var adduserFromValidator =  $("#adduser-form").validate({
-        rules: {
-            password: {
-                required: true,
-                minlength: 5
+    $(document).ready(function(){
+        var serverOriginUrl = window.location.origin;
+        var userTable = $('.dataTables-user').DataTable({
+            orderCellsTop: true,
+            ajax : {
+                "url": serverOriginUrl + "/dashboard/"+ Cookies.get("tenantid")+"/users",
+                "type": "GET",
+                "dataSrc": function (d) {
+                    return d
+                }
             },
-            confirmpassword : {
-                required: true,
-                equalTo : "#inputPassword",
-                minlength: 5
-            },
-            username : {
-                required: true,
-                minlength: 3
-            },
-            email: {
-                required: true,
-                email: true
-            }
-        }
-    });
-
-    var editUserFromValidator =  $("#edituser-form").validate({
-        rules: {
-            editusername : {
-                required: true,
-                minlength: 3
-            },
-            editemail: {
-                required: true,
-                email: true
-            }
-        }
-    });
-
-    $('.dataTables-user tbody').on( 'click', 'tr', function () {
-        if ( $(this).hasClass('selected') ) {
-            $(this).removeClass('selected');
-        }
-        else {
-            userTable.$('tr.selected').removeClass('selected');
-            $(this).addClass('selected');
-        }
-    } );
-
-    var selectedUser,rawTodelete;
-    $('#btn-delete-user').on("click", function(event){
-        $.ajax({
-            url: '/dashboard/users/'+ Cookies.get('tenantId') + '/' + selectedUser.username,
-            type: 'DELETE',
-            success: function(result) {
-                $('#confirm-delete-modal').modal('hide');
-                rawTodelete.remove();
-            },
-            error: function(e){
-                console.log(e)
+            columns: [
+                { "data": "username" , "width": "15%"},
+                { "data": "email" , "width": "10%"},
+                { "data": "status" , "width": "5%"},
+                {"data": null,"defaultContent": "<div class='btn-group'><button class='btn btn-white btn-xs dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fa fa-gear'></i></button><ul class='dropdown-menu'><li><a href='#' id='setting-edit-user'>Edit</a></li><li><a href='#' id='setting-change-password'>Change Password</a></li><li><a href='#' id='setting-delete-user'>Delete</a></li></ul></div>", "width" : "1%", "className" :'center'},
+            ],
+            dom: 'T<"clear">lfrtip',
+            tableTools: {
+                "sSwfPath": "js/plugins/dataTables/swf/copy_csv_xls_pdf.swf"
             }
         });
-        return false;
-    });
 
-    $('.dataTables-user tbody').on( 'click', '#setting-delete-user', function () {
-        rawTodelete =$(this).closest('tr');
-        selectedUser = userTable.row( $(this).parents('tr') ).data();
-        $('#confirm-delete-modal').modal()
-        $('#message').html('<i class="fa fa-warning fa-3x" style="vertical-align: middle;margin-right: 10%"></i>Are you sure you want to delete the user? <strong>' + selectedUser.username  +'</strong>' );
-    });
-
-    $('.dataTables-user tbody').on( 'click', '#setting-edit-user', function () {
-        selectedUser = userTable.row( $(this).parents('tr') ).data();
-        editUserFromValidator.resetForm();
-        $('#edituser-modal').modal()
-        $("#inputEditUsername").val(selectedUser.username);
-        $("#inputEditEmail").val(selectedUser.email);
-        if(selectedUser.status == 'active'){
-            $("#chkEditIsActive").prop('checked',true);
-        }else{
-            $("#chkEditIsActive").prop('checked',false);
-        }
-    });
-
-    $('#btn-edit-user').on("click", function(event){
-        if($("#editser-form").valid()){
-            var newUserStatus = 'pending';
-            if($('#chkEditIsActive').is(":checked")){
-                newUserStatus = 'active';
+        var adduserFromValidator =  $("#adduser-form").validate({
+            rules: {
+                password: {
+                    required: true,
+                    minlength: 5
+                },
+                confirmpassword : {
+                    required: true,
+                    equalTo : "#inputPassword",
+                    minlength: 5
+                },
+                username : {
+                    required: true,
+                    minlength: 3
+                },
+                email: {
+                    required: true,
+                    email: true
+                }
             }
-            var payload = {
-                tenantid : parseInt(Cookies.get('tenantId')),
-                username : $('#inputEditUsername').val(),
-                email : $('#inputEditEmail').val(),
-                roles : [$('.radio:checked').val()],
-                status : newUserStatus
-            }
+        });
 
+        var editUserFromValidator =  $("#edituser-form").validate({
+            rules: {
+                editusername : {
+                    required: true,
+                    minlength: 3
+                },
+                editemail: {
+                    required: true,
+                    email: true
+                }
+            }
+        });
+
+        $('.dataTables-user tbody').on( 'click', 'tr', function () {
+            if ( $(this).hasClass('selected') ) {
+                $(this).removeClass('selected');
+            }
+            else {
+                userTable.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            }
+        } );
+
+        var selectedUser,rawTodelete;
+        $('#btn-delete-user').on("click", function(event){
             $.ajax({
-                url: '/dashboard/users',
-                type: 'PUT',
-                contentType: "application/json",
-                data : JSON.stringify(payload),
+                url: '/dashboard/users/'+ Cookies.get('tenantId') + '/' + selectedUser.username,
+                type: 'DELETE',
                 success: function(result) {
-                    $('#edituser-modal').modal('hide');
+                    $('#confirm-delete-modal').modal('hide');
+                    rawTodelete.remove();
                 },
                 error: function(e){
                     console.log(e)
                 }
             });
-        }
-        return false;
-    });
+            return false;
+        });
 
-    $('body').on( 'click', '#add-user-opt', function () {
-        $('#adduser-form').trigger('reset');
-        adduserFromValidator.resetForm();
-        $('#adduser-modal').modal()
-    });
+        $('.dataTables-user tbody').on( 'click', '#setting-delete-user', function () {
+            rawTodelete =$(this).closest('tr');
+            selectedUser = userTable.row( $(this).parents('tr') ).data();
+            $('#confirm-delete-modal').modal()
+            $('#message').html('<i class="fa fa-warning fa-3x" style="vertical-align: middle;margin-right: 10%"></i>Are you sure you want to delete the user? <strong>' + selectedUser.username  +'</strong>' );
+        });
 
-    $('#btn-add-user').on("click", function(event){
-        if($("#adduser-form").valid()){
-            var newUserStatus = 'pending';
-            if($('#chkIsActive').is(":checked")){
-                newUserStatus = 'active';
+        $('.dataTables-user tbody').on( 'click', '#setting-edit-user', function () {
+            selectedUser = userTable.row( $(this).parents('tr') ).data();
+            editUserFromValidator.resetForm();
+            $('#edituser-modal').modal()
+            $("#inputEditUsername").val(selectedUser.username);
+            $("#inputEditEmail").val(selectedUser.email);
+            if(selectedUser.status == 'active'){
+                $("#chkEditIsActive").prop('checked',true);
+            }else{
+                $("#chkEditIsActive").prop('checked',false);
             }
-            var payload = {
-                tenantid : parseInt(Cookies.get('tenantId')),
-                username : $('#inputUsername').val(),
-                password : $('#inputPassword').val(),
-                email : $('#inputEmail').val(),
-                roles : [$('.radio:checked').val()],
-                status : newUserStatus
+        });
+
+        $('#btn-edit-user').on("click", function(event){
+            if($("#edituser-form").valid()){
+                var newUserStatus = 'pending';
+                if($('#chkEditIsActive').is(":checked")){
+                    newUserStatus = 'active';
+                }
+                var payload = {
+                    tenantid : parseInt(Cookies.get('tenantid')),
+                    username : $('#inputEditUsername').val(),
+                    email : $('#inputEditEmail').val(),
+                    roles : [$('.radio:checked').val()],
+                    status : newUserStatus
+                }
+
+                $.ajax({
+                    url: '/dashboard/users',
+                    type: 'PUT',
+                    contentType: "application/json",
+                    data : JSON.stringify(payload),
+                    success: function(result) {
+                        $('#edituser-modal').modal('hide');
+                    },
+                    error: function(e){
+                        console.log(e)
+                    }
+                });
             }
-            $.post('/dashboard/users',JSON.stringify(payload), function(result) {
-                $('#adduser-modal').modal('hide');
-            });
-        }
-        return false;
+            return false;
+        });
+
+        $('body').on( 'click', '#add-user-opt', function () {
+            $('#adduser-form').trigger('reset');
+            adduserFromValidator.resetForm();
+            $('#adduser-modal').modal()
+        });
+
+        $('#btn-add-user').on("click", function(event){
+            if($("#adduser-form").valid()){
+                var newUserStatus = 'pending';
+                if($('#chkIsActive').is(":checked")){
+                    newUserStatus = 'active';
+                }
+                var payload = {
+                    tenantid : parseInt(Cookies.get('tenantid')),
+                    username : $('#inputUsername').val(),
+                    password : $('#inputPassword').val(),
+                    email : $('#inputEmail').val(),
+                    status : newUserStatus
+                }
+                $.post('/dashboard/users',JSON.stringify(payload), function(result) {
+                    $('#adduser-modal').modal('hide');
+                });
+            }
+            return false;
+        });
     });
  </script>

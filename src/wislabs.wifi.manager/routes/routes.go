@@ -9,7 +9,7 @@ type Route struct {
 	Name        string
 	Method      string
 	Pattern     string
-	Secured 	bool
+	Secured     bool
 	HandlerFunc http.HandlerFunc
 }
 
@@ -87,6 +87,27 @@ var routes = Routes{
 		dashboard_handlers.DeleteDashboardUsersHandler,
 	},
 	Route{
+		"Get Dashboard User Apps",
+		"GET",
+		"/dashboard/{tenantid}/apps/{username}",
+		true,
+		dashboard_handlers.GetAppsOfUser,
+	},
+	Route{
+		"Get Dashboard User Apps",
+		"DELETE",
+		"/dashboard/{tenantid}/apps/{appid}",
+		true,
+		dashboard_handlers.DeleteDashboardApp,
+	},
+	Route{
+		"Add Dashboard User App",
+		"POST",
+		"/dashboard/apps",
+		true,
+		dashboard_handlers.CreateDashboardApp,
+	},
+	Route{
 		"Create WIFI user",
 		"POST",
 		"/wifi/users",
@@ -126,7 +147,7 @@ var routes = Routes{
 		"POST",
 		"/wifi/users/returncount",
 		true,
-		 dashboard_handlers.GetReturningUsersCountFromToHandler,
+		dashboard_handlers.GetReturningUsersCountFromToHandler,
 	},
 	Route{
 		"GetUsersCountFromToLocation",
@@ -176,6 +197,13 @@ var routes = Routes{
 		"/wifi/{tenantid}/locations",
 		true,
 		dashboard_handlers.GetLocations,
+	},
+	Route{
+		"GetLocationGroups",
+		"GET",
+		"/wifi/{tenantid}/locations/groups",
+		true,
+		dashboard_handlers.GetLocationGroups,
 	},
 	Route{
 		"GetLocationAccessPoints",

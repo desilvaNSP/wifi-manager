@@ -16,6 +16,15 @@ func GetAllLocations(tenantid int) []dao.ApLocation {
 	return apLocations
 }
 
+func GetAllLocationGroups(tenantid int) []string {
+	dbMap := utils.GetDBConnection("dashboard");
+	defer dbMap.Db.Close()
+	var apLocationGroups []string
+	_, err := dbMap.Select(&apLocationGroups, common.GET_ALL_AP_GROUPS, tenantid)
+	checkErr(err, "Error occured while getting AP location groups")
+	return apLocationGroups
+}
+
 func AddLocation(location *dao.ApLocation) {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
