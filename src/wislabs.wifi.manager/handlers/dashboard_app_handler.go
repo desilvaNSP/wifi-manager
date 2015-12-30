@@ -108,7 +108,6 @@ func GetGroupsOfApp(w http.ResponseWriter, r *http.Request){
 	}
 }
 
-
 /**
 * GET
 * @path dashboard/{tenantid}/metrics

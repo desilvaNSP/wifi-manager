@@ -76,6 +76,7 @@ type DashboardApp struct {
 	AppId int 				 	  `db:"appid"json:"appid"`
 	TenantId int 				  `db:"tenantid"json:"tenantid"`
 	Name string			 		  `db:"name"json:"name"`
+	Aggregate string			  `db:"aggregate"json:"aggregate"`
 }
 
 type DashboardAppUser struct {

@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<div class="container-fluid container-dashboard">
     <div class="row row-centered app-sort-bar">
         <div class="col-lg-1">
             <button class="btn btn-default" type="button" id="add-dashboard-btn">Add New</button>
@@ -15,18 +15,13 @@
         <!-- /.col-lg-6 -->
     </div>
 
-    <div class="row row-centered app-listing" id="app-grid">
-
-    </div>
+    <div class="row row-centered app-listing" id="app-grid"></div>
 </div>
 
-<div id="add-dashboard-app-modal-content">
-
-</div>
+<div id="add-dashboard-app-modal-content"></div>
 
 <script>
-    var userNames = [];
-    var taggedUsers = []
+    var userNames = [], taggedUsers = [];
     var $grid, $sizer;
     $(document).ready(function () {
         $grid = $('#app-grid'), $sizer = $grid.find('.shuffle__sizer');
@@ -47,10 +42,10 @@
         });
 
         $("#add-dashboard-btn").on('click', function () {
-            var users, locations, metrics
+            var users, locations, metrics;
             var usersAjax = $.get('/dashboard/' + Cookies.get('tenantid') + '/users', function (result) {
-                users = result
-                userNames = []
+                users = result;
+                userNames = [];
                 for (var i = users.length; i--;) {
                     userNames.push(users[i].username)
                 }
@@ -125,8 +120,8 @@
                     users: taggedUsers,
                     aggregate: aggregate,
                     groups: getCheckedGroups('group'),
-                    metrics: getCheckedMetrices('metric'),
-                }
+                    metrics: getCheckedMetrices('metric')
+                };
                 $.post('/dashboard/apps', JSON.stringify(payload), function (result) {
                     $('#add-dashboard-modal').modal('hide');
                     $grid.shuffle('destroy');
@@ -148,6 +143,28 @@
                 });
             });
         }
+
+        $('#app-grid').on('click', '.app-anchor', function (event) {
+            event.preventDefault();
+            var appName = $(this).attr('data-appname');
+            var appId = $(this).attr('data-appid');
+            var aggregate = $(this).attr('data-aggregate');
+            datagroups = [];
+            $.get('components/dashboard.html', function (template) {
+                        if (aggregate == 'no') {
+                            datagroups = [{groupname : appName}]
+                            var rendered = Mustache.render(template, {appId: appId, datagroups: datagroups});
+                            $('.container-dashboard').html(rendered);
+                        } else {
+                            $.get('/dashboard/apps/' + appId + '/groups', function (result) {
+                                var rendered = Mustache.render(template, {appId: appId, datagroups: result});
+                                $('.container-dashboard').html(rendered);
+                            })
+                        }
+
+                    }
+            );
+        });
     });
 
     function getCheckedMetrices(chkboxName) {
@@ -167,7 +184,6 @@
     function getCheckedGroups(chkboxName) {
         var checkboxes = document.getElementsByName(chkboxName);
         var checkboxesChecked = [];
-        // loop over them all
         for (var i = 0; i < checkboxes.length; i++) {
             if (checkboxes[i].checked) {
                 checkboxesChecked.push({groupname: checkboxes[i].value});
@@ -175,4 +191,5 @@
         }
         return checkboxesChecked.length > 0 ? checkboxesChecked : null;
     }
+
 </script>
