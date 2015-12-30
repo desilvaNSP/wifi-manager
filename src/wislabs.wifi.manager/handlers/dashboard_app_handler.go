@@ -16,7 +16,6 @@ import (
 * @path dashboard/apps/
 *
 */
-
 func CreateDashboardApp(w http.ResponseWriter, r *http.Request){
 	decoder := json.NewDecoder(r.Body)
 	var dashboarApp dao.DashboardAppInfo
@@ -25,7 +24,6 @@ func CreateDashboardApp(w http.ResponseWriter, r *http.Request){
 		log.Fatalln("Error while decoding location json")
 	}
 	dashboard.CreateNewDashboardApp(dashboarApp)
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -37,11 +35,11 @@ func CreateDashboardApp(w http.ResponseWriter, r *http.Request){
 func GetAppsOfUser(w http.ResponseWriter, r *http.Request){
 	vars := mux.Vars(r)
 	username := vars["username"]
-	tenantid, err := strconv.Atoi(vars["tenantid"])
+	tenantId, err := strconv.Atoi(vars["tenantid"])
 	if(err!= nil){
 		log.Fatalln("Error while reading tenantid", err)
 	}
-	apps := dashboard.GetAllDashboardAppsOfUser(username, tenantid)
+	apps := dashboard.GetAllDashboardAppsOfUser(username, tenantId)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
@@ -52,20 +50,81 @@ func GetAppsOfUser(w http.ResponseWriter, r *http.Request){
 
 /**
 * GET
-* @path dashboard/apps/{appid}
+* @path dashboard/apps/{appid}/users
 *
 */
-func GetAllUsersOfApp(w http.ResponseWriter, r *http.Request){
+func GetUsersOfApp(w http.ResponseWriter, r *http.Request){
 	vars := mux.Vars(r)
 	appId, err := strconv.Atoi(vars["appid"])
 	if(err!= nil){
 		log.Fatalln("Error while reading tenantid", err)
 	}
-	apps := dashboard.GetAllDashboardUsersOfApp(appId)
+	appUsers := dashboard.GetDashboardUsersOfApp(appId)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(apps); err != nil {
+	if err := json.NewEncoder(w).Encode(appUsers); err != nil {
+		panic(err)
+	}
+}
+
+/**
+* GET
+* @path dashboard/apps/{appid}/metrics
+*
+*/
+func GetMetricsOfApp(w http.ResponseWriter, r *http.Request){
+	vars := mux.Vars(r)
+	appId, err := strconv.Atoi(vars["appid"])
+	if(err!= nil){
+		log.Fatalln("Error while reading tenantid", err)
+	}
+	appMetrics := dashboard.GetDashboardMetricsOfApp(appId)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(appMetrics); err != nil {
+		panic(err)
+	}
+}
+
+/**
+* GET
+* @path dashboard/apps/{appid}/groups
+*
+*/
+func GetGroupsOfApp(w http.ResponseWriter, r *http.Request){
+	vars := mux.Vars(r)
+	appId, err := strconv.Atoi(vars["appid"])
+	if(err!= nil){
+		log.Fatalln("Error while reading tenantid", err)
+	}
+	appGroups := dashboard.GetDashboardGroupsOfApp(appId)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(appGroups); err != nil {
+		panic(err)
+	}
+}
+
+
+/**
+* GET
+* @path dashboard/{tenantid}/metrics
+*
+*/
+func GetAllDashboardMetrics(w http.ResponseWriter, r *http.Request){
+	vars := mux.Vars(r)
+	tenantId, err := strconv.Atoi(vars["tenantid"])
+	if(err!= nil){
+		log.Fatalln("Error while reading tenantid", err)
+	}
+	metrics := dashboard.GetAllDashboardMetrics(tenantId)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(metrics); err != nil {
 		panic(err)
 	}
 }
@@ -78,11 +137,11 @@ func GetAllUsersOfApp(w http.ResponseWriter, r *http.Request){
 func DeleteDashboardApp(w http.ResponseWriter, r *http.Request){
 	vars := mux.Vars(r)
 	appId, err := strconv.Atoi(vars["appid"])
-	tenantid, err := strconv.Atoi(vars["tenantid"])
+	tenantId, err := strconv.Atoi(vars["tenantid"])
 	if(err!= nil){
 		log.Fatalln("Error while reading tenantid", err)
 	}
-	err = dashboard.DeleteDashboardApp(appId, tenantid)
+	err = dashboard.DeleteDashboardApp(appId, tenantId)
 
 	if err != nil {
 		log.Fatalln("Error while deleting dashboard app from DB ", err)

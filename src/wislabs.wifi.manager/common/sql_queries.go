@@ -43,4 +43,4 @@ const DELETE_DASHBOARD_APP string      = "DELETE FROM apps WHERE appid=? AND ten
 const DELETE_DASHBOARD_APP_USER string = "DELETE FROM appusers WHERE appid=? AND username=?"
 
 /* Metrics */
-const GET_ALL_DASHBOARD_METRICS string = "SELECT metricid, name FROM metrics WHERE tenantid=?"
+const GET_ALL_DASHBOARD_METRICS string = "SELECT tenantid, metricid, name FROM metrics WHERE tenantid=?"

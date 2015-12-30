@@ -80,7 +80,7 @@ type DashboardApp struct {
 type DashboardAppUser struct {
 	TenantId int 				  `db:"tenantid"json:"tenantid"`
 	AppId int 				 	  `db:"appid"json:"appid"`
-	UserName string			 	  `db:"name"json:"name"`
+	UserName string			 	  `db:"username"json:"username"`
 }
 
 type DashboardAppMetric struct {
