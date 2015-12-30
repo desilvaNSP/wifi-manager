@@ -65,6 +65,7 @@ type DashboardMetric struct {
 type DashboardAppInfo struct {
 	AppId int 				 	  `db:"appid"json:"appid"`
 	TenantId int 				  `db:"tenantid"json:"tenantid"`
+	Aggregate string			  `db:"aggregate"json:"aggregate"`
 	Name string			 		  `db:"name"json:"name"`
 	Users []DashboardAppUser	  `db:"users"json:"users"`
 	Groups []DashboardAppGroup	  `db:"groups"json:"groups"`

@@ -99,6 +99,7 @@ CREATE TABLE IF NOT EXISTS `apps` (
   `appid` INT NOT NULL AUTO_INCREMENT,
   `tenantid` INT,
   `name` varchar(255) DEFAULT NULL,
+  `aggregate` varchar(255) DEFAULT NULL,
   `createdon` TIMESTAMP,
   PRIMARY KEY(`appid`),
   FOREIGN KEY(tenantid) REFERENCES users(tenantid) ON DELETE CASCADE

@@ -74,4 +74,11 @@ VALUES
 INSERT INTO metrics(tenantid, metricid, name)
 VALUES
   (1, 1, 'Total Downloads'),
-  (1, 2, 'Total Uploads');
+  (1, 2, 'Total Uploads'),
+  (1, 3, 'Total Users'),
+  (1, 4, 'Avg User Session time'),
+  (1, 5, 'Unique Users >1 MB'),
+  (1, 6, 'Returning Users'),
+  (1, 7, 'Users by OS'),
+  (1, 8, 'Users by device type')
+  ;

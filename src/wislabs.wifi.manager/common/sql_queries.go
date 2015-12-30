@@ -30,15 +30,15 @@ const DELETE_AP_GROUP string 	  = "DELETE FROM aplocations WHERE groupname=? AND
 const DELETE_AP string 			  = "DELETE FROM aplocations WHERE mac=? AND tenantid=?"
 
 /* Dashboard Apps */
-const GET_DASHBOARD_APP string 		   = "SELECT appid, tenantid, name FROM apps WHERE tenantid=? AND name=?"
+const GET_DASHBOARD_APP string 		   = "SELECT appid, tenantid, name, aggregate FROM apps WHERE tenantid=? AND name=?"
 const GET_DASHBOARD_APP_GROUPS string  = "SELECT appid, groupname appgroups WHERE appid=?"
-const GET_DASHBOARD_APP_METRICS string = "SELECT appid, name appmetrics WHERE appid=?"
+const GET_DASHBOARD_APP_METRICS string = "SELECT tenantid, metricid, name FROM metrics WHERE metricid IN (SELECT metricid FROM appmetrics WHERE appid=?)"
 const GET_DASHBOARD_APP_USERS string   = "SELECT tenantid, appid, username FROM appusers WHERE appid=?"
 const GET_DASHBOARD_USER_APPS string   = "SELECT tenantid, appid, name FROM apps WHERE appid IN (SELECT appid FROM appusers WHERE username=? AND tenantid=?)"
-const ADD_DASHBOARD_APP string 		   = "INSERT INTO apps (tenantid, name) VALUES( ?, ? )"
+const ADD_DASHBOARD_APP string 		   = "INSERT INTO apps (tenantid, name, aggregate) VALUES( ?, ?, ?)"
 const ADD_DASHBOARD_APP_USER string    = "INSERT INTO appusers (tenantid, appid, username) VALUES(?, ?, ? )"
 const ADD_DASHBOARD_APP_METRIC string  = "INSERT INTO appmetrics (appid, metricid) VALUES( ?, ? )"
-const ADD_DASHBOARD_APP_GROUP string   = "INSERT INTO appgroups (appid, name) VALUES( ?, ? )"
+const ADD_DASHBOARD_APP_GROUP string   = "INSERT INTO appgroups (appid, groupname) VALUES( ?, ? )"
 const DELETE_DASHBOARD_APP string      = "DELETE FROM apps WHERE appid=? AND tenantid=?"
 const DELETE_DASHBOARD_APP_USER string = "DELETE FROM appusers WHERE appid=? AND username=?"
 

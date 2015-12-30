@@ -92,7 +92,7 @@ func AddDashboardApp(app *dao.DashboardAppInfo) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-	result, err := stmtIns.Exec(app.TenantId, app.Name)
+	result, err := stmtIns.Exec(app.TenantId, app.Name, app.Aggregate)
 	if err != nil {
 		return 0, err
 	} else {
