@@ -152,7 +152,7 @@ var routes = Routes{
 	Route{
 		"UpdateWiFiUsers",
 		"PUT",
-		"/wifi/{tenantid}/users",
+		"/wifi/users",
 		true,
 		dashboard_handlers.UpdateUserHandler,
 	},

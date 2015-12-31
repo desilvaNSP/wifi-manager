@@ -8,22 +8,22 @@ import (
 	"database/sql"
 )
 
-func GetUserCountOfDownloadsOver(constrains dao.Constrains, threshold int) int64{
+func GetUserCountOfDownloadsOver(constrains dao.Constrains, threshold int) int64 {
 	dbMap := utils.GetDBConnection("radsummary");
 	defer dbMap.Db.Close()
 	var count sql.NullInt64
 	var err error
-	if len(constrains.LocationId) >0 {
+	if len(constrains.LocationId) > 0 {
 		smtOut, err := dbMap.Db.Prepare(common.GET_USER_COUNT_OF_DOWNLOADS_OVER_LOCATION)
-		defer  smtOut.Close()
-		err = smtOut.QueryRow( constrains.From, constrains.To, constrains.LocationId, threshold ).Scan(&count) // WHERE number = 13
+		defer smtOut.Close()
+		err = smtOut.QueryRow(constrains.From, constrains.To, constrains.LocationId, threshold).Scan(&count) // WHERE number = 13
 		if err != nil {
 			panic(err.Error()) // proper error handling instead of panic in your app
 		}
-	}else{
+	}else {
 		smtOut, err := dbMap.Db.Prepare(common.GET_USER_COUNT_OF_DOWNLOADS_OVER)
-		defer  smtOut.Close()
-		err = smtOut.QueryRow( constrains.From, constrains.To, threshold).Scan(&count) // WHERE number = 13
+		defer smtOut.Close()
+		err = smtOut.QueryRow(constrains.From, constrains.To, threshold).Scan(&count) // WHERE number = 13
 		if err != nil {
 			panic(err.Error()) // proper error handling instead of panic in your app
 		}
@@ -37,7 +37,7 @@ func GetUserCountOfDownloadsOver(constrains dao.Constrains, threshold int) int64
 	}
 }
 
-func AddWiFiUser(user *dao.PortalUser){
+func AddWiFiUser(user *dao.PortalUser) {
 	dbMap := utils.GetDBConnection("portal");
 	defer dbMap.Db.Close()
 
@@ -45,14 +45,14 @@ func AddWiFiUser(user *dao.PortalUser){
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
-	_, err = stmtIns.Exec(user.TenantId, user.Username, user.GroupName.String)
+	_, err = stmtIns.Exec(user.TenantId, user.Username, user.GroupName.String, user.ACL.String)
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
 	defer stmtIns.Close()
 }
 
-func UpdateWiFiUser(user *dao.PortalUser){
+func UpdateWiFiUser(user *dao.PortalUser) {
 	dbMap := utils.GetDBConnection("portal");
 	defer dbMap.Db.Close()
 
@@ -67,43 +67,43 @@ func UpdateWiFiUser(user *dao.PortalUser){
 	defer stmtIns.Close()
 }
 
-func GetAllWiFiUsers(tenantid int) []dao.PortalUser{
+func GetAllWiFiUsers(tenantid int) []dao.PortalUser {
 	dbMap := utils.GetDBConnection("portal");
 	defer dbMap.Db.Close()
 	var users []dao.PortalUser
-	_, err := dbMap.Select(&users,common.GET_ALL_WIFI_USERS, tenantid)
+	_, err := dbMap.Select(&users, common.GET_ALL_WIFI_USERS, tenantid)
 	checkErr(err, "Select failed")
 	return users
 }
 
-func DeleteUserAccountingSession(username string, tenantid int) error{
+func DeleteUserAccountingSession(username string, tenantid int) error {
 	dbMap := utils.GetDBConnection("portal");
 	defer dbMap.Db.Close()
 
 	_, err := dbMap.Exec(common.DELETE_WIFI_USER, username, tenantid)
-   return err
+	return err
 }
 
-func DeleteUserFromRadCheck(username string, tenantid int) error{
+func DeleteUserFromRadCheck(username string, tenantid int) error {
 	dbMap := utils.GetDBConnection("radius");
 	defer dbMap.Db.Close()
 
-	_, err := dbMap.Exec(common.DELETE_RADCHECk_USER, username, tenantid)
+	_, err := dbMap.Exec(common.DELETE_RADCHECk_USER, username)
 
 	return err
 }
 
-func DeleteUserFromRadAcct(username string, tenantid int) error{
+func DeleteUserFromRadAcct(username string, tenantid int) error {
 	dbMap := utils.GetDBConnection("radius");
 	defer dbMap.Db.Close()
 
-	_, err := dbMap.Exec(common.DELETE_RADACCT_USER, username, tenantid)
+	_, err := dbMap.Exec(common.DELETE_RADACCT_USER, username)
 
 	return err
 }
 
 
-func GetUsersCountFromTo(from string, to string, location string) int64{
+func GetUsersCountFromTo(from string, to string, location string) int64 {
 	dbMap := utils.GetDBConnection("portal");
 	defer dbMap.Db.Close()
 	var count int64
@@ -115,7 +115,7 @@ func GetUsersCountFromTo(from string, to string, location string) int64{
 /*
 * Users who visits more than once
 */
-func GetReturningUsers(from string, to string, location string) int64{
+func GetReturningUsers(from string, to string, location string) int64 {
 	dbMap := utils.GetDBConnection("portal");
 	defer dbMap.Db.Close()
 	var count int64

@@ -9,18 +9,26 @@ export JWT_PUBLIC_KEY_PATH=/home/anuruddha/git/wifi-manager/server/resources/sec
 export JWT_EXPIRATION_DELTA=72
 
 function default_(){
+  echo "starting redis server..!"
+  ./redis-server ../configs/redis.conf
+  echo "redis started successfully!"
   echo "server started successfully!"
   ./server.bin $SERVER_HOME
   echo $! > server.pid
 }
 
 function start_(){
+    echo "starting redis server..!"
+    ./redis-server ../configs/redis.conf
+    echo "redis started successfully!"
     nohup ./server.bin $SERVER_HOME > ../logs/nohup.log 2>&1&
     echo $! > server.pid
     echo "server started successfully!"
 }
 
 function stop_(){
+    kill -9 `cat redis.pid`
+    echo "redis stoped successfully!"
     kill -9 `cat server.pid`
     echo "server stoped successfully!"
     rm -rf server.pid

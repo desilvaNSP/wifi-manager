@@ -21,8 +21,6 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 	var user dao.PortalUser
 	decoder.Decode(&user)
 	wifi_controller.AddWiFiUser(&user)
-
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -50,7 +48,7 @@ func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 
 /**
 * DELETE
-* @path /users/<user-id>
+* @path /wifi/{tenantid}/users/<user-id>
 */
 func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
