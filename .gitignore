@@ -5,3 +5,4 @@
 target
 server/bin/server.bin
 server/bin/*.pid
+server/bin/*.rdb

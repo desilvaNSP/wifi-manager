@@ -20,9 +20,29 @@
 
 <div id="add-dashboard-app-modal-content"></div>
 
+<div class="modal fade" id="confirm-delete-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
+                        class="sr-only">Close</span></button>
+                <h4 class="modal-title" style="text-align: center">Delete Dashboard App</h4>
+            </div>
+            <div class="modal-body">
+                <p id="message"><strong>Are you sure you want to delete the dashbloard?</strong></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">No</button>
+                <button type="button" class="btn btn-primary" id="delete-app">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     var userNames = [], taggedUsers = [];
     var $grid, $sizer;
+    var deleteAppId;
     $(document).ready(function () {
         $grid = $('#app-grid'), $sizer = $grid.find('.shuffle__sizer');
         renderDashboardApps();
@@ -58,7 +78,7 @@
             var metricsAjax = $.get('/dashboard/' + Cookies.get('tenantid') + '/metrics', function (result) {
                 metrics = result
             });
-
+            var addDashboardFromValidator;
             $.when(usersAjax, locationsAjax, metricsAjax).done(function () {
                 $.get('components/dashboard-app-modal.html', function (template) {
                             var rendered = Mustache.render(template, {
@@ -97,7 +117,7 @@
                                     });
                                 }
                             });
-                            var addDashboardFromValidator = $("#add-dashboard-form").validate({
+                            addDashboardFromValidator = $("#add-dashboard-form").validate({
                                 rules: {
                                     appName: {
                                         required: true,
@@ -110,23 +130,25 @@
             });
 
             $("#add-dashboard-app-modal-content").off('click').on("click", '#btn-add-dashboard', function (event) {
-                var aggregate = 'no';
-                if ($('#chkAggregate').is(":checked")) {
-                    aggregate = 'yes';
+                if (addDashboardFromValidator.valid()) {
+                    var aggregate = 'no';
+                    if ($('#chkAggregate').is(":checked")) {
+                        aggregate = 'yes';
+                    }
+                    var payload = {
+                        tenantid: parseInt(Cookies.get('tenantid')),
+                        name: $('#input-dashboard-name').val(),
+                        users: taggedUsers,
+                        aggregate: aggregate,
+                        groups: getCheckedGroups('group'),
+                        metrics: getCheckedMetrices('metric')
+                    };
+                    $.post('/dashboard/apps', JSON.stringify(payload), function (result) {
+                        $('#add-dashboard-modal').modal('hide');
+                        $grid.shuffle('destroy');
+                        renderDashboardApps();
+                    });
                 }
-                var payload = {
-                    tenantid: parseInt(Cookies.get('tenantid')),
-                    name: $('#input-dashboard-name').val(),
-                    users: taggedUsers,
-                    aggregate: aggregate,
-                    groups: getCheckedGroups('group'),
-                    metrics: getCheckedMetrices('metric')
-                };
-                $.post('/dashboard/apps', JSON.stringify(payload), function (result) {
-                    $('#add-dashboard-modal').modal('hide');
-                    $grid.shuffle('destroy');
-                    renderDashboardApps();
-                });
                 return false;
             });
         });
@@ -152,7 +174,7 @@
             datagroups = [];
             $.get('components/dashboard.html', function (template) {
                         if (aggregate == 'no') {
-                            datagroups = [{groupname : appName}]
+                            datagroups = [{groupname: appName}]
                             var rendered = Mustache.render(template, {appId: appId, datagroups: datagroups});
                             $('.container-dashboard').html(rendered);
                         } else {
@@ -165,8 +187,26 @@
                     }
             );
         });
-    });
 
+        $('#delete-app').on("click", function (event) {
+            $.ajax({
+                url: '/dashboard/' + Cookies.get('tenantid') + '/apps/' + deleteAppId,
+                type: 'DELETE',
+                success: function (result) {
+                    $('#confirm-delete-modal').modal('hide');
+                    $grid.shuffle('destroy');
+                    renderDashboardApps();
+                },
+                error: function (e) {
+                    console.log(e)
+                }
+            });
+        });
+    });
+    function deleteApp(event){
+        deleteAppId = $(event).attr('data-appid');
+        $('#confirm-delete-modal').modal();
+    }
     function getCheckedMetrices(chkboxName) {
         var checkboxes = document.getElementsByName(chkboxName);
         var checkboxesChecked = [];

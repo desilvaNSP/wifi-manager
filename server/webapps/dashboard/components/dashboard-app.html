@@ -1,12 +1,18 @@
 {{#apps}}
 <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2" data-groups='["apps"]'>
-    <a href="#" class="app-anchor" data-appname="{{name}}" data-appid="{{appid}}" data-aggregation="{{aggregate}}">
-        <div class="cloud-app-listing app-color-one">
+    <div class="cloud-app-listing app-color-one">
+        <a href="#" onclick="deleteApp(this);" class="app-delete" data-appid="{{appid}}"> <i class="fa fa-close fa-1x"
+                                                                                         data-toggle="tooltip"
+                                                                                         data-placement="right"
+                                                                                         title="Delete App"></i></a>
+        <a href="#" class="app-anchor" data-appname="{{name}}" data-appid="{{appid}}" data-aggregation="{{aggregate}}">
+
             <div class="app-icon">
                 <img src="img/dark-app-iconx256.jpg" class="square-element">
             </div>
             <div class="app-name">{{name}}</div>
-        </div>
-    </a>
+
+        </a>
+    </div>
 </div>
 {{/apps}}

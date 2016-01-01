@@ -9,12 +9,14 @@ import (
 )
 
 
-
-func GetAgregatedDownloadsFromToHandler(w http.ResponseWriter, r *http.Request){
+/**
+* POST /wifi/usage/dailytotaldownloads
+ */
+func GetAgregatedDownloadsFromToHandler(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var constrains dao.Constrains
 	decoder.Decode(&constrains)
-	count := wifi.GetAgregatedDownloadsFromTo(constrains)
+	count := wifi.GetAggregatedDownloadsFromTo(constrains)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
@@ -25,12 +27,29 @@ func GetAgregatedDownloadsFromToHandler(w http.ResponseWriter, r *http.Request){
 }
 
 /**
-* GET
-* @path /locatoins
-* return [{"id":0,"username":"anu","password":"","acctstarttime":"2015-09-20 18:49:32",
-*         "acctlastupdatedtime":"2015-09-20 18:49:32","acctactivationtime":"","acctstoptime":"2015-09-20 19:49:32"}]
+* POST /wifi/usage/dailytotaluploads
+ */
+func GetAgregatedUploadsFromToHandler(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var constrains dao.Constrains
+	decoder.Decode(&constrains)
+	count := wifi.GetAggregatedUploadsFromTo(constrains)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+
+	if err := json.NewEncoder(w).Encode(count); err != nil {
+		panic(err)
+	}
+}
+
+
+/**
+* POST
+* @path /wifi/usage/downloads
+*
 */
-func GetDownloadsFromToHandler(w http.ResponseWriter, r *http.Request){
+func GetDownloadsFromToHandler(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var constrains dao.Constrains
 	decoder.Decode(&constrains)
@@ -46,11 +65,10 @@ func GetDownloadsFromToHandler(w http.ResponseWriter, r *http.Request){
 
 /**
 * POST
-* @path /locations
-* return [{"id":0,"username":"anu","password":"","acctstarttime":"2015-09-20 18:49:32",
-*         "acctlastupdatedtime":"2015-09-20 18:49:32","acctactivationtime":"","acctstoptime":"2015-09-20 19:49:32"}]
+* @path /wifi/usage/uploads
+*
 */
-func GetUploadsFromToHandler(w http.ResponseWriter, r *http.Request){
+func GetUploadsFromToHandler(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var constrains dao.Constrains
 	decoder.Decode(&constrains)
@@ -65,7 +83,12 @@ func GetUploadsFromToHandler(w http.ResponseWriter, r *http.Request){
 	}
 }
 
-func GetAvgSessoinTimeFromToHandler(w http.ResponseWriter, r *http.Request){
+/**
+* POST
+* @path /wifi/sessions/avg
+*
+*/
+func GetAvgSessoinTimeFromToHandler(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var constrains dao.Constrains
 	decoder.Decode(&constrains)
@@ -80,7 +103,12 @@ func GetAvgSessoinTimeFromToHandler(w http.ResponseWriter, r *http.Request){
 	}
 }
 
-func GetTotalSessoinCountTimeFromToHandler(w http.ResponseWriter, r *http.Request){
+/**
+* POST
+* @path /wifi/sessions/count
+*
+*/
+func GetTotalSessionCountTimeFromToHandler(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var constrains dao.Constrains
 	decoder.Decode(&constrains)

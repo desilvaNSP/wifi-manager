@@ -11,24 +11,23 @@ import (
 func GetUserCountOfDownloadsOver(constrains dao.Constrains, threshold int) int64 {
 	dbMap := utils.GetDBConnection("radsummary");
 	defer dbMap.Db.Close()
-	var count sql.NullInt64
 	var err error
-	if len(constrains.LocationId) > 0 {
-		smtOut, err := dbMap.Db.Prepare(common.GET_USER_COUNT_OF_DOWNLOADS_OVER_LOCATION)
-		defer smtOut.Close()
-		err = smtOut.QueryRow(constrains.From, constrains.To, constrains.LocationId, threshold).Scan(&count) // WHERE number = 13
-		if err != nil {
-			panic(err.Error()) // proper error handling instead of panic in your app
+	var count sql.NullInt64
+	query := "SELECT count(DISTINCT username) FROM dailyacct where date >= ? AND date < ? AND outputoctets >= ?"
+
+	if len(constrains.LocationGroups) > 0 {
+		args := getArgs(&constrains)
+		query = query + " AND calledstationid=? "
+		for i := 1; i < len(constrains.LocationGroups); i++ {
+			query = query + " OR calledstationid=? "
 		}
-	}else {
-		smtOut, err := dbMap.Db.Prepare(common.GET_USER_COUNT_OF_DOWNLOADS_OVER)
+		smtOut, err := dbMap.Db.Prepare(query)
 		defer smtOut.Close()
-		err = smtOut.QueryRow(constrains.From, constrains.To, threshold).Scan(&count) // WHERE number = 13
+		err = smtOut.QueryRow(args...).Scan(&count) // WHERE number = 13
 		if err != nil {
 			panic(err.Error()) // proper error handling instead of panic in your app
 		}
 	}
-
 	checkErr(err, "Select failed on Get downloads")
 	if count.Valid {
 		return count.Int64
@@ -103,25 +102,63 @@ func DeleteUserFromRadAcct(username string, tenantid int) error {
 }
 
 
-func GetUsersCountFromTo(from string, to string, location string) int64 {
+func GetUsersCountFromTo(constrains dao.Constrains) int64 {
 	dbMap := utils.GetDBConnection("portal");
 	defer dbMap.Db.Close()
-	var count int64
-	count, err := dbMap.SelectInt("SELECT COUNT(DISTINCT username) FROM accounting where acctstarttime >= ? AND acctstarttime < ? AND locationid = ?", from, to, location)
-	checkErr(err, "Select failed")
-	return count
+	var err error
+	var count sql.NullInt64
+	query := "SELECT COUNT(DISTINCT username) FROM accounting where acctstarttime >= ? AND acctstarttime < ? AND tenantid=? "
+
+	if len(constrains.LocationGroups) > 0 {
+		args := getArgs(&constrains)
+		query = query + " AND groupname=? "
+		for i := 1; i < len(constrains.LocationGroups); i++ {
+			query = query + " OR groupname=? "
+		}
+		smtOut, err := dbMap.Db.Prepare(query)
+		defer smtOut.Close()
+		err = smtOut.QueryRow(args...).Scan(&count) // WHERE number = 13
+		if err != nil {
+			panic(err.Error()) // proper error handling instead of panic in your app
+		}
+	}
+	checkErr(err, "Select failed on Get downloads")
+	if count.Valid {
+		return count.Int64
+	}else {
+		return 0
+	}
 }
 
 /*
 * Users who visits more than once
 */
-func GetReturningUsers(from string, to string, location string) int64 {
+func GetReturningUsers(constrains dao.Constrains) int64 {
 	dbMap := utils.GetDBConnection("portal");
 	defer dbMap.Db.Close()
-	var count int64
-	count, err := dbMap.SelectInt("SELECT COUNT(DISTINCT username) FROM accounting where acctstarttime >= ? AND acctstarttime < ? AND locationid = ? AND visits > 1", from, to, location)
-	checkErr(err, "Select failed")
-	return count
+	var err error
+	var count sql.NullInt64
+	query := "SELECT COUNT(DISTINCT username) FROM accounting where acctstarttime >= ? AND acctstarttime < ? AND tenantid=? AND visits > 1"
+
+	if len(constrains.LocationGroups) > 0 {
+		args := getArgs(&constrains)
+		query = query + " AND groupname=? "
+		for i := 1; i < len(constrains.LocationGroups); i++ {
+			query = query + " OR groupname=? "
+		}
+		smtOut, err := dbMap.Db.Prepare(query)
+		defer smtOut.Close()
+		err = smtOut.QueryRow(args...).Scan(&count) // WHERE number = 13
+		if err != nil {
+			panic(err.Error()) // proper error handling instead of panic in your app
+		}
+	}
+	checkErr(err, "Select failed on Get downloads")
+	if count.Valid {
+		return count.Int64
+	}else {
+		return 0
+	}
 }
 
 func checkErr(err error, msg string) {

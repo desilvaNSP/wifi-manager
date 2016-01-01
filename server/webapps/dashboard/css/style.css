@@ -6447,11 +6447,11 @@ body.skin-3 {
 .cloud-app-listing i {
     position: absolute;
     z-index: 98;
-    right: 16px;
+    right: 0px;
     padding: 6px;
-    background-color: #383d44;
+    background-color: rgba(249, 249, 249, 0);
     top: 0;
-    color:#fff;
+    color:#2F4050;
 }
 .app-thumb span {
     padding: 7px;

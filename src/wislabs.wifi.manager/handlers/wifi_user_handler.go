@@ -83,16 +83,15 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 
 /**
 * POST
-* @path /users
-* return [{"id":0,"username":"anu","password":"","acctstarttime":"2015-09-20 18:49:32",
-*         "acctlastupdatedtime":"2015-09-20 18:49:32","acctactivationtime":"","acctstoptime":"2015-09-20 19:49:32"}]
+* @path /wifi/users/count
+*
 */
 func GetUsersCountFromToHandler(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var constrains dao.Constrains
 	err := decoder.Decode(&constrains)
 
-	count := wifi_controller.GetUsersCountFromTo(constrains.From, constrains.To, constrains.LocationId)
+	count := wifi_controller.GetUsersCountFromTo(constrains)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
@@ -102,12 +101,17 @@ func GetUsersCountFromToHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+/**
+* POST
+* @path /wifi/users/returncount
+*
+*/
 func GetReturningUsersCountFromToHandler(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var constrains dao.Constrains
 	err := decoder.Decode(&constrains)
 
-	count := wifi_controller.GetReturningUsers(constrains.From, constrains.To, constrains.LocationId)
+	count := wifi_controller.GetReturningUsers(constrains)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
@@ -117,6 +121,11 @@ func GetReturningUsersCountFromToHandler(w http.ResponseWriter, r *http.Request)
 	}
 }
 
+/**
+* POST
+* @path /wifi/users/countbydownlods/{threshold}
+*
+*/
 func GetUserCountOfDownloadsOverHandler(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var constrains dao.Constrains

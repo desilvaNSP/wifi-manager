@@ -41,9 +41,10 @@ type AuthUser struct {
 }
 
 type Constrains struct {
-	From string `json:"from"`
-	To string   `json:"to"`
-	LocationId string    `json:"locationid"`
+	TenantId int 			   `json:"tenantid"`
+	From string				   `json:"from"`
+	To string   			   `json:"to"`
+	LocationGroups []string    `json:"locationgroups"`
 }
 
 type ApLocation struct {

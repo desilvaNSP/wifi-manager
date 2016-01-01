@@ -199,6 +199,13 @@ var routes = Routes{
 		dashboard_handlers.GetAgregatedDownloadsFromToHandler,
 	},
 	Route{
+		"Get daily total WIFI Downloads ",
+		"POST",
+		"/wifi/usage/dailytotaluploads",
+		true,
+		dashboard_handlers.GetAgregatedUploadsFromToHandler,
+	},
+	Route{
 		"Get WIFI Uploads",
 		"POST",
 		"/wifi/usage/uploads",
@@ -217,7 +224,7 @@ var routes = Routes{
 		"POST",
 		"/wifi/sessions/count",
 		true,
-		dashboard_handlers.GetTotalSessoinCountTimeFromToHandler,
+		dashboard_handlers.GetTotalSessionCountTimeFromToHandler,
 	},
 	Route{
 		"GetLocations",

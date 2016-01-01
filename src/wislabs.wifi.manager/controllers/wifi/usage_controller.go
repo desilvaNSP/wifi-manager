@@ -6,71 +6,65 @@ import (
 	"database/sql"
 )
 
-func GetAgregatedDownloadsFromTo(constrains dao.Constrains) [] dao.NameValue{
+func GetAggregatedDownloadsFromTo(constrains dao.Constrains) [] dao.NameValue {
 	dbMap := utils.GetDBConnection("radsummary");
 	defer dbMap.Db.Close()
 	var totalDailyDownloads[] dao.NameValue
-	if len(constrains.LocationId) >0 {
-		query :="SELECT SUM(inputoctets) as value ,date as name FROM dailyacct where date >= ? AND date < ? AND location = ? group by date"
-		_, err := dbMap.Select(&totalDailyDownloads, query, constrains.From, constrains.To, constrains.LocationId)
-		if err != nil {
-			panic(err.Error()) // proper error handling instead of panic in your app
+	query := "SELECT SUM(outputoctets) as value ,date as name FROM dailyacct where date >= ? AND date < ? AND tenantid=? "
+
+	if len(constrains.LocationGroups) > 0 {
+		args := getArgs(&constrains)
+		query = query + " AND calledstationid=? "
+		for i := 1; i< len(constrains.LocationGroups); i++ {
+   			query = query + " OR calledstationid=? "
 		}
-	}else{
-		query :="SELECT SUM(inputoctets) as value ,date as name FROM dailyacct where date >= ? AND date < ? group by date"
-		_, err := dbMap.Select(&totalDailyDownloads, query, constrains.From, constrains.To)
+		query = query + " group by date"
+		_, err := dbMap.Select(&totalDailyDownloads, query, args...)
 		if err != nil {
-			panic(err.Error()) // proper error handling instead of panic in your app
+			panic(err.Error()) // proper error handling instead of panic
 		}
 	}
 	return totalDailyDownloads
 }
 
-func GetDownloadsFromTo(constrains dao.Constrains) int64{
+func GetAggregatedUploadsFromTo(constrains dao.Constrains) [] dao.NameValue {
 	dbMap := utils.GetDBConnection("radsummary");
 	defer dbMap.Db.Close()
-    var err error
-	var count sql.NullInt64
-	if len(constrains.LocationId) >0 {
-		smtOut, err := dbMap.Db.Prepare("SELECT SUM(inputoctets) FROM dailyacct where date >= ? AND date < ? AND locationid = ?")
-		defer  smtOut.Close()
-		err = smtOut.QueryRow( constrains.From, constrains.To, constrains.LocationId).Scan(&count) // WHERE number = 13
-		if err != nil {
-			panic(err.Error()) // proper error handling instead of panic in your app
-		}
-	}else{
-		smtOut, err := dbMap.Db.Prepare("SELECT SUM(inputoctets) FROM dailyacct where date >= ? AND date < ? ")
-		defer  smtOut.Close()
-		err = smtOut.QueryRow( constrains.From, constrains.To).Scan(&count) // WHERE number = 13
-		if err != nil {
-			panic(err.Error()) // proper error handling instead of panic in your app
-		}
-	}
+	var totalDailyDownloads[] dao.NameValue
+	query := "SELECT SUM(inputoctets) as value ,date as name FROM dailyacct where date >= ? AND date < ? AND tenantid=? "
 
-	checkErr(err, "Select failed on Get downloads")
-	if count.Valid {
-		return count.Int64
-	}else {
-		return 0
+	if len(constrains.LocationGroups) > 0 {
+		args := getArgs(&constrains)
+		query = query + " AND calledstationid=? "
+		for i := 1; i< len(constrains.LocationGroups); i++ {
+			query = query + " OR calledstationid=? "
+		}
+		query = query + " group by date"
+		_, err := dbMap.Select(&totalDailyDownloads, query, args...)
+		if err != nil {
+			panic(err.Error()) // proper error handling instead of panic
+		}
 	}
+	return totalDailyDownloads
 }
 
-func GetUploadsFromTo(constrains dao.Constrains) int64{
+
+func GetDownloadsFromTo(constrains dao.Constrains) int64 {
 	dbMap := utils.GetDBConnection("radsummary");
 	defer dbMap.Db.Close()
 	var err error
 	var count sql.NullInt64
-	if len(constrains.LocationId) >0 {
-		smtOut, err := dbMap.Db.Prepare("SELECT SUM(outputoctets) FROM dailyacct where date >= ? AND date < ? AND locationid = ?")
-		defer  smtOut.Close()
-		err = smtOut.QueryRow( constrains.From, constrains.To, constrains.LocationId).Scan(&count) // WHERE number = 13
-		if err != nil {
-			panic(err.Error()) // proper error handling instead of panic in your app
+	query := "SELECT SUM(outputoctets) FROM dailyacct where date >= ? AND date < ? AND tenantid = ? "
+
+	if len(constrains.LocationGroups) > 0 {
+		args := getArgs(&constrains)
+		query = query + " AND calledstationid=? "
+		for i := 1; i< len(constrains.LocationGroups); i++ {
+			query = query + " OR calledstationid=? "
 		}
-	}else{
-		smtOut, err := dbMap.Db.Prepare("SELECT SUM(outputoctets) FROM dailyacct where date >= ? AND date < ? ")
-		defer  smtOut.Close()
-		err = smtOut.QueryRow( constrains.From, constrains.To).Scan(&count) // WHERE number = 13
+		smtOut, err := dbMap.Db.Prepare(query)
+		defer smtOut.Close()
+		err = smtOut.QueryRow(args...).Scan(&count) // WHERE number = 13
 		if err != nil {
 			panic(err.Error()) // proper error handling instead of panic in your app
 		}
@@ -84,22 +78,22 @@ func GetUploadsFromTo(constrains dao.Constrains) int64{
 	}
 }
 
-func GetTotalSessionsCountFromTo(constrains dao.Constrains) int64{
+func GetUploadsFromTo(constrains dao.Constrains) int64 {
 	dbMap := utils.GetDBConnection("radsummary");
 	defer dbMap.Db.Close()
 	var err error
 	var count sql.NullInt64
-	if len(constrains.LocationId) >0 {
-		smtOut, err := dbMap.Db.Prepare("SELECT SUM(noofsessions) FROM dailyacct where date >= ? AND date < ? AND locationid = ?")
-		defer  smtOut.Close()
-		err = smtOut.QueryRow( constrains.From, constrains.To, constrains.LocationId).Scan(&count) // WHERE number = 13
-		if err != nil {
-			panic(err.Error()) // proper error handling instead of panic in your app
+	query := "SELECT SUM(inputoctets) FROM dailyacct where date >= ? AND date < ? AND tenantid = ? "
+
+	if len(constrains.LocationGroups) > 0 {
+		args := getArgs(&constrains)
+		query = query + " AND calledstationid=? "
+		for i := 1; i< len(constrains.LocationGroups); i++ {
+			query = query + " OR calledstationid=? "
 		}
-	}else{
-		smtOut, err := dbMap.Db.Prepare("SELECT SUM(noofsessions) FROM dailyacct where date >= ? AND date < ? ")
-		defer  smtOut.Close()
-		err = smtOut.QueryRow( constrains.From, constrains.To).Scan(&count) // WHERE number = 13
+		smtOut, err := dbMap.Db.Prepare(query)
+		defer smtOut.Close()
+		err = smtOut.QueryRow(args...).Scan(&count) // WHERE number = 13
 		if err != nil {
 			panic(err.Error()) // proper error handling instead of panic in your app
 		}
@@ -113,22 +107,51 @@ func GetTotalSessionsCountFromTo(constrains dao.Constrains) int64{
 	}
 }
 
-func GetAvgSessionsFromTo(constrains dao.Constrains) float64{
+func GetTotalSessionsCountFromTo(constrains dao.Constrains) int64 {
+	dbMap := utils.GetDBConnection("radsummary");
+	defer dbMap.Db.Close()
+	var err error
+	var count sql.NullInt64
+	query := "SELECT SUM(noofsessions) FROM dailyacct where date >= ? AND date < ? AND tenantid = ? "
+
+	if len(constrains.LocationGroups) > 0 {
+		args := getArgs(&constrains)
+		query = query + " AND calledstationid=? "
+		for i := 1; i< len(constrains.LocationGroups); i++ {
+			query = query + " OR calledstationid=? "
+		}
+		smtOut, err := dbMap.Db.Prepare(query)
+		defer smtOut.Close()
+		err = smtOut.QueryRow(args...).Scan(&count) // WHERE number = 13
+		if err != nil {
+			panic(err.Error()) // proper error handling instead of panic in your app
+		}
+	}
+
+	checkErr(err, "Select failed on Get downloads")
+	if count.Valid {
+		return count.Int64
+	}else {
+		return 0
+	}
+}
+
+func GetAvgSessionsFromTo(constrains dao.Constrains) float64 {
 	dbMap := utils.GetDBConnection("radsummary");
 	defer dbMap.Db.Close()
 	var err error
 	var count sql.NullFloat64
-	if len(constrains.LocationId) >0 {
-		smtOut, err := dbMap.Db.Prepare("SELECT AVG(sessionavgduration) FROM dailyacct where date >= ? AND date < ? AND locationid = ?")
-		defer  smtOut.Close()
-		err = smtOut.QueryRow( constrains.From, constrains.To, constrains.LocationId).Scan(&count) // WHERE number = 13
-		if err != nil {
-			panic(err.Error()) // proper error handling instead of panic in your app
+	query := "SELECT AVG(sessionavgduration) FROM dailyacct where date >= ? AND date < ? AND tenantid = ? "
+
+	if len(constrains.LocationGroups) > 0 {
+		args := getArgs(&constrains)
+		query = query + " AND calledstationid=? "
+		for i := 1; i< len(constrains.LocationGroups); i++ {
+			query = query + " OR calledstationid=? "
 		}
-	}else{
-		smtOut, err := dbMap.Db.Prepare("SELECT AVG(sessionavgduration) FROM dailyacct where date >= ? AND date < ? ")
-		defer  smtOut.Close()
-		err = smtOut.QueryRow( constrains.From, constrains.To).Scan(&count) // WHERE number = 13
+		smtOut, err := dbMap.Db.Prepare(query)
+		defer smtOut.Close()
+		err = smtOut.QueryRow(args...).Scan(&count) // WHERE number = 13
 		if err != nil {
 			panic(err.Error()) // proper error handling instead of panic in your app
 		}
@@ -142,3 +165,11 @@ func GetAvgSessionsFromTo(constrains dao.Constrains) float64{
 	}
 }
 
+func getArgs(constrains *dao.Constrains) []interface{}{
+	args := make([]interface{}, len(constrains.LocationGroups)+3)
+	args[0] = constrains.From
+	args[1] = constrains.To
+	args[2] = constrains.TenantId
+	for index, value := range constrains.LocationGroups { args[index+3] = value }
+	return args
+}
