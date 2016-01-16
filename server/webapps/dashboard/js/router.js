@@ -25,14 +25,25 @@ function renderWifiUserTable() {
 }
 
 function renderDashboardUserTable() {
-    var tenantUsers;
+    var tenantUsers, tenantPermissions=[];
     var users = $.get('/dashboard/' + Cookies.get('tenantid') + '/users', function (result) {
         tenantUsers = result
     });
 
+    var permissions = $.get('/dashboard/' + Cookies.get('tenantid') + '/permissions', function (result) {
+        tenantPermissions = []
+        $.each(result, function (index, element) {
+            tenantPermissions.push(element.name)
+        })
+    });
     $.when(users).done(function () {
         $.get('components/dashboard-usertable.html', function (template) {
-                var rendered = Mustache.render(template, {data: JSON.stringify(tenantUsers)});
+                var rendered = Mustache.render(template, {
+                    data: JSON.stringify(tenantUsers),
+                    tenantDomain: Cookies.get('tenantdomain'),
+                    roles: [{name: "admin"}, {name: "devop"}, {name: "dashboard user"}],
+                    permissions : tenantPermissions
+                });
                 $('#content-main').html(rendered);
             }
         );

@@ -46,7 +46,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic("Error while decoding json")
 	}
-	err = dashboard.RegisterUser(user)
+	err = dashboard.RegisterDashboardUser(user)
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -57,7 +57,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic("Error while decoding json")
 	}
-	err = dashboard.UpdateUser(user)
+	err = dashboard.UpdateDashboardUser(user)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
@@ -85,7 +85,7 @@ func GetUserProfile(w http.ResponseWriter, r *http.Request) {
 	username := vars["username"]
 	var user dao.DashboardUser
 
-	user = dashboard.GetUser(tenantid, username)
+	user = dashboard.GetDashboardUser(tenantid, username)
 	if (user.Username!="") {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
@@ -104,7 +104,7 @@ func GetDashboardUsersHandler(w http.ResponseWriter, r *http.Request) {
 	if (err != nil) {
 		log.Fatalln("Error while reading tenantid", err)
 	}
-	users := dashboard.GetAllUsers(tenantid)
+	users := dashboard.GetAllDashboardUsers(tenantid)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
@@ -117,11 +117,27 @@ func GetTenantRolesHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	tenantId := vars["tenantid"]
 	tenantIdInt, _ := strconv.Atoi(tenantId)
-	roles := dashboard.GetRoles(tenantIdInt)
+	roles := dashboard.GetDashboardUserRoles(tenantIdInt)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(roles); err != nil {
+		panic(err)
+	}
+}
+
+func GetAllUserPermissionsHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	tenantid, err := strconv.Atoi(vars["tenantid"])
+	if (err != nil) {
+		log.Fatalln("Error while reading tenantid", err)
+	}
+	permissions := dashboard.GetAllDashboardUserPermissions(tenantid)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+
+	if err := json.NewEncoder(w).Encode(permissions); err != nil {
 		panic(err)
 	}
 }

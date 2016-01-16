@@ -12,11 +12,11 @@ func GetAggregatedDownloadsFromTo(constrains dao.Constrains) [] dao.NameValue {
 	var totalDailyDownloads[] dao.NameValue
 	query := "SELECT SUM(outputoctets) as value ,date as name FROM dailyacct where date >= ? AND date < ? AND tenantid=? "
 
-	if len(constrains.LocationGroups) > 0 {
+	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
-		query = query + " AND calledstationid=? "
-		for i := 1; i< len(constrains.LocationGroups); i++ {
-   			query = query + " OR calledstationid=? "
+		query = query + " AND groupname=? "
+		for i := 1; i< len(constrains.GroupNames); i++ {
+   			query = query + " OR groupname=? "
 		}
 		query = query + " group by date"
 		_, err := dbMap.Select(&totalDailyDownloads, query, args...)
@@ -33,11 +33,11 @@ func GetAggregatedUploadsFromTo(constrains dao.Constrains) [] dao.NameValue {
 	var totalDailyDownloads[] dao.NameValue
 	query := "SELECT SUM(inputoctets) as value ,date as name FROM dailyacct where date >= ? AND date < ? AND tenantid=? "
 
-	if len(constrains.LocationGroups) > 0 {
+	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
-		query = query + " AND calledstationid=? "
-		for i := 1; i< len(constrains.LocationGroups); i++ {
-			query = query + " OR calledstationid=? "
+		query = query + " AND groupname=? "
+		for i := 1; i< len(constrains.GroupNames); i++ {
+			query = query + " OR groupname=? "
 		}
 		query = query + " group by date"
 		_, err := dbMap.Select(&totalDailyDownloads, query, args...)
@@ -56,11 +56,11 @@ func GetDownloadsFromTo(constrains dao.Constrains) int64 {
 	var count sql.NullInt64
 	query := "SELECT SUM(outputoctets) FROM dailyacct where date >= ? AND date < ? AND tenantid = ? "
 
-	if len(constrains.LocationGroups) > 0 {
+	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
-		query = query + " AND calledstationid=? "
-		for i := 1; i< len(constrains.LocationGroups); i++ {
-			query = query + " OR calledstationid=? "
+		query = query + " AND groupname=? "
+		for i := 1; i< len(constrains.GroupNames); i++ {
+			query = query + " OR groupname=? "
 		}
 		smtOut, err := dbMap.Db.Prepare(query)
 		defer smtOut.Close()
@@ -85,11 +85,11 @@ func GetUploadsFromTo(constrains dao.Constrains) int64 {
 	var count sql.NullInt64
 	query := "SELECT SUM(inputoctets) FROM dailyacct where date >= ? AND date < ? AND tenantid = ? "
 
-	if len(constrains.LocationGroups) > 0 {
+	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
-		query = query + " AND calledstationid=? "
-		for i := 1; i< len(constrains.LocationGroups); i++ {
-			query = query + " OR calledstationid=? "
+		query = query + " AND groupname=? "
+		for i := 1; i< len(constrains.GroupNames); i++ {
+			query = query + " OR groupname=? "
 		}
 		smtOut, err := dbMap.Db.Prepare(query)
 		defer smtOut.Close()
@@ -114,11 +114,11 @@ func GetTotalSessionsCountFromTo(constrains dao.Constrains) int64 {
 	var count sql.NullInt64
 	query := "SELECT SUM(noofsessions) FROM dailyacct where date >= ? AND date < ? AND tenantid = ? "
 
-	if len(constrains.LocationGroups) > 0 {
+	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
-		query = query + " AND calledstationid=? "
-		for i := 1; i< len(constrains.LocationGroups); i++ {
-			query = query + " OR calledstationid=? "
+		query = query + " AND groupname=? "
+		for i := 1; i< len(constrains.GroupNames); i++ {
+			query = query + " OR groupname=? "
 		}
 		smtOut, err := dbMap.Db.Prepare(query)
 		defer smtOut.Close()
@@ -143,11 +143,11 @@ func GetAvgSessionsFromTo(constrains dao.Constrains) float64 {
 	var count sql.NullFloat64
 	query := "SELECT AVG(sessionavgduration) FROM dailyacct where date >= ? AND date < ? AND tenantid = ? "
 
-	if len(constrains.LocationGroups) > 0 {
+	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
-		query = query + " AND calledstationid=? "
-		for i := 1; i< len(constrains.LocationGroups); i++ {
-			query = query + " OR calledstationid=? "
+		query = query + " AND groupname=? "
+		for i := 1; i< len(constrains.GroupNames); i++ {
+			query = query + " OR groupname=? "
 		}
 		smtOut, err := dbMap.Db.Prepare(query)
 		defer smtOut.Close()
@@ -166,10 +166,10 @@ func GetAvgSessionsFromTo(constrains dao.Constrains) float64 {
 }
 
 func getArgs(constrains *dao.Constrains) []interface{}{
-	args := make([]interface{}, len(constrains.LocationGroups)+3)
+	args := make([]interface{}, len(constrains.GroupNames)+3)
 	args[0] = constrains.From
 	args[1] = constrains.To
 	args[2] = constrains.TenantId
-	for index, value := range constrains.LocationGroups { args[index+3] = value }
+	for index, value := range constrains.GroupNames { args[index+3] = value }
 	return args
 }

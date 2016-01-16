@@ -188,112 +188,224 @@
 
 <script>
     $(
-        function () {
-            var payload = {from:from_, to :to_, locationid:window.wifilocation }
-            window.payload  = payload
-            var totaldownloads = 0, totaluploads = 0, uniqueuserscount = 0
+            function () {
+                var payload = {
+                    from: from_,
+                    to: to_,
+                    groupnames: window.datagroups,
+                    tenantid: parseInt(Cookies.get("tenantid"))
+                }
+                window.payload = payload
+                var totaldownloads = 0, totaluploads = 0, uniqueuserscount = 0
 
-            var renderTotalDownloads = $.post('/wifi/usage/downloads',JSON.stringify(payload),function(data,status){
-                                            totaldownloads = data
-                                            $.get('components/metric-base.html', function (template) {
-                                                var rendered = Mustache.render(template, {caption:'Total Downloads', value: numeral(data).format('0.00b'), titlecolor : '#12A6A8'});
-                                                $('#metric-downloads').html(rendered)
-                                            })
-                                        });
+                var renderTotalDownloads = $.post('/wifi/usage/downloads', JSON.stringify(payload), function (data, status) {
+                    totaldownloads = data
+                    $.get('components/metric-base.html', function (template) {
+                        var rendered = Mustache.render(template, {
+                            caption: 'Total Downloads',
+                            value: numeral(data).format('0.00b'),
+                            titlecolor: '#12A6A8'
+                        });
+                        $('#metric-downloads').html(rendered)
+                    })
+                });
 
-            var renderTotalUploads = $.post('/wifi/usage/uploads',JSON.stringify(payload),function(data,status){
-                                            totaluploads = data
-                                            $.get('components/metric-base.html', function (template) {
-                                                var rendered = Mustache.render(template, {caption:'Total Uploads', value : numeral(data).format('0.00b'), titlecolor : '#12A6A8'});
-                                                $('#metric-uploads').html(rendered)
-                                            })
-                                        });
+                var renderTotalUploads = $.post('/wifi/usage/uploads', JSON.stringify(payload), function (data, status) {
+                    totaluploads = data
+                    $.get('components/metric-base.html', function (template) {
+                        var rendered = Mustache.render(template, {
+                            caption: 'Total Uploads',
+                            value: numeral(data).format('0.00b'),
+                            titlecolor: '#12A6A8'
+                        });
+                        $('#metric-uploads').html(rendered)
+                    })
+                });
 
-            var renderTotalUserCount = $.post('/wifi/users/count',JSON.stringify(payload),function(data,status){
-                                            uniqueuserscount = (data === 0 ? 1 : data);
-                                            $.get('components/metric-base.html', function (template) {
-                                                var rendered = Mustache.render(template, {caption:'Total Users', value : data, titlecolor : '#12A6A8'});
-                                                $('#metric-totalusers').html(rendered)
-                                            })
-                                        });
+                var renderTotalUserCount = $.post('/wifi/users/count', JSON.stringify(payload), function (data, status) {
+                    uniqueuserscount = (data === 0 ? 1 : data);
+                    $.get('components/metric-base.html', function (template) {
+                        var rendered = Mustache.render(template, {
+                            caption: 'Total Users',
+                            value: data,
+                            titlecolor: '#12A6A8'
+                        });
+                        $('#metric-totalusers').html(rendered)
+                    })
+                });
 
-            $.post('/wifi/users/returncount',JSON.stringify(payload),function(data,status){
-                $.get('components/metric-base.html', function (template) {
-                    var rendered = Mustache.render(template, {caption:'Returning Users', value : data, titlecolor : '#12A6A8'});
-                    $('#metric-returningusers').html(rendered)
-                })
-            });
+                $.post('/wifi/sessions/avg', JSON.stringify(payload), function (data, status) {
+                    $.get('components/metric-base.html', function (template) {
+                        var rendered = Mustache.render(template, {
+                            caption: 'Avg User session time',
+                            value: numeral(data).format('00:00:00'),
+                            titlecolor: '#12A6A8'
+                        });
+                        $('#metric-avgsessiontime').html(rendered)
+                    })
+                });
 
-            $.post('/wifi/sessions/avg',JSON.stringify(payload),function(data,status){
-                $.get('components/metric-base.html', function (template) {
-                    var rendered = Mustache.render(template, {caption:'Avg User session time', value :  numeral(data).format('00:00:00'), titlecolor : '#12A6A8'});
-                    $('#metric-avgsessiontime').html(rendered)
-                })
-            });
+                $.post('/wifi/sessions/count', JSON.stringify(payload), function (data, status) {
+                    $.get('components/metric-base.html', function (template) {
+                        var rendered = Mustache.render(template, {
+                            caption: 'Total Sessions',
+                            value: data,
+                            titlecolor: '#12A6A8'
+                        });
+                        $('#metric-totalsessioncount').html(rendered)
+                    })
+                });
 
-            $.post('/wifi/sessions/count',JSON.stringify(payload),function(data,status){
-                $.get('components/metric-base.html', function (template) {
-                    var rendered = Mustache.render(template, {caption:'Total Sessions', value : data, titlecolor : '#12A6A8'});
-                    $('#metric-totalsessioncount').html(rendered)
-                })
-            });
+                $.post('/wifi/users/countbydownlods/1000000', JSON.stringify(payload), function (data, status) {
+                    $.get('components/metric-base.html', function (template) {
+                        var rendered = Mustache.render(template, {
+                            caption: 'Unique Users (>1MB)',
+                            value: data,
+                            titlecolor: '#12A6A8'
+                        });
+                        $('#metric-usercountover1MB').html(rendered)
+                    })
+                });
 
-            $.post('/wifi/users/countbydownlods/1000000',JSON.stringify(payload),function(data,status){
-                $.get('components/metric-base.html', function (template) {
-                    var rendered = Mustache.render(template, {caption:'Unique Users (>1MB)', value : data, titlecolor : '#12A6A8'});
-                    $('#metric-usercountover1MB').html(rendered)
-                })
-            });
+                $.when(renderTotalDownloads, renderTotalUploads, renderTotalUserCount).done(function () {
+                    $.get('components/metric-base.html', function (template) {
+                        var rendered = Mustache.render(template, {
+                            caption: 'Avg Data Usage per User',
+                            value: numeral((totaldownloads + totaluploads) / uniqueuserscount).format('0.00b'),
+                            titlecolor: '#12A6A8'
+                        });
+                        $('#metric-avgdatausageperuser').html(rendered)
+                    })
+                });
 
-            $.when(renderTotalDownloads,renderTotalUploads,renderTotalUserCount).done(function(){
-                        $.get('components/metric-base.html', function (template) {
-                            var rendered = Mustache.render(template, {caption:'Avg Data Usage per User', value :numeral((totaldownloads + totaluploads)/uniqueuserscount).format('0.00b'), titlecolor : '#12A6A8'});
-                            $('#metric-avgdatausageperuser').html(rendered)
-                        })
-                    });
+//            $.post('/wifi/users/bydeviceos',JSON.stringify(payload),function(data,status){
+                browserdata = [{
+                    name: "Internet Explorer",
+                    y: 16.33
+                }, {
+                    name: "Chrome",
+                    y: 24.03,
+                    sliced: true,
+                    selected: true
+                }, {
+                    name: "Firefox",
+                    y: 20.38
+                }, {
+                    name: "Safari",
+                    y: 34.77
+                }, {
+                    name: "Opera",
+                    y: 0.91
+                }, {
+                    name: "Other",
+                    y: 0.2
+                }]
 
-            $.post('/wifi/users/bydeviceos',JSON.stringify(payload),function(data,status){
+                devicedata = [{
+                    name: "iOS",
+                    y: 26.33
+                }, {
+                    name: "Android",
+                    y: 34.03,
+                    sliced: true,
+                    selected: true
+                }, {
+                    name: "Windows",
+                    y: 8.38
+                }, {
+                    name: "Mac OS",
+                    y: 14.77
+                }, {
+                    name: "Windows Phone",
+                    y: 0.91
+                }, {
+                    name: "Other",
+                    y: 0.2
+                }]
                 $.get('components/metric-piechart-base.html', function (template) {
-                    var rendered = Mustache.render(template, {id: 0, caption:'Users by OS',  style: 'success', data :JSON.stringify(getChartData(data)), titlecolor : '#2F4050'});
+                    var rendered = Mustache.render(template, {
+                        id: 0,
+                        caption: 'Users by Browser',
+                        style: 'success',
+                        data: JSON.stringify(browserdata),
+                        data2: JSON.stringify(getChartData(browserdata)),
+                        titlecolor: '#2F4050'
+                    });
                     $('#metric-usersbyos').html(rendered)
                 })
-            });
-
-            $.post('/wifi/users/bydevicetype',JSON.stringify(payload),function(data,status){
+//            });
+//
+//            $.post('/wifi/users/bydevicetype',JSON.stringify(payload),function(data,status){
                 $.get('components/metric-piechart-base.html', function (template) {
-                    var rendered = Mustache.render(template, {id: 1, caption:'Users by Device Type', style: 'success', data : JSON.stringify(getChartData(data)), titlecolor : '#2F4050' })
+                    var rendered = Mustache.render(template, {
+                        id: 1,
+                        caption: 'Users by Device OS',
+                        style: 'success',
+                        data: JSON.stringify(devicedata),
+                        data2: JSON.stringify(getChartData(devicedata)),
+                        titlecolor: '#2F4050'
+                    })
                     $('#metric-usersbydevicetype').html(rendered)
                 })
-            });
+//            });
 
-            timeSeriesData = []
-            $.post('/wifi/usage/dailytotaldownloads',JSON.stringify(payload),function(data,status){
-                var locationDist = { type: 'spline', name: payload.locationid, data: convertToHighChartSeries(data)}
-                timeSeriesData.push(locationDist);
-            });
+                timeSeriesData = []
+                if (window.aggregate == "no") {
+                    $.each(window.datagroups, function (i, val) {
+                        var payload2 = payload
+                        payload2.datagroups = val
+                        $.post('/wifi/usage/dailytotaldownloads', JSON.stringify(payload2), function (data, status) {
+                            var locationDist = {type: 'spline', name: val, data: convertToHighChartSeries(data)}
+                            timeSeriesData.push(locationDist);
+                        });
+                    });
+                    renderTimeSeries();
+                } else {
+                    $.post('/wifi/usage/dailytotaldownloads', JSON.stringify(payload), function (data, status) {
+                        var locationDist = {type: 'spline', name: window.appName, data: convertToHighChartSeries(data)}
+                        timeSeriesData.push(locationDist);
+                        renderTimeSeries();
+                    });
+                }
 
-            $.post('/wifi/usage/dailytotaldownloads',JSON.stringify(payload),function(data,status){
-                  $.get('components/metric-timeserieschart-base.html', function (template) {
-                    var rendered = Mustache.render(template, {id: 1, caption:'Users by Device Type', style: 'success', data : JSON.stringify(timeSeriesData)})
-                    $('#time-series').html(rendered)
-                })
-            });
+                function renderTimeSeries() {
+                    $.get('components/metric-timeserieschart-base.html', function (template) {
+                        var rendered = Mustache.render(template, {
+                            id: 1,
+                            caption: 'Users by Device Type',
+                            style: 'success',
+                            data: JSON.stringify(timeSeriesData)
+                        })
+                        $('#time-series').html(rendered)
+                    })
+                }
 
-            function convertToHighChartSeries(arr){
-                return data = $.map(arr, function(val,i){
-                    return [[moment(val.name,'YYYY-M-D H:m:s').valueOf(), val.value/1000000]];
+                function convertToHighChartSeries(arr) {
+                    return data = $.map(arr, function (val, i) {
+                        return [[moment(val.name, 'YYYY-M-D H:m:s').valueOf(), val.value / 1000000]];
+                    });
+                    return data;
+                }
+
+                function getChartData(data) {
+                    var chartData = $.map(data, function (obj, i) {
+                        return [[obj.name, obj.value]];
+                    });
+                    return chartData;
+                }
+
+                $.post('/wifi/users/returncount', JSON.stringify(payload), function (data, status) {
+                    $.get('components/metric-base.html', function (template) {
+                        var rendered = Mustache.render(template, {
+                            caption: 'Returning Users',
+                            value: data,
+                            titlecolor: '#12A6A8'
+                        });
+                        $('#metric-returningusers').html(rendered)
+                    })
                 });
-                return data;
-            }
 
-            function getChartData(data){
-                var chartData = $.map( data, function( obj,i){
-                    return [[ obj.name, obj.value]];
-                });
-                return chartData;
             }
-
-        }
     );
 
 </script>

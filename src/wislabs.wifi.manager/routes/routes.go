@@ -52,6 +52,13 @@ var routes = Routes{
 		dashboard_handlers.GetTenantRolesHandler,
 	},
 	Route{
+		"Get all dashboard user permissions",
+		"GET",
+		"/dashboard/{tenantid}/permissions",
+		true,
+		dashboard_handlers.GetAllUserPermissionsHandler,
+	},
+	Route{
 		"Login",
 		"POST",
 		"/dashboard/login2",

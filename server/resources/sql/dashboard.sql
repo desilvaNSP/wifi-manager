@@ -14,7 +14,6 @@ USE `dashboard`;
 CREATE TABLE IF NOT EXISTS `tenants` (
   `tenantid` INT NOT NULL AUTO_INCREMENT,
   `domain` varchar(255) DEFAULT NULL,
-  `email` varchar(255) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL,
   `createdon` TIMESTAMP,
   PRIMARY KEY(`tenantid`)
@@ -49,24 +48,35 @@ CREATE TABLE IF NOT EXISTS `userpermissions` (
   FOREIGN KEY(permissionid) REFERENCES permissions(permissionid) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS `apgroups` (
+  `tenantid` INT,
+  `groupid` BIGINT NOT NULL AUTO_INCREMENT,
+  `groupname` VARCHAR(255) DEFAULT NULL,
+  PRIMARY KEY (`groupid`,  `tenantid`),
+  FOREIGN KEY(`tenantid`) REFERENCES tenants(tenantid) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
 CREATE TABLE IF NOT EXISTS `aplocations` (
   `tenantid` INT,
   `locationid` BIGINT NOT NULL AUTO_INCREMENT,
   `ssid`  VARCHAR(255) NOT NULL,
   `mac` VARCHAR(255) DEFAULT NULL,
+  `bssid` VARCHAR(255) DEFAULT NULL,
   `longitude` FLOAT ,
   `latitude` FLOAT ,
+  `groupid` BIGINT,
   `groupname` varchar(255) NOT NULL,
   PRIMARY KEY(`locationid`, `ssid`, `mac`),
-  FOREIGN KEY(tenantid) REFERENCES users(tenantid) ON DELETE CASCADE
+  FOREIGN KEY(tenantid) REFERENCES tenants(tenantid) ON DELETE CASCADE,
+  FOREIGN KEY(groupid) REFERENCES apgroups(groupid) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS `apgroups` (
-  `groupid` BIGINT NOT NULL AUTO_INCREMENT,
-  `locationid` BIGINT,
-  `groupname` VARCHAR(255) DEFAULT NULL,
-  PRIMARY KEY (`groupid`),
-  FOREIGN KEY(`locationid`) REFERENCES aplocations(locationid) ON DELETE CASCADE
+CREATE TABLE IF NOT EXISTS `userapgroups` (
+  `userid` BIGINT,
+  `groupid` BIGINT,
+  PRIMARY KEY(`groupid`, `userid`),
+  FOREIGN KEY(userid) REFERENCES users(userid) ON DELETE CASCADE,
+  FOREIGN KEY(groupid) REFERENCES apgroups(groupid) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `useragentinfo` (
@@ -125,25 +135,4 @@ CREATE TABLE IF NOT EXISTS `appmetrics` (
   FOREIGN KEY(appid) REFERENCES apps(appid) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
---
--- Adding sample dataset
---
-
-INSERT INTO tenants (domain, email, status)
-VALUES ('wislabs.com','admin@wislabs.com','active');
-
-INSERT INTO users (tenantid, username, password, email, status)
-VALUES (1,'admin','$2a$10$FesfnIBKqhH2MuF1hmss0umXNrrx28AW1E4re9OCAwib3cIOKBz3C', 'admin@wsilabs.com', 'active');
-
-INSERT INTO permissions (tenantid, name, action)
-VALUES (1, 'wifi_location', 'read'),
-  (1, 'wifi_location', 'write'),
-  (1, 'wifi_location', 'execute')
-;
-
-INSERT INTO userpermissions (userid, permissionid)
-VALUES (1, 1),
-  (1, 2),
-  (1, 3)
-;
 

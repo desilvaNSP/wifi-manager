@@ -9,53 +9,58 @@ import (
 	"wislabs.wifi.manager/common"
 )
 
-func IsUserAuthenticated(user dao.DashboardUser) bool{
+func IsUserAuthenticated(user dao.DashboardUser) bool {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 
 	var hashedPassword sql.NullString
 	smtOut, err := dbMap.Db.Prepare("SELECT password FROM users where username=? ANd tenantid=? and status='active'")
-	defer  smtOut.Close()
+	defer smtOut.Close()
 	err = smtOut.QueryRow(user.Username, user.TenantId).Scan(&hashedPassword)
 	if err == nil && hashedPassword.Valid {
-		if(len(hashedPassword.String) > 0){
+		if (len(hashedPassword.String) > 0) {
 			err = bcrypt.CompareHashAndPassword([]byte(hashedPassword.String), []byte(user.Password))
-			if err == nil{
+			if err == nil {
 				log.Debug("User authenticated successfully " + user.Username)
-			    return true
+				return true
 			}
 		}
-	}else{
+	}else {
 		log.Debug("User authentication failed " + user.Username)
 		return false
 	}
 	return false
 }
 
-func RegisterUser(user dao.DashboardUser) error{
+func RegisterDashboardUser(user dao.DashboardUser) error {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
-
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
 	}
-
-	stmtIns, err := dbMap.Db.Prepare("INSERT INTO users (tenantid, username, password, email, status) VALUES( ?, ?, ?, ?, ?)")
+	stmtIns, err := dbMap.Db.Prepare(common.CREATE_DASHBOARD_USER)
 	defer stmtIns.Close()
 
 	if err != nil {
 		return err
 	}
-	_, err = stmtIns.Exec(user.TenantId, user.Username, string(hashedPassword), user.Email, user.Status)
+	result, err := stmtIns.Exec(user.TenantId, user.Username, string(hashedPassword), user.Email, user.Status)
+	if err != nil {
+		return err
+	} else {
+		userId, _ := result.LastInsertId()
+		//AddDashboardUserPermissions(userId, user)
+		AddDashboardUserApGroups(userId, user)
+	}
 	return err
 }
 
-func UpdateUser(user dao.DashboardUser) error{
+func UpdateDashboardUser(user dao.DashboardUser) error {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 
-	stmtIns, err := dbMap.Db.Prepare("UPDATE users SET email=?, status=? WHERE username=? and tenantid=?")
+	stmtIns, err := dbMap.Db.Prepare(common.UPDATE_DASHBOARD_USER)
 	defer stmtIns.Close()
 
 	if err != nil {
@@ -65,8 +70,7 @@ func UpdateUser(user dao.DashboardUser) error{
 	return err
 }
 
-
-func DeleteDashboardUser(tenantId int, username string){
+func DeleteDashboardUser(tenantId int, username string) {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 
@@ -81,7 +85,7 @@ func DeleteDashboardUser(tenantId int, username string){
 	defer stmtIns.Close()
 }
 
-func GetUser(tenantId int, username string) dao.DashboardUser{
+func GetDashboardUser(tenantId int, username string) dao.DashboardUser {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 
@@ -92,27 +96,125 @@ func GetUser(tenantId int, username string) dao.DashboardUser{
 		return user
 	}
 	user.TenantId = tenantId
+	user.Permissions = GetDashboardUserPermissions(tenantId, username)
+	user.ApGroups = GetDashboardUserApGroups(tenantId, username)
 	return user
 }
 
-func GetAllUsers(tenantId int) []dao.DashboardUser{
+func GetAllDashboardUsers(tenantId int) []dao.DashboardUser {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 	var users []dao.DashboardUser
-	_,err := dbMap.Select(&users, common.GET_ALL_DASHBOARD_USERS ,tenantId)
+	_, err := dbMap.Select(&users, common.GET_ALL_DASHBOARD_USERS, tenantId)
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
 	return users
 }
 
-func GetRoles(tenantId int) []dao.Role{
+func GetDashboardUserRoles(tenantId int) []dao.Role {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 	var roles []dao.Role
-	_,err := dbMap.Select(&roles, "SELECT name, tenantId FROM roles WHERE tenantid=?",tenantId)
+	_, err := dbMap.Select(&roles, "SELECT name, tenantId FROM roles WHERE tenantid=?", tenantId)
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
 	return roles
 }
+
+func GetDashboardUserPermissions(tenantId int, username string) []string {
+	dbMap := utils.GetDBConnection("dashboard");
+	defer dbMap.Db.Close()
+	var permissions []string
+	_, err := dbMap.Select(&permissions, common.GET_DASHBOARD_USER_PERMISSIONS, username, tenantId)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	return permissions
+}
+
+func AddDashboardUserPermissions(userId int64, user dao.DashboardUser) error {
+	dbMap := utils.GetDBConnection("dashboard");
+	defer dbMap.Db.Close()
+	stmtIns, err := dbMap.Db.Prepare(common.ADD_DASHBOARD_USER_PERMISSIONS)
+	defer stmtIns.Close()
+
+	if err != nil {
+		return err
+	}
+	for _, permission := range user.Permissions {
+		_, err := stmtIns.Exec(GetPermissionId(user.TenantId, permission), userId)
+		if err != nil {
+			return err
+		}
+	}
+	return err
+}
+
+func UpdateDashboardUserPermissions() {
+
+}
+
+func GetAllDashboardUserPermissions(tenantId int) []dao.Permission {
+	dbMap := utils.GetDBConnection("dashboard");
+	defer dbMap.Db.Close()
+	var permissions []dao.Permission
+	_, err := dbMap.Select(&permissions, common.GET_ALL_PERMISSIONS, tenantId)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	return permissions
+}
+
+func GetPermissionId(tenantId int, permission string) int64 {
+	dbMap := utils.GetDBConnection("dashboard");
+	defer dbMap.Db.Close()
+
+	permissionId, err := dbMap.SelectInt(common.GET_PERMISSION_ID, permission, tenantId)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	return permissionId
+}
+
+func AddDashboardUserApGroups(userId int64, user dao.DashboardUser) error {
+	dbMap := utils.GetDBConnection("dashboard");
+	defer dbMap.Db.Close()
+	stmtIns, err := dbMap.Db.Prepare(common.ADD_DASHBOARD_USER_AP_GROUP)
+	defer stmtIns.Close()
+
+	if err != nil {
+		return err
+	}
+	for _, groupName := range user.ApGroups {
+		_, err := stmtIns.Exec(GetApGroupId(user.TenantId, groupName), userId)
+		if err != nil {
+			return err
+		}
+	}
+	return err
+}
+
+func GetApGroupId(tenantId int, groupName string) int64 {
+	dbMap := utils.GetDBConnection("dashboard");
+	defer dbMap.Db.Close()
+
+	permissionId, err := dbMap.SelectInt(common.GET_AP_GROUP_ID, groupName, tenantId)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	return permissionId
+}
+
+func GetDashboardUserApGroups(tenantId int, username string) []string {
+	dbMap := utils.GetDBConnection("dashboard");
+	defer dbMap.Db.Close()
+	var groups []string
+	_, err := dbMap.Select(&groups, common.GET_DASHBOARD_USER_AP_GROUPS, username, tenantId)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	return groups
+}
+

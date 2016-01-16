@@ -1,4 +1,23 @@
+<div class="ibox-title" style="background-color:{{{titlecolor}}} ">
+    <!--<span class="label label-{{{style}}} pull-right">Today</span>-->
+    <h5 style="color:#ffffff">Downloads distribution</h5>
+    <div class="ibox-tools">
+        <a class="collapse-link">
+            <i class="fa fa-chevron-up"></i>
+        </a>
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+            <i class="fa fa-wrench"></i>
+        </a>
+        <ul class="dropdown-menu dropdown-user">
+        </ul>
+        <a class="close-link">
+            <i class="fa fa-times"></i>
+        </a>
+    </div>
+</div>
+
 <div class="ibox-content">
+    <h1 class="no-margins" style="padding-left: 15%"></h1>
     <div id="lineChart" height="70">
 
     </div>
@@ -19,10 +38,7 @@
                 zoomType: 'x'
             },
             title: {
-                text: 'Downloads distribution'
-            },
-            subtitle: {
-                text: 'Daily Downloads against time'
+                text: ''
             },
             xAxis: {
                 type: 'datetime',
@@ -36,7 +52,7 @@
             },
             yAxis: {
                 title: {
-                    text: 'Downlods (MB)'
+                    text: 'Downloads (MB)'
                 },
                 min: 0
             },
@@ -44,7 +60,6 @@
                 headerFormat: '<b>{series.name}</b><br>',
                 pointFormat: '{point.x:%e. %b}: {point.y:.2f} m'
             },
-
             plotOptions: {
                 spline: {
                     marker: {
@@ -59,7 +74,10 @@
                    subtitle: null
                }
            },
-            series: {{{data}}}
+            series: {{{data}}},
+            credits: {
+                enabled: false
+            }
         });
     });
 </script>

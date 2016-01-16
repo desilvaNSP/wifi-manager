@@ -14,9 +14,9 @@ function default_(){
 }
 
 function clean_(){
-    echo "Cleaning databses..."
+    echo "Cleaning dashboard databses..."
     mysql -u $DASHBOARD_DB_USERNAME -p$DASHBOARD_DB_PASSWORD -h $DASHBOARD_DB_HOST < ../sql/cleanall.sql
-    echo "Cleaning complete"
+    echo "Cleaning dashboard database complete"
 }
 
 case "$1" in

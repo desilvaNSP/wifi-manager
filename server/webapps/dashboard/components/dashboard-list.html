@@ -71,13 +71,18 @@
                 }
             });
 
-            var locationsAjax = $.get('/wifi/' + Cookies.get('tenantid') + '/locations/groups', function (result) {
-                locations = result
+//            var locationsAjax = $.get('/wifi/' + Cookies.get('tenantid') + '/locations/groups', function (result) {
+//                locations = result
+//            });
+
+            var locationsAjax = $.get('/dashboard/' + Cookies.get('tenantid') + '/users/' + Cookies.get('username'), function (result) {
+                locations = result.permissions
             });
 
             var metricsAjax = $.get('/dashboard/' + Cookies.get('tenantid') + '/metrics', function (result) {
                 metrics = result
             });
+
             var addDashboardFromValidator;
             $.when(usersAjax, locationsAjax, metricsAjax).done(function () {
                 $.get('components/dashboard-app-modal.html', function (template) {
@@ -173,17 +178,21 @@
             var aggregate = $(this).attr('data-aggregate');
             datagroups = [];
             $.get('components/dashboard.html', function (template) {
-                        if (aggregate == 'no') {
-                            datagroups = [{groupname: appName}]
+                        $.get('/dashboard/apps/' + appId + '/groups', function (result) {
+                            if (aggregate === 'yes') {
+                                datagroups = [{groupname: appName}]
+                            } else {
+                                datagroups = []
+                                $.each(result, function (index, element) {
+                                    datagroups.push(element.groupname)
+                                })
+                            }
+                            window.appId = appId
+                            window.appName = appName
+                            window.datagroups = datagroups
                             var rendered = Mustache.render(template, {appId: appId, datagroups: datagroups});
                             $('.container-dashboard').html(rendered);
-                        } else {
-                            $.get('/dashboard/apps/' + appId + '/groups', function (result) {
-                                var rendered = Mustache.render(template, {appId: appId, datagroups: result});
-                                $('.container-dashboard').html(rendered);
-                            })
-                        }
-
+                        });
                     }
             );
         });
@@ -203,7 +212,7 @@
             });
         });
     });
-    function deleteApp(event){
+    function deleteApp(event) {
         deleteAppId = $(event).attr('data-appid');
         $('#confirm-delete-modal').modal();
     }

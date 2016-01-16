@@ -13,7 +13,7 @@ func GetUsersByOS(constrains dao.Constrains) []dao.NameValue{
 
 	query = "SELECT count(username) as value,os as name from useragentinfo WHERE locationid=? AND date >= ? AND date < ? group by os"
 
-	_, err := dbMap.Select(&usersByOS, query, constrains.LocationGroups, constrains.From, constrains.To)
+	_, err := dbMap.Select(&usersByOS, query, constrains.GroupNames, constrains.From, constrains.To)
 	checkErr(err, "Select failed")
 	return usersByOS
 }
@@ -27,7 +27,7 @@ func GetUsersByDevice(constrains dao.Constrains) []dao.NameValue{
 
 	query = "SELECT count(username) as value, device as name from useragentinfo WHERE locationid=? AND date >= ? AND date < ? group by os"
 
-	_, err := dbMap.Select(&usersByOS, query, constrains.LocationGroups, constrains.From, constrains.To)
+	_, err := dbMap.Select(&usersByOS, query, constrains.GroupNames, constrains.From, constrains.To)
 	checkErr(err, "Select failed")
 	return usersByOS
 }
