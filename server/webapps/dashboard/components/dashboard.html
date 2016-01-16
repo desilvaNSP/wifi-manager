@@ -48,7 +48,6 @@
         });
 
         function renderMetrics() {
-            var payload = {from: from_, to: to_}
             $.get('components/dashboard-metrics.html', function (template) {
                 var rendered = Mustache.render(template, {});
                 $('#dashboard-metric-content').html(rendered)
@@ -56,8 +55,7 @@
         }
 
         $('#select-wifilocation').on('change', function (e) {
-            var optionSelected = $("option:selected", this);
-            window.wifilocation = this.value;
+            window.datagroups = [this.value];
             renderMetrics()
         });
     });

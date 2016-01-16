@@ -27,6 +27,40 @@ func GetAgregatedDownloadsFromToHandler(w http.ResponseWriter, r *http.Request) 
 }
 
 /**
+* POST /wifi/usage/dailyavguserdownloads
+ */
+func GetAvgUserDownloadsFromToHandler(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var constrains dao.Constrains
+	decoder.Decode(&constrains)
+	count := wifi.GetAvgDailyDownloadsPerUserFromTo(constrains)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+
+	if err := json.NewEncoder(w).Encode(count); err != nil {
+		panic(err)
+	}
+}
+
+/**
+* POST /wifi/usage/dailyavgusersessiontime
+ */
+func GetAvgUserSessionTimeFromToHandler(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var constrains dao.Constrains
+	decoder.Decode(&constrains)
+	count := wifi.GetAvgDailySessionTimePerUserFromTo(constrains)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+
+	if err := json.NewEncoder(w).Encode(count); err != nil {
+		panic(err)
+	}
+}
+
+/**
 * POST /wifi/usage/dailytotaluploads
  */
 func GetAgregatedUploadsFromToHandler(w http.ResponseWriter, r *http.Request) {

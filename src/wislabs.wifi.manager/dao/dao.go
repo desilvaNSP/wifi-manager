@@ -5,7 +5,7 @@ import (
 
 type NameValue struct {
 	Name  string  `db:"name"json:"name"`
-	Value int  `db:"value"json:"value"`
+	Value float64  `db:"value"json:"value"`
 }
 
 type Tenant struct {

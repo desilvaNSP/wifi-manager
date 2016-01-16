@@ -341,7 +341,7 @@
                     password: $('#inputPassword').val(),
                     email: $('#inputEmail').val(),
                     status: newUserStatus,
-                    permissions : getCheckedDataScopes('datascope')
+                    apgroups : getCheckedDataScopes('datascope')
                 }
                 $.post('/dashboard/users', JSON.stringify(payload), function (result) {
                     $('#adduser-modal').modal('hide');

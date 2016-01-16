@@ -10,7 +10,7 @@ func GetAggregatedDownloadsFromTo(constrains dao.Constrains) [] dao.NameValue {
 	dbMap := utils.GetDBConnection("radsummary");
 	defer dbMap.Db.Close()
 	var totalDailyDownloads[] dao.NameValue
-	query := "SELECT SUM(outputoctets) as value ,date as name FROM dailyacct where date >= ? AND date < ? AND tenantid=? "
+	query := "SELECT SUM(inputoctets) as value ,date as name FROM dailyacct where date >= ? AND date < ? AND tenantid=? "
 
 	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
@@ -31,7 +31,7 @@ func GetAggregatedUploadsFromTo(constrains dao.Constrains) [] dao.NameValue {
 	dbMap := utils.GetDBConnection("radsummary");
 	defer dbMap.Db.Close()
 	var totalDailyDownloads[] dao.NameValue
-	query := "SELECT SUM(inputoctets) as value ,date as name FROM dailyacct where date >= ? AND date < ? AND tenantid=? "
+	query := "SELECT SUM(outputoctets) as value ,date as name FROM dailyacct where date >= ? AND date < ? AND tenantid=? "
 
 	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
@@ -48,13 +48,33 @@ func GetAggregatedUploadsFromTo(constrains dao.Constrains) [] dao.NameValue {
 	return totalDailyDownloads
 }
 
+func GetAvgDailyDownloadsPerUserFromTo(constrains dao.Constrains) [] dao.NameValue {
+	dbMap := utils.GetDBConnection("radsummary");
+	defer dbMap.Db.Close()
+	var totalDailyDownloads[] dao.NameValue
+	query := "SELECT SUM(inputoctets)/COUNT(DISTINCT username) as value ,date as name FROM dailyacct where date >= ? AND date < ? AND tenantid=? "
+
+	if len(constrains.GroupNames) > 0 {
+		args := getArgs(&constrains)
+		query = query + " AND groupname=? "
+		for i := 1; i< len(constrains.GroupNames); i++ {
+			query = query + " OR groupname=? "
+		}
+		query = query + " group by date"
+		_, err := dbMap.Select(&totalDailyDownloads, query, args...)
+		if err != nil {
+			panic(err.Error()) // proper error handling instead of panic
+		}
+	}
+	return totalDailyDownloads
+}
 
 func GetDownloadsFromTo(constrains dao.Constrains) int64 {
 	dbMap := utils.GetDBConnection("radsummary");
 	defer dbMap.Db.Close()
 	var err error
 	var count sql.NullInt64
-	query := "SELECT SUM(outputoctets) FROM dailyacct where date >= ? AND date < ? AND tenantid = ? "
+	query := "SELECT SUM(inputoctets) FROM dailyacct where date >= ? AND date < ? AND tenantid = ? "
 
 	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
@@ -83,7 +103,7 @@ func GetUploadsFromTo(constrains dao.Constrains) int64 {
 	defer dbMap.Db.Close()
 	var err error
 	var count sql.NullInt64
-	query := "SELECT SUM(inputoctets) FROM dailyacct where date >= ? AND date < ? AND tenantid = ? "
+	query := "SELECT SUM(outputoctets) FROM dailyacct where date >= ? AND date < ? AND tenantid = ? "
 
 	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
@@ -141,7 +161,7 @@ func GetAvgSessionsFromTo(constrains dao.Constrains) float64 {
 	defer dbMap.Db.Close()
 	var err error
 	var count sql.NullFloat64
-	query := "SELECT AVG(sessionavgduration) FROM dailyacct where date >= ? AND date < ? AND tenantid = ? "
+	query := "SELECT SUM(sessionavgduration)/COUNT(DISTINCT username) FROM dailyacct where date >= ? AND date < ? AND tenantid = ? "
 
 	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
@@ -163,6 +183,27 @@ func GetAvgSessionsFromTo(constrains dao.Constrains) float64 {
 	}else {
 		return 0
 	}
+}
+
+func GetAvgDailySessionTimePerUserFromTo(constrains dao.Constrains) [] dao.NameValue {
+	dbMap := utils.GetDBConnection("radsummary");
+	defer dbMap.Db.Close()
+	var totalDailyDownloads[] dao.NameValue
+	query := "SELECT SUM(sessionavgduration)/COUNT(DISTINCT username) as value ,date as name FROM dailyacct where date >= ? AND date < ? AND tenantid = ?"
+
+	if len(constrains.GroupNames) > 0 {
+		args := getArgs(&constrains)
+		query = query + " AND groupname=? "
+		for i := 1; i< len(constrains.GroupNames); i++ {
+			query = query + " OR groupname=? "
+		}
+		query = query + " group by date"
+		_, err := dbMap.Select(&totalDailyDownloads, query, args...)
+		if err != nil {
+			panic(err.Error()) // proper error handling instead of panic
+		}
+	}
+	return totalDailyDownloads
 }
 
 func getArgs(constrains *dao.Constrains) []interface{}{

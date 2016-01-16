@@ -1,6 +1,6 @@
 <div class="ibox-title" style="background-color:{{{titlecolor}}} ">
     <!--<span class="label label-{{{style}}} pull-right">Today</span>-->
-    <h5 style="color:#ffffff">Downloads distribution</h5>
+    <h5 style="color:#ffffff">{{caption}}</h5>
     <div class="ibox-tools">
         <a class="collapse-link">
             <i class="fa fa-chevron-up"></i>
@@ -18,22 +18,15 @@
 
 <div class="ibox-content">
     <h1 class="no-margins" style="padding-left: 15%"></h1>
-    <div id="lineChart" height="70">
+    <div id="lineChart-{{id}}" height="70">
 
     </div>
-    <div class="m-t-md">
-        <small class="pull-right">
-            <i class="fa fa-clock-o"> </i>
-            Update on
-        </small>
-    </div>
-
 </div>
 
 
 <script>
     $(function () {
-       var lineChart = $('#lineChart').highcharts({
+       var lineChart = $('#lineChart-{{id}}').highcharts({
             chart: {
                 zoomType: 'x'
             },
@@ -52,7 +45,7 @@
             },
             yAxis: {
                 title: {
-                    text: 'Downloads (MB)'
+                    text: "{{yAxis}}"
                 },
                 min: 0
             },

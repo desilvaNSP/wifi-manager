@@ -1,8 +1,52 @@
+<!-- Downloads and Uploads -->
 <div class="row">
-    <div class="col-lg-12">
+    <div class="col-lg-6">
         <div class="ibox float-e-margins">
             <div class="ibox-content">
-                <div id="time-series">
+                <div id="time-series-downloads">
+                    <div class="sk-spinner sk-spinner-three-bounce">
+                        <div class="sk-bounce1"></div>
+                        <div class="sk-bounce2"></div>
+                        <div class="sk-bounce3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div id="time-series-uploads">
+                    <div class="sk-spinner sk-spinner-three-bounce">
+                        <div class="sk-bounce1"></div>
+                        <div class="sk-bounce2"></div>
+                        <div class="sk-bounce3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Avg sessions -->
+<div class="row">
+    <div class="col-lg-6">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div id="time-series-avgdownloads">
+                    <div class="sk-spinner sk-spinner-three-bounce">
+                        <div class="sk-bounce1"></div>
+                        <div class="sk-bounce2"></div>
+                        <div class="sk-bounce3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div id="time-series-avgsessiontime">
                     <div class="sk-spinner sk-spinner-three-bounce">
                         <div class="sk-bounce1"></div>
                         <div class="sk-bounce2"></div>
@@ -278,6 +322,17 @@
                     })
                 });
 
+                $.post('/wifi/users/returncount', JSON.stringify(payload), function (data, status) {
+                    $.get('components/metric-base.html', function (template) {
+                        var rendered = Mustache.render(template, {
+                            caption: 'Returning Users',
+                            value: data,
+                            titlecolor: '#12A6A8'
+                        });
+                        $('#metric-returningusers').html(rendered)
+                    })
+                });
+
 //            $.post('/wifi/users/bydeviceos',JSON.stringify(payload),function(data,status){
                 browserdata = [{
                     name: "Internet Explorer",
@@ -349,34 +404,55 @@
                 })
 //            });
 
-                timeSeriesData = []
+                downloadsTimeSeriesData = []
                 if (window.aggregate == "no") {
                     $.each(window.datagroups, function (i, val) {
                         var payload2 = payload
                         payload2.datagroups = val
                         $.post('/wifi/usage/dailytotaldownloads', JSON.stringify(payload2), function (data, status) {
                             var locationDist = {type: 'spline', name: val, data: convertToHighChartSeries(data)}
-                            timeSeriesData.push(locationDist);
+                            downloadsTimeSeriesData.push(locationDist);
                         });
                     });
-                    renderTimeSeries();
+                    renderTimeSeries('time-series-downloads', 'Total Daily Downloads Distribution', "Downloads (MB)", downloadsTimeSeriesData);
                 } else {
                     $.post('/wifi/usage/dailytotaldownloads', JSON.stringify(payload), function (data, status) {
                         var locationDist = {type: 'spline', name: window.appName, data: convertToHighChartSeries(data)}
-                        timeSeriesData.push(locationDist);
-                        renderTimeSeries();
+                        downloadsTimeSeriesData.push(locationDist);
+                        renderTimeSeries('time-series-downloads', 'Total Daily Downloads Distribution', "Downloads (MB)", downloadsTimeSeriesData);
                     });
                 }
+                uploadsTimeSeriesData = []
+                $.post('/wifi/usage/dailytotaluploads', JSON.stringify(payload), function (data, status) {
+                    var locationDist = {type: 'spline', name: window.appName, data: convertToHighChartSeries(data)}
+                    uploadsTimeSeriesData.push(locationDist);
+                    renderTimeSeries('time-series-uploads', 'Total Daily Uploads Distribution', "Uploads (MB)", uploadsTimeSeriesData);
+                });
 
-                function renderTimeSeries() {
+                avgDownloadsTimeSeriesData = []
+                $.post('/wifi/usage/dailyavguserdownloads', JSON.stringify(payload), function (data, status) {
+                    var locationDist = {type: 'spline', name: window.appName, data: convertToHighChartSeries(data)}
+                    avgDownloadsTimeSeriesData.push(locationDist);
+                    renderTimeSeries('time-series-avgdownloads', 'Average Daily User Downloads Distribution', "Downloads (MB)", avgDownloadsTimeSeriesData);
+                });
+
+                avgUserSessionTimeSeriesData = []
+                $.post('/wifi/usage/dailyavgusersessiontime', JSON.stringify(payload), function (data, status) {
+                    var locationDist = {type: 'spline', name: window.appName, data: convertToHighChartSeries(data)}
+                    avgUserSessionTimeSeriesData.push(locationDist);
+                    renderTimeSeries('time-series-avgsessiontime', 'Average Daily User Session Time Distribution', "Time", avgUserSessionTimeSeriesData);
+                });
+
+                function renderTimeSeries(elementId, caption, yAxis, data) {
                     $.get('components/metric-timeserieschart-base.html', function (template) {
                         var rendered = Mustache.render(template, {
-                            id: 1,
-                            caption: 'Users by Device Type',
+                            id: elementId,
+                            caption: caption,
+                            yAxis: yAxis,
                             style: 'success',
-                            data: JSON.stringify(timeSeriesData)
-                        })
-                        $('#time-series').html(rendered)
+                            data: JSON.stringify(data)
+                        });
+                        $('#'+elementId).html(rendered)
                     })
                 }
 
@@ -393,18 +469,6 @@
                     });
                     return chartData;
                 }
-
-                $.post('/wifi/users/returncount', JSON.stringify(payload), function (data, status) {
-                    $.get('components/metric-base.html', function (template) {
-                        var rendered = Mustache.render(template, {
-                            caption: 'Returning Users',
-                            value: data,
-                            titlecolor: '#12A6A8'
-                        });
-                        $('#metric-returningusers').html(rendered)
-                    })
-                });
-
             }
     );
 

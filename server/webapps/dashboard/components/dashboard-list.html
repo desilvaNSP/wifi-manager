@@ -76,7 +76,7 @@
 //            });
 
             var locationsAjax = $.get('/dashboard/' + Cookies.get('tenantid') + '/users/' + Cookies.get('username'), function (result) {
-                locations = result.permissions
+                locations = result.apgroups
             });
 
             var metricsAjax = $.get('/dashboard/' + Cookies.get('tenantid') + '/metrics', function (result) {
@@ -175,12 +175,13 @@
             event.preventDefault();
             var appName = $(this).attr('data-appname');
             var appId = $(this).attr('data-appid');
-            var aggregate = $(this).attr('data-aggregate');
+            var aggregate = $(this).attr('data-aggregation');
+            window.aggregate = aggregate
             datagroups = [];
             $.get('components/dashboard.html', function (template) {
                         $.get('/dashboard/apps/' + appId + '/groups', function (result) {
-                            if (aggregate === 'yes') {
-                                datagroups = [{groupname: appName}]
+                            if (aggregate == 'yes3') {
+                                datagroups = [appName]
                             } else {
                                 datagroups = []
                                 $.each(result, function (index, element) {

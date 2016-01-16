@@ -30,13 +30,10 @@ function renderDashboardUserTable() {
         tenantUsers = result
     });
 
-    var permissions = $.get('/dashboard/' + Cookies.get('tenantid') + '/permissions', function (result) {
-        tenantPermissions = []
-        $.each(result, function (index, element) {
-            tenantPermissions.push(element.name)
-        })
+    var permissions = $.get('/dashboard/' + Cookies.get('tenantid') + '/users/' + Cookies.get('username'), function (result) {
+        tenantPermissions = result.apgroups
     });
-    $.when(users).done(function () {
+    $.when(users, permissions).done(function () {
         $.get('components/dashboard-usertable.html', function (template) {
                 var rendered = Mustache.render(template, {
                     data: JSON.stringify(tenantUsers),

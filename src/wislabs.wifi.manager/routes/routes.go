@@ -208,9 +208,23 @@ var routes = Routes{
 	Route{
 		"Get daily total WIFI Downloads ",
 		"POST",
+		"/wifi/usage/dailyavguserdownloads",
+		true,
+		dashboard_handlers.GetAvgUserDownloadsFromToHandler,
+	},
+	Route{
+		"Get daily AVG WIFI Downloads ",
+		"POST",
 		"/wifi/usage/dailytotaluploads",
 		true,
 		dashboard_handlers.GetAgregatedUploadsFromToHandler,
+	},
+	Route{
+		"Get daily AVG user session time ",
+		"POST",
+		"/wifi/usage/dailyavgusersessiontime",
+		true,
+		dashboard_handlers.GetAvgUserSessionTimeFromToHandler,
 	},
 	Route{
 		"Get WIFI Uploads",
