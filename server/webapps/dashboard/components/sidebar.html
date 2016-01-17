@@ -55,43 +55,44 @@
     </div>
 </nav>
 <script>
+    $(document).ready(function () {
+        // MetsiMenu
+        $('#side-menu').metisMenu();
 
-    // MetsiMenu
-    $('#side-menu').metisMenu();
+        // Open close right sidebar
+        $('.right-sidebar-toggle').click(function () {
+            $('#right-sidebar').toggleClass('sidebar-open');
+        });
 
-    // Open close right sidebar
-    $('.right-sidebar-toggle').click(function () {
-        $('#right-sidebar').toggleClass('sidebar-open');
+        // Initialize slimscroll for right sidebar
+        $('.sidebar-container').slimScroll({
+            height: '100%',
+            railOpacity: 0.4,
+            wheelStep: 10
+        });
+
+        $("#href-wifiuser-tables").click(function () {
+            renderWifiUserTable()
+        });
+
+        $("#href-dashboarduser-tables").click(function () {
+            renderDashboardUserTable()
+        });
+
+        $("#href-locations").click(function () {
+            renderLocations()
+        });
+
+        $("#href-list-dashboard").click(function () {
+            renderDashboardList()
+        });
+        $(".logout").on('click', function () {
+            Cookies.remove();
+            window.location.href = "/dashboard/login"
+        })
+
+        function isAuthorized(){
+
+        }
     });
-
-    // Initialize slimscroll for right sidebar
-    $('.sidebar-container').slimScroll({
-        height: '100%',
-        railOpacity: 0.4,
-        wheelStep: 10
-    });
-
-    $("#href-dashboard").click(function () {
-        renderDashBoard()
-    });
-
-    $("#href-wifiuser-tables").click(function () {
-        renderWifiUserTable()
-    });
-
-    $("#href-dashboarduser-tables").click(function () {
-        renderDashboardUserTable()
-    });
-
-    $("#href-locations").click(function () {
-        renderLocations()
-    });
-
-    $("#href-list-dashboard").click(function () {
-        renderDashboardList()
-    });
-    $(".logout").on('click', function () {
-        Cookies.remove();
-        window.location.href = "/dashboard/login"
-    })
 </script>

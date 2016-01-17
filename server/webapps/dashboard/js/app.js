@@ -1,20 +1,44 @@
-
-$(document).ajaxError(function(event, jqxhr, settings, thrownError ){
-    if(thrownError == 'Unauthorized'){
+$(document).ajaxError(function (event, jqxhr, settings, thrownError) {
+    toastr.options = {
+        "closeButton": true,
+        "debug": false,
+        "progressBar": true,
+        "preventDuplicates" : true,
+        "positionClass": "toast-top-right",
+        "onclick": null,
+        "showDuration": "400",
+        "hideDuration": "1500",
+        "timeOut": "1500",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    };
+    if (thrownError == 'Unauthorized') {
         toastr.error("Please check your username and password")
-        window.location.href = "/dashboard/login"
+        toastr.options.onHidden = function () {
+            window.location.href = "/dashboard/login"
+        }
+    }
+    if (thrownError == 'Forbidden') {
+        toastr.options.onHidden = function () {
+        };
+        toastr.error("You are not Authorized to perform this operation")
     }
 });
 
-$(document).ajaxSend(function(event, request, settings){
-    request.setRequestHeader("Authorization","Bearer " + Cookies.get("jwt"));
+$(document).ajaxSend(function (event, request, settings) {
+    request.setRequestHeader("Authorization", "Bearer " + Cookies.get("jwt"));
 });
 
 $(document).ready(function () {
-    if(!Cookies.get("jwt")){
+    if (!Cookies.get("jwt")) {
         //toastr.error("Unauthorised please login")
         window.location.href = "/dashboard/login"
         return
+    }else{
+        storeLoggedInUserPermissions()
     }
     renderSidebar(Cookies.get("username"))
     renderDashboardList();
@@ -27,7 +51,7 @@ $(document).ready(function () {
     }
 
     // Close menu in canvas mode
-    $('.close-canvas-menu').click( function() {
+    $('.close-canvas-menu').click(function () {
         $("body").toggleClass("mini-navbar");
         SmoothlyMenu();
     });
@@ -62,15 +86,16 @@ $(document).ready(function () {
         var navbarHeigh = $('nav.navbar-default').height();
         var wrapperHeigh = $('#page-wrapper').height();
 
-        if(navbarHeigh > wrapperHeigh){
+        if (navbarHeigh > wrapperHeigh) {
             $('#page-wrapper').css("min-height", navbarHeigh + "px");
         }
 
-        if(navbarHeigh < wrapperHeigh){
-            $('#page-wrapper').css("min-height", $(window).height()  + "px");
+        if (navbarHeigh < wrapperHeigh) {
+            $('#page-wrapper').css("min-height", $(window).height() + "px");
         }
 
     }
+
     fix_height();
 
     // Fixed Sidebar
@@ -84,29 +109,29 @@ $(document).ready(function () {
     })
 
     // Move right sidebar top after scroll
-    $(window).scroll(function(){
-        if ($(window).scrollTop() > 0 && !$('body').hasClass('fixed-nav') ) {
+    $(window).scroll(function () {
+        if ($(window).scrollTop() > 0 && !$('body').hasClass('fixed-nav')) {
             $('#right-sidebar').addClass('sidebar-top');
         } else {
             $('#right-sidebar').removeClass('sidebar-top');
         }
     });
 
-    $(document).bind("load resize scroll", function() {
-        if(!$("body").hasClass('body-small')) {
+    $(document).bind("load resize scroll", function () {
+        if (!$("body").hasClass('body-small')) {
             fix_height();
         }
     });
 
     $("[data-toggle=popover]")
-            .popover();
+        .popover();
 
     // Add slimscroll to element
     $('.full-height-scroll').slimscroll({
         height: '100%'
     })
 
-    $(".logout").on('click',function(){
+    $(".logout").on('click', function () {
         Cookies.remove();
         window.location.href = "/dashboard/login"
     })
@@ -123,7 +148,7 @@ $(window).bind("resize", function () {
 });
 
 // Collapse ibox function
-$(document.body).on( 'click', '.collapse-link', function() {
+$(document.body).on('click', '.collapse-link', function () {
     var ibox = $(this).closest('div.ibox');
     var button = $(this).find('i');
     var content = ibox.find('div.ibox-content');
@@ -137,24 +162,24 @@ $(document.body).on( 'click', '.collapse-link', function() {
 });
 
 // Close ibox function
-$(document).on('click', '.close-link', function() {
+$(document).on('click', '.close-link', function () {
     var content = $(this).closest('div.ibox');
     content.remove();
 });
 
 // For demo purpose - animation css script
-function animationHover(element, animation){
+function animationHover(element, animation) {
     element = $(element);
     element.hover(
-            function() {
-                element.addClass('animated ' + animation);
-            },
-            function(){
-                //wait for animation to finish before removing classes
-                window.setTimeout( function(){
-                    element.removeClass('animated ' + animation);
-                }, 2000);
-            });
+        function () {
+            element.addClass('animated ' + animation);
+        },
+        function () {
+            //wait for animation to finish before removing classes
+            window.setTimeout(function () {
+                element.removeClass('animated ' + animation);
+            }, 2000);
+        });
 }
 
 function SmoothlyMenu() {
@@ -163,19 +188,25 @@ function SmoothlyMenu() {
         $('#side-menu').hide();
         // For smoothly turn on menu
         setTimeout(
-                function () {
-                    $('#side-menu').fadeIn(500);
-                }, 100);
+            function () {
+                $('#side-menu').fadeIn(500);
+            }, 100);
     } else if ($('body').hasClass('fixed-sidebar')) {
         $('#side-menu').hide();
         setTimeout(
-                function () {
-                    $('#side-menu').fadeIn(500);
-                }, 300);
+            function () {
+                $('#side-menu').fadeIn(500);
+            }, 300);
     } else {
         // Remove all inline style from jquery fadeIn function to reset menu state
         $('#side-menu').removeAttr('style');
     }
+}
+
+function storeLoggedInUserPermissions(){
+    $.get('/dashboard/' + Cookies.get('tenantid') + '/users/' + Cookies.get('username'), function (result) {
+      Cookies.set('userpermissions', result.permissions)
+    })
 }
 
 

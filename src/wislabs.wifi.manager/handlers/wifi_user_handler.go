@@ -9,6 +9,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/gorilla/mux"
 	"strconv"
+	"wislabs.wifi.manager/authenticator"
 )
 
 
@@ -31,6 +32,11 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 *         "acctlastupdatedtime":"2015-09-20 18:49:32","acctactivationtime":"","acctstoptime":"2015-09-20 19:49:32"}]
 */
 func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
+	if(!authenticator.IsAuthorized("wifi_users", authenticator.ACTION_READ,r)){
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
 	vars := mux.Vars(r)
 	tenantid, err := strconv.Atoi(vars["tenantid"])
 	if (err != nil) {

@@ -9,6 +9,7 @@ import (
 	"github.com/gorilla/mux"
 	"strconv"
 	log "github.com/Sirupsen/logrus"
+	"wislabs.wifi.manager/authenticator"
 )
 
 func AuthenticateUser(w http.ResponseWriter, r *http.Request) {
@@ -99,6 +100,11 @@ func GetUserProfile(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetDashboardUsersHandler(w http.ResponseWriter, r *http.Request) {
+	if (!authenticator.IsAuthorized("dashboard_users", authenticator.ACTION_READ, r)) {
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
 	vars := mux.Vars(r)
 	tenantid, err := strconv.Atoi(vars["tenantid"])
 	if (err != nil) {

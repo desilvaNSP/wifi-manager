@@ -25,40 +25,25 @@ function renderWifiUserTable() {
 }
 
 function renderDashboardUserTable() {
-    var tenantUsers, tenantPermissions=[];
+    var tenantUsers, userLocationGroups = [];
     var users = $.get('/dashboard/' + Cookies.get('tenantid') + '/users', function (result) {
         tenantUsers = result
     });
 
-    var permissions = $.get('/dashboard/' + Cookies.get('tenantid') + '/users/' + Cookies.get('username'), function (result) {
-        tenantPermissions = result.apgroups
+    var allowedGroups = $.get('/dashboard/' + Cookies.get('tenantid') + '/users/' + Cookies.get('username'), function (result) {
+        userLocationGroups = result.apgroups
     });
-    $.when(users, permissions).done(function () {
+    $.when(users, allowedGroups).done(function () {
         $.get('components/dashboard-usertable.html', function (template) {
                 var rendered = Mustache.render(template, {
                     data: JSON.stringify(tenantUsers),
                     tenantDomain: Cookies.get('tenantdomain'),
-                    roles: [{name: "admin"}, {name: "devop"}, {name: "dashboard user"}],
-                    permissions : tenantPermissions
+                    roles: [{name: "Admin"}, {name: "DevOp"}, {name: "Dashboard User"}],
+                    groups: userLocationGroups
                 });
                 $('#content-main').html(rendered);
             }
         );
-    });
-}
-
-function renderDashBoard() {
-    $.get('components/dashboard.html', function (template) {
-        //$.get('/wifi/locations',function(result){
-        //    if (result){
-        //        window.wifilocation = result[0].locationid;
-        //        window.wifilocationlist = result
-        //    }else{
-        //        window.wifilocation = "default";
-        //    }
-        //    var rendered = Mustache.render(template, {locations:result});
-        //    $('#content-main').html(rendered)
-        //});
     });
 }
 

@@ -178,6 +178,7 @@
             ajax: {
                 "url": serverOriginUrl + "/wifi/" + Cookies.get("tenantid") + "/users",
                 "type": "GET",
+                "error" : function(e){},
                 "dataSrc": function (d) {
                     return d
                 }
@@ -209,7 +210,7 @@
                 sPlaceHolder: "head:before",
                 aoColumns: [
                     {"bSortable": false},
-                    {type: "select", values: ['whitelisted', 'blacklisted', 'normaluser']},
+                    {type: "select", values: ['Whitelisted', 'Blacklisted', 'normal_user']},
                     {type: "select", values: locationGroups},
                     {"bSortable": false},
                     {"bSortable": false},
@@ -328,8 +329,7 @@
                     password: $('#inputPassword').val(),
                     groupname: "master",
                     acl: $('.radio:checked').val()
-
-                }
+                };
                 $.post('/wifi/users', JSON.stringify(payload), function (result) {
                     $('#adduser-modal').modal('hide');
                 });

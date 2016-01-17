@@ -63,17 +63,25 @@
 
         $("#add-dashboard-btn").on('click', function () {
             var users, locations, metrics;
-            var usersAjax = $.get('/dashboard/' + Cookies.get('tenantid') + '/users', function (result) {
-                users = result;
-                userNames = [];
-                for (var i = users.length; i--;) {
-                    userNames.push(users[i].username)
+            userPermissions = JSON.parse(Cookies.get('userpermissions'));
+            hasDashboardUserReadPermission = false
+            $.each(userPermissions, function (key, value) {
+                if (value == 'dashboard_users') {
+                    hasDashboardUserReadPermission = true
                 }
             });
-
-//            var locationsAjax = $.get('/wifi/' + Cookies.get('tenantid') + '/locations/groups', function (result) {
-//                locations = result
-//            });
+            if (hasDashboardUserReadPermission) {
+                var usersAjax = $.get('/dashboard/' + Cookies.get('tenantid') + '/users', function (result) {
+                    users = result;
+                    userNames = [];
+                    for (var i = users.length; i--;) {
+                        userNames.push(users[i].username)
+                    }
+                });
+            } else {
+                usersAjax = true
+                userNames.push(Cookies.get('username'))
+            }
 
             var locationsAjax = $.get('/dashboard/' + Cookies.get('tenantid') + '/users/' + Cookies.get('username'), function (result) {
                 locations = result.apgroups

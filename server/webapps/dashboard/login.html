@@ -63,50 +63,55 @@
 <script src="js/plugins/toastr/toastr.min.js"></script>
 <script src="js/plugins/validate/jquery.validate.min.js"></script>
 <script>
-    $(document).ajaxError(function(event, jqxhr, settings, thrownError ){
-        if(thrownError == 'Unauthorized'){
-            toastr.error("Please check your username and password")
+    $(document).ready(function () {
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "onclick": null,
+            "showDuration": "400",
+            "hideDuration": "1000",
+            "timeOut": "1000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut",
+        };
+        toastr.options.onHidden = function () {
             window.location.href = "/dashboard/login"
-        }
-    });
-    $("#login-form").validate({
-        rules: {
-            password: {
-                required: true
-            },
-            username: {
-                required: true
+        };
+        $(document).ajaxError(function (event, jqxhr, settings, thrownError) {
+            if (thrownError == 'Unauthorized') {
+                toastr.error("Please check your username and password")
             }
-        }
-    });
-    toastr.options = {
-        "closeButton": true,
-        "debug": false,
-        "progressBar": true,
-        "positionClass": "toast-bottom-center",
-        "onclick": null,
-        "showDuration": "400",
-        "hideDuration": "1000",
-        "timeOut": "7000",
-        "extendedTimeOut": "1000",
-        "showEasing": "swing",
-        "hideEasing": "linear",
-        "showMethod": "fadeIn",
-        "hideMethod": "fadeOut"
-    };
-    $("#login-btn").on('click', function (e) {
-        e.preventDefault();
-        if ($("#login-form").valid()) {
-            userRealm = $("#username").val().split('@');
-            var payload = {username: userRealm[0] , password: $("#password").val(), tenantdomain: userRealm[1]}
-            $.post("/dashboard/login", JSON.stringify(payload), function (result) {
-                Cookies.set("username", userRealm[0])
-                Cookies.set("tenantid", result.tenantid)
-                Cookies.set("tenantdomain", userRealm[1])
-                Cookies.set("jwt", result.token)
-                window.location.href = "/dashboard/"
-            });
-        }
+        });
+        $("#login-form").validate({
+            rules: {
+                password: {
+                    required: true
+                },
+                username: {
+                    required: true
+                }
+            }
+        });
+
+        $("#login-btn").on('click', function (e) {
+            e.preventDefault();
+            if ($("#login-form").valid()) {
+                userRealm = $("#username").val().split('@');
+                var payload = {username: userRealm[0], password: $("#password").val(), tenantdomain: userRealm[1]}
+                $.post("/dashboard/login", JSON.stringify(payload), function (result) {
+                    Cookies.set("username", userRealm[0])
+                    Cookies.set("tenantid", result.tenantid)
+                    Cookies.set("tenantdomain", userRealm[1])
+                    Cookies.set("jwt", result.token)
+                    window.location.href = "/dashboard/"
+                });
+            }
+        })
     })
 </script>
 </body>

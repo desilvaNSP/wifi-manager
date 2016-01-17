@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"wislabs.wifi.manager/dao"
-	//"wislabs.wifi.manager/authenticator"
+	"wislabs.wifi.manager/authenticator"
 	"encoding/json"
 	"net/http"
 	_ "github.com/go-sql-driver/mysql"
@@ -13,11 +13,11 @@ import (
 )
 
 func GetLocations(w http.ResponseWriter, r *http.Request){
-//	if(!authenticator.IsAutherized("wifi_location", authenticator.ACTION_READ,r)){
-//		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-//		w.WriteHeader(http.StatusUnauthorized)
-//		return
-//	}
+	if(!authenticator.IsAuthorized("wifi_location", authenticator.ACTION_READ,r)){
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
 	vars := mux.Vars(r)
 	tenantid, err := strconv.Atoi(vars["tenantid"])
 	if(err!= nil){
@@ -33,11 +33,11 @@ func GetLocations(w http.ResponseWriter, r *http.Request){
 }
 
 func GetLocationGroups(w http.ResponseWriter, r *http.Request){
-//	if(!authenticator.IsAutherized("wifi_location", authenticator.ACTION_READ,r)){
-//		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-//		w.WriteHeader(http.StatusUnauthorized)
-//		return
-//	}
+	if (!authenticator.IsAuthorized("wifi_location", authenticator.ACTION_READ, r)) {
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
 	vars := mux.Vars(r)
 	tenantid, err := strconv.Atoi(vars["tenantid"])
 	if(err!= nil){

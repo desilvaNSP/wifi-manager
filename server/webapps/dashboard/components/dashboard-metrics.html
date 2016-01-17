@@ -405,23 +405,30 @@
 //            });
 
                 downloadsTimeSeriesData = []
-                if (window.aggregate == "no") {
-                    $.each(window.datagroups, function (i, val) {
-                        var payload2 = payload
-                        payload2.datagroups = val
-                        $.post('/wifi/usage/dailytotaldownloads', JSON.stringify(payload2), function (data, status) {
-                            var locationDist = {type: 'spline', name: val, data: convertToHighChartSeries(data)}
-                            downloadsTimeSeriesData.push(locationDist);
-                        });
-                    });
+//                if (window.aggregate == "no") {
+//                    $.each(window.datagroups, function (i, val) {
+//                        var payload2 = payload
+//                        payload2.datagroups = val
+//                        $.post('/wifi/usage/dailytotaldownloads', JSON.stringify(payload2), function (data, status) {
+//                            var locationDist = {type: 'spline', name: val, data: convertToHighChartSeries(data)}
+//                            downloadsTimeSeriesData.push(locationDist);
+//                        });
+//                    });
+//                    renderTimeSeries('time-series-downloads', 'Total Daily Downloads Distribution', "Downloads (MB)", downloadsTimeSeriesData);
+//                } else {
+//                    $.post('/wifi/usage/dailytotaldownloads', JSON.stringify(payload), function (data, status) {
+//                        var locationDist = {type: 'spline', name: window.appName, data: convertToHighChartSeries(data)}
+//                        downloadsTimeSeriesData.push(locationDist);
+//                        renderTimeSeries('time-series-downloads', 'Total Daily Downloads Distribution', "Downloads (MB)", downloadsTimeSeriesData);
+//                    });
+//                }
+
+                $.post('/wifi/usage/dailytotaldownloads', JSON.stringify(payload), function (data, status) {
+                    var locationDist = {type: 'spline', name: window.appName, data: convertToHighChartSeries(data)}
+                    downloadsTimeSeriesData.push(locationDist);
                     renderTimeSeries('time-series-downloads', 'Total Daily Downloads Distribution', "Downloads (MB)", downloadsTimeSeriesData);
-                } else {
-                    $.post('/wifi/usage/dailytotaldownloads', JSON.stringify(payload), function (data, status) {
-                        var locationDist = {type: 'spline', name: window.appName, data: convertToHighChartSeries(data)}
-                        downloadsTimeSeriesData.push(locationDist);
-                        renderTimeSeries('time-series-downloads', 'Total Daily Downloads Distribution', "Downloads (MB)", downloadsTimeSeriesData);
-                    });
-                }
+                });
+
                 uploadsTimeSeriesData = []
                 $.post('/wifi/usage/dailytotaluploads', JSON.stringify(payload), function (data, status) {
                     var locationDist = {type: 'spline', name: window.appName, data: convertToHighChartSeries(data)}

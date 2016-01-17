@@ -68,7 +68,8 @@
                 <form role="form" id="adduser-form">
                     <div class="form-group">
                         <label for="inputTenantDomain">Tenant Domain</label>
-                        <input type="text" class="form-control" id="inputTenantDomain" name="tenantdomain" value="{{tenantDomain}}" required readonly>
+                        <input type="text" class="form-control" id="inputTenantDomain" name="tenantdomain"
+                               value="{{tenantDomain}}" required readonly>
                     </div>
                     <div class="form-group">
                         <label for="inputUsername">Username</label>
@@ -101,17 +102,17 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label >Allowed Data Scopes</label>
+                        <label>Allowed Data Scopes</label>
 
                         <div class="checkbox">
                             <div class="row">
-                                {{#permissions}}
+                                {{#groups}}
                                 <div class="col-sm-6">
                                     <label>
                                         <input type="checkbox" name="datascope" value="{{.}}">{{.}}
                                     </label>
                                 </div>
-                                {{/permissions}}
+                                {{/groups}}
                             </div>
                         </div>
                     </div>
@@ -145,7 +146,8 @@
                 <form role="form" id="edituser-form">
                     <div class="form-group">
                         <label for="inputEditTenantDomain">Tenant Domain</label>
-                        <input type="text" class="form-control" id="inputEditTenantDomain" name="tenantdomain" value="{{tenantDomain}}" required readonly>
+                        <input type="text" class="form-control" id="inputEditTenantDomain" name="tenantdomain"
+                               value="{{tenantDomain}}" required readonly>
                     </div>
                     <div class="form-group">
                         <label for="inputEditUsername">Username</label>
@@ -159,6 +161,7 @@
                     </div>
                     <div class="form-group">
                         <label for="inputPassword">Roles</label>
+
                         <div class="checkbox">
                             {{#roles}}
                             <label class="radio inline control-label"><input type="radio" class="radio"
@@ -341,7 +344,8 @@
                     password: $('#inputPassword').val(),
                     email: $('#inputEmail').val(),
                     status: newUserStatus,
-                    apgroups : getCheckedDataScopes('datascope')
+                    apgroups: getCheckedDataScopes('datascope'),
+                    roles: getCheckedDataScopes('role')
                 }
                 $.post('/dashboard/users', JSON.stringify(payload), function (result) {
                     $('#adduser-modal').modal('hide');
