@@ -91,16 +91,16 @@
                         <input type="password" class="form-control" id="inputConfirmPassword" name="confirmpassword"
                                placeholder="Confirm Password" required>
                     </div>
-                    <div class="form-group">
-                        <label for="inputPassword">Roles</label>
+                    <!--<div class="form-group">-->
+                        <!--<label for="inputPassword">Roles</label>-->
 
-                        <div class="checkbox">
-                            {{#roles}}
-                            <label class="radio inline control-label"><input type="radio" class="radio"
-                                                                             name="role-select" value="{{name}}">{{name}}</label><br/>
-                            {{/roles}}
-                        </div>
-                    </div>
+                        <!--<div class="checkbox">-->
+                            <!--{{#roles}}-->
+                            <!--<label class="radio inline control-label"><input type="radio" class="radio"-->
+                                                                             <!--name="role-select" value="{{name}}">{{name}}</label><br/>-->
+                            <!--{{/roles}}-->
+                        <!--</div>-->
+                    <!--</div>-->
                     <div class="form-group">
                         <label>Allowed Data Scopes</label>
 
@@ -159,14 +159,28 @@
                         <input type="email" class="form-control" id="inputEditEmail" name="editemail"
                                placeholder="Email" required>
                     </div>
-                    <div class="form-group">
-                        <label for="inputPassword">Roles</label>
+                    <!--<div class="form-group">-->
+                        <!--<label for="inputPassword">Roles</label>-->
 
+                        <!--<div class="checkbox">-->
+                            <!--{{#roles}}-->
+                            <!--<label class="radio inline control-label"><input type="radio" class="radio"-->
+                                                                             <!--name="role-select" value="{{name}}">{{name}}</label><br/>-->
+                            <!--{{/roles}}-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <div class="form-group">
+                        <label>Allowed Data Scopes</label>
                         <div class="checkbox">
-                            {{#roles}}
-                            <label class="radio inline control-label"><input type="radio" class="radio"
-                                                                             name="role-select" value="{{name}}">{{name}}</label><br/>
-                            {{/roles}}
+                            <div class="row">
+                                {{#groups}}
+                                <div class="col-sm-6">
+                                    <label>
+                                        <input type="checkbox" name="datascope" value="{{.}}">{{.}}
+                                    </label>
+                                </div>
+                                {{/groups}}
+                            </div>
                         </div>
                     </div>
                     <div class="checkbox">
@@ -307,8 +321,10 @@
                     username: $('#inputEditUsername').val(),
                     email: $('#inputEditEmail').val(),
                     roles: [$('.radio:checked').val()],
-                    status: newUserStatus
-                }
+                    status: newUserStatus,
+                    apgroups: getCheckedDataScopes('datascope'),
+                    roles: getCheckedDataScopes('role')
+                };
 
                 $.ajax({
                     url: '/dashboard/users',
@@ -317,6 +333,7 @@
                     data: JSON.stringify(payload),
                     success: function (result) {
                         $('#edituser-modal').modal('hide');
+                        userTable.ajax.reload();
                     },
                     error: function (e) {
                         console.log(e)
@@ -349,6 +366,7 @@
                 }
                 $.post('/dashboard/users', JSON.stringify(payload), function (result) {
                     $('#adduser-modal').modal('hide');
+                    userTable.ajax.reload();
                 });
             }
             return false;

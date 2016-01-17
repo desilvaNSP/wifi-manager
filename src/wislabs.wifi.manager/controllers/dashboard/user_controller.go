@@ -67,6 +67,10 @@ func UpdateDashboardUser(user dao.DashboardUser) error {
 		return err
 	}
 	_, err = stmtIns.Exec(user.Email, user.Status, user.Username, user.TenantId)
+	if err != nil {
+		return err
+	}
+	AddDashboardUserApGroups(GetUserId(user.TenantId, user.Username), user)
 	return err
 }
 
@@ -172,6 +176,17 @@ func GetPermissionId(tenantId int, permission string) int64 {
 	defer dbMap.Db.Close()
 
 	permissionId, err := dbMap.SelectInt(common.GET_PERMISSION_ID, permission, tenantId)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	return permissionId
+}
+
+func GetUserId(tenantId int, username string) int64 {
+	dbMap := utils.GetDBConnection("dashboard");
+	defer dbMap.Db.Close()
+
+	permissionId, err := dbMap.SelectInt(common.GET_USER_ID, username, tenantId)
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}

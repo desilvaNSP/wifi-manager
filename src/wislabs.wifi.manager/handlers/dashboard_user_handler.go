@@ -59,13 +59,9 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		panic("Error while decoding json")
 	}
 	err = dashboard.UpdateDashboardUser(user)
-
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode("{}"); err != nil {
-		panic(err)
-	}
 }
+
 func DeleteDashboardUsersHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	username := vars["username"]
@@ -87,14 +83,14 @@ func GetUserProfile(w http.ResponseWriter, r *http.Request) {
 	var user dao.DashboardUser
 
 	user = dashboard.GetDashboardUser(tenantid, username)
-	if (user.Username!="") {
+	if (user.Username != "") {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
 
 		if err := json.NewEncoder(w).Encode(user); err != nil {
 			panic(err)
 		}
-	}else{
+	}else {
 		w.WriteHeader(http.StatusNotFound)
 	}
 }

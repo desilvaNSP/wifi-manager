@@ -56,7 +56,7 @@ func (backend *JWTAuthenticationBackend) GenerateToken(user *common.SystemUser) 
 	return tokenString, nil
 }
 
-func getUserId(user *common.SystemUser) int64{
+func getUserId(user *common.SystemUser) int64 {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 	var userId sql.NullInt64
@@ -73,7 +73,7 @@ func getUserId(user *common.SystemUser) int64{
 	return -1
 }
 
-func getUserScopes(user *common.SystemUser) map[string][]string{
+func getUserScopes(user *common.SystemUser) map[string][]string {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 	rows, err := dbMap.Db.Query("select name,action from permissions where permissionid in (select userpermissions.permissionid from userpermissions where userpermissions.userid = ?) order by name", user.UserId)
@@ -82,7 +82,7 @@ func getUserScopes(user *common.SystemUser) map[string][]string{
 		log.Fatal(err)
 	}
 	defer rows.Close()
-	var(
+	var (
 		name string
 		action string
 	)
@@ -93,7 +93,7 @@ func getUserScopes(user *common.SystemUser) map[string][]string{
 		if err != nil {
 			log.Fatal(err)
 		}
-		scopes[name] = append(scopes[name],action)
+		scopes[name] = append(scopes[name], action)
 	}
 	err = rows.Err()
 	if err != nil {
@@ -110,9 +110,6 @@ func (backend *JWTAuthenticationBackend) Authenticate(user *common.SystemUser) b
 	smtOut, err := dbMap.Db.Prepare("SELECT password FROM users where username=? AND tenantid=? AND status='active'")
 	defer smtOut.Close()
 	err = smtOut.QueryRow(user.Username, user.TenantId).Scan(&hashedPassword)
-	print(hashedPassword.String)
-	print(hashedPassword.Valid)
-	print(user.Username)
 	if err == nil && hashedPassword.Valid {
 		if (len(hashedPassword.String) > 0) {
 			err = bcrypt.CompareHashAndPassword([]byte(hashedPassword.String), []byte(user.Password))
