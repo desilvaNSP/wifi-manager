@@ -55,6 +55,7 @@ func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 /**
 * DELETE
 * @path /wifi/{tenantid}/users/<user-id>
+* delete user from radacct, radcheck and accounting tables
 */
 func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)

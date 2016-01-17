@@ -3,14 +3,16 @@ USE `dashboard`;
 INSERT INTO tenants (domain, status)
 VALUES ('wislabs.com', 'active');
 
-INSERT INTO apgroups (tenantid, groupid, groupname)
+INSERT INTO apgroups (tenantid, groupid, groupname, groupsymbol)
 VALUES
-  (1, 1, 'Capitol Square'),
-  (1, 2, 'Double Bay'),
-  (1, 3, 'Fairfield'),
-  (1, 4, 'Preston'),
-  (1, 5, 'Reservoir'),
-  (1, 6, 'UAMPS_Test');
+  (1, 1, 'Capitol Square', 'capitolsquare'),
+  (1, 2, 'Double Bay', 'dbvillage'),
+  (1, 3, 'Fairfield', 'fairfield'),
+  (1, 4, 'Preston', 'perston'),
+  (1, 5, 'Reservoir', 'reservoir'),
+  (1, 6, 'Oohm', 'oohm'),
+  (1, 7, 'Oohm', 'oohmmkt'),
+  (1, 8, 'UAMPS_Test','UAMPS_Test');
 
 INSERT INTO aplocations (tenantid, locationid, ssid, mac, bssid, groupid, groupname)
 VALUES
@@ -149,8 +151,7 @@ VALUES (1, 1),
   (1, 6),
   (1, 7),
   (1, 8),
-  (1, 9)
-;
+  (1, 9);
 
 INSERT INTO userapgroups (userid, groupid)
 VALUES
@@ -160,13 +161,6 @@ VALUES
   (1, 4),
   (1, 5),
   (1, 6);
-
-INSERT INTO useragentinfo (date, username, locationid, device, browser, os, ua)
-VALUES
-  (NOW() - INTERVAL 3 MONTH, 'anu123', 1, 'Android', 'Chrome', 'Linux',
-   'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.125 Safari/537.36'),
-  (NOW() - INTERVAL 3 DAY, 'samee', 2, 'Apple', 'Chrome', 'IOS',
-   'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.125 Safari/537.36');
 
 INSERT INTO metrics (tenantid, metricid, name)
 VALUES

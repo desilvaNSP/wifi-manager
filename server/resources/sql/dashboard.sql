@@ -1,10 +1,11 @@
-
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 
 --
 -- Database: `dashboard`
 --
-CREATE DATABASE IF NOT EXISTS `dashboard` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+CREATE DATABASE IF NOT EXISTS `dashboard`
+  DEFAULT CHARACTER SET latin1
+  COLLATE latin1_swedish_ci;
 USE `dashboard`;
 
 -- --------------------------------------------------------
@@ -12,84 +13,89 @@ USE `dashboard`;
 -- Table structures for dashboard
 --
 CREATE TABLE IF NOT EXISTS `tenants` (
-  `tenantid` INT NOT NULL AUTO_INCREMENT,
-  `domain` varchar(255) DEFAULT NULL,
-  `status` varchar(255) DEFAULT NULL,
+  `tenantid`  INT NOT NULL AUTO_INCREMENT,
+  `domain`    VARCHAR(255) DEFAULT NULL,
+  `status`    VARCHAR(255) DEFAULT NULL,
   `createdon` TIMESTAMP,
-  PRIMARY KEY(`tenantid`)
-) ENGINE=InnoDB;
+  PRIMARY KEY (`tenantid`)
+)
+  ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `users` (
-  `userid` BIGINT NOT NULL AUTO_INCREMENT,
-  `tenantid` INT,
-  `username` varchar(255) DEFAULT NULL,
-  `password` VARCHAR(255) DEFAULT NULL,
-  `email` VARCHAR(255) DEFAULT NULL,
-  `status` VARCHAR(255) DEFAULT NULL,
+  `userid`          BIGINT NOT NULL AUTO_INCREMENT,
+  `tenantid`        INT,
+  `username`        VARCHAR(255)    DEFAULT NULL,
+  `password`        VARCHAR(255)    DEFAULT NULL,
+  `email`           VARCHAR(255)    DEFAULT NULL,
+  `status`          VARCHAR(255)    DEFAULT NULL,
   `lastupdatedtime` TIMESTAMP,
-  PRIMARY KEY(`userid`),
-  FOREIGN KEY(tenantid) REFERENCES tenants(tenantid) ON DELETE CASCADE
-) ENGINE=InnoDB;
+  PRIMARY KEY (`userid`),
+  FOREIGN KEY (tenantid) REFERENCES tenants (tenantid)
+    ON DELETE CASCADE
+)
+  ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `permissions` (
   `permissionid` BIGINT NOT NULL AUTO_INCREMENT,
-  `tenantid` INT,
-  `name`  VARCHAR(255) DEFAULT NULL,
-  `action` VARCHAR(255) DEFAULT NULL,
-  PRIMARY KEY(`permissionid`),
-  FOREIGN KEY(tenantid) REFERENCES tenants(tenantid) ON DELETE CASCADE
-) ENGINE=InnoDB;
+  `tenantid`     INT,
+  `name`         VARCHAR(255)    DEFAULT NULL,
+  `action`       VARCHAR(255)    DEFAULT NULL,
+  PRIMARY KEY (`permissionid`),
+  FOREIGN KEY (tenantid) REFERENCES tenants (tenantid)
+    ON DELETE CASCADE
+)
+  ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `userpermissions` (
   `permissionid` BIGINT,
-  `userid` BIGINT,
-  PRIMARY KEY(`permissionid`, `userid`),
-  FOREIGN KEY(userid) REFERENCES users(userid) ON DELETE CASCADE,
-  FOREIGN KEY(permissionid) REFERENCES permissions(permissionid) ON DELETE CASCADE
-) ENGINE=InnoDB;
+  `userid`       BIGINT,
+  PRIMARY KEY (`permissionid`, `userid`),
+  FOREIGN KEY (userid) REFERENCES users (userid)
+    ON DELETE CASCADE,
+  FOREIGN KEY (permissionid) REFERENCES permissions (permissionid)
+    ON DELETE CASCADE
+)
+  ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `apgroups` (
-  `tenantid` INT,
-  `groupid` BIGINT NOT NULL AUTO_INCREMENT,
-  `groupname` VARCHAR(255) DEFAULT NULL,
-  PRIMARY KEY (`groupid`,  `tenantid`),
-  FOREIGN KEY(`tenantid`) REFERENCES tenants(tenantid) ON DELETE CASCADE
-) ENGINE=InnoDB;
+  `tenantid`    INT,
+  `groupid`     BIGINT NOT NULL AUTO_INCREMENT,
+  `groupname`   VARCHAR(255)    DEFAULT NULL,
+  `groupsymbol` VARCHAR(255)    DEFAULT NULL,
+  PRIMARY KEY (`groupid`, `tenantid`),
+  FOREIGN KEY (`tenantid`) REFERENCES tenants (tenantid)
+    ON DELETE CASCADE
+)
+  ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `aplocations` (
-  `tenantid` INT,
-  `locationid` BIGINT NOT NULL AUTO_INCREMENT,
-  `ssid`  VARCHAR(255) NOT NULL,
-  `mac` VARCHAR(255) DEFAULT NULL,
-  `bssid` VARCHAR(255) DEFAULT NULL,
-  `longitude` FLOAT ,
-  `latitude` FLOAT ,
-  `groupid` BIGINT,
-  `groupname` varchar(255) NOT NULL,
-  PRIMARY KEY(`locationid`, `ssid`, `mac`),
-  FOREIGN KEY(tenantid) REFERENCES tenants(tenantid) ON DELETE CASCADE,
-  FOREIGN KEY(groupid) REFERENCES apgroups(groupid) ON DELETE CASCADE
-) ENGINE=InnoDB;
+  `tenantid`   INT,
+  `locationid` BIGINT       NOT NULL AUTO_INCREMENT,
+  `ssid`       VARCHAR(255) NOT NULL,
+  `mac`        VARCHAR(255)          DEFAULT NULL,
+  `bssid`      VARCHAR(255)          DEFAULT NULL,
+  `longitude`  FLOAT,
+  `latitude`   FLOAT,
+  `groupid`    BIGINT,
+  `groupname`  VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`locationid`, `ssid`, `mac`),
+  FOREIGN KEY (tenantid) REFERENCES tenants (tenantid)
+    ON DELETE CASCADE,
+  FOREIGN KEY (groupid) REFERENCES apgroups (groupid)
+    ON DELETE CASCADE
+)
+  ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `userapgroups` (
-  `userid` BIGINT,
+  `userid`  BIGINT,
   `groupid` BIGINT,
-  PRIMARY KEY(`groupid`, `userid`),
-  FOREIGN KEY(userid) REFERENCES users(userid) ON DELETE CASCADE,
-  FOREIGN KEY(groupid) REFERENCES apgroups(groupid) ON DELETE CASCADE
-) ENGINE=InnoDB;
-
-CREATE TABLE IF NOT EXISTS `useragentinfo` (
-  `date` datetime DEFAULT NULL,
-  `username` varchar(255) DEFAULT NULL ,
-  `locationid` BIGINT,
-  `device` varchar(200) DEFAULT NULL,
-  `browser` varchar(200) DEFAULT NULL,
-  `os` varchar(200) DEFAULT NULL,
-  `ua` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`username`, `ua`, `locationid`),
-  FOREIGN KEY(locationid) REFERENCES aplocations(locationid) ON DELETE CASCADE
-)ENGINE=InnoDB;
+  PRIMARY KEY (`groupid`, `userid`),
+  FOREIGN KEY (userid) REFERENCES users (userid)
+    ON DELETE CASCADE,
+  FOREIGN KEY (groupid) REFERENCES apgroups (groupid)
+    ON DELETE CASCADE
+)
+  ENGINE = InnoDB;
 
 --
 -- Metrics
@@ -97,42 +103,85 @@ CREATE TABLE IF NOT EXISTS `useragentinfo` (
 CREATE TABLE IF NOT EXISTS `metrics` (
   `tenantid` INT,
   `metricid` INT NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL,
-  PRIMARY KEY(`metricid`),
-  FOREIGN KEY(tenantid) REFERENCES users(tenantid) ON DELETE CASCADE
-) ENGINE=InnoDB;
+  `name`     VARCHAR(255) DEFAULT NULL,
+  PRIMARY KEY (`metricid`),
+  FOREIGN KEY (tenantid) REFERENCES users (tenantid)
+    ON DELETE CASCADE
+)
+  ENGINE = InnoDB;
 
 --
 -- applications
 --
 CREATE TABLE IF NOT EXISTS `apps` (
-  `appid` INT NOT NULL AUTO_INCREMENT,
-  `tenantid` INT,
-  `name` varchar(255) DEFAULT NULL,
-  `aggregate` varchar(255) DEFAULT NULL,
+  `appid`     INT NOT NULL AUTO_INCREMENT,
+  `tenantid`  INT,
+  `name`      VARCHAR(255) DEFAULT NULL,
+  `aggregate` VARCHAR(255) DEFAULT NULL,
   `createdon` TIMESTAMP,
-  PRIMARY KEY(`appid`),
-  FOREIGN KEY(tenantid) REFERENCES users(tenantid) ON DELETE CASCADE
-) ENGINE=InnoDB;
+  PRIMARY KEY (`appid`),
+  FOREIGN KEY (tenantid) REFERENCES users (tenantid)
+    ON DELETE CASCADE
+)
+  ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `appgroups` (
-  `appid` INT,
-  `groupname` varchar(255) DEFAULT NULL,
-  FOREIGN KEY(appid) REFERENCES apps(appid) ON DELETE CASCADE
-) ENGINE=InnoDB;
+  `appid`     INT,
+  `groupname` VARCHAR(255) DEFAULT NULL,
+  FOREIGN KEY (appid) REFERENCES apps (appid)
+    ON DELETE CASCADE
+)
+  ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `appusers` (
   `tenantid` INT,
-  `appid` INT,
-  `username` varchar(255) DEFAULT NULL,
-  FOREIGN KEY(appid) REFERENCES apps(appid) ON DELETE CASCADE,
-  FOREIGN KEY(tenantid) REFERENCES users(tenantid) ON DELETE CASCADE
-) ENGINE=InnoDB;
+  `appid`    INT,
+  `username` VARCHAR(255) DEFAULT NULL,
+  FOREIGN KEY (appid) REFERENCES apps (appid)
+    ON DELETE CASCADE,
+  FOREIGN KEY (tenantid) REFERENCES users (tenantid)
+    ON DELETE CASCADE
+)
+  ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `appmetrics` (
-  `appid` INT,
+  `appid`    INT,
   `metricid` INT,
-  FOREIGN KEY(appid) REFERENCES apps(appid) ON DELETE CASCADE
-) ENGINE=InnoDB;
+  FOREIGN KEY (appid) REFERENCES apps (appid)
+    ON DELETE CASCADE
+)
+  ENGINE = InnoDB;
 
+
+--
+-- Table structure for table `accounting`
+--
+CREATE TABLE IF NOT EXISTS `accounting` (
+  `tenantid`            INT(10)      DEFAULT NULL,
+  `username`            VARCHAR(255) DEFAULT NULL,
+  `acctstarttime`       DATETIME     DEFAULT NULL,
+  `acctlastupdatedtime` DATETIME     DEFAULT NULL,
+  `acctactivationtime`  DATETIME     DEFAULT NULL,
+  `acctstoptime`        DATETIME     DEFAULT NULL,
+  `groupname`           VARCHAR(255) DEFAULT NULL,
+  `visits`              INT(10)      DEFAULT 0,
+  `acl`                 VARCHAR(255) DEFAULT 'normal_user',
+  `accounting`          VARCHAR(255) DEFAULT 'on' NOT NULL,
+  PRIMARY KEY (`username`, `groupname`)
+)
+  ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS `useragentinfo` (
+  `id`        BIGINT NOT NULL        AUTO_INCREMENT,
+  `tenantid`  INT(10)                DEFAULT NULL,
+  `date`      TIMESTAMP,
+  `username`  VARCHAR(255) UNIQUE    DEFAULT NULL,
+  `groupname` VARCHAR(255)           DEFAULT NULL,
+  `device`    VARCHAR(200)           DEFAULT NULL,
+  `browser`   VARCHAR(200)           DEFAULT NULL,
+  `os`        VARCHAR(200)           DEFAULT NULL,
+  `ua`        VARCHAR(255)           DEFAULT NULL,
+  PRIMARY KEY (`id`)
+)
+  ENGINE = InnoDB;
 
