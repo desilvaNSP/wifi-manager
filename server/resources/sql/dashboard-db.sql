@@ -151,37 +151,3 @@ CREATE TABLE IF NOT EXISTS `appmetrics` (
     ON DELETE CASCADE
 )
   ENGINE = InnoDB;
-
-
---
--- Table structure for table `accounting`
---
-CREATE TABLE IF NOT EXISTS `accounting` (
-  `tenantid`            INT(10)      DEFAULT NULL,
-  `username`            VARCHAR(255) DEFAULT NULL,
-  `acctstarttime`       DATETIME     DEFAULT NULL,
-  `acctlastupdatedtime` DATETIME     DEFAULT NULL,
-  `acctactivationtime`  DATETIME     DEFAULT NULL,
-  `acctstoptime`        DATETIME     DEFAULT NULL,
-  `groupname`           VARCHAR(255) DEFAULT NULL,
-  `visits`              INT(10)      DEFAULT 0,
-  `acl`                 VARCHAR(255) DEFAULT 'normal_user',
-  `accounting`          VARCHAR(255) DEFAULT 'on' NOT NULL,
-  PRIMARY KEY (`username`, `groupname`)
-)
-  ENGINE = InnoDB;
-
-CREATE TABLE IF NOT EXISTS `useragentinfo` (
-  `id`        BIGINT NOT NULL        AUTO_INCREMENT,
-  `tenantid`  INT(10)                DEFAULT NULL,
-  `date`      TIMESTAMP,
-  `username`  VARCHAR(255) UNIQUE    DEFAULT NULL,
-  `groupname` VARCHAR(255)           DEFAULT NULL,
-  `device`    VARCHAR(200)           DEFAULT NULL,
-  `browser`   VARCHAR(200)           DEFAULT NULL,
-  `os`        VARCHAR(200)           DEFAULT NULL,
-  `ua`        VARCHAR(255)           DEFAULT NULL,
-  PRIMARY KEY (`id`)
-)
-  ENGINE = InnoDB;
-

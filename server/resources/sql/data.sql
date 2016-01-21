@@ -1,7 +1,7 @@
 USE `dashboard`;
 
 INSERT INTO tenants (domain, status)
-VALUES ('wislabs.com', 'active');
+VALUES ('isl.com', 'active');
 
 INSERT INTO apgroups (tenantid, groupid, groupname, groupsymbol)
 VALUES
@@ -128,7 +128,7 @@ VALUES
   (1, 110, 'UAMPS_Test', '84-18-3a-10-9c-10', '84-18-3a-10-9c-1c', 6, 'UAMPS_Test');
 
 INSERT INTO users (tenantid, username, password, email, status)
-VALUES (1, 'admin', '$2a$10$FesfnIBKqhH2MuF1hmss0umXNrrx28AW1E4re9OCAwib3cIOKBz3C', 'admin@wsilabs.com', 'active');
+VALUES (1, 'admin', '$2a$10$FesfnIBKqhH2MuF1hmss0umXNrrx28AW1E4re9OCAwib3cIOKBz3C', 'admin@isl.com', 'active');
 
 INSERT INTO permissions (permissionid, tenantid, name, action)
 VALUES

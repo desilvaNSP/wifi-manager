@@ -9,7 +9,7 @@ import (
 )
 
 func GetDailyUserCountFromTo(constrains dao.Constrains) [] dao.NameValue {
-	dbMap := utils.GetDBConnection("radsummary");
+	dbMap := utils.GetDBConnection("summary");
 	defer dbMap.Db.Close()
 	var totalDailyDownloads[] dao.NameValue
 	query := "SELECT COUNT(username) as value ,date as name FROM dailyacct where date >= ? AND date < ? AND tenantid=? "
@@ -30,7 +30,7 @@ func GetDailyUserCountFromTo(constrains dao.Constrains) [] dao.NameValue {
 }
 
 func GetUserCountOfDownloadsOver(constrains dao.Constrains, threshold int) int64 {
-	dbMap := utils.GetDBConnection("radsummary");
+	dbMap := utils.GetDBConnection("summary");
 	defer dbMap.Db.Close()
 	var err error
 	var count sql.NullInt64
@@ -124,7 +124,7 @@ func DeleteUserFromRadAcct(username string, tenantid int) error {
 
 
 func GetUsersCountFromTo(constrains dao.Constrains) int64 {
-	dbMap := utils.GetDBConnection("radsummary");
+	dbMap := utils.GetDBConnection("summary");
 	defer dbMap.Db.Close()
 	var err error
 	var count sql.NullInt64

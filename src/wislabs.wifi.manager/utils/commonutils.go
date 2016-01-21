@@ -20,7 +20,7 @@ type DBConfigs struct{
 var portalDBConfigs DBConfigs
 var radiusDBConfigs DBConfigs
 var dashboardDBConfigs DBConfigs
-var radsummaryDBConfigs DBConfigs
+var summaryDBConfigs DBConfigs
 
 var dbConfigs map[string] DBConfigs
 
@@ -36,11 +36,11 @@ func Init_(serverHome string){
 	radiusDBConfigs = readDBConfigs("radiusDBConfigs")
 	dashboardDBConfigs = readDBConfigs("dashboardDBConfigs")
 	portalDBConfigs = readDBConfigs("portalDBConfigs")
-	radsummaryDBConfigs = readDBConfigs("radsummaryDBConfigs")
+	summaryDBConfigs = readDBConfigs("summaryDBConfigs")
 
 	dbConfigs = make(map[string] DBConfigs)
 	dbConfigs["radius"] = radiusDBConfigs
-	dbConfigs["radsummary"] = radsummaryDBConfigs
+	dbConfigs["summary"] = summaryDBConfigs
 	dbConfigs["portal"] = portalDBConfigs
 	dbConfigs["dashboard"] = dashboardDBConfigs
 }

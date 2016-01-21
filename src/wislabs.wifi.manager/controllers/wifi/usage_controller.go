@@ -7,7 +7,7 @@ import (
 )
 
 func GetAggregatedDownloadsFromTo(constrains dao.Constrains) [] dao.NameValue {
-	dbMap := utils.GetDBConnection("radsummary");
+	dbMap := utils.GetDBConnection("summary");
 	defer dbMap.Db.Close()
 	var totalDailyDownloads[] dao.NameValue
 	query := "SELECT SUM(inputoctets) as value ,date as name FROM dailyacct where date >= ? AND date < ? AND tenantid=? "
@@ -28,7 +28,7 @@ func GetAggregatedDownloadsFromTo(constrains dao.Constrains) [] dao.NameValue {
 }
 
 func GetAggregatedUploadsFromTo(constrains dao.Constrains) [] dao.NameValue {
-	dbMap := utils.GetDBConnection("radsummary");
+	dbMap := utils.GetDBConnection("summary");
 	defer dbMap.Db.Close()
 	var totalDailyDownloads[] dao.NameValue
 	query := "SELECT SUM(outputoctets) as value ,date as name FROM dailyacct where date >= ? AND date < ? AND tenantid=? "
@@ -49,7 +49,7 @@ func GetAggregatedUploadsFromTo(constrains dao.Constrains) [] dao.NameValue {
 }
 
 func GetAvgDailyDownloadsPerUserFromTo(constrains dao.Constrains) [] dao.NameValue {
-	dbMap := utils.GetDBConnection("radsummary");
+	dbMap := utils.GetDBConnection("summary");
 	defer dbMap.Db.Close()
 	var totalDailyDownloads[] dao.NameValue
 	query := "SELECT SUM(inputoctets)/COUNT(DISTINCT username) as value ,date as name FROM dailyacct where date >= ? AND date < ? AND tenantid=? "
@@ -70,7 +70,7 @@ func GetAvgDailyDownloadsPerUserFromTo(constrains dao.Constrains) [] dao.NameVal
 }
 
 func GetDownloadsFromTo(constrains dao.Constrains) int64 {
-	dbMap := utils.GetDBConnection("radsummary");
+	dbMap := utils.GetDBConnection("summary");
 	defer dbMap.Db.Close()
 	var err error
 	var count sql.NullInt64
@@ -99,7 +99,7 @@ func GetDownloadsFromTo(constrains dao.Constrains) int64 {
 }
 
 func GetUploadsFromTo(constrains dao.Constrains) int64 {
-	dbMap := utils.GetDBConnection("radsummary");
+	dbMap := utils.GetDBConnection("summary");
 	defer dbMap.Db.Close()
 	var err error
 	var count sql.NullInt64
@@ -128,7 +128,7 @@ func GetUploadsFromTo(constrains dao.Constrains) int64 {
 }
 
 func GetTotalSessionsCountFromTo(constrains dao.Constrains) int64 {
-	dbMap := utils.GetDBConnection("radsummary");
+	dbMap := utils.GetDBConnection("summary");
 	defer dbMap.Db.Close()
 	var err error
 	var count sql.NullInt64
@@ -157,7 +157,7 @@ func GetTotalSessionsCountFromTo(constrains dao.Constrains) int64 {
 }
 
 func GetAvgSessionsFromTo(constrains dao.Constrains) float64 {
-	dbMap := utils.GetDBConnection("radsummary");
+	dbMap := utils.GetDBConnection("summary");
 	defer dbMap.Db.Close()
 	var err error
 	var count sql.NullFloat64
@@ -186,7 +186,7 @@ func GetAvgSessionsFromTo(constrains dao.Constrains) float64 {
 }
 
 func GetAvgDailySessionTimePerUserFromTo(constrains dao.Constrains) [] dao.NameValue {
-	dbMap := utils.GetDBConnection("radsummary");
+	dbMap := utils.GetDBConnection("summary");
 	defer dbMap.Db.Close()
 	var totalDailyDownloads[] dao.NameValue
 	query := "SELECT SUM(sessionavgduration)/COUNT(DISTINCT username) as value ,date as name FROM dailyacct where date >= ? AND date < ? AND tenantid = ?"

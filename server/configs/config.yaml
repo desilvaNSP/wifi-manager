@@ -5,10 +5,10 @@ radiusDBConfigs:
  host : localhost
  port : 3306
 
-radsummaryDBConfigs:
+summaryDBConfigs:
  username : root
  password : root
- DBName : radsummary
+ DBName : summary
  host : localhost
  port : 3306
 

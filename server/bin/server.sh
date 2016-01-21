@@ -4,8 +4,8 @@ DATE_COMMAND=$(which date)
 TIME_STAMP=`${DATE_COMMAND} '+%Y-%m-%d.%H:%M:%S'`
 CURRENT_DIR=`pwd`
 SERVER_HOME=`cd ..;pwd`
-export JWT_PRIVATE_KEY_PATH=/home/anuruddha/git/wifi-manager/server/resources/security/private.key
-export JWT_PUBLIC_KEY_PATH=/home/anuruddha/git/wifi-manager/server/resources/security/public.key
+export JWT_PRIVATE_KEY_PATH=../resources/security/private.key
+export JWT_PUBLIC_KEY_PATH=../resources/security/public.key
 export JWT_EXPIRATION_DELTA=72
 
 function default_(){
