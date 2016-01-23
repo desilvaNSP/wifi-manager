@@ -5,6 +5,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"wislabs.wifi.manager/dao"
 	"wislabs.wifi.manager/common"
+	"wislabs.wifi.manager/controllers/dashboard"
 )
 
 func GetAllLocations(tenantid int) []dao.ApLocation {
@@ -25,13 +26,23 @@ func GetAllLocationGroups(tenantid int) []string {
 	return apLocationGroups
 }
 
-func AddLocation(location *dao.ApLocation) {
+func AddWiFiLocation(location *dao.ApLocation) {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 
-	stmtIns , err := dbMap.Db.Prepare(common.ADD_AP_LOCATION)
-	_, err = stmtIns.Exec(location.TenantId, location.SSID, location.MAC, location.Longitude, location.Latitude, location.GroupName)
+	stmtIns, err := dbMap.Db.Prepare(common.ADD_AP_LOCATION)
+	_, err = stmtIns.Exec(location.TenantId, location.SSID, location.MAC, location.BSSID, location.Longitude, location.Latitude, dashboard.GetApGroupId(location.TenantId, location.GroupName), location.GroupName)
 	checkErr(err, "Error occured while adding AP location")
+	defer stmtIns.Close()
+}
+
+func AddWiFiGroup(group *dao.ApGroup) {
+	dbMap := utils.GetDBConnection("dashboard");
+	defer dbMap.Db.Close()
+
+	stmtIns, err := dbMap.Db.Prepare(common.ADD_AP_GROUP)
+	_, err = stmtIns.Exec(group.TenantId, group.GroupName, group.GroupSymbol)
+	checkErr(err, "Error occured while adding AP group")
 	defer stmtIns.Close()
 }
 
@@ -39,29 +50,29 @@ func DeleteApLocation(tenantid int, ssid string, mac string, groupName string) e
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 	_, err := dbMap.Exec(common.DELETE_AP_LOCATION, ssid, mac, groupName, tenantid)
-	if(err != nil){
+	if (err != nil) {
 		return err
 	}else {
 		return nil
 	}
 }
 
-func DeleteApGroup(groupName string,tenantid int) error {
+func DeleteApGroup(groupName string, tenantid int) error {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 	_, err := dbMap.Exec(common.DELETE_AP_GROUP, groupName, tenantid)
-	if(err != nil){
+	if (err != nil) {
 		return err
 	}else {
 		return nil
 	}
 }
 
-func DeleteAccessPoint(mac string, tenantid int) error{
+func DeleteAccessPoint(mac string, tenantid int) error {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 	_, err := dbMap.Exec(common.DELETE_AP, mac, tenantid)
-	if(err != nil){
+	if (err != nil) {
 		return err
 	}else {
 		return nil
@@ -70,7 +81,7 @@ func DeleteAccessPoint(mac string, tenantid int) error{
 
 func checkErr(err error, msg string) {
 	if err != nil {
-		log.Fatalln(msg, err)
+		log.Error(msg, err)
 	}
 }
 

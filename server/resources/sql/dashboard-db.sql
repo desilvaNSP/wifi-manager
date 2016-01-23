@@ -14,7 +14,7 @@ USE `dashboard`;
 --
 CREATE TABLE IF NOT EXISTS `tenants` (
   `tenantid`  INT NOT NULL AUTO_INCREMENT,
-  `domain`    VARCHAR(255) DEFAULT NULL,
+  `domain`    VARCHAR(255) DEFAULT NULL UNIQUE ,
   `status`    VARCHAR(255) DEFAULT NULL,
   `createdon` TIMESTAMP,
   PRIMARY KEY (`tenantid`)

@@ -287,7 +287,14 @@ var routes = Routes{
 		"POST",
 		"/wifi/locations",
 		true,
-		dashboard_handlers.AddLocation,
+		dashboard_handlers.AddWiFiLocationHandler,
+	},
+	Route{
+		"Add WiFi Group",
+		"POST",
+		"/wifi/locations/groups",
+		true,
+		dashboard_handlers.AddWiFiGroupHandler,
 	},
 	Route{
 		"Get OS Stats ",

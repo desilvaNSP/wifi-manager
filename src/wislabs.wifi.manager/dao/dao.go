@@ -75,6 +75,12 @@ type ApLocation struct {
 	GroupName  string              `db:"groupname"json:"groupname"`
 }
 
+type ApGroup struct {
+	TenantId    int                  `db:"tenantid"json:"tenantid"`
+	GroupName   string              `db:"groupname"json:"groupname"`
+	GroupSymbol string              `db:"groupsymbol"json:"groupsymbol"`
+}
+
 type DashboardMetric struct {
 	TenantId int                  `db:"tenantid"json:"tenantid"`
 	MetricId int                  `db:"metricid"json:"metricid"`

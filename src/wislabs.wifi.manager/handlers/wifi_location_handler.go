@@ -14,7 +14,6 @@ import (
 
 func GetLocations(w http.ResponseWriter, r *http.Request){
 	if(!authenticator.IsAuthorized("wifi_location", authenticator.ACTION_READ,r)){
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusForbidden)
 		return
 	}
@@ -57,17 +56,33 @@ func GetLocationGroups(w http.ResponseWriter, r *http.Request){
 * @path /{tenantid}/locations
 * return
 */
-func AddLocation(w http.ResponseWriter, r *http.Request){
+func AddWiFiLocationHandler(w http.ResponseWriter, r *http.Request){
 	decoder := json.NewDecoder(r.Body)
-	var aplocation dao.ApLocation
-	err := decoder.Decode(&aplocation)
+	var apLocation dao.ApLocation
+	err := decoder.Decode(&apLocation)
 	if(err != nil){
 		log.Fatalln("Error while decoding location json")
 	}
-	location.AddLocation(&aplocation)
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	location.AddWiFiLocation(&apLocation)
 	w.WriteHeader(http.StatusOK)
 }
+
+/**
+* POST
+* @path /{tenantid}/locations
+* return
+*/
+func AddWiFiGroupHandler(w http.ResponseWriter, r *http.Request){
+	decoder := json.NewDecoder(r.Body)
+	var apGroup dao.ApGroup
+	err := decoder.Decode(&apGroup)
+	if(err != nil){
+		log.Fatalln("Error while decoding location json")
+	}
+	location.AddWiFiGroup(&apGroup)
+	w.WriteHeader(http.StatusOK)
+}
+
 
 /**
 * DELETE
@@ -85,7 +100,6 @@ func DeleteLocation(w http.ResponseWriter, r *http.Request){
 	groupname := vars["groupname"]
 	err =location.DeleteApLocation(tenantid, ssid, mac, groupname)
 
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	if err != nil {
 		log.Fatalln("Error while deleting location " + ssid +" from DB ", err)
 		w.WriteHeader(http.StatusNotFound)
@@ -108,7 +122,6 @@ func DeleteLocationGroup(w http.ResponseWriter, r *http.Request){
 	groupname := vars["groupname"]
 	err =location.DeleteApGroup(groupname, tenantid)
 
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	if err != nil {
 		log.Fatalln("Error while deleting location " + groupname +" from DB ", err)
 		w.WriteHeader(http.StatusNotFound)
@@ -132,8 +145,6 @@ func DeleteAccessPoint(w http.ResponseWriter, r *http.Request){
 	mac := vars["mac"]
 
 	err = location.DeleteAccessPoint(mac, tenantid)
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-
 	if err != nil {
 		log.Fatalln("Error while deleting accesspoint : " + mac +" from DB ", err)
 		w.WriteHeader(http.StatusNotFound)

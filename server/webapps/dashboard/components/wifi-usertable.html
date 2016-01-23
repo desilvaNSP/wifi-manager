@@ -175,6 +175,10 @@
             responsive: true,
             orderCellsTop: true,
             autoWidth: false,
+            processing : true,
+            language : {
+                processing : "<div class='sk-spinner sk-spinner-three-bounce'><div class='sk-bounce1'></div><div class='sk-bounce2'></div><div class='sk-bounce3'></div></div>"
+            },
             ajax: {
                 "url": serverOriginUrl + "/wifi/" + Cookies.get("tenantid") + "/users",
                 "type": "GET",
@@ -280,7 +284,7 @@
                     password: selectedUser.password,
                     acl: $('.radio:checked').val(),
                     tenantid: parseInt(Cookies.get('tenantid')),
-                }
+                };
 
                 $.ajax({
                     url: '/wifi/users',

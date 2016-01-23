@@ -23,9 +23,8 @@
                         <i class="fa fa-wrench"></i>
                     </a>
                     <ul class="dropdown-menu dropdown-user">
-                        <li><a href="#">Add New</a>
-                        </li>
-                        <li><a href="#">Config option 2</a>
+                        <li><a href="#" id="add-wifilocation-btn">Add New Location</a>
+                        <li><a href="#" id="add-wifigroup-btn">Add New Group</a>
                         </li>
                     </ul>
                     <a class="close-link">
@@ -83,6 +82,8 @@
         </div>
     </div>
 </div>
+
+<div id="add-wifi-location-modal-content"></div>
 
 <div class="modal inmodal" id="editlocation-modal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
@@ -175,7 +176,8 @@
             "ajax": {
                 "url": serverOriginUrl + "/wifi/" + Cookies.get("tenantid") + "/locations",
                 "type": "GET",
-                "error" : function(e){},
+                "error": function (e) {
+                },
                 "dataSrc": function (d) {
                     return d
                 }
@@ -232,7 +234,7 @@
 
         $('#delete-location').on("click", function (event) {
             $.ajax({
-                url: '/wifi/locations/' + selectedLocation.mac + '/' + selectedLocation.ssid + '/' + selectedLocation.groupname,
+                url: '/wifi/' + Cookies.get('tenantid') + '/locations/' + selectedLocation.mac + '/' + selectedLocation.ssid + '/' + selectedLocation.groupname,
                 type: 'DELETE',
                 success: function (result) {
                     $('#confirm-delete-modal').modal('hide')
@@ -248,6 +250,111 @@
         $('.dataTables-location tbody').on('click', '#setting-delete-location', function () {
             selectedLocation = locationTable.row($(this).parents('tr')).data();
             $('#confirm-delete-modal').modal()
+        });
+
+        $("#add-wifilocation-btn").on('click', function () {
+            var locations;
+            var locationsAjax = $.get('/wifi/' + Cookies.get('tenantid') + '/locations/groups', function (result) {
+                locations = result
+            });
+            var addWifiLocationFromValidator;
+            $.when(locationsAjax).done(function () {
+                $.get('components/wifi-location-modal.html', function (template) {
+                    var rendered = Mustache.render(template, {
+                        locations: locations
+                    });
+                    $('#add-wifi-location-modal-content').html(rendered);
+                    $('#add-wifilocation-modal').modal();
+
+                    addWifiLocationFromValidator = $("#add-wifilocation-form").validate({
+                        rules: {
+                            mac: {
+                                required: true,
+                                minlength: 17,
+                                maxlength: 17,
+                            },
+                            ssid: {
+                                required: true,
+                                minlength: 1
+                            },
+                            bssid: {
+                                required: true,
+                                minlength: 17,
+                                maxlength: 17,
+                            },
+                            longitude: {
+                                required: false,
+                                number: true
+                            },
+                            latitude: {
+                                required: false,
+                                number: true
+                            }
+                        },
+                        messages: {
+                            mac: "Please enter a correct MAC address in xx-xx-xx-xx-xx-xx form",
+                            bssid: "Please enter a correct BSSID address in xx-xx-xx-xx-xx-xx form"
+                        }
+                    });
+                });
+            });
+
+            $("#add-wifi-location-modal-content").off('click').on("click", '#btn-add-wifilocation', function (event) {
+                if (addWifiLocationFromValidator.valid()) {
+                    var payload = {
+                        tenantid: parseInt(Cookies.get('tenantid')),
+                        mac: $('#input-mac').val(),
+                        ssid: $('#input-ssid').val(),
+                        bssid: $('#input-bssid').val(),
+                        latitude: parseFloat($('#input-latitude').val()),
+                        longitude: parseFloat($('#input-longitude').val()),
+                        groupname: $('#input-group-name').val()
+                    };
+                    $.post('/wifi/locations', JSON.stringify(payload), function (result) {
+                        $('#add-wifilocation-modal').modal('hide');
+                        locationTable.ajax.reload();
+                    });
+                }
+                return false;
+            });
+        });
+
+        $("#add-wifigroup-btn").on('click', function () {
+            var addWifiGroupFromValidator;
+            $.get('components/wifi-group-modal.html', function (template) {
+                var rendered = Mustache.render(template, {
+                    locations: ""
+                });
+                $('#add-wifi-location-modal-content').html(rendered);
+                $('#add-wifigroup-modal').modal();
+
+                addWifiGroupFromValidator = $("#add-wifigroup-form").validate({
+                    rules: {
+                        groupname: {
+                            required: true,
+                            minlength: 1
+                        },
+                        groupsymbol: {
+                            required: true,
+                            minlength: 1
+                        }
+                    }
+                });
+            });
+
+            $("#add-wifi-location-modal-content").off('click').on("click", '#btn-add-wifigroup', function (event) {
+                if (addWifiGroupFromValidator.valid()) {
+                    var payload = {
+                        tenantid: parseInt(Cookies.get('tenantid')),
+                        groupname: $('#input-group-name').val(),
+                        groupsymbol: $('#input-group-symbol').val()
+                    };
+                    $.post('/wifi/locations/groups', JSON.stringify(payload), function (result) {
+                        $('#add-wifigroup-modal').modal('hide');
+                    });
+                }
+                return false;
+            });
         });
     });
 </script>
