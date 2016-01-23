@@ -45,6 +45,7 @@
     var deleteAppId;
     $(document).ready(function () {
         $grid = $('#app-grid'), $sizer = $grid.find('.shuffle__sizer');
+
         renderDashboardApps();
 
         $('#search-dashboard-app').on('keyup change', function () {
@@ -188,18 +189,21 @@
             datagroups = [];
             $.get('components/dashboard.html', function (template) {
                         $.get('/dashboard/apps/' + appId + '/groups', function (result) {
-                            if (aggregate == 'yes3') {
-                                datagroups = [appName]
-                            } else {
-                                datagroups = []
-                                $.each(result, function (index, element) {
-                                    datagroups.push(element.groupname)
-                                })
-                            }
+                            datagroups = []
+                            $.each(result, function (index, element) {
+                                datagroups.push(element.groupname)
+                            })
                             window.appId = appId
                             window.appName = appName
                             window.datagroups = datagroups
-                            var rendered = Mustache.render(template, {appId: appId, datagroups: datagroups});
+                            window.originaldatagroups = datagroups
+                            var rendered
+                            if (aggregate == 'yes') {
+                                rendered = Mustache.render(template, {appId: appId, datagroups: datagroups[0]});
+                            }else{
+                                window.appName = datagroups[0]
+                                rendered = Mustache.render(template, {appId: appId, datagroups: datagroups});
+                            }
                             $('.container-dashboard').html(rendered);
                         });
                     }
@@ -221,10 +225,12 @@
             });
         });
     });
+
     function deleteApp(event) {
         deleteAppId = $(event).attr('data-appid');
         $('#confirm-delete-modal').modal();
     }
+
     function getCheckedMetrices(chkboxName) {
         var checkboxes = document.getElementsByName(chkboxName);
         var checkboxesChecked = [];

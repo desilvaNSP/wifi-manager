@@ -48,6 +48,10 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 		panic("Error while decoding json")
 	}
 	err = dashboard.RegisterDashboardUser(user)
+	if (err != nil) {
+		log.Error(err.Error())
+	}
+
 	w.WriteHeader(http.StatusOK)
 }
 

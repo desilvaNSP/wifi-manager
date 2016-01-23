@@ -1,9 +1,9 @@
 <!-- Downloads and Uploads -->
 <div class="row">
     <div class="col-lg-6">
-        <div class="ibox float-e-margins">
+        <div class="ibox float-e-margins" id="time-series-downloads">
             <div class="ibox-content">
-                <div id="time-series-downloads">
+                <div>
                     <div class="sk-spinner sk-spinner-three-bounce">
                         <div class="sk-bounce1"></div>
                         <div class="sk-bounce2"></div>
@@ -14,9 +14,9 @@
         </div>
     </div>
     <div class="col-lg-6">
-        <div class="ibox float-e-margins">
+        <div class="ibox float-e-margins" id="time-series-uploads">
             <div class="ibox-content">
-                <div id="time-series-uploads">
+                <div>
                     <div class="sk-spinner sk-spinner-three-bounce">
                         <div class="sk-bounce1"></div>
                         <div class="sk-bounce2"></div>
@@ -31,9 +31,9 @@
 <!-- Avg sessions -->
 <div class="row">
     <div class="col-lg-6">
-        <div class="ibox float-e-margins">
+        <div class="ibox float-e-margins" id="time-series-avgdownloads">
             <div class="ibox-content">
-                <div id="time-series-avgdownloads">
+                <div>
                     <div class="sk-spinner sk-spinner-three-bounce">
                         <div class="sk-bounce1"></div>
                         <div class="sk-bounce2"></div>
@@ -44,9 +44,9 @@
         </div>
     </div>
     <div class="col-lg-6">
-        <div class="ibox float-e-margins">
+        <div class="ibox float-e-margins" id="time-series-avgsessiontime">
             <div class="ibox-content">
-                <div id="time-series-avgsessiontime">
+                <div>
                     <div class="sk-spinner sk-spinner-three-bounce">
                         <div class="sk-bounce1"></div>
                         <div class="sk-bounce2"></div>
@@ -333,50 +333,33 @@
                     })
                 });
 
-           $.post('/wifi/devices/osstats',JSON.stringify(payload),function(data,status){
-                $.get('components/metric-piechart-base.html', function (template) {
-                    var rendered = Mustache.render(template, {
-                        id: 0,
-                        caption: 'Users by Browser',
-                        style: 'success',
-                        data: JSON.stringify(getPieChartData(data)),
-                        titlecolor: '#2F4050'
-                    });
-                    $('#metric-usersbyos').html(rendered)
-                })
-            });
-
-       $.post('/wifi/devices/devicestats',JSON.stringify(payload),function(data,status){
-                $.get('components/metric-piechart-base.html', function (template) {
-                    var rendered = Mustache.render(template, {
-                        id: 1,
-                        caption: 'device Stats',
-                        style: 'success',
-                        data: JSON.stringify(getPieChartData(data)),
-                        titlecolor: '#2F4050'
+                $.post('/wifi/devices/osstats', JSON.stringify(payload), function (data, status) {
+                    $.get('components/metric-piechart-base.html', function (template) {
+                        var rendered = Mustache.render(template, {
+                            id: 0,
+                            caption: 'Users by Browser',
+                            style: 'success',
+                            data: JSON.stringify(getPieChartData(data)),
+                            titlecolor: '#2F4050'
+                        });
+                        $('#metric-usersbyos').html(rendered)
                     })
-                    $('#metric-usersbydevicetype').html(rendered)
-                })
-            });
+                });
+
+                $.post('/wifi/devices/devicestats', JSON.stringify(payload), function (data, status) {
+                    $.get('components/metric-piechart-base.html', function (template) {
+                        var rendered = Mustache.render(template, {
+                            id: 1,
+                            caption: 'device Stats',
+                            style: 'success',
+                            data: JSON.stringify(getPieChartData(data)),
+                            titlecolor: '#2F4050'
+                        })
+                        $('#metric-usersbydevicetype').html(rendered)
+                    })
+                });
 
                 downloadsTimeSeriesData = []
-//                if (window.aggregate == "no") {
-//                    $.each(window.datagroups, function (i, val) {
-//                        var payload2 = payload
-//                        payload2.datagroups = val
-//                        $.post('/wifi/usage/dailytotaldownloads', JSON.stringify(payload2), function (data, status) {
-//                            var locationDist = {type: 'spline', name: val, data: convertToHighChartSeries(data)}
-//                            downloadsTimeSeriesData.push(locationDist);
-//                        });
-//                    });
-//                    renderTimeSeries('time-series-downloads', 'Total Daily Downloads Distribution', "Downloads (MB)", downloadsTimeSeriesData);
-//                } else {
-//                    $.post('/wifi/usage/dailytotaldownloads', JSON.stringify(payload), function (data, status) {
-//                        var locationDist = {type: 'spline', name: window.appName, data: convertToHighChartSeries(data)}
-//                        downloadsTimeSeriesData.push(locationDist);
-//                        renderTimeSeries('time-series-downloads', 'Total Daily Downloads Distribution', "Downloads (MB)", downloadsTimeSeriesData);
-//                    });
-//                }
 
                 $.post('/wifi/usage/dailytotaldownloads', JSON.stringify(payload), function (data, status) {
                     var locationDist = {type: 'spline', name: window.appName, data: convertToHighChartSeries(data)}
@@ -414,10 +397,63 @@
                             style: 'success',
                             data: JSON.stringify(data)
                         });
-                        $('#'+elementId).html(rendered)
+                        $('#' + elementId).html(rendered)
                     })
                 }
 
+                $('#time-series-downloads').on('click', '#time-series-downloads-compare-btn', function (e) {
+                    downloadsTimeSeriesData = []
+                    $.each(window.originaldatagroups, function (i, val) {
+                        var payload2 = payload
+                        payload2.groupnames = [val]
+                        $.post('/wifi/usage/dailytotaldownloads', JSON.stringify(payload2), function (data, status) {
+                            var locationDist = {type: 'spline', name: val, data: convertToHighChartSeries(data)}
+                            downloadsTimeSeriesData.push(locationDist);
+                        });
+                    });
+                    renderTimeSeries('time-series-downloads', 'Total Daily Downloads Distribution', "Downloads (MB)", downloadsTimeSeriesData);
+                });
+
+                $('#time-series-uploads').on('click', '#time-series-uploads-compare-btn', function (e) {
+                    downloadsTimeSeriesData = []
+                    $.each(window.originaldatagroups, function (i, val) {
+                        var payload2 = payload
+                        payload2.groupnames = [val]
+                        $.post('/wifi/usage/dailytotaluploads', JSON.stringify(payload2), function (data, status) {
+                            var locationDist = {type: 'spline', name: val, data: convertToHighChartSeries(data)}
+                            downloadsTimeSeriesData.push(locationDist);
+                        });
+                    });
+                    renderTimeSeries('time-series-uploads', 'Total Daily Uploads Distribution', "Downloads (MB)", downloadsTimeSeriesData);
+                });
+
+                $('#time-series-avgdownloads').on('click', '#time-series-avgdownloads-compare-btn', function (e) {
+                    avgDownloadsTimeSeriesData = []
+                    $.each(window.originaldatagroups, function (i, val) {
+                        var payload2 = payload
+                        payload2.groupnames = [val]
+                        $.post('/wifi/usage/dailyavguserdownloads', JSON.stringify(payload2), function (data, status) {
+                            var locationDist = {type: 'spline', name: val, data: convertToHighChartSeries(data)}
+                            avgDownloadsTimeSeriesData.push(locationDist);
+                        });
+                    });
+                    renderTimeSeries('time-series-avgdownloads', 'Average Daily User Downloads Distribution', "Downloads (MB)", avgDownloadsTimeSeriesData);
+                });
+
+                $('#time-series-avgsessiontime').on('click', '#time-series-avgsessiontime-compare-btn', function (e) {
+                    avgUserSessionTimeSeriesData = []
+                    $.each(window.originaldatagroups, function (i, val) {
+                        var payload2 = payload
+                        payload2.groupnames = [val]
+                        $.post('/wifi/usage/dailyavgusersessiontime', JSON.stringify(payload2), function (data, status) {
+                            var locationDist = {type: 'spline', name: val, data: convertToHighChartSeries(data)}
+                            avgUserSessionTimeSeriesData.push(locationDist);
+                        });
+                    });
+                    renderTimeSeries('time-series-avgsessiontime', 'Average Daily User Session Time Distribution', "Time", avgUserSessionTimeSeriesData);
+                });
+
+                WinMove();
                 function convertToHighChartSeries(arr) {
                     return data = $.map(arr, function (val, i) {
                         return [[moment(val.name, 'YYYY-M-D H:m:s').valueOf(), val.value / 1000000]];
@@ -434,9 +470,25 @@
 
                 function getPieChartData(data) {
                     var pieChartData = $.map(data, function (obj, i) {
-                        return [{"name" : obj.name, "y" :obj.value}];
+                        return [{"name": obj.name, "y": obj.value}];
                     });
                     return pieChartData;
+                }
+
+                // Dragable panels
+                function WinMove() {
+                    var element = "[class*=col]";
+                    var handle = ".ibox-title";
+                    var connect = "[class*=col]";
+                    $(element).sortable(
+                            {
+                                handle: handle,
+                                connectWith: connect,
+                                tolerance: 'pointer',
+                                forcePlaceholderSize: true,
+                                opacity: 0.8
+                            })
+                            .disableSelection();
                 }
             }
     );

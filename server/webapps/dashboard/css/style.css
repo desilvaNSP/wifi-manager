@@ -3935,12 +3935,17 @@ body.modal-open {
     padding: 100px 20px 20px 20px;
 }
 .logo-name {
-    color: #e6e6e6;
+    color: #FFFFFF;
     font-size: 180px;
     font-weight: 800;
     letter-spacing: -10px;
     margin-bottom: 0px;
 }
+
+.login-text {
+    color: #FFFFFF;
+}
+
 .middle-box h1 {
     font-size: 170px;
 }
