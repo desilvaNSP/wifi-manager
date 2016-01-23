@@ -333,76 +333,31 @@
                     })
                 });
 
-//            $.post('/wifi/users/bydeviceos',JSON.stringify(payload),function(data,status){
-                browserdata = [{
-                    name: "Internet Explorer",
-                    y: 16.33
-                }, {
-                    name: "Chrome",
-                    y: 24.03,
-                    sliced: true,
-                    selected: true
-                }, {
-                    name: "Firefox",
-                    y: 20.38
-                }, {
-                    name: "Safari",
-                    y: 34.77
-                }, {
-                    name: "Opera",
-                    y: 0.91
-                }, {
-                    name: "Other",
-                    y: 0.2
-                }]
-
-                devicedata = [{
-                    name: "iOS",
-                    y: 26.33
-                }, {
-                    name: "Android",
-                    y: 34.03,
-                    sliced: true,
-                    selected: true
-                }, {
-                    name: "Windows",
-                    y: 8.38
-                }, {
-                    name: "Mac OS",
-                    y: 14.77
-                }, {
-                    name: "Windows Phone",
-                    y: 0.91
-                }, {
-                    name: "Other",
-                    y: 0.2
-                }]
+           $.post('/wifi/devices/osstats',JSON.stringify(payload),function(data,status){
                 $.get('components/metric-piechart-base.html', function (template) {
                     var rendered = Mustache.render(template, {
                         id: 0,
                         caption: 'Users by Browser',
                         style: 'success',
-                        data: JSON.stringify(browserdata),
-                        data2: JSON.stringify(getChartData(browserdata)),
+                        data: JSON.stringify(getPieChartData(data)),
                         titlecolor: '#2F4050'
                     });
                     $('#metric-usersbyos').html(rendered)
                 })
-//            });
-//
-//            $.post('/wifi/users/bydevicetype',JSON.stringify(payload),function(data,status){
+            });
+
+       $.post('/wifi/devices/devicestats',JSON.stringify(payload),function(data,status){
                 $.get('components/metric-piechart-base.html', function (template) {
                     var rendered = Mustache.render(template, {
                         id: 1,
-                        caption: 'Users by Device OS',
+                        caption: 'device Stats',
                         style: 'success',
-                        data: JSON.stringify(devicedata),
-                        data2: JSON.stringify(getChartData(devicedata)),
+                        data: JSON.stringify(getPieChartData(data)),
                         titlecolor: '#2F4050'
                     })
                     $('#metric-usersbydevicetype').html(rendered)
                 })
-//            });
+            });
 
                 downloadsTimeSeriesData = []
 //                if (window.aggregate == "no") {
@@ -475,6 +430,13 @@
                         return [[obj.name, obj.value]];
                     });
                     return chartData;
+                }
+
+                function getPieChartData(data) {
+                    var pieChartData = $.map(data, function (obj, i) {
+                        return [{"name" : obj.name, "y" :obj.value}];
+                    });
+                    return pieChartData;
                 }
             }
     );

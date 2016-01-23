@@ -2,17 +2,17 @@
 <html>
 
 <head>
-
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>INSPINIA | Register</title>
+    <title>WiFi | Register</title>
 
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
     <link href="css/plugins/iCheck/custom.css" rel="stylesheet">
     <link href="css/animate.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
+    <link href="css/plugins/toastr/toastr.min.css" rel="stylesheet">
 
 </head>
 
@@ -27,18 +27,18 @@
 
         <p>Create account to see it in action.</p>
 
-        <form class="m-t">
+        <form class="m-t" id="registration-form">
             <div class="form-group">
-                <input type="text" id="username" class="form-control" placeholder="User Name" required="">
+                <input type="text" name="username" id="username" class="form-control" placeholder="User Name" required="">
             </div>
             <div class="form-group">
-                <input type="email" id="tenantdomain" class="form-control" placeholder="Org. Domain" required="">
+                <input type="email" name="email" id="email" class="form-control" placeholder="Email" required="">
             </div>
             <div class="form-group">
-                <input type="password" id="password" class="form-control" placeholder="Password" required="">
+                <input type="password" name="password" id="password" class="form-control" placeholder="Password" required="">
             </div>
             <div class="form-group">
-                <input type="password" id="confirmpassword" class="form-control" placeholder="Confirm Password"
+                <input type="password" name="confirmpassword" id="confirmpassword" class="form-control" placeholder="Confirm Password"
                        required="">
             </div>
             <div class="form-group">
@@ -53,7 +53,7 @@
             <a class="btn btn-sm btn-white btn-block" href="login.html">Login</a>
         </form>
         <p class="m-t">
-            <small>Wifi solutions &copy; 2015</small>
+            <small>Wifi solutions &copy; 2016</small>
         </p>
     </div>
 </div>
@@ -64,34 +64,79 @@
 <script src="js/plugins/cookie/js.cookie.js"></script>
 <!-- iCheck -->
 <script src="js/plugins/iCheck/icheck.min.js"></script>
+<script src="js/plugins/toastr/toastr.min.js"></script>
+<script src="js/plugins/validate/jquery.validate.min.js"></script>
+
 <script>
     $(document).ready(function () {
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "progressBar": true,
+            "positionClass": "toast-top-center",
+            "onclick": null,
+            "showDuration": "5000",
+            "hideDuration": "5000",
+            "timeOut": "5000",
+            "extendedTimeOut": "5000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+        toastr.options.onHidden = function () {
+            window.location.href = "/dashboard/login"
+        };
         $('.i-checks').iCheck({
             checkboxClass: 'icheckbox_square-green',
             radioClass: 'iradio_square-green',
         });
 
+        var registerUserFromValidator = $("#registration-form").validate({
+            rules: {
+                password: {
+                    required: true,
+                    minlength: 5
+                },
+                confirmpassword: {
+                    required: true,
+                    equalTo: "#password",
+                    minlength: 5
+                },
+                username: {
+                    required: true,
+                    minlength: 3
+                },
+                email: {
+                    required: true,
+                    email: true
+                }
+            }
+        });
+
+        $(document).ajaxError(function (event, jqxhr, settings, thrownError) {
+            if (thrownError == 'Unauthorized') {
+                toastr.error("Please check your username and password")
+            }
+        });
+
         $("#btn-register").on('click', function (e) {
-            e.preventDefault();
             var payload = {
                 username: $("#username").val(),
                 password: $("#password").val(),
                 email: $("#email").val(),
-                tenantid: parseInt(Cookies.get('tenantId')),
-                status: 'pending'
+                tenantid: 1,
+                status: 'pending',
+                roles: [],
+                permissions: []
             };
-            $.post("/dashboard/users", JSON.stringify(payload), function (result) {
-                Cookies.set("username", $("#username").val())
-                Cookies.set("status", result.status)
-                if (result.status === "success") {
-                    window.location.href = "/dashboard/"
-                } else if (result.status === "pending") {
-                    window.location.href = "/dashboard/login"
-                }
-                else {
-                    console.log("registration failure")
-                }
-            })
+            if ($("#registration-form").valid()) {
+                $.post("/dashboard/users", JSON.stringify(payload), function (result) {
+                    Cookies.set("username", $("#username").val());
+                    Cookies.set("status", result.status);
+                    toastr.info("Account activation is pending for approval. Please contact the System Administrator.")
+                })
+            }
         })
     });
 </script>

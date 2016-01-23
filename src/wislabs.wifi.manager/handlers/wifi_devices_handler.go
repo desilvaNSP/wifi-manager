@@ -8,7 +8,22 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func GetUsersByOSHandler(w http.ResponseWriter, r *http.Request){
+func GetBrowserStatsHandler(w http.ResponseWriter, r *http.Request){
+	decoder := json.NewDecoder(r.Body)
+	var constrains dao.Constrains
+	decoder.Decode(&constrains)
+
+	usersByOS := wifi.GetBrowserStats(constrains)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+
+	if err := json.NewEncoder(w).Encode(usersByOS); err != nil {
+		panic(err)
+	}
+}
+
+func GetOSStatsHandler(w http.ResponseWriter, r *http.Request){
 	decoder := json.NewDecoder(r.Body)
 	var constrains dao.Constrains
 	decoder.Decode(&constrains)
@@ -23,7 +38,7 @@ func GetUsersByOSHandler(w http.ResponseWriter, r *http.Request){
 	}
 }
 
-func GetUsersByDeviceTypeHandler(w http.ResponseWriter, r *http.Request){
+func GetDeviceStatsHandler(w http.ResponseWriter, r *http.Request){
 	decoder := json.NewDecoder(r.Body)
 	var constrains dao.Constrains
 	decoder.Decode(&constrains)

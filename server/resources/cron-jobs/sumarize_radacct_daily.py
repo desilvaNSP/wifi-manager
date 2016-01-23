@@ -70,7 +70,7 @@ def dumpExistingData(database):
 
 
 def cleanUserAgentInfo(date):
-    portalconn = mysql.connector.connect(host="localhost", user="root", passwd="root", db="portal")
+    portalconn = mysql.connector.connect(host=dbhost, user=dbuser, passwd=dbpass, db="portal")
     portalcursor = portalconn.cursor()
     query = "DELETE FROM useragentinfo WHERE date<='%s'" % (date)
     try:
@@ -87,10 +87,10 @@ def cleanUserAgentInfo(date):
 
 
 def summarizeBrowserStats(from_, to, tenantId):
-    portalconn = mysql.connector.connect(host="localhost", user="root", passwd="root", db="portal")
+    portalconn = mysql.connector.connect(host=dbhost, user=dbuser, passwd=dbpass, db="portal")
     portalcursor = portalconn.cursor()
 
-    dashboardconn = mysql.connector.connect(host="localhost", user="root", passwd="root", db="summary")
+    dashboardconn = mysql.connector.connect(host=dbhost, user=dbuser, passwd=dbpass, db="summary")
     dashboardcursor = dashboardconn.cursor()
 
     for groupName in groups2:
@@ -137,10 +137,10 @@ def summarizeBrowserStats(from_, to, tenantId):
     return groups
 
 def summarizeOSStats(from_, to, tenantId):
-    portalconn = mysql.connector.connect(host="localhost", user="root", passwd="root", db="portal")
+    portalconn = mysql.connector.connect(host=dbhost, user=dbuser, passwd=dbpass, db="portal")
     portalcursor = portalconn.cursor()
 
-    dashboardconn = mysql.connector.connect(host="localhost", user="root", passwd="root", db="summary")
+    dashboardconn = mysql.connector.connect(host=dbhost, user=dbuser, passwd=dbpass, db="summary")
     dashboardcursor = dashboardconn.cursor()
 
     for groupName in groups2:
@@ -232,7 +232,7 @@ def summarizeDevicesStats(from_, to, tenantId):
 
 def updateLocationGroups(date):
     global updatequery
-    radiusconn = mysql.connector.connect(host="localhost", user="root", passwd="root", db="summary")
+    radiusconn = mysql.connector.connect(host=dbhost, user=dbuser, passwd=dbpass, db="summary")
     radiuscursor = radiusconn.cursor()
     query = "SELECT calledstationid from dailyacct WHERE date >= '%s'" % (date)
     print query
@@ -265,7 +265,7 @@ def updateLocationGroups(date):
     radiusconn.close()
 
 def initGroupsDictionary():
-    dashboardconn = mysql.connector.connect(host="localhost", user="root", passwd="root", db="dashboard")
+    dashboardconn = mysql.connector.connect(host=dbhost, user=dbuser, passwd=dbpass, db="dashboard")
     dashboardcursor = dashboardconn.cursor()
     query = "SELECT groupname from apgroups WHERE tenantid=%d GROUP BY groupname, tenantid" % (1)
 
@@ -288,7 +288,7 @@ def initGroupsDictionary():
     return groups
 
 def initLocationDictionary():
-    dashboardconn = mysql.connector.connect(host="localhost", user="root", passwd="root", db="dashboard")
+    dashboardconn = mysql.connector.connect(host=dbhost, user=dbuser, passwd=dbpass, db="dashboard")
     dashboardcursor = dashboardconn.cursor()
     query = "SELECT mac, ssid, groupname from aplocations"
 
