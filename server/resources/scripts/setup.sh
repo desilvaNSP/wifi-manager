@@ -4,13 +4,13 @@ set -e
 source setup_configs.sh
 
 function default_(){
- echo "Installing dashboard databse..."
- mysql -u $DASHBOARD_DB_USERNAME -p$DASHBOARD_DB_PASSWORD -h $DASHBOARD_DB_HOST < ../sql/dashboard-db.sql
- echo "Dashboard DB installed successfully."
+    echo "Installing dashboard databse..."
+    mysql -u $DASHBOARD_DB_USERNAME -p$DASHBOARD_DB_PASSWORD -h $DASHBOARD_DB_HOST < ../sql/dashboard-db.sql
+    echo "Dashboard DB installed successfully."
 
- echo "Adding initial dataset.."
- mysql -u $DASHBOARD_DB_USERNAME -p$DASHBOARD_DB_PASSWORD -h $DASHBOARD_DB_HOST < ../sql/data.sql
- echo "Initial dataset added successfully."
+    echo "Adding initial dataset.."
+    mysql -u $DASHBOARD_DB_USERNAME -p$DASHBOARD_DB_PASSWORD -h $DASHBOARD_DB_HOST < ../sql/data.sql
+    echo "Initial dataset added successfully."
 
     echo "Installing radsummary databse..."
     mysql -u $SUMMARY_DB_USERNAME -p$SUMMARY_DB_PASSWORD -h $SUMMARY_DB_HOST < ../sql/summary-db.sql
@@ -30,8 +30,8 @@ function clean_(){
 
 function summarize_(){
     echo "Sumarizing databses..."
-    mysql -u $PORTAL_DB_USERNAME -p$PORTAL_DB_PASSWORD -h $PORTAL_DB_HOST < ../sql/sumarize.sql
-    echo "Cleaning complete"
+    mysql -u $SUMMARY_DB_USERNAME -p$SUMMARY_DB_PASSWORD -h $SUMMARY_DB_HOST < ../sql/summarize.sql
+    echo "Summarizing complete"
 }
 
 case "$1" in

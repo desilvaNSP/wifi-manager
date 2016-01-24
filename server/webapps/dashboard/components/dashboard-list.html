@@ -204,6 +204,8 @@
                                 window.appName = datagroups[0]
                                 rendered = Mustache.render(template, {appId: appId, datagroups: datagroups});
                             }
+                            $grid.shuffle('destroy')
+                            $('.container-dashboard').remove('#app-grid')
                             $('.container-dashboard').html(rendered);
                         });
                     }

@@ -4,10 +4,11 @@ import os
 import time
 from datetime import date, timedelta
 
-dbuser = 'root'
-dbpass = 'root'
-dbhost = 'localhost'
+dbuser = os.environ.get('SUMMARY_DB_USERNAME', 'root')
+dbpass = os.environ.get('SUMMARY_DB_PASSWORD', 'root')
+dbhost = os.environ.get('SUMMARY_DB_HOST', 'root')
 
+logger = ""
 groups = {}
 groups2 = []
 updatequery = ""
@@ -26,6 +27,7 @@ devicesStats = {'mobile': 0, 'tablet': 0, 'smarttv': 0, 'wearable': 0, 'embedded
 
 
 def main():
+    global logger
     logger = logging.getLogger('sumarize_radacct_todaily')
     hdlr = logging.FileHandler('daily.log')
     formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
@@ -34,39 +36,50 @@ def main():
     logger.setLevel(logging.INFO)
 
     today = date.today()
-    from_ = today - timedelta(days=100)
+    from_ = today - timedelta(days=2)
     to = today.isoformat()
     initLocationDictionary()
     initGroupsDictionary()
 
-    # updateLocationGroups((today-timedelta(days=1)).isoformat())
+    updateLocationGroups((today-timedelta(days=1)).isoformat())
     dumpExistingData('portal')
+    logger.info("-----------------  Starting daily cron job  --------------------")
 
+    logger.info("Starting Browser stat summarizer    [START]")
     summarizeBrowserStats(from_, to, 1)
+    logger.info("Browser stat summary completed      [OK]")
+
+    logger.info("Starting OS stat summarizer         [START]")
     summarizeOSStats(from_, to, 1)
+    logger.info("OS stat summary completed           [OK]")
+
+    logger.info("Starting Device stat summarizer     [START]")
     summarizeDevicesStats(from_, to, 1)
+    logger.info("Device stat summary completed       [OK]")
+
+    logger.info("Starting cleaning useragentinfo     [START]")
     cleanUserAgentInfo(to)
-    logger.info("starting daily cron job ...")
+    logger.info("Cleaning useragentinfo completed    [OK]")
 
-    # conn = mysql.connector.connect(host="localhost", user="root", passwd="root", db="summary")
-    # cursor = conn.cursor()
-    #
-    # try:
-    #     cursor.callproc('sumarize_radacct_todaily')
-    # except mysql.connector.Error, e:
-    #     logger.error("Error while performing daily corn job %s", str(e))
-    #     conn.rollback()
-    # finally:
-    #     cursor.close()
-    #     conn.close()
+    logger.info("Starting Accounting summarizer      [START]")
+    conn = mysql.connector.connect(host=dbhost, user=dbuser, passwd=dbpass, db="summary")
+    cursor = conn.cursor()
 
-    logger.info("daily cron job stopped...")
+    try:
+        cursor.callproc('sumarize_radacct_todaily')
+    except mysql.connector.Error, e:
+        conn.rollback()
+        logger.error("Error occurred executing account summarizing procedure cron job : %s" % str(e))
+        logger.info("----------------- Daily cron job stopped [FAILED] ---------------------")
+        raise
+    logger.info("Accounting summarizer completed    [OK]")
+    logger.info("----------------- Daily cron job stopped [PASS] ---------------------")
 
 
 def dumpExistingData(database):
     filestamp = time.strftime('%Y-%m-%d-%I:%M')
     os.popen("mysqldump -u %s -p%s -h %s -e --opt -c %s | gzip -c > %s.gz" % (
-    dbuser, dbpass, dbhost, database, database + "_" + filestamp))
+        dbuser, dbpass, dbhost, database, database + "_" + filestamp))
 
 
 def cleanUserAgentInfo(date):
@@ -83,7 +96,6 @@ def cleanUserAgentInfo(date):
     portalconn.commit()
     portalcursor.close()
     portalconn.close()
-
 
 
 def summarizeBrowserStats(from_, to, tenantId):
@@ -119,13 +131,15 @@ def summarizeBrowserStats(from_, to, tenantId):
             try:
                 dashboardcursor.execute(insertQuery)
             except Exception, e:
-                print "error occurred while summarizing browser information"
-                print str(e)
                 dashboardconn.rollback()
+                raise
+
 
         except Exception, e:
-            print str(e)
             portalconn.rollback()
+            logger.error("Error occurred while preparing Browser summary : %s" % str(e))
+            logger.info("----------------- Daily cron job stopped [FAILED] ---------------------")
+            raise
 
     portalconn.commit()
     portalcursor.close()
@@ -135,6 +149,7 @@ def summarizeBrowserStats(from_, to, tenantId):
     dashboardcursor.close()
     dashboardconn.close()
     return groups
+
 
 def summarizeOSStats(from_, to, tenantId):
     portalconn = mysql.connector.connect(host=dbhost, user=dbuser, passwd=dbpass, db="portal")
@@ -166,13 +181,14 @@ def summarizeOSStats(from_, to, tenantId):
             try:
                 dashboardcursor.execute(insertQuery)
             except Exception, e:
-                print "error occurred while summarizing browser information"
-                print str(e)
                 dashboardconn.rollback()
+                raise
 
         except Exception, e:
-            print str(e)
             portalconn.rollback()
+            logger.error("Error occurred while preparing OS summary : %s" % str(e))
+            logger.info("----------------- Daily cron job stopped [FAILED] ---------------------")
+            raise
 
     portalconn.commit()
     portalcursor.close()
@@ -182,6 +198,7 @@ def summarizeOSStats(from_, to, tenantId):
     dashboardcursor.close()
     dashboardconn.close()
     return groups
+
 
 def summarizeDevicesStats(from_, to, tenantId):
     portalconn = mysql.connector.connect(host=dbhost, user=dbuser, passwd=dbpass, db="portal")
@@ -213,13 +230,14 @@ def summarizeDevicesStats(from_, to, tenantId):
             try:
                 summarycursor.execute(insertQuery)
             except Exception, e:
-                print "error occurred while summarizing browser information"
-                print str(e)
                 sumaryconn.rollback()
+                raise
 
         except Exception, e:
-            print str(e)
             portalconn.rollback()
+            logger.error("Error occurred while preparing Device summary : %s" % str(e))
+            logger.info("----------------- Daily cron job stopped [FAILED] ---------------------")
+            raise
 
     portalconn.commit()
     portalcursor.close()
@@ -230,6 +248,7 @@ def summarizeDevicesStats(from_, to, tenantId):
     sumaryconn.close()
     return groups
 
+#TODO : replace key error with 'in' check
 def updateLocationGroups(date):
     global updatequery
     radiusconn = mysql.connector.connect(host=dbhost, user=dbuser, passwd=dbpass, db="summary")
@@ -257,12 +276,14 @@ def updateLocationGroups(date):
 
                 radiuscursor.execute(updatequery)
     except Exception, e:
-        print('errr')
-        print str(e)
         radiusconn.rollback()
+        logger.error("Error occurred while updating location groups : %s" % str(e))
+        logger.info("----------------- Daily cron job stopped [FAILED] ---------------------")
+        raise
     radiusconn.commit()
     radiuscursor.close()
     radiusconn.close()
+
 
 def initGroupsDictionary():
     dashboardconn = mysql.connector.connect(host=dbhost, user=dbuser, passwd=dbpass, db="dashboard")
@@ -277,15 +298,17 @@ def initGroupsDictionary():
             groups2.append(row[0])
 
     except Exception, e:
-        print "Error occurred while initializing the location dictionary"
-        print str(e)
         dashboardconn.rollback()
+        logger.error("Error occurred initializing group dictionary : %s" % str(e))
+        logger.info("----------------- Daily cron job stopped [FAILED] ---------------------")
+        raise
 
     dashboardconn.commit()
     dashboardcursor.close()
     dashboardconn.close()
 
     return groups
+
 
 def initLocationDictionary():
     dashboardconn = mysql.connector.connect(host=dbhost, user=dbuser, passwd=dbpass, db="dashboard")
@@ -301,13 +324,15 @@ def initLocationDictionary():
             groups[key] = row[2]
 
     except Exception, e:
-        print "Error occurred while initializing the location dictionary"
-        print str(e)
         dashboardconn.rollback()
+        logger.error("Error occurred while initializing location dictionary : %s" % str(e))
+        logger.info("----------------- Daily cron job stopped [FAILED] ---------------------")
+        raise
 
     dashboardconn.commit()
     dashboardcursor.close()
     dashboardconn.close()
     return groups
+
 
 if __name__ == "__main__": main()

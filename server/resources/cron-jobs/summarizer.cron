@@ -1,2 +1,2 @@
-0 0 * * *   /usr/bin/python /mnt/corn/sumarize_radacct_daily.py >/dev/null 2>&1
+0 0 * * *   /usr/bin/python /mnt/corn/daily_summarizer.py >/dev/null 2>&1
 # 0 0 30 * *  /usr/bin/python /mnt/corn/sumarize_radacct_monthly.py >/dev/null 2>&1

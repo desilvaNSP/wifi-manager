@@ -170,5 +170,10 @@ VALUES
   (1, 4, 'Avg User Session time'),
   (1, 5, 'Unique Users >1 MB'),
   (1, 6, 'Returning Users'),
-  (1, 7, 'Users by OS'),
-  (1, 8, 'Users by device type');
+  (1, 7, 'Browser Stats'),
+  (1, 8, 'Device Stats'),
+  (1, 9, 'Total Daily Downloads Distribution'),
+  (1, 10, 'Total Daily Uploads Distribution'),
+  (1, 11, 'Average Daily User Downloads Distribution'),
+  (1, 12, 'Average Daily User Uploads Distribution')
+;

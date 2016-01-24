@@ -337,7 +337,7 @@
                     $.get('components/metric-piechart-base.html', function (template) {
                         var rendered = Mustache.render(template, {
                             id: 0,
-                            caption: 'Users by Browser',
+                            caption: 'Browser Stats',
                             style: 'success',
                             data: JSON.stringify(getPieChartData(data)),
                             titlecolor: '#2F4050'
@@ -350,7 +350,7 @@
                     $.get('components/metric-piechart-base.html', function (template) {
                         var rendered = Mustache.render(template, {
                             id: 1,
-                            caption: 'device Stats',
+                            caption: 'Device Stats',
                             style: 'success',
                             data: JSON.stringify(getPieChartData(data)),
                             titlecolor: '#2F4050'
@@ -362,30 +362,30 @@
                 downloadsTimeSeriesData = []
 
                 $.post('/wifi/usage/dailytotaldownloads', JSON.stringify(payload), function (data, status) {
-                    var locationDist = {type: 'spline', name: window.appName, data: convertToHighChartSeries(data)}
+                    var locationDist = {type: 'spline', name: window.appName, data: convertToHighChartSeries(data, 1000000)}
                     downloadsTimeSeriesData.push(locationDist);
                     renderTimeSeries('time-series-downloads', 'Total Daily Downloads Distribution', "Downloads (MB)", downloadsTimeSeriesData);
                 });
 
                 uploadsTimeSeriesData = []
                 $.post('/wifi/usage/dailytotaluploads', JSON.stringify(payload), function (data, status) {
-                    var locationDist = {type: 'spline', name: window.appName, data: convertToHighChartSeries(data)}
+                    var locationDist = {type: 'spline', name: window.appName, data: convertToHighChartSeries(data, 1000000)}
                     uploadsTimeSeriesData.push(locationDist);
                     renderTimeSeries('time-series-uploads', 'Total Daily Uploads Distribution', "Uploads (MB)", uploadsTimeSeriesData);
                 });
 
                 avgDownloadsTimeSeriesData = []
                 $.post('/wifi/usage/dailyavguserdownloads', JSON.stringify(payload), function (data, status) {
-                    var locationDist = {type: 'spline', name: window.appName, data: convertToHighChartSeries(data)}
+                    var locationDist = {type: 'spline', name: window.appName, data: convertToHighChartSeries(data, 1000000)}
                     avgDownloadsTimeSeriesData.push(locationDist);
                     renderTimeSeries('time-series-avgdownloads', 'Average Daily User Downloads Distribution', "Downloads (MB)", avgDownloadsTimeSeriesData);
                 });
 
                 avgUserSessionTimeSeriesData = []
                 $.post('/wifi/usage/dailyavgusersessiontime', JSON.stringify(payload), function (data, status) {
-                    var locationDist = {type: 'spline', name: window.appName, data: convertToHighChartSeries(data)}
+                    var locationDist = {type: 'spline', name: window.appName, data: convertToHighChartSeries(data, 60)}
                     avgUserSessionTimeSeriesData.push(locationDist);
-                    renderTimeSeries('time-series-avgsessiontime', 'Average Daily User Session Time Distribution', "Time", avgUserSessionTimeSeriesData);
+                    renderTimeSeries('time-series-avgsessiontime', 'Average Daily User Session Time Distribution', "Time (Min)", avgUserSessionTimeSeriesData);
                 });
 
                 function renderTimeSeries(elementId, caption, yAxis, data) {
@@ -407,7 +407,7 @@
                         var payload2 = payload
                         payload2.groupnames = [val]
                         $.post('/wifi/usage/dailytotaldownloads', JSON.stringify(payload2), function (data, status) {
-                            var locationDist = {type: 'spline', name: val, data: convertToHighChartSeries(data)}
+                            var locationDist = {type: 'spline', name: val, data: convertToHighChartSeries(data,100000)}
                             downloadsTimeSeriesData.push(locationDist);
                         });
                     });
@@ -420,7 +420,7 @@
                         var payload2 = payload
                         payload2.groupnames = [val]
                         $.post('/wifi/usage/dailytotaluploads', JSON.stringify(payload2), function (data, status) {
-                            var locationDist = {type: 'spline', name: val, data: convertToHighChartSeries(data)}
+                            var locationDist = {type: 'spline', name: val, data: convertToHighChartSeries(data, 1000000)}
                             downloadsTimeSeriesData.push(locationDist);
                         });
                     });
@@ -433,7 +433,7 @@
                         var payload2 = payload
                         payload2.groupnames = [val]
                         $.post('/wifi/usage/dailyavguserdownloads', JSON.stringify(payload2), function (data, status) {
-                            var locationDist = {type: 'spline', name: val, data: convertToHighChartSeries(data)}
+                            var locationDist = {type: 'spline', name: val, data: convertToHighChartSeries(data, 1000000)}
                             avgDownloadsTimeSeriesData.push(locationDist);
                         });
                     });
@@ -446,17 +446,17 @@
                         var payload2 = payload
                         payload2.groupnames = [val]
                         $.post('/wifi/usage/dailyavgusersessiontime', JSON.stringify(payload2), function (data, status) {
-                            var locationDist = {type: 'spline', name: val, data: convertToHighChartSeries(data)}
+                            var locationDist = {type: 'spline', name: val, data: convertToHighChartSeries(data, 60)}
                             avgUserSessionTimeSeriesData.push(locationDist);
                         });
                     });
-                    renderTimeSeries('time-series-avgsessiontime', 'Average Daily User Session Time Distribution', "Time", avgUserSessionTimeSeriesData);
+                    renderTimeSeries('time-series-avgsessiontime', 'Average Daily User Session Time Distribution', "Time (Sec)", avgUserSessionTimeSeriesData);
                 });
 
                 WinMove();
-                function convertToHighChartSeries(arr) {
+                function convertToHighChartSeries(arr, devider) {
                     return data = $.map(arr, function (val, i) {
-                        return [[moment(val.name, 'YYYY-M-D H:m:s').valueOf(), val.value / 1000000]];
+                        return [[moment(val.name, 'YYYY-M-D H:m:s').valueOf(), val.value / devider]];
                     });
                     return data;
                 }
@@ -477,9 +477,9 @@
 
                 // Dragable panels
                 function WinMove() {
-                    var element = "[class*=col]";
+                    var element = "[class*=col-lg-6]";
                     var handle = ".ibox-title";
-                    var connect = "[class*=col]";
+                    var connect = "[class*=col-lg-6]";
                     $(element).sortable(
                             {
                                 handle: handle,
