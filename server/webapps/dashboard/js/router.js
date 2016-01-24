@@ -61,4 +61,12 @@ function renderDashboardList() {
     })
 }
 
+function renderEmptyPage() {
+    $.get('components/emptypage.html', function (template) {
+        var rendered = Mustache.render(template, {});
+        $('#content-main').html(rendered)
+    })
+}
+
+
 

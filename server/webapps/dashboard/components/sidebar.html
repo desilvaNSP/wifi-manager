@@ -3,6 +3,9 @@
         <ul class="nav" id="side-menu">
             <li class="nav-header">
                 <div class="dropdown profile-element">
+                     <span>
+                            <img alt="image" class="img-circle" src="img/profile_small.jpg"/>
+                     </span>
                     <a data-toggle="dropdown" class="dropdown-toggle" href="#">
 		                    <span class="clear"> <span class="block m-t-xs"> <strong
                                     class="font-bold">{{data.username}}</strong>
@@ -28,9 +31,7 @@
                         class="fa arrow"></span></a>
                 <ul class="nav nav-second-level">
                     <li><a href="#" id="href-wifiuser-tables">WiFi Users</a></li>
-                    <li><a href="#">Managed APs</a></li>
-                    <li><a href="#">Downloads</a></li>
-                    <li><a href="#">Alarms</a></li>
+                    <li><a href="#" id="href-alarms">Alarms</a></li>
                 </ul>
             </li>
             <li>
@@ -42,13 +43,23 @@
                 </a>
             </li>
             <li>
-                <a href="#"><i class="fa fa-line-chart"></i> <span class="nav-label">Analytics</span> </a>
+                <a href="#" id="href-analytics"><i class="fa fa-line-chart"></i> <span
+                        class="nav-label">Analytics</span> </a>
+            </li>
+            <li>
+                <a href="#" id="href-realtime"><i class="fa fa-lightbulb-o"></i> <span class="nav-label">Realtime</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" id="href-campaigns"><i class="fa fa-shopping-cart"></i> <span
+                        class="nav-label">Ad Campaigns</span> </a>
             </li>
             <li>
                 <a href="#"><i class="fa fa-cogs"></i> <span class="nav-label">Settings</span><span
                         class="fa arrow"></span></a>
                 <ul class="nav nav-second-level">
                     <li><a href="#" id="href-dashboarduser-tables">Dashboard Users</a></li>
+                    <li><a href="#" id="href-hotspots">Hot Spots</a></li>
                 </ul>
             </li>
         </ul>
@@ -86,13 +97,32 @@
         $("#href-list-dashboard").click(function () {
             renderDashboardList()
         });
+
+        $("#href-analytics").click(function () {
+            renderEmptyPage()
+        });
+
+        $("#href-campaigns").click(function () {
+            renderEmptyPage()
+        });
+        $("#href-hotspots").click(function () {
+            renderEmptyPage()
+        });
+        $("#href-realtime").click(function () {
+            renderEmptyPage()
+        });
+
+        $("#href-reports").click(function () {
+            renderEmptyPage()
+        });
+
+        $("#href-alarms").click(function () {
+            renderEmptyPage()
+        });
+
         $(".logout").on('click', function () {
             Cookies.remove();
             window.location.href = "/dashboard/login"
-        })
-
-        function isAuthorized(){
-
-        }
+        });
     });
 </script>

@@ -199,7 +199,7 @@
                             window.originaldatagroups = datagroups
                             var rendered
                             if (aggregate == 'yes') {
-                                rendered = Mustache.render(template, {appId: appId, datagroups: datagroups[0]});
+                                rendered = Mustache.render(template, {appId: appId, datagroups: appName});
                             }else{
                                 window.appName = datagroups[0]
                                 rendered = Mustache.render(template, {appId: appId, datagroups: datagroups});
