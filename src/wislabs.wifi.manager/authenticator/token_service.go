@@ -44,7 +44,8 @@ func (backend *JWTAuthenticationBackend) GenerateToken(user *common.SystemUser) 
 	i, _ := strconv.Atoi(os.Getenv(common.JWT_EXPIRATION_DELTA))
 	token.Claims["exp"] = time.Now().Add(time.Hour * time.Duration(i)).Unix()
 	token.Claims["iat"] = time.Now().Unix()
-	token.Claims["sub"] = user.Password
+	token.Claims["sub"] = user.Username
+	token.Claims["tenantid"] = user.TenantId
 	token.Claims["userid"] = getUserId(user)
 	sample := getUserScopes(user)
 	token.Claims["scopes"] = sample

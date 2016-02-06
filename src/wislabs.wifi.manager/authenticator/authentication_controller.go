@@ -7,10 +7,11 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 	"wislabs.wifi.manager/utils"
 	log "github.com/Sirupsen/logrus"
+	"strconv"
 )
 
 type TokenAuthentication struct {
-	Token string `json:"token" form:"token"`
+	Token    string `json:"token" form:"token"`
 	TenantId int64 `json:"tenantid" form:"tenantid"`
 }
 
@@ -69,12 +70,13 @@ func RequireTokenAuthentication(inner http.Handler) http.Handler {
 		}else {
 			sClaims, _ := json.Marshal(token.Claims["scopes"])
 			r.Header.Set("scopes", string(sClaims))
+			r.Header.Set("tenantid", strconv.FormatFloat((token.Claims["tenantid"]).(float64),'f',0,64))
 		}
 		inner.ServeHTTP(w, r)
 	})
 }
 
-func getTenantId(user *common.SystemUser) int64{
+func getTenantId(user *common.SystemUser) int64 {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 

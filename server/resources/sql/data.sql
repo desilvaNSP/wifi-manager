@@ -1,9 +1,9 @@
 USE `dashboard`;
 
-INSERT INTO tenants (domain, status)
+INSERT IGNORE INTO tenants (domain, status)
 VALUES ('isl.com', 'active');
 
-INSERT INTO apgroups (tenantid, groupid, groupname, groupsymbol)
+INSERT IGNORE INTO apgroups (tenantid, groupid, groupname, groupsymbol)
 VALUES
   (1, 1, 'Capitol Square', 'capitolsquare'),
   (1, 2, 'Double Bay', 'dbvillage'),
@@ -14,7 +14,7 @@ VALUES
   (1, 7, 'Oohm', 'oohmmkt'),
   (1, 8, 'UAMPS_Test','UAMPS_Test');
 
-INSERT INTO aplocations (tenantid, locationid, ssid, mac, bssid, groupid, groupname)
+INSERT IGNORE INTO aplocations (tenantid, locationid, ssid, mac, bssid, groupid, groupname)
 VALUES
   (1, 1, 'CSQ_Free_WiFi', 'f0-b0-52-3b-3f-00', 'f0-b0-52-7b-3f-08', 1, 'Capitol Square'),
   (1, 2, 'CSQ_Free_WiFi', 'f0-b0-52-3b-3f-00', 'f0-b0-52-7b-3f-0c', 1, 'Capitol Square'),
@@ -127,10 +127,10 @@ VALUES
   (1, 109, 'UAMPS_Test', '84-18-3a-10-9c-10', '84-18-3a-10-9c-18', 6, 'UAMPS_Test'),
   (1, 110, 'UAMPS_Test', '84-18-3a-10-9c-10', '84-18-3a-10-9c-1c', 6, 'UAMPS_Test');
 
-INSERT INTO users (tenantid, username, password, email, status)
+INSERT IGNORE INTO users (tenantid, username, password, email, status)
 VALUES (1, 'admin', '$2a$10$FesfnIBKqhH2MuF1hmss0umXNrrx28AW1E4re9OCAwib3cIOKBz3C', 'admin@isl.com', 'active');
 
-INSERT INTO permissions (permissionid, tenantid, name, action)
+INSERT IGNORE INTO permissions (permissionid, tenantid, name, action)
 VALUES
   (1, 1, 'wifi_location', 'read'),
   (2, 1, 'wifi_location', 'write'),
@@ -142,7 +142,7 @@ VALUES
   (8, 1, 'dashboard_users', 'write'),
   (9, 1, 'dashboard_users', 'execute');
 
-INSERT INTO userpermissions (userid, permissionid)
+INSERT IGNORE INTO userpermissions (userid, permissionid)
 VALUES (1, 1),
   (1, 2),
   (1, 3),
@@ -153,7 +153,7 @@ VALUES (1, 1),
   (1, 8),
   (1, 9);
 
-INSERT INTO userapgroups (userid, groupid)
+INSERT IGNORE INTO userapgroups (userid, groupid)
 VALUES
   (1, 1),
   (1, 2),
@@ -162,7 +162,7 @@ VALUES
   (1, 5),
   (1, 6);
 
-INSERT INTO metrics (tenantid, metricid, name)
+INSERT IGNORE INTO metrics (tenantid, metricid, name)
 VALUES
   (1, 1, 'Total Downloads'),
   (1, 2, 'Total Uploads'),

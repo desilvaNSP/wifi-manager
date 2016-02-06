@@ -4,13 +4,14 @@ set -e
 PROJECT_NAME='wifi-manager'
 PROJECT_ROOT=`pwd`
 
-echo 'Installing Gom'
-go get github.com/mattn/gom
-
 echo 'Exporting GO variables.'
 export GOPATH=$GOPATH:$PROJECT_ROOT
 
+echo 'Installing Gom'
+go get github.com/mattn/gom
+
 cd src/wislabs.wifi.manager/main
+
 echo 'Gom install dependencies. This might take some time...'
 gom install
 

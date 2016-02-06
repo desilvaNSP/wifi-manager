@@ -1,11 +1,15 @@
 USE `summary`;
+DROP PROCEDURE IF EXISTS clean_radacct;
+DROP PROCEDURE IF EXISTS clean_dailyacct;
+DROP PROCEDURE IF EXISTS summarize_radacct_todaily;
+DROP PROCEDURE IF EXISTS sumarize_dailyacct_tomonthly;
 
 DELIMITER //
 CREATE PROCEDURE `clean_radacct`(cleandate DATE)
   BEGIN
     START TRANSACTION;
     DELETE FROM radius.radacct
-    WHERE AcctStopTime IS NULL OR AcctStopTime <= (cleandate + INTERVAL 2 DAY);
+    WHERE AcctStopTime IS NULL OR AcctStopTime <= (cleandate + INTERVAL 1 DAY);
     COMMIT;
   END//
 
@@ -19,7 +23,7 @@ CREATE PROCEDURE `clean_dailyacct`(cleandate DATE)
   END//
 
 DELIMITER //
-CREATE PROCEDURE `sumarize_radacct_todaily`()
+CREATE PROCEDURE `summarize_radacct_todaily`()
   BEGIN
     DECLARE startdate DATE DEFAULT NOW();
     DECLARE enddate DATE DEFAULT NOW();
@@ -39,18 +43,18 @@ CREATE PROCEDURE `sumarize_radacct_todaily`()
     WHILE startdate <= enddate
     DO
       INSERT INTO summary.dailyacct (tenantid,
-                                        username,
-                                        date,
-                                        noofsessions,
-                                        totalsessionduration,
-                                        sessionmaxduration,
-                                        sessionminduration,
-                                        sessionavgduration,
-                                        inputoctets,
-                                        outputoctets,
-                                        nasipaddress,
-                                        framedipaddress,
-                                        calledstationid)
+                                     username,
+                                     date,
+                                     noofsessions,
+                                     totalsessionduration,
+                                     sessionmaxduration,
+                                     sessionminduration,
+                                     sessionavgduration,
+                                     inputoctets,
+                                     outputoctets,
+                                     nasipaddress,
+                                     framedipaddress,
+                                     calledstationid)
         SELECT
           1,
           UserName,
@@ -67,7 +71,11 @@ CREATE PROCEDURE `sumarize_radacct_todaily`()
           calledstationid
         FROM radius.radacct
         WHERE AcctStopTime >= startdate AND AcctStopTime < (startdate + INTERVAL 1 DAY)
-        GROUP BY UserName, calledstationid, nasipaddress;
+        GROUP BY UserName, calledstationid, nasipaddress
+      ON DUPLICATE KEY UPDATE noofsessions = noofsessions + VALUES(noofsessions),
+        totalsessionduration               = totalsessionduration + VALUES(totalsessionduration),
+        inputoctets                        = inputoctets + VALUES(inputoctets),
+        outputoctets                       = outputoctets + VALUES(outputoctets);
       SET startdate = DATE_ADD(startdate, INTERVAL 1 DAY);
     END WHILE;
     COMMIT;
@@ -91,18 +99,18 @@ CREATE PROCEDURE `sumarize_dailyacct_tomonthly`()
     WHILE startdate <= enddate
     DO
       INSERT INTO summary.monthlyacct (tenantid,
-                                          username,
-                                          date,
-                                          noofsessions,
-                                          totalsessionduration,
-                                          sessionmaxduration,
-                                          sessionminduration,
-                                          sessionavgduration,
-                                          inputoctets,
-                                          outputoctets,
-                                          nasipaddress,
-                                          framedipaddress,
-                                          location)
+                                       username,
+                                       date,
+                                       noofsessions,
+                                       totalsessionduration,
+                                       sessionmaxduration,
+                                       sessionminduration,
+                                       sessionavgduration,
+                                       inputoctets,
+                                       outputoctets,
+                                       nasipaddress,
+                                       framedipaddress,
+                                       location)
         SELECT
           1,
           UserName,

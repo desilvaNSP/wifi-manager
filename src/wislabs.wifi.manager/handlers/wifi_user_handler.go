@@ -37,12 +37,12 @@ func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusForbidden)
 		return
 	}
-	vars := mux.Vars(r)
-	tenantid, err := strconv.Atoi(vars["tenantid"])
+
+	tenantId, err := strconv.Atoi(r.Header.Get("tenantid"))
 	if (err != nil) {
 		log.Fatalln("Error while reading tenantid", err)
 	}
-	users := wifi_controller.GetAllWiFiUsers(tenantid)
+	users := wifi_controller.GetAllWiFiUsers(tenantId)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)

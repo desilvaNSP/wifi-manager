@@ -25,7 +25,7 @@ const DELETE_DASHBOARD_USER string   				= "DELETE FROM users WHERE tenantid=? A
 /* WIFI users */
 const ADD_WIFI_USER_SQL string  = "INSERT INTO accounting (tenantid, username, acctstarttime, acctlastupdatedtime, acctstoptime, groupname, acl) VALUES( ?, ?, NOW(),NOW(),NOW()+ INTERVAL 1 HOUR, ?, ? )";
 const UPDATE_WIFI_USER string   = "UPDATE accounting SET acl=? WHERE username=? AND tenantid=?";
-const GET_ALL_WIFI_USERS string = "SELECT tenantid, username, acctstarttime, acctlastupdatedtime, acctstoptime, groupname, visits, acl FROM accounting WHERE tenantid=? order by username";
+const GET_ALL_WIFI_USERS string = "SELECT tenantid, username, acctstarttime, acctlastupdatedtime, acctstoptime, groupname, visits, acl FROM accounting WHERE tenantid=? order by username limit 100";
 
 const DELETE_WIFI_USER string     = "DELETE FROM accounting where username=? AND tenantid=?";
 const DELETE_RADCHECk_USER string = "DELETE FROM radcheck WHERE username = ?";

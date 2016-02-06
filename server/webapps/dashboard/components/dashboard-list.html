@@ -181,6 +181,7 @@
         }
 
         $('#app-grid').on('click', '.app-anchor', function (event) {
+            console.log(">>>>>>>>>>>>")
             event.preventDefault();
             var appName = $(this).attr('data-appname');
             var appId = $(this).attr('data-appid');

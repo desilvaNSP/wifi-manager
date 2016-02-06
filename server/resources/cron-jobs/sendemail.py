@@ -5,7 +5,7 @@ from email.MIMEBase import MIMEBase
 from email import encoders
 
 toaddr = "anuruddha@wislabs.com"
-fromaddr = "@gmail.com"
+fromaddr = "infrastructure.logic.au@gmail.com"
 
 msg = MIMEMultipart()
 
@@ -29,7 +29,7 @@ msg.attach(MIMEText(body, 'plain'))
 
 server = smtplib.SMTP('smtp.gmail.com', 587)
 server.starttls()
-server.login(fromaddr, "")
+server.login(fromaddr, 'infrastructure123')
 text = msg.as_string()
 server.sendmail(fromaddr, toaddr, text)
 server.quit()

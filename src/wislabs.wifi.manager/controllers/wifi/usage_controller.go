@@ -52,7 +52,7 @@ func GetAvgDailyDownloadsPerUserFromTo(constrains dao.Constrains) [] dao.NameVal
 	dbMap := utils.GetDBConnection("summary");
 	defer dbMap.Db.Close()
 	var totalDailyDownloads[] dao.NameValue
-	query := "SELECT SUM(inputoctets)/COUNT(DISTINCT username) as value ,date as name FROM dailyacct where date >= ? AND date < ? AND tenantid=? "
+	query := "SELECT AVG(inputoctets) as value ,date as name FROM dailyacct where date >= ? AND date < ? AND tenantid=? "
 
 	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
@@ -136,11 +136,13 @@ func GetTotalSessionsCountFromTo(constrains dao.Constrains) int64 {
 
 	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
-		query = query + " AND groupname=? "
+		query = query + " AND (groupname=? "
 		for i := 1; i< len(constrains.GroupNames); i++ {
 			query = query + " OR groupname=? "
 		}
-		smtOut, err := dbMap.Db.Prepare(query)
+		smtOut, err := dbMap.Db.Prepare(query + ")")
+		println(constrains.From)
+		println(constrains.To)
 		defer smtOut.Close()
 		err = smtOut.QueryRow(args...).Scan(&count) // WHERE number = 13
 		if err != nil {
@@ -161,15 +163,15 @@ func GetAvgSessionsFromTo(constrains dao.Constrains) float64 {
 	defer dbMap.Db.Close()
 	var err error
 	var count sql.NullFloat64
-	query := "SELECT SUM(sessionavgduration)/COUNT(DISTINCT username) FROM dailyacct where date >= ? AND date < ? AND tenantid = ? "
+	query := "SELECT SUM(totalsessionduration)/SUM(noofsessions) FROM dailyacct where date >= ? AND date < ? AND tenantid = ? "
 
 	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
-		query = query + " AND groupname=? "
+		query = query + " AND ( groupname=? "
 		for i := 1; i< len(constrains.GroupNames); i++ {
 			query = query + " OR groupname=? "
 		}
-		smtOut, err := dbMap.Db.Prepare(query)
+		smtOut, err := dbMap.Db.Prepare(query + ")")
 		defer smtOut.Close()
 		err = smtOut.QueryRow(args...).Scan(&count) // WHERE number = 13
 		if err != nil {
@@ -189,7 +191,7 @@ func GetAvgDailySessionTimePerUserFromTo(constrains dao.Constrains) [] dao.NameV
 	dbMap := utils.GetDBConnection("summary");
 	defer dbMap.Db.Close()
 	var totalDailyDownloads[] dao.NameValue
-	query := "SELECT SUM(sessionavgduration)/COUNT(DISTINCT username) as value ,date as name FROM dailyacct where date >= ? AND date < ? AND tenantid = ?"
+	query := "SELECT SUM(totalsessionduration)/SUM(noofsessions) as value ,date as name FROM dailyacct where date >= ? AND date < ? AND tenantid = ?"
 
 	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
@@ -212,5 +214,15 @@ func getArgs(constrains *dao.Constrains) []interface{}{
 	args[1] = constrains.To
 	args[2] = constrains.TenantId
 	for index, value := range constrains.GroupNames { args[index+3] = value }
+	return args
+}
+
+func getArgs2(constrains *dao.Constrains, threshold int) []interface{}{
+	args := make([]interface{}, len(constrains.GroupNames)+4)
+	args[0] = constrains.From
+	args[1] = constrains.To
+	args[2] = constrains.TenantId
+	args[3] = threshold
+	for index, value := range constrains.GroupNames { args[index+4] = value }
 	return args
 }

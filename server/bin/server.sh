@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 DATE_COMMAND=$(which date)
 TIME_STAMP=`${DATE_COMMAND} '+%Y-%m-%d.%H:%M:%S'`

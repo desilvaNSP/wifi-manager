@@ -67,6 +67,12 @@ function renderEmptyPage() {
         $('#content-main').html(rendered)
     })
 }
+function renderReportPage() {
+    $.get('components/home-demo.html', function (template) {
+        var rendered = Mustache.render(template, {});
+        $('#content-main').html(rendered)
+    })
+}
 
 
 

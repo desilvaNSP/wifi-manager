@@ -152,7 +152,7 @@ var routes = Routes{
 	Route{
 		"GetWiFiUsers",
 		"GET",
-		"/wifi/{tenantid}/users",
+		"/wifi/users",
 		true,
 		dashboard_handlers.GetUsersHandler,
 	},

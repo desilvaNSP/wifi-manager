@@ -169,20 +169,23 @@
     </div>
 </div>
 <script>
+    var userTable;
     $(document).ready(function () {
         var serverOriginUrl = window.location.origin;
-        var userTable = $('.dataTables-user').DataTable({
+         userTable = $('.dataTables-user').DataTable({
             responsive: true,
             orderCellsTop: true,
             autoWidth: false,
-            processing : true,
-            language : {
-                processing : "<div class='sk-spinner sk-spinner-three-bounce'><div class='sk-bounce1'></div><div class='sk-bounce2'></div><div class='sk-bounce3'></div></div>"
+            serverSide: true,
+            processing: true,
+            language: {
+                processing: "<div class='sk-spinner sk-spinner-three-bounce'><div class='sk-bounce1'></div><div class='sk-bounce2'></div><div class='sk-bounce3'></div></div>"
             },
             ajax: {
-                "url": serverOriginUrl + "/wifi/" + Cookies.get("tenantid") + "/users",
+                "url": serverOriginUrl + "/wifi/users",
                 "type": "GET",
-                "error" : function(e){},
+                "error": function (e) {
+                },
                 "dataSrc": function (d) {
                     return d
                 }
@@ -201,29 +204,29 @@
                     "width": "1%",
                     "className": 'center',
                     "sortable": false
-                },
+                }
             ],
             dom: 'T<"clear">lfrtip',
             tableTools: {
                 "sSwfPath": "js/plugins/dataTables/swf/copy_csv_xls_pdf.swf"
             }
         });
-
-        $.get('/wifi/' + Cookies.get('tenantid') + '/locations/groups', function (locationGroups) {
-            $('.dataTables-user').dataTable().columnFilter({
-                sPlaceHolder: "head:before",
-                aoColumns: [
-                    {"bSortable": false},
-                    {type: "select", values: ['Whitelisted', 'Blacklisted', 'normal_user']},
-                    {type: "select", values: locationGroups},
-                    {"bSortable": false},
-                    {"bSortable": false},
-                    {"bSortable": false},
-                    null,
-                    null
-                ]
-            });
-        });
+//
+//        $.get('/wifi/' + Cookies.get('tenantid') + '/locations/groups', function (locationGroups) {
+//            $('.dataTables-user').dataTable().columnFilter({
+//                sPlaceHolder: "head:before",
+//                aoColumns: [
+//                    {"bSortable": false},
+//                    {type: "select", values: ['Whitelisted', 'Blacklisted', 'normal_user']},
+//                    {type: "select", values: locationGroups},
+//                    {"bSortable": false},
+//                    {"bSortable": false},
+//                    {"bSortable": false},
+//                    null,
+//                    null
+//                ]
+//            });
+//        });
 
         $('.dataTables-user tbody').on('click', 'tr', function () {
             if ($(this).hasClass('selected')) {

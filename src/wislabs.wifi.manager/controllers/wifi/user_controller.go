@@ -17,7 +17,7 @@ func GetDailyUserCountFromTo(constrains dao.Constrains) [] dao.NameValue {
 	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
 		query = query + " AND groupname=? "
-		for i := 1; i< len(constrains.GroupNames); i++ {
+		for i := 1; i < len(constrains.GroupNames); i++ {
 			query = query + " OR groupname=? "
 		}
 		query = query + " group by date"
@@ -34,15 +34,15 @@ func GetUserCountOfDownloadsOver(constrains dao.Constrains, threshold int) int64
 	defer dbMap.Db.Close()
 	var err error
 	var count sql.NullInt64
-	query := "SELECT count(DISTINCT username) FROM dailyacct where date >= ? AND date < ? AND outputoctets >= ?"
+	query := "SELECT count(DISTINCT username) FROM dailyacct where date >= ? AND date < ? AND tenantid= ? AND inputoctets >= ?"
 
 	if len(constrains.GroupNames) > 0 {
-		args := getArgs(&constrains)
-		query = query + " AND groupname=? "
+		args := getArgs2(&constrains, threshold)
+		query = query + " AND (groupname=? "
 		for i := 1; i < len(constrains.GroupNames); i++ {
 			query = query + " OR groupname=? "
 		}
-		smtOut, err := dbMap.Db.Prepare(query)
+		smtOut, err := dbMap.Db.Prepare(query + ")")
 		defer smtOut.Close()
 		err = smtOut.QueryRow(args...).Scan(&count) // WHERE number = 13
 		if err != nil {
@@ -132,11 +132,11 @@ func GetUsersCountFromTo(constrains dao.Constrains) int64 {
 
 	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
-		query = query + " AND groupname=? "
+		query = query + " AND (groupname=? "
 		for i := 1; i < len(constrains.GroupNames); i++ {
 			query = query + " OR groupname=? "
 		}
-		smtOut, err := dbMap.Db.Prepare(query)
+		smtOut, err := dbMap.Db.Prepare(query + ")")
 		defer smtOut.Close()
 		err = smtOut.QueryRow(args...).Scan(&count) // WHERE number = 13
 		if err != nil {
@@ -163,11 +163,11 @@ func GetReturningUsers(constrains dao.Constrains) int64 {
 
 	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
-		query = query + " AND groupname=? "
+		query = query + " AND ( groupname=? "
 		for i := 1; i < len(constrains.GroupNames); i++ {
 			query = query + " OR groupname=? "
 		}
-		smtOut, err := dbMap.Db.Prepare(query)
+		smtOut, err := dbMap.Db.Prepare(query + ")")
 		defer smtOut.Close()
 		err = smtOut.QueryRow(args...).Scan(&count) // WHERE number = 13
 		if err != nil {

@@ -6,7 +6,8 @@ from datetime import date, timedelta
 
 dbuser = os.environ.get('SUMMARY_DB_USERNAME', 'root')
 dbpass = os.environ.get('SUMMARY_DB_PASSWORD', 'root')
-dbhost = os.environ.get('SUMMARY_DB_HOST', 'root')
+dbhost = os.environ.get('SUMMARY_DB_HOST', 'localhost')
+tenantid = 1
 
 logger = ""
 groups = {}
@@ -28,7 +29,7 @@ devicesStats = {'mobile': 0, 'tablet': 0, 'smarttv': 0, 'wearable': 0, 'embedded
 
 def main():
     global logger
-    logger = logging.getLogger('sumarize_radacct_todaily')
+    logger = logging.getLogger('summarize_radacct_todaily')
     hdlr = logging.FileHandler('daily.log')
     formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
     hdlr.setFormatter(formatter)
@@ -36,42 +37,53 @@ def main():
     logger.setLevel(logging.INFO)
 
     today = date.today()
-    from_ = today - timedelta(days=2)
+    from_ = (today - timedelta(days=200)).isoformat()
     to = today.isoformat()
+
     initLocationDictionary()
     initGroupsDictionary()
 
-    updateLocationGroups((today-timedelta(days=1)).isoformat())
-    dumpExistingData('portal')
+    #dumpExistingData('portal')
     logger.info("-----------------  Starting daily cron job  --------------------")
 
-    logger.info("Starting Browser stat summarizer    [START]")
-    summarizeBrowserStats(from_, to, 1)
-    logger.info("Browser stat summary completed      [OK]")
+    # logger.info("Starting Browser stat summarizer    [START]")
+    # summarizeBrowserStats(from_, to, tenantid)
+    # logger.info("Browser stat summary completed      [OK]")
+    #
+    # logger.info("Starting OS stat summarizer         [START]")
+    # summarizeOSStats(from_, to, tenantid)
+    # logger.info("OS stat summary completed           [OK]")
+    #
+    # logger.info("Starting Device stat summarizer     [START]")
+    # summarizeDevicesStats(from_, to, tenantid)
+    # logger.info("Device stat summary completed       [OK]")
+    #
+    # logger.info("Starting cleaning useragentinfo     [START]")
+    # cleanUserAgentInfo(to)
+    # logger.info("Cleaning useragentinfo completed    [OK]")
 
-    logger.info("Starting OS stat summarizer         [START]")
-    summarizeOSStats(from_, to, 1)
-    logger.info("OS stat summary completed           [OK]")
+    # logger.info("Starting Accounting summarizer      [START]")
+    # conn = mysql.connector.connect(host=dbhost, user=dbuser, passwd=dbpass, db="summary")
+    # cursor = conn.cursor()
+    #
+    # logger.info("Starting summarizing procedure      [START]")
+    # try:
+    #     cursor.callproc('summarize_radacct_todaily')
+    # except mysql.connector.Error, e:
+    #     conn.rollback()
+    #     logger.error("Error occurred executing account summarizing procedure cron job : %s" % str(e))
+    #     logger.info("----------------- Daily cron job stopped [FAILED] ---------------------")
+    #     raise
+    # conn.commit()
+    # cursor.close()
+    # conn.close()
 
-    logger.info("Starting Device stat summarizer     [START]")
-    summarizeDevicesStats(from_, to, 1)
-    logger.info("Device stat summary completed       [OK]")
+    logger.info("Summarize procedure completed       [OK]")
 
-    logger.info("Starting cleaning useragentinfo     [START]")
-    cleanUserAgentInfo(to)
-    logger.info("Cleaning useragentinfo completed    [OK]")
+    logger.info("Starting location group update      [START]")
+    updateLocationGroups(from_)
+    logger.info("Location group update completed     [OK]")
 
-    logger.info("Starting Accounting summarizer      [START]")
-    conn = mysql.connector.connect(host=dbhost, user=dbuser, passwd=dbpass, db="summary")
-    cursor = conn.cursor()
-
-    try:
-        cursor.callproc('sumarize_radacct_todaily')
-    except mysql.connector.Error, e:
-        conn.rollback()
-        logger.error("Error occurred executing account summarizing procedure cron job : %s" % str(e))
-        logger.info("----------------- Daily cron job stopped [FAILED] ---------------------")
-        raise
     logger.info("Accounting summarizer completed    [OK]")
     logger.info("----------------- Daily cron job stopped [PASS] ---------------------")
 
@@ -120,7 +132,14 @@ def summarizeBrowserStats(from_, to, tenantId):
                 else:
                     browsersStats['other'] = count
 
-            insertQuery = "INSERT INTO  browserstats (date, tenantid, groupname,chrome, firefox,ie,iemobile,kindle,safari,safarimobile,opera,webkit,chromemobile,other) VALUES ('%s',%d,'%s',%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d)" % (
+            insertQuery = """INSERT INTO  browserstats (date, tenantid, groupname,chrome, firefox,ie,iemobile, kindle,
+                             safari,safarimobile,opera,webkit,chromemobile,other)
+                             VALUES ('%s',%d,'%s',%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d)ON DUPLICATE KEY UPDATE chrome = chrome + VALUES(chrome), firefox = firefox + VALUES(firefox),
+                              ie = ie + VALUES(ie), iemobile = iemobile + VALUES(iemobile), kindle = kindle + VALUES(kindle),
+                              safari = safari + VALUES(safari), safarimobile = safarimobile + VALUES(safarimobile),
+                              opera = opera + VALUES(opera), webkit = webkit + VALUES(webkit),
+                              chromemobile = chromemobile + VALUES(chromemobile),
+                              other = other + VALUES(other)""" % (
                 date.today().isoformat(), tenantId, groupName, browsersStats['chrome'], browsersStats['firefox'],
                 browsersStats['ie'],
                 browsersStats['iemobile'], browsersStats['kindle'], browsersStats['safari'],
@@ -128,6 +147,7 @@ def summarizeBrowserStats(from_, to, tenantId):
                 browsersStats['chromemobile'], browsersStats['other']
             )
 
+            print insertQuery
             try:
                 dashboardcursor.execute(insertQuery)
             except Exception, e:
@@ -173,7 +193,11 @@ def summarizeOSStats(from_, to, tenantId):
                 else:
                     osStats['other'] = count
 
-            insertQuery = "INSERT INTO osstats (date, tenantid, groupname,android, ios, windows, linux, macos, windowsmobile, other) VALUES ('%s',%d,'%s',%d,%d,%d,%d,%d,%d,%d)" % (
+            insertQuery = """INSERT INTO osstats (date, tenantid, groupname,android, ios, windows, linux, macos,
+                            windowsmobile, other) VALUES ('%s',%d,'%s',%d,%d,%d,%d,%d,%d,%d)
+                            ON DUPLICATE KEY UPDATE android = android + VALUES(android), ios = ios + VALUES(ios),
+                            windows = windows + VALUES(windows), linux = linux + VALUES(linux), macos = macos + VALUES(macos),
+                            windowsmobile = windowsmobile + VALUES(windowsmobile), other = other + VALUES(other)""" % (
                 date.today().isoformat(), tenantId, groupName, osStats['android'], osStats['ios'],
                 osStats['windows'], osStats['linux'], osStats['macos'], osStats['windowsmobile'], osStats['other']
             )
@@ -222,7 +246,11 @@ def summarizeDevicesStats(from_, to, tenantId):
                 else:
                     devicesStats['other'] = count
 
-            insertQuery = "INSERT INTO devicestats (date, tenantid, groupname, mobile, tablet, smarttv, wearable, embedded, other) VALUES ('%s',%d,'%s',%d,%d,%d,%d,%d,%d)" % (
+            insertQuery = """INSERT INTO devicestats (date, tenantid, groupname, mobile, tablet, smarttv, wearable,
+                          embedded, other) VALUES ('%s',%d,'%s',%d,%d,%d,%d,%d,%d) ON DUPLICATE KEY UPDATE
+                          mobile = mobile + VALUES(mobile) , tablet = tablet + VALUES(tablet),
+                          smarttv = smarttv + VALUES(smarttv), wearable = wearable + VALUES(wearable),
+                          other = other + VALUES(other)""" % (
                 date.today().isoformat(), tenantId, groupName, devicesStats['mobile'], devicesStats['tablet'],
                 devicesStats['smarttv'], devicesStats['wearable'], devicesStats['embedded'], devicesStats['other']
             )
@@ -248,33 +276,34 @@ def summarizeDevicesStats(from_, to, tenantId):
     sumaryconn.close()
     return groups
 
-#TODO : replace key error with 'in' check
+
+# TODO : replace key error with 'in' check
 def updateLocationGroups(date):
     global updatequery
     radiusconn = mysql.connector.connect(host=dbhost, user=dbuser, passwd=dbpass, db="summary")
     radiuscursor = radiusconn.cursor()
     query = "SELECT calledstationid from dailyacct WHERE date >= '%s'" % (date)
-    print query
     try:
         radiuscursor.execute(query)
         result = radiuscursor.fetchall()
         for row in result:
             tmp = row[0]  # calledstationid
             values = row[0].split(':')
+            # ZD, SZ case
             if (len(values) == 2):
                 updatequery = ""
                 bssid = ((values[0])[:14]).upper()
                 try:
                     group = groups[bssid + ':' + values[1]]
-                    updatequery = "UPDATE dailyacct SET ssid='%s', calledstationmac='%s', groupname='%s' WHERE calledstationid='%s'" % (
-                        values[1], values[0], group, tmp)
-                    print "matched"
+                    updatequery = "UPDATE dailyacct SET ssid='%s', calledstationmac='%s', groupname='%s' WHERE calledstationid='%s' AND date >= '%s'" % (
+                        values[1], values[0], group, tmp, date)
+                    print("match")
                 except KeyError, e:
-                    updatequery = "UPDATE dailyacct SET ssid='%s', calledstationmac='%s' WHERE calledstationid='%s'" % (
-                        values[1], values[0], tmp)
-                    print "missed %s" % bssid
-
+                    updatequery = "UPDATE dailyacct SET ssid='%s', calledstationmac='%s' WHERE calledstationid='%s' AND date >= '%s'" % (
+                        values[1], values[0], tmp, date)
+                    print("miss")
                 radiuscursor.execute(updatequery)
+            # MKT case
     except Exception, e:
         radiusconn.rollback()
         logger.error("Error occurred while updating location groups : %s" % str(e))
