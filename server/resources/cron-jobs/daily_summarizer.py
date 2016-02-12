@@ -7,6 +7,7 @@ from datetime import date, timedelta
 dbuser = os.environ.get('SUMMARY_DB_USERNAME', 'root')
 dbpass = os.environ.get('SUMMARY_DB_PASSWORD', 'root')
 dbhost = os.environ.get('SUMMARY_DB_HOST', 'localhost')
+wifiserverdir = os.environ.get('WIFI_SERVER_DIR', '/home/anuruddha/git/wifi-manager/server/')
 tenantid = 1
 
 logger = ""
@@ -30,7 +31,7 @@ devicesStats = {'mobile': 0, 'tablet': 0, 'smarttv': 0, 'wearable': 0, 'embedded
 def main():
     global logger
     logger = logging.getLogger('summarize_radacct_todaily')
-    hdlr = logging.FileHandler('daily.log')
+    hdlr = logging.FileHandler(wifiserverdir + 'logs/daily.log')
     formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
     hdlr.setFormatter(formatter)
     logger.addHandler(hdlr)
@@ -43,40 +44,45 @@ def main():
     initLocationDictionary()
     initGroupsDictionary()
 
-    #dumpExistingData('portal')
     logger.info("-----------------  Starting daily cron job  --------------------")
 
-    # logger.info("Starting Browser stat summarizer    [START]")
-    # summarizeBrowserStats(from_, to, tenantid)
-    # logger.info("Browser stat summary completed      [OK]")
-    #
-    # logger.info("Starting OS stat summarizer         [START]")
-    # summarizeOSStats(from_, to, tenantid)
-    # logger.info("OS stat summary completed           [OK]")
-    #
-    # logger.info("Starting Device stat summarizer     [START]")
-    # summarizeDevicesStats(from_, to, tenantid)
-    # logger.info("Device stat summary completed       [OK]")
-    #
-    # logger.info("Starting cleaning useragentinfo     [START]")
-    # cleanUserAgentInfo(to)
-    # logger.info("Cleaning useragentinfo completed    [OK]")
+    logger.info("Dumping portal database")
+    dumpExistingData('portal')
 
-    # logger.info("Starting Accounting summarizer      [START]")
-    # conn = mysql.connector.connect(host=dbhost, user=dbuser, passwd=dbpass, db="summary")
-    # cursor = conn.cursor()
-    #
-    # logger.info("Starting summarizing procedure      [START]")
-    # try:
-    #     cursor.callproc('summarize_radacct_todaily')
-    # except mysql.connector.Error, e:
-    #     conn.rollback()
-    #     logger.error("Error occurred executing account summarizing procedure cron job : %s" % str(e))
-    #     logger.info("----------------- Daily cron job stopped [FAILED] ---------------------")
-    #     raise
-    # conn.commit()
-    # cursor.close()
-    # conn.close()
+    logger.info("Dumping radius database")
+    dumpExistingData('radius')
+
+    logger.info("Starting Browser stat summarizer    [START]")
+    summarizeBrowserStats(from_, to, tenantid)
+    logger.info("Browser stat summary completed      [OK]")
+
+    logger.info("Starting OS stat summarizer         [START]")
+    summarizeOSStats(from_, to, tenantid)
+    logger.info("OS stat summary completed           [OK]")
+
+    logger.info("Starting Device stat summarizer     [START]")
+    summarizeDevicesStats(from_, to, tenantid)
+    logger.info("Device stat summary completed       [OK]")
+
+    logger.info("Starting cleaning useragentinfo     [START]")
+    cleanUserAgentInfo(to)
+    logger.info("Cleaning useragentinfo completed    [OK]")
+
+    logger.info("Starting Accounting summarizer      [START]")
+    conn = mysql.connector.connect(host=dbhost, user=dbuser, passwd=dbpass, db="summary")
+    cursor = conn.cursor()
+
+    logger.info("Starting summarizing procedure      [START]")
+    try:
+        cursor.callproc('summarize_radacct_todaily')
+    except mysql.connector.Error, e:
+        conn.rollback()
+        logger.error("Error occurred executing account summarizing procedure cron job : %s" % str(e))
+        logger.info("----------------- Daily cron job stopped [FAILED] ---------------------")
+        raise
+    conn.commit()
+    cursor.close()
+    conn.close()
 
     logger.info("Summarize procedure completed       [OK]")
 
@@ -91,7 +97,7 @@ def main():
 def dumpExistingData(database):
     filestamp = time.strftime('%Y-%m-%d-%I:%M')
     os.popen("mysqldump -u %s -p%s -h %s -e --opt -c %s | gzip -c > %s.gz" % (
-        dbuser, dbpass, dbhost, database, database + "_" + filestamp))
+        dbuser, dbpass, dbhost, database, wifiserverdir + "/resources/cron-jobs/" + database + "_" + filestamp))
 
 
 def cleanUserAgentInfo(date):
@@ -146,8 +152,6 @@ def summarizeBrowserStats(from_, to, tenantId):
                 browsersStats['safarimobile'], browsersStats['opera'], browsersStats['webkit'],
                 browsersStats['chromemobile'], browsersStats['other']
             )
-
-            print insertQuery
             try:
                 dashboardcursor.execute(insertQuery)
             except Exception, e:
@@ -297,11 +301,9 @@ def updateLocationGroups(date):
                     group = groups[bssid + ':' + values[1]]
                     updatequery = "UPDATE dailyacct SET ssid='%s', calledstationmac='%s', groupname='%s' WHERE calledstationid='%s' AND date >= '%s'" % (
                         values[1], values[0], group, tmp, date)
-                    print("match")
                 except KeyError, e:
                     updatequery = "UPDATE dailyacct SET ssid='%s', calledstationmac='%s' WHERE calledstationid='%s' AND date >= '%s'" % (
                         values[1], values[0], tmp, date)
-                    print("miss")
                 radiuscursor.execute(updatequery)
             # MKT case
     except Exception, e:

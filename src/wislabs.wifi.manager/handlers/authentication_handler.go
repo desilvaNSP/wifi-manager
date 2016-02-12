@@ -1,14 +1,14 @@
 package handlers
 
 import (
-	"wislabs.wifi.manager/common"
+	"wislabs.wifi.manager/commons"
 	"wislabs.wifi.manager/authenticator"
 	"encoding/json"
 	"net/http"
 )
 
 func Login(w http.ResponseWriter, r *http.Request) {
-	requestUser := new(common.SystemUser)
+	requestUser := new(commons.SystemUser)
 	decoder := json.NewDecoder(r.Body)
 	decoder.Decode(&requestUser)
 
@@ -19,7 +19,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func RefreshToken(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-	requestUser := new(common.SystemUser)
+	requestUser := new(commons.SystemUser)
 	decoder := json.NewDecoder(r.Body)
 	decoder.Decode(&requestUser)
 

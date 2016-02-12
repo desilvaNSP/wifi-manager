@@ -3,7 +3,7 @@ package wifi
 import (
 	"wislabs.wifi.manager/utils"
 	"wislabs.wifi.manager/dao"
-	"wislabs.wifi.manager/common"
+	"wislabs.wifi.manager/commons"
 	log "github.com/Sirupsen/logrus"
 	"database/sql"
 )
@@ -61,11 +61,27 @@ func AddWiFiUser(user *dao.PortalUser) {
 	dbMap := utils.GetDBConnection("portal");
 	defer dbMap.Db.Close()
 
-	stmtIns, err := dbMap.Db.Prepare(common.ADD_WIFI_USER_SQL)
+	stmtIns, err := dbMap.Db.Prepare(commons.ADD_WIFI_USER_SQL)
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
 	_, err = stmtIns.Exec(user.TenantId, user.Username, user.GroupName.String, user.ACL.String)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	AddRadiusUser(user)
+	defer stmtIns.Close()
+}
+
+func AddRadiusUser(user *dao.PortalUser) {
+	dbMap := utils.GetDBConnection(commons.RADIUS_DB_NAME);
+	defer dbMap.Db.Close()
+
+	stmtIns, err := dbMap.Db.Prepare(commons.ADD_RADIUS_USER)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	_, err = stmtIns.Exec(user.Username, "Cleartext-Password", ":=", user.Password)
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
@@ -76,7 +92,7 @@ func UpdateWiFiUser(user *dao.PortalUser) {
 	dbMap := utils.GetDBConnection("portal");
 	defer dbMap.Db.Close()
 
-	stmtIns, err := dbMap.Db.Prepare(common.UPDATE_WIFI_USER)
+	stmtIns, err := dbMap.Db.Prepare(commons.UPDATE_WIFI_USER)
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
@@ -91,7 +107,7 @@ func GetAllWiFiUsers(tenantid int) []dao.PortalUser {
 	dbMap := utils.GetDBConnection("portal");
 	defer dbMap.Db.Close()
 	var users []dao.PortalUser
-	_, err := dbMap.Select(&users, common.GET_ALL_WIFI_USERS, tenantid)
+	_, err := dbMap.Select(&users, commons.GET_ALL_WIFI_USERS, tenantid)
 	checkErr(err, "Select failed")
 	return users
 }
@@ -100,7 +116,7 @@ func DeleteUserAccountingSession(username string, tenantid int) error {
 	dbMap := utils.GetDBConnection("portal");
 	defer dbMap.Db.Close()
 
-	_, err := dbMap.Exec(common.DELETE_WIFI_USER, username, tenantid)
+	_, err := dbMap.Exec(commons.DELETE_WIFI_USER, username, tenantid)
 	return err
 }
 
@@ -108,7 +124,7 @@ func DeleteUserFromRadCheck(username string, tenantid int) error {
 	dbMap := utils.GetDBConnection("radius");
 	defer dbMap.Db.Close()
 
-	_, err := dbMap.Exec(common.DELETE_RADCHECk_USER, username)
+	_, err := dbMap.Exec(commons.DELETE_RADCHECk_USER, username)
 
 	return err
 }
@@ -117,7 +133,7 @@ func DeleteUserFromRadAcct(username string, tenantid int) error {
 	dbMap := utils.GetDBConnection("radius");
 	defer dbMap.Db.Close()
 
-	_, err := dbMap.Exec(common.DELETE_RADACCT_USER, username)
+	_, err := dbMap.Exec(commons.DELETE_RADACCT_USER, username)
 
 	return err
 }

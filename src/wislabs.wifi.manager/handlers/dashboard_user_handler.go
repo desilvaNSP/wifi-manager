@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"wislabs.wifi.manager/dao"
-	"wislabs.wifi.manager/common"
+	"wislabs.wifi.manager/commons"
 	"wislabs.wifi.manager/controllers/dashboard"
 	"net/http"
 	"encoding/json"
@@ -149,11 +149,11 @@ func GetAllUserPermissionsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetLoginPage(w http.ResponseWriter, r *http.Request) {
-	r.URL.Path = common.ServerHome + "/webapps/dashboard/login.html"
+	r.URL.Path = commons.ServerHome + "/webapps/dashboard/login.html"
 	http.ServeFile(w, r, r.URL.Path)
 }
 
 func GetRegistrationPage(w http.ResponseWriter, r *http.Request) {
-	r.URL.Path = common.ServerHome + "/webapps/dashboard/register.html"
+	r.URL.Path = commons.ServerHome + "/webapps/dashboard/register.html"
 	http.ServeFile(w, r, r.URL.Path)
 }

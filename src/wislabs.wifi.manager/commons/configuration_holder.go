@@ -1,4 +1,4 @@
-package common
+package commons
 
 var ServerHome string
 const JWT_PRIVATE_KEY_PATH string = "JWT_PRIVATE_KEY_PATH"

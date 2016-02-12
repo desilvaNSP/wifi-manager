@@ -6,7 +6,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 	"database/sql"
-	"wislabs.wifi.manager/common"
+	"wislabs.wifi.manager/commons"
 )
 
 func IsUserAuthenticated(user dao.DashboardUser) bool {
@@ -39,7 +39,7 @@ func RegisterDashboardUser(user dao.DashboardUser) error {
 	if err != nil {
 		return err
 	}
-	stmtIns, err := dbMap.Db.Prepare(common.CREATE_DASHBOARD_USER)
+	stmtIns, err := dbMap.Db.Prepare(commons.CREATE_DASHBOARD_USER)
 	defer stmtIns.Close()
 
 	if err != nil {
@@ -60,7 +60,7 @@ func UpdateDashboardUser(user dao.DashboardUser) error {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 
-	stmtIns, err := dbMap.Db.Prepare(common.UPDATE_DASHBOARD_USER)
+	stmtIns, err := dbMap.Db.Prepare(commons.UPDATE_DASHBOARD_USER)
 	defer stmtIns.Close()
 
 	if err != nil {
@@ -78,7 +78,7 @@ func DeleteDashboardUser(tenantId int, username string) {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 
-	stmtIns, err := dbMap.Db.Prepare(common.DELETE_DASHBOARD_USER)
+	stmtIns, err := dbMap.Db.Prepare(commons.DELETE_DASHBOARD_USER)
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
@@ -94,7 +94,7 @@ func GetDashboardUser(tenantId int, username string) dao.DashboardUser {
 	defer dbMap.Db.Close()
 
 	var user dao.DashboardUser
-	err := dbMap.SelectOne(&user, common.GET_DASHBOARD_USER, username, tenantId)
+	err := dbMap.SelectOne(&user, commons.GET_DASHBOARD_USER, username, tenantId)
 	if err != nil {
 		//panic(err.Error()) // proper error handling instead of panic in your app
 		return user
@@ -109,7 +109,7 @@ func GetAllDashboardUsers(tenantId int) []dao.DashboardUser {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 	var users []dao.DashboardUser
-	_, err := dbMap.Select(&users, common.GET_ALL_DASHBOARD_USERS, tenantId)
+	_, err := dbMap.Select(&users, commons.GET_ALL_DASHBOARD_USERS, tenantId)
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
@@ -131,7 +131,7 @@ func GetDashboardUserPermissions(tenantId int, username string) []string {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 	var permissions []string
-	_, err := dbMap.Select(&permissions, common.GET_DASHBOARD_USER_PERMISSIONS, username, tenantId)
+	_, err := dbMap.Select(&permissions, commons.GET_DASHBOARD_USER_PERMISSIONS, username, tenantId)
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
@@ -141,7 +141,7 @@ func GetDashboardUserPermissions(tenantId int, username string) []string {
 func AddDashboardUserPermissions(userId int64, user dao.DashboardUser) error {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
-	stmtIns, err := dbMap.Db.Prepare(common.ADD_DASHBOARD_USER_PERMISSIONS)
+	stmtIns, err := dbMap.Db.Prepare(commons.ADD_DASHBOARD_USER_PERMISSIONS)
 	defer stmtIns.Close()
 
 	if err != nil {
@@ -164,7 +164,7 @@ func GetAllDashboardUserPermissions(tenantId int) []dao.Permission {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 	var permissions []dao.Permission
-	_, err := dbMap.Select(&permissions, common.GET_ALL_PERMISSIONS, tenantId)
+	_, err := dbMap.Select(&permissions, commons.GET_ALL_PERMISSIONS, tenantId)
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
@@ -175,7 +175,7 @@ func GetPermissionId(tenantId int, permission string) int64 {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 
-	permissionId, err := dbMap.SelectInt(common.GET_PERMISSION_ID, permission, tenantId)
+	permissionId, err := dbMap.SelectInt(commons.GET_PERMISSION_ID, permission, tenantId)
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
@@ -186,7 +186,7 @@ func GetUserId(tenantId int, username string) int64 {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 
-	permissionId, err := dbMap.SelectInt(common.GET_USER_ID, username, tenantId)
+	permissionId, err := dbMap.SelectInt(commons.GET_USER_ID, username, tenantId)
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
@@ -196,7 +196,7 @@ func GetUserId(tenantId int, username string) int64 {
 func AddDashboardUserApGroups(userId int64, user dao.DashboardUser) error {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
-	stmtIns, err := dbMap.Db.Prepare(common.ADD_DASHBOARD_USER_AP_GROUP)
+	stmtIns, err := dbMap.Db.Prepare(commons.ADD_DASHBOARD_USER_AP_GROUP)
 	defer stmtIns.Close()
 
 	if err != nil {
@@ -215,7 +215,7 @@ func GetApGroupId(tenantId int, groupName string) int64 {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 
-	permissionId, err := dbMap.SelectInt(common.GET_AP_GROUP_ID, groupName, tenantId)
+	permissionId, err := dbMap.SelectInt(commons.GET_AP_GROUP_ID, groupName, tenantId)
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
@@ -226,7 +226,7 @@ func GetDashboardUserApGroups(tenantId int, username string) []string {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 	var groups []string
-	_, err := dbMap.Select(&groups, common.GET_DASHBOARD_USER_AP_GROUPS, username, tenantId)
+	_, err := dbMap.Select(&groups, commons.GET_DASHBOARD_USER_AP_GROUPS, username, tenantId)
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}

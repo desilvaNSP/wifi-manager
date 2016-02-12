@@ -9,7 +9,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"os"
 	"time"
-	"wislabs.wifi.manager/common"
+	"wislabs.wifi.manager/commons"
 	"wislabs.wifi.manager/redis"
 	"strconv"
 	"wislabs.wifi.manager/utils"
@@ -39,9 +39,9 @@ func InitJWTAuthenticationEngine() *JWTAuthenticationBackend {
 	return authBackendInstance
 }
 
-func (backend *JWTAuthenticationBackend) GenerateToken(user *common.SystemUser) (string, error) {
+func (backend *JWTAuthenticationBackend) GenerateToken(user *commons.SystemUser) (string, error) {
 	token := jwt.New(jwt.SigningMethodRS512)
-	i, _ := strconv.Atoi(os.Getenv(common.JWT_EXPIRATION_DELTA))
+	i, _ := strconv.Atoi(os.Getenv(commons.JWT_EXPIRATION_DELTA))
 	token.Claims["exp"] = time.Now().Add(time.Hour * time.Duration(i)).Unix()
 	token.Claims["iat"] = time.Now().Unix()
 	token.Claims["sub"] = user.Username
@@ -57,7 +57,7 @@ func (backend *JWTAuthenticationBackend) GenerateToken(user *common.SystemUser) 
 	return tokenString, nil
 }
 
-func getUserId(user *common.SystemUser) int64 {
+func getUserId(user *commons.SystemUser) int64 {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 	var userId sql.NullInt64
@@ -74,7 +74,7 @@ func getUserId(user *common.SystemUser) int64 {
 	return -1
 }
 
-func getUserScopes(user *common.SystemUser) map[string][]string {
+func getUserScopes(user *commons.SystemUser) map[string][]string {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 	rows, err := dbMap.Db.Query("select name,action from permissions where permissionid in (select userpermissions.permissionid from userpermissions where userpermissions.userid = ?) order by name", user.UserId)
@@ -103,7 +103,7 @@ func getUserScopes(user *common.SystemUser) map[string][]string {
 	return scopes
 }
 
-func (backend *JWTAuthenticationBackend) Authenticate(user *common.SystemUser) bool {
+func (backend *JWTAuthenticationBackend) Authenticate(user *commons.SystemUser) bool {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 
@@ -153,7 +153,7 @@ func (backend *JWTAuthenticationBackend) IsInBlacklist(token string) bool {
 }
 
 func getPrivateKey() *rsa.PrivateKey {
-	privateKeyFile, err := os.Open(os.Getenv(common.JWT_PRIVATE_KEY_PATH))
+	privateKeyFile, err := os.Open(os.Getenv(commons.JWT_PRIVATE_KEY_PATH))
 	if err != nil {
 		panic(err)
 	}
@@ -178,7 +178,7 @@ func getPrivateKey() *rsa.PrivateKey {
 }
 
 func getPublicKey() *rsa.PublicKey {
-	publicKeyFile, err := os.Open(os.Getenv(common.JWT_PUBLIC_KEY_PATH))
+	publicKeyFile, err := os.Open(os.Getenv(commons.JWT_PUBLIC_KEY_PATH))
 	if err != nil {
 		panic(err)
 	}

@@ -9,7 +9,7 @@ import (
 	"os"
 	"strconv"
 	"time"
-	"wislabs.wifi.manager/common"
+	"wislabs.wifi.manager/commons"
 	"wislabs.wifi.manager/dao"
 	"wislabs.wifi.manager/routes"
 	"wislabs.wifi.manager/utils"
@@ -24,7 +24,7 @@ var httpAccessLogFile os.File
 func main() {
 	ServerHome = os.Args[1]
 	loadConfigs(ServerHome)
-	common.ServerHome = ServerHome
+	commons.ServerHome = ServerHome
 	defer serverLogFile.Close()
 	defer httpAccessLogFile.Close()
 	router := routes.NewRouter()

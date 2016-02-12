@@ -3,7 +3,7 @@ package dashboard
 import (
 	"wislabs.wifi.manager/utils"
 	"wislabs.wifi.manager/dao"
-	"wislabs.wifi.manager/common"
+	"wislabs.wifi.manager/commons"
 //	log "github.com/Sirupsen/logrus"
 //"database/sql"
 )
@@ -22,7 +22,7 @@ func GetAllDashboardAppsOfUser(username string, tenantId int) []dao.DashboardApp
 	defer dbMap.Db.Close()
 
 	var apps []dao.DashboardApp
-	_, err := dbMap.Select(&apps, common.GET_DASHBOARD_USER_APPS, username, tenantId)
+	_, err := dbMap.Select(&apps, commons.GET_DASHBOARD_USER_APPS, username, tenantId)
 	if err != nil {
 		//panic(err.Error()) // proper error handling instead of panic in your app
 		return apps
@@ -35,7 +35,7 @@ func GetDashboardUsersOfApp(appId int) []dao.DashboardAppUser {
 	defer dbMap.Db.Close()
 
 	var users []dao.DashboardAppUser
-	_, err := dbMap.Select(&users, common.GET_DASHBOARD_APP_USERS, appId)
+	_, err := dbMap.Select(&users, commons.GET_DASHBOARD_APP_USERS, appId)
 	if err != nil {
 		//panic(err.Error()) // proper error handling instead of panic in your app
 		return users
@@ -48,7 +48,7 @@ func GetDashboardMetricsOfApp(appId int) []dao.DashboardMetric {
 	defer dbMap.Db.Close()
 
 	var metrics []dao.DashboardMetric
-	_, err := dbMap.Select(&metrics, common.GET_DASHBOARD_APP_METRICS, appId)
+	_, err := dbMap.Select(&metrics, commons.GET_DASHBOARD_APP_METRICS, appId)
 	if err != nil {
 		//panic(err.Error()) // proper error handling instead of panic in your app
 		return metrics
@@ -61,7 +61,7 @@ func GetDashboardGroupsOfApp(appId int) []dao.DashboardAppGroup {
 	defer dbMap.Db.Close()
 
 	var groups []dao.DashboardAppGroup
-	_, err := dbMap.Select(&groups, common.GET_DASHBOARD_APP_GROUPS, appId)
+	_, err := dbMap.Select(&groups, commons.GET_DASHBOARD_APP_GROUPS, appId)
 	if err != nil {
 		//panic(err.Error()) // proper error handling instead of panic in your app
 		return groups
@@ -74,7 +74,7 @@ func GetAllDashboardMetrics(tenantId int) []dao.DashboardMetric {
 	defer dbMap.Db.Close()
 
 	var metrics []dao.DashboardMetric
-	_, err := dbMap.Select(&metrics, common.GET_ALL_DASHBOARD_METRICS, tenantId)
+	_, err := dbMap.Select(&metrics, commons.GET_ALL_DASHBOARD_METRICS, tenantId)
 	if err != nil {
 		//panic(err.Error()) // proper error handling instead of panic in your app
 		return metrics
@@ -86,7 +86,7 @@ func AddDashboardApp(app *dao.DashboardAppInfo) (int64, error) {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 
-	stmtIns, err := dbMap.Db.Prepare(common.ADD_DASHBOARD_APP)
+	stmtIns, err := dbMap.Db.Prepare(commons.ADD_DASHBOARD_APP)
 	defer stmtIns.Close()
 
 	if err != nil {
@@ -105,7 +105,7 @@ func AddDashboardAppMetrics(appMetrics *[]dao.DashboardAppMetric, appId int64) e
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 
-	stmtIns, err := dbMap.Db.Prepare(common.ADD_DASHBOARD_APP_METRIC)
+	stmtIns, err := dbMap.Db.Prepare(commons.ADD_DASHBOARD_APP_METRIC)
 	defer stmtIns.Close()
 
 	if err != nil {
@@ -121,7 +121,7 @@ func AddDashboardAppGroups(appGroup *[]dao.DashboardAppGroup, appId int64) error
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 
-	stmtIns, err := dbMap.Db.Prepare(common.ADD_DASHBOARD_APP_GROUP)
+	stmtIns, err := dbMap.Db.Prepare(commons.ADD_DASHBOARD_APP_GROUP)
 	defer stmtIns.Close()
 
 	if err != nil {
@@ -137,7 +137,7 @@ func AddDashboardAppUsers(appUsers *[]dao.DashboardAppUser, appId int64) error {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 
-	stmtIns, err := dbMap.Db.Prepare(common.ADD_DASHBOARD_APP_USER)
+	stmtIns, err := dbMap.Db.Prepare(commons.ADD_DASHBOARD_APP_USER)
 	defer stmtIns.Close()
 
 	if err != nil {
@@ -153,7 +153,7 @@ func DeleteDashboardApp(appId int, tenantId int) error {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 
-	stmtIns, err := dbMap.Db.Prepare(common.DELETE_DASHBOARD_APP)
+	stmtIns, err := dbMap.Db.Prepare(commons.DELETE_DASHBOARD_APP)
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}

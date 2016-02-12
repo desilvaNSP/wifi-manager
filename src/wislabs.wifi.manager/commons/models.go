@@ -1,4 +1,4 @@
-package common
+package commons
 
 type SystemUser struct {
 	UserId int64 `db:"userid"json:"userid"`

@@ -1,7 +1,7 @@
 package authenticator
 
 import (
-	"wislabs.wifi.manager/common"
+	"wislabs.wifi.manager/commons"
 	"net/http"
 	"encoding/json"
 	jwt "github.com/dgrijalva/jwt-go"
@@ -15,7 +15,7 @@ type TokenAuthentication struct {
 	TenantId int64 `json:"tenantid" form:"tenantid"`
 }
 
-func Login(requestUser *common.SystemUser) (int, []byte) {
+func Login(requestUser *commons.SystemUser) (int, []byte) {
 	authEngine := InitJWTAuthenticationEngine()
 	requestUser.TenantId = getTenantId(requestUser)
 	if authEngine.Authenticate(requestUser) {
@@ -30,7 +30,7 @@ func Login(requestUser *common.SystemUser) (int, []byte) {
 	return http.StatusUnauthorized, []byte("")
 }
 
-func RefreshToken(requestUser *common.SystemUser) []byte {
+func RefreshToken(requestUser *commons.SystemUser) []byte {
 	authEngine := InitJWTAuthenticationEngine()
 	token, err := authEngine.GenerateToken(requestUser)
 	if err != nil {
@@ -76,7 +76,7 @@ func RequireTokenAuthentication(inner http.Handler) http.Handler {
 	})
 }
 
-func getTenantId(user *common.SystemUser) int64 {
+func getTenantId(user *commons.SystemUser) int64 {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 
