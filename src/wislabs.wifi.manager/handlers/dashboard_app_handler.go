@@ -18,12 +18,12 @@ import (
 */
 func CreateDashboardApp(w http.ResponseWriter, r *http.Request){
 	decoder := json.NewDecoder(r.Body)
-	var dashboarApp dao.DashboardAppInfo
-	err := decoder.Decode(&dashboarApp)
+	var dashboardApp dao.DashboardAppInfo
+	err := decoder.Decode(&dashboardApp)
 	if(err != nil){
 		log.Fatalln("Error while decoding location json")
 	}
-	dashboard.CreateNewDashboardApp(dashboarApp)
+	dashboard.CreateNewDashboardApp(dashboardApp)
 	w.WriteHeader(http.StatusOK)
 }
 

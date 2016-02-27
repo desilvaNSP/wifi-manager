@@ -269,7 +269,7 @@
                         th.append(aoFragments[ti]);
                     }
                 }
-                
+
 
             }
 
@@ -785,38 +785,6 @@
                     return $("#" + id + "_range_from_" + aiCustomSearch_Indexes[j]).val() + properties.sRangeSeparator + $("#" + id + "_range_to_" + aiCustomSearch_Indexes[j]).val()
                 }
                 afnSearch_.push(fnSearch_);
-            }
-
-            if (oTable.fnSettings().oFeatures.bServerSide) {
-
-                var fnServerDataOriginal = oTable.fnSettings().fnServerData;
-
-                oTable.fnSettings().fnServerData = function (sSource, aoData, fnCallback) {
-
-                    for (j = 0; j < aiCustomSearch_Indexes.length; j++) {
-                        var index = aiCustomSearch_Indexes[j];
-
-                        for (k = 0; k < aoData.length; k++) {
-                            if (aoData[k].name == "sSearch_" + index)
-                                aoData[k].value = afnSearch_[j]();
-                        }
-                    }
-                    aoData.push({ "name": "sRangeSeparator", "value": properties.sRangeSeparator });
-
-                    if (fnServerDataOriginal != null) {
-                        try {
-                            fnServerDataOriginal(sSource, aoData, fnCallback, oTable.fnSettings()); //TODO: See Issue 18
-                        } catch (ex) {
-                            fnServerDataOriginal(sSource, aoData, fnCallback);
-                        }
-                    }
-                    else {
-                        $.getJSON(sSource, aoData, function (json) {
-                            fnCallback(json)
-                        });
-                    }
-                };
-
             }
 
         });

@@ -3,7 +3,7 @@ $(document).ajaxError(function (event, jqxhr, settings, thrownError) {
         "closeButton": true,
         "debug": false,
         "progressBar": true,
-        "preventDuplicates" : true,
+        "preventDuplicates": true,
         "positionClass": "toast-top-right",
         "onclick": null,
         "showDuration": "400",
@@ -37,7 +37,7 @@ $(document).ready(function () {
         //toastr.error("Unauthorised please login")
         window.location.href = "/dashboard/login"
         return
-    }else{
+    } else {
         storeLoggedInUserPermissions()
     }
     renderSidebar(Cookies.get("username"))
@@ -203,10 +203,72 @@ function SmoothlyMenu() {
     }
 }
 
-function storeLoggedInUserPermissions(){
+function storeLoggedInUserPermissions() {
     $.get('/dashboard/' + Cookies.get('tenantid') + '/users/' + Cookies.get('username'), function (result) {
-      Cookies.set('userpermissions', result.permissions)
+        Cookies.set('userpermissions', result.permissions)
     })
+}
+
+
+function getPieChartData(data) {
+    return pieChartData = $.map(data, function (obj, i) {
+        return [{"name": obj.name, "y": obj.value}];
+    });
+}
+
+function convertToHighChartSeries(arr, devider) {
+    return data = $.map(arr, function (val, i) {
+        return [[moment(val.name, 'YYYY-M-D H:m:s').add(1, "days").valueOf(), val.value / devider]];
+    });
+}
+
+function renderTimeSeries(element, toolTipHeader, yAxisTitle, dataSeries) {
+    $(element).highcharts({
+        chart: {
+            zoomType: 'x'
+        },
+        title: {
+            text: ''
+        },
+        xAxis: {
+            type: 'datetime',
+            dateTimeLabelFormats: { // don't display the dummy year
+                month: '%e. %b',
+                year: '%b'
+            },
+            title: {
+                text: 'Date'
+            }
+        },
+        yAxis: {
+            title: {
+                text: yAxisTitle
+            },
+            min: 0
+        },
+        tooltip: {
+            headerFormat: '<b>' + toolTipHeader + '</b><br>',
+            pointFormat: '{point.x:%e. %b}: {point.y:.2f} m'
+        },
+        plotOptions: {
+            spline: {
+                marker: {
+                    enabled: true
+                }
+            }
+        },
+        exporting: {
+            sourceWidth: 1600,
+            sourceHeight: 500,
+            chartOptions: {
+                subtitle: null
+            }
+        },
+        series: dataSeries,
+        credits: {
+            enabled: false
+        }
+    });
 }
 
 

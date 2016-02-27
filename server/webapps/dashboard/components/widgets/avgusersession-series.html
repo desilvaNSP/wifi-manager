@@ -1,0 +1,29 @@
+<div class="chart-wrapper">
+    <div class="chart-inner">
+        <div id="avg-user-sessions-series" style="width:100%; height: 100%;"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        avgUserSessionTimeSeriesData = []
+        $.post('/wifi/usage/dailyavgusersessiontime', JSON.stringify(payload), function (data, status) {
+            var locationDist = {type: 'spline', name: window.appName, data: convertToHighChartSeries(data, 60)}
+            avgUserSessionTimeSeriesData.push(locationDist);
+            renderTimeSeries('#avg-user-sessions-series', 'Sessoins', "Time (Min)", avgUserSessionTimeSeriesData);
+        });
+
+        $('#time-series-avgsessiontime').on('click', '#time-series-avgsessiontime-compare-btn', function (e) {
+            avgUserSessionTimeSeriesData = []
+            $.each(window.originaldatagroups, function (i, val) {
+                var payload2 = payload
+                payload2.groupnames = [val]
+                $.post('/wifi/usage/dailyavgusersessiontime', JSON.stringify(payload2), function (data, status) {
+                    var locationDist = {type: 'spline', name: val, data: convertToHighChartSeries(data, 60)}
+                    avgUserSessionTimeSeriesData.push(locationDist);
+                });
+            });
+            renderTimeSeries('time-series-avgsessiontime', 'Average Daily User Session Time Distribution', "Time (Sec)", avgUserSessionTimeSeriesData);
+        });
+    });
+</script>

@@ -22,8 +22,14 @@ var serverLogFile os.File
 var httpAccessLogFile os.File
 
 func main() {
-	ServerHome = os.Args[1]
-	loadConfigs(ServerHome)
+
+	ServerHome = os.Getenv(commons.SERVER_HOME)
+	if( len(ServerHome) <=0 ){
+		ServerHome = os.Args[1]
+	}
+
+	initConfigurations(ServerHome)
+	InitConfigs(ServerHome)
 	commons.ServerHome = ServerHome
 	defer serverLogFile.Close()
 	defer httpAccessLogFile.Close()
@@ -42,7 +48,7 @@ func main() {
 	log.Fatal("HTTP Server error: ", s.ListenAndServeTLS(ServerHome+"/resources/security/server.pem", ServerHome+"/resources/security/server.key"))
 }
 
-func loadConfigs(serverHome string) {
+func initConfigurations(serverHome string) {
 	viper.New()
 	viper.SetConfigName("config")
 	viper.AddConfigPath(serverHome + "/configs")

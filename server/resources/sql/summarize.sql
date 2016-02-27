@@ -1,3 +1,3 @@
 USE `summary`
 
-CALL sumarize_radacct_todaily;
+CALL summarize_radacct_todaily;

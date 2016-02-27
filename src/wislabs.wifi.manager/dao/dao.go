@@ -40,6 +40,14 @@ type PortalUser struct {
 	Visits              int64                         `db:"visits"json:"visits"`
 }
 
+type DataTablesResponce struct {
+	Draw            int  `json:"draw"`
+	RecordsTotal    int64 `json:"recordsTotal"`
+	RecordsFiltered int64 `json:"recordsFiltered"`
+	Data            []PortalUser `json:"data"`
+	Error           string
+}
+
 type Role struct {
 	Name     string `json:"name"`
 	TenantId string `json:"tenantId"`
@@ -59,9 +67,9 @@ type AuthUser struct {
 
 type Constrains struct {
 	TenantId   int               `json:"tenantid"`
-	From       string                   `json:"from"`
-	To         string               `json:"to"`
-	GroupNames []string           `json:"groupnames"`
+	From       string            `json:"from"`
+	To         string            `json:"to"`
+	GroupNames []string          `json:"groupnames"`
 }
 
 type ApLocation struct {

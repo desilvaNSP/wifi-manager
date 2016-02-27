@@ -173,6 +173,7 @@
         var locationTable = $('.dataTables-location').DataTable({
             responsive: true,
             orderCellsTop: true,
+            autoWidth: false,
             "ajax": {
                 "url": serverOriginUrl + "/wifi/" + Cookies.get("tenantid") + "/locations",
                 "type": "GET",
@@ -198,8 +199,37 @@
                     "sortable": false
                 }
             ],
-            dom: 'T<"clear">lfrtip',
+            dom: "<'dt-toolbar'<'col-xs-12 col-sm-6'lf><'col-sm-6 col-xs-6 hidden-xs'CT>r>" +
+            "t" +
+            "<'dt-toolbar-footer'<'col-sm-6 col-xs-12 hidden-xs'i><'col-sm-6 col-xs-12'p>>",
             tableTools: {
+                "aButtons": [
+                    {
+                        "sExtends": "copy",
+                        "sButtonText": "Copy",
+                        "mColumns": "visible"
+                    },
+                    {
+                        "sExtends": "csv",
+                        "sButtonText": "CSV",
+                        "mColumns": "visible"
+                    },
+                    {
+                        "sExtends": "xls",
+                        "sButtonText": "Excel",
+                        "mColumns": "visible"
+                    },
+                    {
+                        "sExtends": "pdf",
+                        "sButtonText": "PDF",
+                        "mColumns": "visible"
+                    },
+                    {
+                        "sExtends": "print",
+                        "sButtonText": "Print",
+                        "mColumns": "visible"
+                    }
+                ],
                 "sSwfPath": "js/plugins/dataTables/swf/copy_csv_xls_pdf.swf"
             }
         });

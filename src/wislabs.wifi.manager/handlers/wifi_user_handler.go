@@ -42,7 +42,9 @@ func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 	if (err != nil) {
 		log.Fatalln("Error while reading tenantid", err)
 	}
-	users := wifi_controller.GetAllWiFiUsers(tenantId)
+
+	draw, err := strconv.Atoi(r.FormValue("draw"))
+	users := wifi_controller.GetAllWiFiUsers(tenantId, draw, r)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
@@ -119,6 +121,26 @@ func GetReturningUsersCountFromToHandler(w http.ResponseWriter, r *http.Request)
 	err := decoder.Decode(&constrains)
 
 	count := wifi_controller.GetReturningUsers(constrains)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+
+	if err = json.NewEncoder(w).Encode(count); err != nil {
+		panic(err)
+	}
+}
+
+/**
+* POST
+* @path /wifi/users/dailycountseries
+*
+*/
+func GetDailyUsersCountSeriesFromToHandler(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var constrains dao.Constrains
+	err := decoder.Decode(&constrains)
+
+	count := wifi_controller.GetDailyUserCountSeriesFromTo(constrains)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)

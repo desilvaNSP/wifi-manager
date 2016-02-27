@@ -22,7 +22,7 @@ var username string
 
 func setup() {
 
-	loadConfigs("/home/anuruddha/git/wifi-manager/server")
+	initConfigurations("/home/anuruddha/git/wifi-manager/server")
 	username = "erty"
 	//mux router with added question routes
 	m = routes.NewRouter()

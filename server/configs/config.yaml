@@ -29,6 +29,7 @@ portalDBConfigs:
 serverConfigs:
  httpPort : 8081
  httpsPort : 9443
+ adminPort : 9463
  readTimeOut : 20
  writeTimeOut : 20
 

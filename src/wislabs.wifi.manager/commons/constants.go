@@ -1,9 +1,15 @@
 package commons
 
+const SERVER_HOME string = "SERVER_HOME"
+
+
 const RADIUS_DB_NAME string = "radius"
 const DASHBOARD_DB_NAME string = "dashboard"
 const PORTAL_DB_NAME string = "portal"
 const SUMMARY_DB_NAME string = "summary"
+
+/* common queries */
+const GET_RECORDS_COUNT = "SELECT COUNT(*) from accounting WHERE tenantid=?"
 
 /* Analytics */
 const GET_USER_COUNT_OF_DOWNLOADS_OVER_LOCATION string = "SELECT count(DISTINCT username) FROM dailyacct where date >= ? AND date < ? AND location = ? AND outputoctets >= ?";
@@ -30,7 +36,8 @@ const DELETE_DASHBOARD_USER string   				= "DELETE FROM users WHERE tenantid=? A
 /* WIFI users */
 const ADD_WIFI_USER_SQL string  = "INSERT INTO accounting (tenantid, username, acctstarttime, acctlastupdatedtime, acctstoptime, groupname, acl) VALUES( ?, ?, NOW(),NOW(),NOW()+ INTERVAL 1 HOUR, ?, ? )";
 const UPDATE_WIFI_USER string   = "UPDATE accounting SET acl=? WHERE username=? AND tenantid=?";
-const GET_ALL_WIFI_USERS string = "SELECT tenantid, username, acctstarttime, acctlastupdatedtime, acctstoptime, groupname, visits, acl FROM accounting WHERE tenantid=? order by username";
+const GET_ALL_WIFI_USERS string = "SELECT tenantid, username, acctstarttime, acctlastupdatedtime, acctstoptime, groupname, visits, acl FROM accounting WHERE tenantid=? order by username LIMIT ?, ?";
+const SEARCH_WIFI_USERS string  = "SELECT tenantid, username, acctstarttime, acctlastupdatedtime, acctstoptime, groupname, visits, acl FROM accounting WHERE tenantid=? AND username LIKE ? LIMIT ?,?";
 
 const DELETE_WIFI_USER string     = "DELETE FROM accounting where username=? AND tenantid=?";
 const DELETE_RADCHECk_USER string = "DELETE FROM radcheck WHERE username = ?";

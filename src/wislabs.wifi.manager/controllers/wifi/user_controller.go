@@ -6,21 +6,23 @@ import (
 	"wislabs.wifi.manager/commons"
 	log "github.com/Sirupsen/logrus"
 	"database/sql"
+	"net/http"
+	"strconv"
 )
 
-func GetDailyUserCountFromTo(constrains dao.Constrains) [] dao.NameValue {
+func GetDailyUserCountSeriesFromTo(constrains dao.Constrains) [] dao.NameValue {
 	dbMap := utils.GetDBConnection("summary");
 	defer dbMap.Db.Close()
 	var totalDailyDownloads[] dao.NameValue
-	query := "SELECT COUNT(username) as value ,date as name FROM dailyacct where date >= ? AND date < ? AND tenantid=? "
+	query := "SELECT COUNT(DISTINCT username) as value ,date as name FROM dailyacct where date >= ? AND date < ? AND tenantid=? "
 
 	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
-		query = query + " AND groupname=? "
+		query = query + " AND (groupname=? "
 		for i := 1; i < len(constrains.GroupNames); i++ {
 			query = query + " OR groupname=? "
 		}
-		query = query + " group by date"
+		query = query + " )group by date"
 		_, err := dbMap.Select(&totalDailyDownloads, query, args...)
 		if err != nil {
 			panic(err.Error()) // proper error handling instead of panic
@@ -103,13 +105,15 @@ func UpdateWiFiUser(user *dao.PortalUser) {
 	defer stmtIns.Close()
 }
 
-func GetAllWiFiUsers(tenantid int) []dao.PortalUser {
-	dbMap := utils.GetDBConnection("portal");
-	defer dbMap.Db.Close()
+func GetAllWiFiUsers(tenantId int, draw int, r *http.Request) dao.DataTablesResponce {
 	var users []dao.PortalUser
-	_, err := dbMap.Select(&users, commons.GET_ALL_WIFI_USERS, tenantid)
-	checkErr(err, "Select failed")
-	return users
+	var response dao.DataTablesResponce
+	columns := []string{"username", "acl", "groupname", "visits", "acctstarttime", "acctstoptime", "acctlastupdatedtime"}
+	totalRecordCountQuery := "SELECT COUNT(username) FROM accounting where tenantid=" + strconv.Itoa(tenantId)
+	response.RecordsFiltered, response.RecordsTotal = commons.Fetch(r, "portal", "accounting", totalRecordCountQuery, columns, &users)
+	response.Data = users
+	response.Draw = draw
+	return response
 }
 
 func DeleteUserAccountingSession(username string, tenantid int) error {
@@ -137,7 +141,6 @@ func DeleteUserFromRadAcct(username string, tenantid int) error {
 
 	return err
 }
-
 
 func GetUsersCountFromTo(constrains dao.Constrains) int64 {
 	dbMap := utils.GetDBConnection("summary");
@@ -175,7 +178,7 @@ func GetReturningUsers(constrains dao.Constrains) int64 {
 	defer dbMap.Db.Close()
 	var err error
 	var count sql.NullInt64
-	query := "SELECT COUNT(DISTINCT username) FROM accounting where acctstarttime >= ? AND acctstarttime < ? AND tenantid=? AND visits > 1"
+	query := "SELECT COUNT(DISTINCT username) FROM accounting where acctstarttime >= ? AND acctstarttime < ? AND tenantid=? AND visits > 0"
 
 	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)

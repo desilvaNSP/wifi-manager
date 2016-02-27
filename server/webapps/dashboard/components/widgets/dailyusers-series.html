@@ -1,0 +1,30 @@
+<div class="chart-wrapper">
+    <div class="chart-inner">
+        <div id="time-series-daily-users" style="width:100%; height: 100%;" ></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        dailyUsersTimeSeriesData = []
+        $.post('/wifi/users/dailycountseries', JSON.stringify(payload), function (data, status) {
+            var locationDist = {type: 'spline', name: window.appName, data: convertToHighChartSeries(data, 1)};
+            dailyUsersTimeSeriesData.push(locationDist);
+            renderTimeSeries('#time-series-daily-users', 'Users', "Count", dailyUsersTimeSeriesData);
+        });
+
+        $('#time-series-uploads').on('click', '#time-series-uploads-compare-btn', function (e) {
+            downloadsTimeSeriesData = []
+            $.each(window.originaldatagroups, function (i, val) {
+                var payload2 = payload
+                payload2.groupnames = [val]
+                $.post('/wifi/users/dailycountseries', JSON.stringify(payload2), function (data, status) {
+                    var locationDist = {type: 'spline', name: val, data: convertToHighChartSeries(data, 1)}
+                    downloadsTimeSeriesData.push(locationDist);
+                });
+            });
+            renderTimeSeries('time-series-uploads', 'Total Daily Users Distribution', "Count", downloadsTimeSeriesData);
+        });
+
+    });
+</script>

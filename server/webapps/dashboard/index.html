@@ -14,12 +14,15 @@
     <link href="css/plugins/dataTables/dataTables.bootstrap.css" rel="stylesheet">
     <link href="css/plugins/dataTables/dataTables.responsive.css" rel="stylesheet">
     <link href="css/plugins/dataTables/dataTables.tableTools.min.css" rel="stylesheet">
+    <link href="css/plugins/dataTables/dataTables.colVis.min.css" rel="stylesheet">
+
     <link href="css/plugins/slider/ion.rangeSlider.skinModern.css" rel="stylesheet">
     <link href="css/plugins/slider/ion.rangeSlider.css" rel="stylesheet">
     <link href="css/plugins/toastr/toastr.min.css" rel="stylesheet">
 
     <link href="css/animate.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
+    <link href="css/app.plugin.css" rel="stylesheet">
 
     <link href="css/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet" type="text/css">
     <link href="css/plugins/tag-it/jquery.tagit.css" rel="stylesheet" type="text/css">
@@ -27,9 +30,12 @@
 <body>
 
 <!--Start side navigation bar -->
-<div id="side-navigation">
+<aside id="left-panel">
+    <div id="side-navigation">
 
-</div>
+    </div>
+</aside>
+
 <!-- End side navigation bar -->
 
 <div id="page-wrapper" class="gray-bg">
@@ -67,7 +73,14 @@
 
 <!-- Mainly scripts -->
 <script src="js/jquery-2.1.1.js"></script>
+<script src="js/jquery-ui.min.js"></script>
+<script src="js/plugins/jarviswidgets/jarvis.config.js"></script>
+
 <script src="js/bootstrap.min.js"></script>
+<!-- Widgets -->
+<script src="js/plugins/jarviswidgets/jarvis.widget.min.js"></script>
+<script src="js/plugins/jarviswidgets/jarvis.js"></script>
+
 <script src="js/mustache.min.js"></script>
 <script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
 <script src="js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
@@ -75,9 +88,10 @@
 
 <!-- Data Tables -->
 <script src="js/plugins/dataTables/jquery.dataTables.min.js"></script>
-<script src="js/plugins/dataTables/dataTables.bootstrap.js"></script>
+<script src="js/plugins/dataTables/dataTables.bootstrap.min.js"></script>
 <script src="js/plugins/dataTables/dataTables.tableTools.min.js"></script>
 <script src="js/plugins/dataTables/jquery.dataTables.columnFilter.js"></script>
+<script src="js/plugins/dataTables/dataTables.colVis.min.js"></script>
 
 <!-- Jvectormap -->
 <script src="js/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
@@ -96,7 +110,6 @@
 <script src="js/plugins/toastr/toastr.min.js"></script>
 <script src="js/plugins/pace/pace.min.js"></script>
 <script src="js/plugins/shuffle/jquery.shuffle.modernizr.min.js"></script>
-<script src="js/jquery-ui.min.js"></script>
 <script src="js/plugins/tag-it/tag-it.min.js"></script>
 <script src="js/plugins/validate/jquery.validate.min.js"></script>
 

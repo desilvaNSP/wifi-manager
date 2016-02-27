@@ -2,6 +2,7 @@
 *.iml
 *.log
 *.zip
+*.gz
 target
 server/bin/server.bin
 server/bin/*.pid

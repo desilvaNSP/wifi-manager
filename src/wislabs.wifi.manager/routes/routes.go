@@ -185,6 +185,13 @@ var routes = Routes{
 		dashboard_handlers.GetReturningUsersCountFromToHandler,
 	},
 	Route{
+		"GetUsersCountSeriesFromTo",
+		"POST",
+		"/wifi/users/dailycountseries",
+		true,
+		dashboard_handlers.GetDailyUsersCountSeriesFromToHandler,
+	},
+	Route{
 		"GetUsersCountFromToLocation",
 		"POST",
 		"/wifi/users/countbydownlods/{threshold}",

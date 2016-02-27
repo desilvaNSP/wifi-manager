@@ -14,11 +14,11 @@ func GetAggregatedDownloadsFromTo(constrains dao.Constrains) [] dao.NameValue {
 
 	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
-		query = query + " AND groupname=? "
+		query = query + " AND ( groupname=? "
 		for i := 1; i< len(constrains.GroupNames); i++ {
    			query = query + " OR groupname=? "
 		}
-		query = query + " group by date"
+		query = query + ") group by date"
 		_, err := dbMap.Select(&totalDailyDownloads, query, args...)
 		if err != nil {
 			panic(err.Error()) // proper error handling instead of panic
@@ -35,11 +35,11 @@ func GetAggregatedUploadsFromTo(constrains dao.Constrains) [] dao.NameValue {
 
 	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
-		query = query + " AND groupname=? "
+		query = query + " AND (groupname=? "
 		for i := 1; i< len(constrains.GroupNames); i++ {
 			query = query + " OR groupname=? "
 		}
-		query = query + " group by date"
+		query = query + ") group by date"
 		_, err := dbMap.Select(&totalDailyDownloads, query, args...)
 		if err != nil {
 			panic(err.Error()) // proper error handling instead of panic
@@ -52,15 +52,15 @@ func GetAvgDailyDownloadsPerUserFromTo(constrains dao.Constrains) [] dao.NameVal
 	dbMap := utils.GetDBConnection("summary");
 	defer dbMap.Db.Close()
 	var totalDailyDownloads[] dao.NameValue
-	query := "SELECT AVG(inputoctets) as value ,date as name FROM dailyacct where date >= ? AND date < ? AND tenantid=? "
+	query := "SELECT SUM(inputoctets)/COUNT(DISTINCT username) as value ,date as name FROM dailyacct where date >= ? AND date < ? AND tenantid=? "
 
 	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
-		query = query + " AND groupname=? "
+		query = query + " AND( groupname=? "
 		for i := 1; i< len(constrains.GroupNames); i++ {
 			query = query + " OR groupname=? "
 		}
-		query = query + " group by date"
+		query = query + ") group by date"
 		_, err := dbMap.Select(&totalDailyDownloads, query, args...)
 		if err != nil {
 			panic(err.Error()) // proper error handling instead of panic
@@ -78,11 +78,11 @@ func GetDownloadsFromTo(constrains dao.Constrains) int64 {
 
 	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
-		query = query + " AND groupname=? "
+		query = query + " AND( groupname=? "
 		for i := 1; i< len(constrains.GroupNames); i++ {
 			query = query + " OR groupname=? "
 		}
-		smtOut, err := dbMap.Db.Prepare(query)
+		smtOut, err := dbMap.Db.Prepare(query+ ")")
 		defer smtOut.Close()
 		err = smtOut.QueryRow(args...).Scan(&count) // WHERE number = 13
 		if err != nil {
@@ -107,11 +107,11 @@ func GetUploadsFromTo(constrains dao.Constrains) int64 {
 
 	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
-		query = query + " AND groupname=? "
+		query = query + " AND ( groupname=? "
 		for i := 1; i< len(constrains.GroupNames); i++ {
 			query = query + " OR groupname=? "
 		}
-		smtOut, err := dbMap.Db.Prepare(query)
+		smtOut, err := dbMap.Db.Prepare(query + ")")
 		defer smtOut.Close()
 		err = smtOut.QueryRow(args...).Scan(&count) // WHERE number = 13
 		if err != nil {
@@ -195,11 +195,11 @@ func GetAvgDailySessionTimePerUserFromTo(constrains dao.Constrains) [] dao.NameV
 
 	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
-		query = query + " AND groupname=? "
+		query = query + " AND (groupname=? "
 		for i := 1; i< len(constrains.GroupNames); i++ {
 			query = query + " OR groupname=? "
 		}
-		query = query + " group by date"
+		query = query + ") group by date"
 		_, err := dbMap.Select(&totalDailyDownloads, query, args...)
 		if err != nil {
 			panic(err.Error()) // proper error handling instead of panic

@@ -14,23 +14,27 @@
         </div>
     </div>
 </div>
+<div id="xxx">
+    <div id="dashboard-metric-content" class="row">
 
-<div id="dashboard-metric-content">
-
+    </div>
 </div>
 
-<script>
+
+<script type="text/javascript">
     from_ = 0, to_ = 0;
     $(document).ready(function () {
+        renderMetrics()
         var saveResult = function (data) {
             from_ = moment(data.from, "X").format('YYYY-MM-DD');
             to_ = moment(data.to, "X").format('YYYY-MM-DD');
         };
 
         var slider = $("#range").ionRangeSlider({
-            min: +moment().subtract(1, "years").format("X"),
-            max: +moment().format("X"),
-            from: +moment().subtract(6, "months").format("X"),
+            min: +moment("2016-01-01").format("X"),
+            max: +moment().add(1, "days").format("X"),
+            from: +moment().subtract(1, "months").format("X"),
+            to: +moment().format("X"),
             grid: true,
             type: "double",
             prettify: function (num) {
@@ -38,7 +42,6 @@
             },
             onStart: function (data) {
                 saveResult(data);
-                renderMetrics()
             },
             onChange: saveResult,
             onFinish: function (data) {
@@ -49,6 +52,7 @@
 
         function renderMetrics() {
             $.get('components/dashboard-metrics.html', function (template) {
+//                $('#dashboard-metric-content').empty()
                 var rendered = Mustache.render(template, {});
                 $('#dashboard-metric-content').html(rendered)
             })
