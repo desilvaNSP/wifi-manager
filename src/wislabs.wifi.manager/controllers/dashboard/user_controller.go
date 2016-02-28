@@ -74,6 +74,34 @@ func UpdateDashboardUser(user dao.DashboardUser) error {
 	return err
 }
 
+func UpdateDashboardUserPassword(tenantId int, username string, oldPassword string, newPassword string)error {
+	var user dao.DashboardUser
+	user.Username = username
+	user.Password = oldPassword
+	user.TenantId = tenantId
+	var err error
+	if (IsUserAuthenticated(user)) {
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
+		if err != nil {
+			return err
+		}
+		dbMap := utils.GetDBConnection("dashboard");
+		defer dbMap.Db.Close()
+
+		stmtIns, err := dbMap.Db.Prepare(commons.UPDATE_DASHBOARD_USER_PASSWORD)
+		defer stmtIns.Close()
+
+		if err != nil {
+			return err
+		}
+		_, err = stmtIns.Exec(string(hashedPassword), username, tenantId)
+		if err != nil {
+			return err
+		}
+	}
+	return err
+}
+
 func DeleteDashboardUser(tenantId int, username string) {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()

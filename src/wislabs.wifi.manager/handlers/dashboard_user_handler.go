@@ -10,6 +10,7 @@ import (
 	"strconv"
 	log "github.com/Sirupsen/logrus"
 	"wislabs.wifi.manager/authenticator"
+	"wislabs.wifi.manager/utils"
 )
 
 func AuthenticateUser(w http.ResponseWriter, r *http.Request) {
@@ -66,6 +67,19 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+func UpdateUserPasswordHandler(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var user dao.DashboardUserResetPassword
+	err := decoder.Decode(&user)
+	if err != nil {
+		panic("Error while decoding json")
+	}
+	tenantId, err := strconv.Atoi(r.Header.Get("tenantid"))
+	err = dashboard.UpdateDashboardUserPassword(tenantId, user.Username, user.OldPassword, user.NewPassword)
+	w.WriteHeader(http.StatusOK)
+}
+
+
 func DeleteDashboardUsersHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	username := vars["username"]
@@ -79,14 +93,11 @@ func DeleteDashboardUsersHandler(w http.ResponseWriter, r *http.Request) {
 
 func GetUserProfile(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	tenantid, err := strconv.Atoi(vars["tenantid"])
-	if (err != nil) {
-		log.Fatalln("Error while reading tenantid", err)
-	}
 	username := vars["username"]
+	tenantId := utils.GetTenantId(r)
 	var user dao.DashboardUser
 
-	user = dashboard.GetDashboardUser(tenantid, username)
+	user = dashboard.GetDashboardUser(tenantId, username)
 	if (user.Username != "") {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
@@ -134,11 +145,11 @@ func GetTenantRolesHandler(w http.ResponseWriter, r *http.Request) {
 
 func GetAllUserPermissionsHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	tenantid, err := strconv.Atoi(vars["tenantid"])
+	tenantId, err := strconv.Atoi(vars["tenantid"])
 	if (err != nil) {
 		log.Fatalln("Error while reading tenantid", err)
 	}
-	permissions := dashboard.GetAllDashboardUserPermissions(tenantid)
+	permissions := dashboard.GetAllDashboardUserPermissions(tenantId)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)

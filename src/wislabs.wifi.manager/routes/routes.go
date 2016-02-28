@@ -80,6 +80,13 @@ var routes = Routes{
 		dashboard_handlers.UpdateUser,
 	},
 	Route{
+		"Update Dashboard user",
+		"POST",
+		"/dashboard/users/changepassword",
+		true,
+		dashboard_handlers.UpdateUserPasswordHandler,
+	},
+	Route{
 		"Get Dashboard user Info",
 		"GET",
 		"/dashboard/{tenantid}/users/{username}",

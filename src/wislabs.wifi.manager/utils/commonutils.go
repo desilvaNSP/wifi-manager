@@ -7,6 +7,9 @@ import (
 	"github.com/spf13/viper"
 	"fmt"
 	"encoding/json"
+	"github.com/gorilla/mux"
+	"net/http"
+	"log"
 )
 
 type DBConfigs struct{
@@ -78,6 +81,15 @@ func SetDBConfigs(dbConfigs map[string] DBConfigs){
 
 func AddDBConfig(name string, dbConfig DBConfigs){
 		dbConfigs[name] = dbConfig
+}
+
+func GetTenantId( r *http.Request)int{
+	vars := mux.Vars(r)
+	tenantId, err := strconv.Atoi(vars["tenantid"])
+	if (err != nil) {
+		log.Fatalln("Error while reading tenantid", err)
+	}
+	return tenantId
 }
 
 type NullString struct {

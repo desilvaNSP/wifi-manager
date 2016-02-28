@@ -16,15 +16,21 @@ type Tenant struct {
 }
 
 type DashboardUser struct {
-	UserId      int64    `db:"userid"json:"userid"`
-	TenantId    int    `db:"tenantid"json:"tenantid"`
-	Username    string `db:"username"json:"username"`
-	Password    string `db:"password"json:"password"`
+	UserId      int64     `db:"userid"json:"userid"`
+	TenantId    int       `db:"tenantid"json:"tenantid"`
+	Username    string    `db:"username"json:"username"`
+	Password    string    `db:"password"json:"password"`
 	Email       string    `db:"email"json:"email"`
 	Status      string    `db:"status"json:"status"`
 	Roles       []string  `json:"roles"`
-	Permissions []string `json:"permissions"`
-	ApGroups    []string `json:"apgroups"`
+	Permissions []string  `json:"permissions"`
+	ApGroups    []string  `json:"apgroups"`
+}
+
+type DashboardUserResetPassword struct {
+	Username    string  `json:"username"`
+	OldPassword string  `json:"oldpassword"`
+	NewPassword string  `json:"newpassword"`
 }
 
 type PortalUser struct {
