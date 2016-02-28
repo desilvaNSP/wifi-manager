@@ -5,16 +5,33 @@
 * Execute wifi-manager/build.sh 
     * This will create a distribution pack (wifi-manager.zip)
 * Installing the DataBase
-    * Create a Db with name ‘dashboard’
-    * Update the wifi-manager/server/resources/scripts/setup_config.sh with your mysql parameters
+    * Create a database with name ‘dashboard’
+    * Update the wifi-manager/server/resources/scripts/setup_config.sh with your mysql server configurations
     * Execute wifi-manager/server/resources/scripts/setup.sh
 * Configure server parameters in  wifi-manager/server/configs/config.yaml
 * To run the server execute wifi-manager/server/server.sh
-* Navigate to https://localhost:8081/dashboard/
+* To run the server in daemon mode run server.sh start
+
+* Point your browser to https://localhost:8081/dashboard/
 * Username : admin@isl.com Password: admin
+
+#### Adding  a dummy data set
+
+* A dummy data set is located under wifi-manager/server/resources/sql/dummydata folder
+
+1. unzip portaldump.sql.zip and source the file to portal database
+ > source portaldump.sql
+2. unzip sumarydump.sql.zip and source the file to portal database
+ > source sumarydump.sql
 
 #### IDE support for go-lang
 
 * https://github.com/golang/go/wiki/IDEsAndTextEditorPlugins
 
 #### Configure Redis
+* Redis[1] is an open source (BSD licensed), in-memory data structure store, used as database, cache and message broker. This 
+ app use redis primarily as a JWT token storage. 
+* This distribution contains an embedded redis instance compiled for Ubuntu 14.04 LTS. You have to replace thse redis-server 
+with the matching redis server for the OS.
+
+[1] http://redis.io/

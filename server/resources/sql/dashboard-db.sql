@@ -151,3 +151,42 @@ CREATE TABLE IF NOT EXISTS `appmetrics` (
     ON DELETE CASCADE
 )
   ENGINE = InnoDB;
+
+-- Inserting default data set
+INSERT IGNORE INTO tenants (domain, status)
+VALUES ('isl.com', 'active');
+
+INSERT IGNORE INTO users (tenantid, username, password, email, status)
+VALUES (1, 'admin', '$2a$10$FesfnIBKqhH2MuF1hmss0umXNrrx28AW1E4re9OCAwib3cIOKBz3C', 'admin@isl.com', 'active');
+
+INSERT IGNORE INTO permissions (permissionid, tenantid, name, action)
+VALUES
+  (1, 1, 'wifi_location', 'read'),
+  (2, 1, 'wifi_location', 'write'),
+  (3, 1, 'wifi_location', 'execute'),
+  (4, 1, 'wifi_users', 'read'),
+  (5, 1, 'wifi_users', 'write'),
+  (6, 1, 'wifi_users', 'execute'),
+  (7, 1, 'dashboard_users', 'read'),
+  (8, 1, 'dashboard_users', 'write'),
+  (9, 1, 'dashboard_users', 'execute');
+
+INSERT IGNORE INTO userpermissions (userid, permissionid)
+VALUES (1, 1),
+  (1, 2),
+  (1, 3),
+  (1, 4),
+  (1, 5),
+  (1, 6),
+  (1, 7),
+  (1, 8),
+  (1, 9);
+
+INSERT IGNORE INTO userapgroups (userid, groupid)
+VALUES
+  (1, 1),
+  (1, 2),
+  (1, 3),
+  (1, 4),
+  (1, 5),
+  (1, 6);

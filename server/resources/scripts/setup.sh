@@ -9,7 +9,7 @@ function default_(){
     echo "Dashboard DB installed successfully."
 
     echo "Adding initial dataset.."
-    mysql -u $DASHBOARD_DB_USERNAME -p$DASHBOARD_DB_PASSWORD -h $DASHBOARD_DB_HOST < ../sql/data.sql
+    mysql -u $DASHBOARD_DB_USERNAME -p$DASHBOARD_DB_PASSWORD -h $DASHBOARD_DB_HOST < ../sql/dummydata/data.sql
     echo "Initial dataset added successfully."
 
     echo "Installing radsummary databse..."
