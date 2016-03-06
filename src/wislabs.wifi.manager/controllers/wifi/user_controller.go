@@ -110,7 +110,11 @@ func GetAllWiFiUsers(tenantId int, draw int, r *http.Request) dao.DataTablesResp
 	var response dao.DataTablesResponce
 	columns := []string{"username", "acl", "groupname", "visits", "acctstarttime", "acctstoptime", "acctlastupdatedtime"}
 	totalRecordCountQuery := "SELECT COUNT(username) FROM accounting where tenantid=" + strconv.Itoa(tenantId)
-	response.RecordsFiltered, response.RecordsTotal = commons.Fetch(r, "portal", "accounting", totalRecordCountQuery, columns, &users)
+	var err error
+	response.RecordsFiltered, response.RecordsTotal, err = commons.Fetch(r, "portal", "accounting", totalRecordCountQuery, columns, &users)
+	if( err!= nil){
+		log.Error("")
+	}
 	response.Data = users
 	response.Draw = draw
 	return response

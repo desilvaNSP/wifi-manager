@@ -255,7 +255,6 @@
         });
 
         $('.dataTables-user tbody').on('click', '#setting-delete-user', function () {
-            console.log(">>>>>>>>>>>>>>>")
             selectedUser = userTable.api().row($(this).parents('tr')).data();
             console.log(selectedUser)
             rawTodelete = $(this).closest('tr');
