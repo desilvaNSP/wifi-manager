@@ -28,6 +28,8 @@
 
 * https://github.com/golang/go/wiki/IDEsAndTextEditorPlugins
 
+#### Git & BitBucket
+* Please refer https://bitbucket.org/apremalal/wifi-manager/wiki/Home
 #### Configure Redis
 * Redis[1] is an open source (BSD licensed), in-memory data structure store, used as database, cache and message broker. This 
  app use redis primarily as a JWT token storage. 
