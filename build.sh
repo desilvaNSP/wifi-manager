@@ -5,6 +5,10 @@ PROJECT_NAME='wifi-manager'
 PROJECT_ROOT=`pwd`
 
 echo 'Exporting GO variables.'
+if [ -z "$GOPATH" ]; then
+ echo "Build failed due to GOPATH has not been set."
+ exit 1
+fi
 export GOPATH=$GOPATH:$PROJECT_ROOT
 
 echo 'Installing Gom'
