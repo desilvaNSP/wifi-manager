@@ -21,7 +21,11 @@ function default_(){
 
 function start_(){
     echo "starting redis server..!"
-    ./redis-server ../configs/redis.conf
+    if test -f "../configs/redis.conf"; then
+        ./redis-server ../configs/redis.conf
+    else
+       ./redis-server ../configs/redis.default.conf
+    fi
     echo "redis started successfully!"
     nohup ./server.bin $SERVER_HOME > ../logs/nohup.log 2>&1&
     echo $! > server.pid

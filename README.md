@@ -1,6 +1,7 @@
 ####How to setup the  Dashboard development environment
 
 * Install go-lang https://golang.org/
+* Make sure you have set GOPATH  variable. (This variable must not point to the project folder)
 * checkout the source code available at https://apremalal@bitbucket.org/apremalal/wifi-manager.git	
 * Execute wifi-manager/build.sh 
     * This will create a distribution pack (wifi-manager.zip)
@@ -8,7 +9,9 @@
     * Create a database with name ‘dashboard’
     * Update the wifi-manager/server/resources/scripts/setup_config.sh with your mysql server configurations
     * Execute wifi-manager/server/resources/scripts/setup.sh
-* Configure server parameters in  wifi-manager/server/configs/config.yaml
+* Default configuration files are config.default.yaml and redis.default.conf, to change and override the defaults, simply
+create new files config.yaml and redis.conf respectively and have your preferred configs. Do not change the default configuration files.
+
 * To run the server execute wifi-manager/server/server.sh
 * To run the server in daemon mode run server.sh start
 

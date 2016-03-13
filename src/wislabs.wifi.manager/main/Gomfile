@@ -1,6 +1,6 @@
 gom 'github.com/BurntSushi/toml', :tag => 'v0.1.0'
-gom 'github.com/Sirupsen/logrus', :commit => 'v0.9.0 '
-gom 'github.com/gorilla/handlers', :commit => '40694b40f4a928c062f56849989d3e9cd0570e5f'
+gom 'github.com/Sirupsen/logrus', :tag => 'v0.9.0'
+gom 'github.com/gorilla/handlers', :tag => 'v1.1'
 gom 'github.com/kr/pretty', :commit => 'e6ac2fc51e89a3249e82157fa0bb7a18ef9dd5bb'
 gom 'github.com/kr/text', :commit => 'e373e137fafd8abd480af49182dea0513914adb4'
 gom 'github.com/magiconair/properties', :commit => '337395e44efb4affc8bf11971e22acbd4e27a32d'

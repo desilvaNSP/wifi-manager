@@ -50,9 +50,11 @@ func main() {
 
 func initConfigurations(serverHome string) {
 	viper.New()
-	viper.SetConfigName("config")
 	viper.AddConfigPath(serverHome + "/configs")
-
+	viper.SetConfigName("config")
+	if _, err := os.Stat("../configs/config.yaml"); os.IsNotExist(err) {
+		viper.SetConfigName("config.default")
+	}
 	err := viper.ReadInConfig() // Find and read the config file
 	if err != nil {             // Handle errors reading the config file
 		panic(fmt.Errorf("Fatal error config file: %s \n", err))
