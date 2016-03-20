@@ -220,8 +220,8 @@
                 url: '/wifi/' + Cookies.get('tenantid') + '/locations/' + selectedLocation.mac + '/' + selectedLocation.ssid + '/' + selectedLocation.groupname,
                 type: 'DELETE',
                 success: function (result) {
-                    $('#confirm-delete-modal').modal('hide')
-                    locationTable.row('.selected').remove().draw(false);
+                    $('#confirm-delete-modal').modal('hide');
+                    locationTable.ajax.reload();
                 },
                 error: function (e) {
                     console.log(e)
