@@ -338,4 +338,11 @@ var routes = Routes{
 		true,
 		dashboard_handlers.GetBrowserStatsHandler,
 	},
+	Route{
+		"Download Summary Details Dashboard",
+		"POST",
+		"/wifi/summary/downloadrawdata",
+		true,
+		dashboard_handlers.DownlaodCSVSummaryDetailsDashboard,
+	},
 }

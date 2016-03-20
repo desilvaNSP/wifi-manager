@@ -586,6 +586,24 @@
                     })
                 });
 
+                // Summary Data CSV download ajax call
+                var a = document.createElement("a");
+                document.body.appendChild(a);
+                a.style = "display: none";
+
+                var fileName = "dashboard.csv";
+
+                $('#exportCSV').click(function () {
+                    $.post('/wifi/summary/downloadrawdata', JSON.stringify(payload), function (data, status) {
+                        var csvfile = new Blob([data], {type: "text/csv"}),
+                                url = window.URL.createObjectURL(csvfile);
+                        a.href = url;
+                        a.download = fileName;
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                    });
+                });
+
             }
     );
 
