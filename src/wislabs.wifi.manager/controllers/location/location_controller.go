@@ -36,6 +36,15 @@ func AddWiFiLocation(location *dao.ApLocation) {
 	defer stmtIns.Close()
 }
 
+func UpdateWifiLocation(location *dao.ApLocation){
+	dbMap := utils.GetDBConnection("dashboard");
+	defer dbMap.Db.Close()
+	stmtIns, err := dbMap.Db.Prepare(commons.UPDATE_AP_LOCATION)
+	_, err = stmtIns.Exec(location.SSID, location.MAC, location.BSSID, location.Longitude, location.Latitude, dashboard.GetApGroupId(location.TenantId, location.GroupName), location.GroupName, location.LocationId,location.TenantId)
+	checkErr(err, "Error occured while updating AP location")
+	defer stmtIns.Close()
+}
+
 func AddWiFiGroup(group *dao.ApGroup) {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()

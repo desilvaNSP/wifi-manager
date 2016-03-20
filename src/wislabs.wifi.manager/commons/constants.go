@@ -46,6 +46,7 @@ const DELETE_RADACCT_USER string  = "DELETE FROM radacct WHERE username = ?";
 
 /* AP locations */
 const ADD_AP_LOCATION string 	  = "INSERT INTO aplocations (tenantid, ssid, mac, bssid, longitude, latitude, groupid,  groupname) VALUES( ?, ?, ?, ?, ?, ?, ?, ? )"
+const UPDATE_AP_LOCATION string        ="UPDATE aplocations SET ssid=?,mac=?,bssid=?,longitude=?,latitude=?,groupid=?,groupname=? WHERE locationid=? and tenantid=? "
 const ADD_AP_GROUP string 	 	  = "INSERT INTO apgroups (tenantid, groupname, groupsymbol) VALUES( ?, ?, ?)"
 const GET_ALL_AP_LOCATIONS string = "SELECT tenantid, locationid, ssid, mac, bssid, longitude, latitude, groupname FROM aplocations WHERE tenantid=?"
 const GET_ALL_AP_GROUPS string	  = "SELECT distinct(groupname) FROM apgroups WHERE tenantid=?"

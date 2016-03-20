@@ -1,0 +1,53 @@
+<div class="modal inmodal" id="update-wifilocation-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content animated fadeIn">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
+                        class="sr-only">Close</span></button>
+                <h4 class="modal-title">Update WiFi Location</h4>
+            </div>
+            <div class="modal-body">
+                <form role="form" id="update-wifilocation-form">
+                    <div class="form-group">
+                        <label for="edit-group-name">Location Group</label>
+                        <select class="form-control" id="edit-group-name">
+                            {{#locations}}
+                            <option>{{.}}</option>
+                            {{/locations}}
+                            <option selected>{{groupname}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-mac">Mac</label>
+                        <input type="text" class="form-control" id="edit-mac" name="mac"
+                               placeholder="MAC" value="{{mac}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-ssid">SSID</label>
+                        <input type="text" class="form-control" id="edit-ssid" name="ssid"
+                               placeholder="SSID" value="{{ssid}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-bssid">BSSID</label>
+                        <input type="text" class="form-control" id="edit-bssid" name="bssid"
+                               placeholder="BSSID" value="{{bssid}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-longitude">Longitude</label>
+                        <input type="text" class="form-control" id="edit-longitude" name="longitude"
+                               placeholder="Longitude" value="{{longitude}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-latitude">Latitude</label>
+                        <input type="text" class="form-control" id="edit-latitude" name="latitude"
+                               placeholder="Latitude" value="{{latitude}}">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="btn-update-wifilocation">Update Location</button>
+            </div>
+        </div>
+    </div>
+</div>
