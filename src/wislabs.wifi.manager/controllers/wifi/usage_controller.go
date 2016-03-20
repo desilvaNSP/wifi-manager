@@ -4,7 +4,47 @@ import (
 	"wislabs.wifi.manager/utils"
 	"wislabs.wifi.manager/dao"
 	"database/sql"
+	"strconv"
 )
+
+
+func SummaryDetailsFromTo(constrains dao.Constrains) [][]string {
+
+	dbMap := utils.GetDBConnection("summary");
+	defer dbMap.Db.Close()
+	var totalDailyDownloads[] dao.SummaryDailyAcctAll
+	query := "SELECT * FROM dailyacct"
+
+	_, err := dbMap.Select(&totalDailyDownloads, query)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic
+	}
+
+	CSVcontent := make([][]string, len(totalDailyDownloads))
+
+	for i := range CSVcontent {
+		CSVcontent[i] = make([]string, 17)
+		CSVcontent[i][0] = strconv.Itoa(totalDailyDownloads[i].Tenantid)
+		CSVcontent[i][1] = totalDailyDownloads[i].Username
+		CSVcontent[i][2] = totalDailyDownloads[i].Date.String
+		CSVcontent[i][3] = strconv.Itoa(totalDailyDownloads[i].Noofsessions)
+		CSVcontent[i][4] = strconv.Itoa(totalDailyDownloads[i].Totalsessionduration)
+		CSVcontent[i][5] = strconv.Itoa(totalDailyDownloads[i].Sessionmaxduration)
+		CSVcontent[i][6] = strconv.Itoa(totalDailyDownloads[i].Sessionminduration)
+		CSVcontent[i][7] = strconv.Itoa(totalDailyDownloads[i].Sessionavgduration)
+		CSVcontent[i][8] = strconv.FormatInt(totalDailyDownloads[i].Inputoctets,10)
+		CSVcontent[i][8] = strconv.FormatInt(totalDailyDownloads[i].Outputoctets,10)
+		CSVcontent[i][10] = totalDailyDownloads[i].Nasipaddress
+		CSVcontent[i][11] = totalDailyDownloads[i].Framedipaddress
+		CSVcontent[i][12] = totalDailyDownloads[i].Calledstationid
+		CSVcontent[i][13] = totalDailyDownloads[i].Ssid.String
+		CSVcontent[i][14] = totalDailyDownloads[i].Calledstationmac.String
+		CSVcontent[i][15] = totalDailyDownloads[i].Groupname.String
+		CSVcontent[i][16] = totalDailyDownloads[i].Locationid.String
+	}
+	return  CSVcontent
+}
+
 
 func GetAggregatedDownloadsFromTo(constrains dao.Constrains) [] dao.NameValue {
 	dbMap := utils.GetDBConnection("summary");

@@ -8,6 +8,26 @@ type NameValue struct {
 	Value float64  `db:"value"json:"value"`
 }
 
+type SummaryDailyAcctAll struct {
+	Tenantid  		int 			`db:"tenantid"json:"tenantid"`
+	Username 		string			`db:"username"json:"username"`
+	Date 			utils.NullString	`db:"date"json:"date"`
+	Noofsessions		int			`db:"noofsessions"json:"noofsessions"`
+	Totalsessionduration	int			`db:"totalsessionduration"json:"totalsessionduration"`
+	Sessionmaxduration	int			`db:"sessionmaxduration"json:"sessionmaxduration"`
+	Sessionminduration	int			`db:"sessionminduration"json:"sessionminduration"`
+	Sessionavgduration	int			`db:"sessionavgduration"json:"sessionavgduration"`
+	Inputoctets		int64			`db:"inputoctets"json:"inputoctets"`
+	Outputoctets		int64			`db:"outputoctets"json:"outputoctets"`
+	Nasipaddress		string			`db:"nasipaddress"json:"nasipaddress"`
+	Framedipaddress		string			`db:"framedipaddress"json:"framedipaddress"`
+	Calledstationid		string			`db:"calledstationid"json:"calledstationid"`
+	Ssid			utils.NullString			`db:"ssid"json:"ssid"`
+	Calledstationmac	utils.NullString			`db:"calledstationmac"json:"calledstationmac"`
+	Groupname		utils.NullString			`db:"groupname"json:"groupname"`
+	Locationid		utils.NullString			`db:"locationid"json:"locationid"`
+}
+
 type Tenant struct {
 	TenantId  int       `db:"tenantid"json:"tenantid"`
 	Domain    string    `db:"domain"json:"domain"`
