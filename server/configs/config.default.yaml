@@ -7,7 +7,7 @@ radiusDBConfigs:
 
 summaryDBConfigs:
  username : root
- password : root123
+ password : root
  DBName : summary
  host : localhost
  port : 3306

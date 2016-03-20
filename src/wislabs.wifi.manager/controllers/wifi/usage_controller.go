@@ -12,35 +12,61 @@ func SummaryDetailsFromTo(constrains dao.Constrains) [][]string {
 
 	dbMap := utils.GetDBConnection("summary");
 	defer dbMap.Db.Close()
-	var totalDailyDownloads[] dao.SummaryDailyAcctAll
-	query := "SELECT * FROM dailyacct"
+	var dailyAccData[] dao.SummaryDailyAcctAll
+	query := "SELECT * FROM dailyacct where date >= ? AND date < ? AND tenantid=? "
 
-	_, err := dbMap.Select(&totalDailyDownloads, query)
-	if err != nil {
-		panic(err.Error()) // proper error handling instead of panic
+	if len(constrains.GroupNames) > 0 {
+		args := getArgs(&constrains)
+		query = query + " AND ( groupname=? "
+		for i := 1; i< len(constrains.GroupNames); i++ {
+			query = query + " OR groupname=? "
+		}
+		query = query + ")"
+
+		_, err := dbMap.Select(&dailyAccData, query, args...)
+		if err != nil {
+			panic(err.Error()) // proper error handling instead of panic
+		}
 	}
 
-	CSVcontent := make([][]string, len(totalDailyDownloads))
+	CSVcontent := make([][]string, len(dailyAccData) + 1)
 
-	for i := range CSVcontent {
+	CSVcontent[0] = make([]string, 17)
+	CSVcontent[0][0] = "TenantId"
+	CSVcontent[0][1] = "Username"
+	CSVcontent[0][2] = "Date"
+	CSVcontent[0][3] = "NumOfSessions"
+	CSVcontent[0][4] = "TotalSessionDuration"
+	CSVcontent[0][5] = "MaxSessionDuration"
+	CSVcontent[0][6] = "MinSessionDuration"
+	CSVcontent[0][7] = "AvgSessionDuration"
+	CSVcontent[0][8] = "Downloads"
+	CSVcontent[0][9] = "Uploads"
+	CSVcontent[0][10] = "NASIPAddress"
+	CSVcontent[0][11] = "FramedIPAddress"
+	CSVcontent[0][12] = "CalledStationId"
+	CSVcontent[0][13] = "SSID"
+	CSVcontent[0][14] = "CalledStatoinMAC"
+	CSVcontent[0][15] = "GroupName"
+
+	for i :=1 ; i < len(CSVcontent)-1; i++ {
 		CSVcontent[i] = make([]string, 17)
-		CSVcontent[i][0] = strconv.Itoa(totalDailyDownloads[i].Tenantid)
-		CSVcontent[i][1] = totalDailyDownloads[i].Username
-		CSVcontent[i][2] = totalDailyDownloads[i].Date.String
-		CSVcontent[i][3] = strconv.Itoa(totalDailyDownloads[i].Noofsessions)
-		CSVcontent[i][4] = strconv.Itoa(totalDailyDownloads[i].Totalsessionduration)
-		CSVcontent[i][5] = strconv.Itoa(totalDailyDownloads[i].Sessionmaxduration)
-		CSVcontent[i][6] = strconv.Itoa(totalDailyDownloads[i].Sessionminduration)
-		CSVcontent[i][7] = strconv.Itoa(totalDailyDownloads[i].Sessionavgduration)
-		CSVcontent[i][8] = strconv.FormatInt(totalDailyDownloads[i].Inputoctets,10)
-		CSVcontent[i][8] = strconv.FormatInt(totalDailyDownloads[i].Outputoctets,10)
-		CSVcontent[i][10] = totalDailyDownloads[i].Nasipaddress
-		CSVcontent[i][11] = totalDailyDownloads[i].Framedipaddress
-		CSVcontent[i][12] = totalDailyDownloads[i].Calledstationid
-		CSVcontent[i][13] = totalDailyDownloads[i].Ssid.String
-		CSVcontent[i][14] = totalDailyDownloads[i].Calledstationmac.String
-		CSVcontent[i][15] = totalDailyDownloads[i].Groupname.String
-		CSVcontent[i][16] = totalDailyDownloads[i].Locationid.String
+		CSVcontent[i][0] = strconv.Itoa(dailyAccData[i].Tenantid)
+		CSVcontent[i][1] = dailyAccData[i].Username
+		CSVcontent[i][2] = dailyAccData[i].Date.String
+		CSVcontent[i][3] = strconv.Itoa(dailyAccData[i].Noofsessions)
+		CSVcontent[i][4] = strconv.Itoa(dailyAccData[i].Totalsessionduration)
+		CSVcontent[i][5] = strconv.Itoa(dailyAccData[i].Sessionmaxduration)
+		CSVcontent[i][6] = strconv.Itoa(dailyAccData[i].Sessionminduration)
+		CSVcontent[i][7] = strconv.Itoa(dailyAccData[i].Sessionavgduration)
+		CSVcontent[i][8] = strconv.FormatInt(dailyAccData[i].Inputoctets,10)
+		CSVcontent[i][9] = strconv.FormatInt(dailyAccData[i].Outputoctets,10)
+		CSVcontent[i][10] = dailyAccData[i].Nasipaddress
+		CSVcontent[i][11] = dailyAccData[i].Framedipaddress
+		CSVcontent[i][12] = dailyAccData[i].Calledstationid
+		CSVcontent[i][13] = dailyAccData[i].Ssid.String
+		CSVcontent[i][14] = dailyAccData[i].Calledstationmac.String
+		CSVcontent[i][15] = dailyAccData[i].Groupname.String
 	}
 	return  CSVcontent
 }
