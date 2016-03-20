@@ -304,6 +304,13 @@ var routes = Routes{
 		dashboard_handlers.AddWiFiLocationHandler,
 	},
 	Route{
+		"Update WiFi Locations AccessPoints",
+		"POST",
+		"/wifi/locationsupdate",
+		true,
+		dashboard_handlers.UpdateWiFiLocationHandler,
+	},
+	Route{
 		"Add WiFi Group",
 		"POST",
 		"/wifi/locations/groups",

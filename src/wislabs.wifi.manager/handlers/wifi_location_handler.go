@@ -53,7 +53,7 @@ func GetLocationGroups(w http.ResponseWriter, r *http.Request){
 
 /**
 * POST
-* @path /{tenantid}/locations
+* @path /wifi/locations
 * return
 */
 func AddWiFiLocationHandler(w http.ResponseWriter, r *http.Request){
@@ -64,6 +64,22 @@ func AddWiFiLocationHandler(w http.ResponseWriter, r *http.Request){
 		log.Fatalln("Error while decoding location json")
 	}
 	location.AddWiFiLocation(&apLocation)
+	w.WriteHeader(http.StatusOK)
+}
+
+/**
+* POST
+* @path /wifi/locationsupdate
+* return
+*/
+func UpdateWiFiLocationHandler(w http.ResponseWriter,r *http.Request)  {
+	decoder := json.NewDecoder(r.Body)
+	var apLocation dao.ApLocation
+	err := decoder.Decode(&apLocation)
+	if(err != nil){
+		log.Fatalln("Error while decoding location json")
+	}
+	location.UpdateWifiLocation(&apLocation)
 	w.WriteHeader(http.StatusOK)
 }
 

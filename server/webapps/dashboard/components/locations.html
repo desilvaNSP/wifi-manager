@@ -34,7 +34,7 @@
             </div>
             <div class="ibox-content">
 
-                <table class="table table-striped table-bordered table-hover dataTables-location">
+                <table id="example" class="table table-striped table-bordered table-hover dataTables-location">
                     <thead>
                     <tr>
                         <th>Id</th>
@@ -84,53 +84,6 @@
 </div>
 
 <div id="add-wifi-location-modal-content"></div>
-
-<div class="modal inmodal" id="editlocation-modal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content animated fadeIn">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
-                        class="sr-only">Close</span></button>
-                <i class="fa fa-user-md modal-icon"></i>
-                <h4 class="modal-title">Edit WiFi Location</h4>
-                <small class="font-bold">Edit wifi location options</small>
-            </div>
-            <div class="modal-body">
-                <hr>
-                <form role="form" id="edituser-form">
-                    <div class="form-group">
-                        <label for="inputEditUsername">Username</label>
-                        <input type="text" class="form-control" id="inputEditUsername" name="editusername"
-                               placeholder="Username" required readonly="readonly">
-                    </div>
-                    <div class="form-group">
-                        <label for="inputEditPassword">Password</label>
-                        <input type="text" class="form-control" id="inputEditPassword" name="editpassword"
-                               placeholder="Password" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="radioEditIsBlackListed">Access Control</label>
-                    </div>
-                    <div class="checkbox">
-                        <label class="radio inline control-label"><input type="radio" id="radioEditIsWhiteListed"
-                                                                         class="radio" name="role-select"
-                                                                         value="whitelisted">White Listed</label><br/>
-                        <label class="radio inline control-label"><input type="radio" id="radioEditIsBlackListed"
-                                                                         class="radio" name="role-select"
-                                                                         value="blacklisted">Black Listed</label><br/>
-                        <label class="radio inline control-label"><input type="radio" id="radioEditIsNormalUser"
-                                                                         class="radio" name="role-select"
-                                                                         value="normaluser">Normal User</label><br/>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="btn-edit-user">Update User</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <script>
     $(document).ready(function () {
@@ -267,8 +220,8 @@
                 url: '/wifi/' + Cookies.get('tenantid') + '/locations/' + selectedLocation.mac + '/' + selectedLocation.ssid + '/' + selectedLocation.groupname,
                 type: 'DELETE',
                 success: function (result) {
-                    $('#confirm-delete-modal').modal('hide')
-                    locationTable.row('.selected').remove().draw(false);
+                    $('#confirm-delete-modal').modal('hide');
+                    locationTable.ajax.reload();
                 },
                 error: function (e) {
                     console.log(e)
@@ -280,6 +233,84 @@
         $('.dataTables-location tbody').on('click', '#setting-delete-location', function () {
             selectedLocation = locationTable.row($(this).parents('tr')).data();
             $('#confirm-delete-modal').modal()
+        });
+
+        $('.dataTables-location tbody').on('click', '#setting-edit-location', function () {
+            var locations;
+            selectedLocation = locationTable.row($(this).parents('tr')).data();
+            var locationsAjax = $.get('/wifi/' + Cookies.get('tenantid') + '/locations/groups', function (result) {
+                locations = result;
+                console.log(locations);
+                var index = locations.indexOf(selectedLocation.groupname);
+                if (index > -1) {
+                    locations.splice(index, 1);
+                }
+            });
+            var updateWifiLocationFromValidator;
+            $.when(locationsAjax).done(function(){
+                $.get('components/wifi-locationupdate-modal.html', function (template) {
+                    var rendered = Mustache.render(template, {
+                        locations: locations,
+                        groupname:selectedLocation.groupname,
+                        mac:selectedLocation.mac,
+                        ssid:selectedLocation.ssid,
+                        bssid:selectedLocation.bssid,
+                        longitude:selectedLocation.longitude,
+                        latitude:selectedLocation.longitude
+                    });
+                    console.log(rendered);
+                    $('#add-wifi-location-modal-content').html(rendered);
+                    $('#update-wifilocation-modal').modal();
+                    updateWifiLocationFromValidator = $("#update-wifilocation-form").validate({
+                        rules: {
+                            mac: {
+                                required: true,
+                                minlength: 17,
+                                maxlength: 17
+                            },
+                            ssid: {
+                                required: true,
+                                minlength: 1
+                            },
+                            bssid: {
+                                required: true,
+                                minlength: 17,
+                                maxlength: 17,
+                            },
+                            longitude: {
+                                required: false,
+                                number: true
+                            },
+                            latitude: {
+                                required: false,
+                                number: true
+                            }
+                        },
+                        messages: {
+                            mac: "Please enter a correct MAC address in xx-xx-xx-xx-xx-xx form",
+                            bssid: "Please enter a correct BSSID address in xx-xx-xx-xx-xx-xx form"
+                        }
+                    });
+                });
+            });
+
+            // update wifi location
+            $("#add-wifi-location-modal-content").off('click').on("click", '#btn-update-wifilocation', function (event) {
+                var payload = {
+                    tenantid: parseInt(Cookies.get('tenantid')),
+                    locationid:selectedLocation.locationid,
+                    mac: $('#edit-mac').val(),
+                    ssid: $('#edit-ssid').val(),
+                    bssid: $('#edit-bssid').val(),
+                    latitude: parseFloat($('#edit-latitude').val()),
+                    longitude: parseFloat($('#edit-longitude').val()),
+                    groupname: $('#edit-group-name').val()
+                };
+                $.post('/wifi/locationsupdate', JSON.stringify(payload), function (result) {
+                    $('#update-wifilocation-modal').modal('hide');
+                    locationTable.ajax.reload();
+                });
+            });
         });
 
         $("#add-wifilocation-btn").on('click', function () {
