@@ -600,7 +600,10 @@
                         a.href = url;
                         a.download = fileName;
                         a.click();
-                        window.URL.revokeObjectURL(url);
+                        setTimeout(function(){
+                            document.body.removeChild(a);
+                            window.URL.revokeObjectURL(url);
+                        }, 100);
                     });
                 });
 

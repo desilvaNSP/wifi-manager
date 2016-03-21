@@ -175,7 +175,7 @@ func DownlaodCSVSummaryDetailsDashboard(w http.ResponseWriter,r *http.Request){
 
 	//generate temp file
 	CSVcontent := wifi.SummaryDetailsFromTo(constrains)
-	tempfile, err := ioutil.TempFile("/","summary")
+	tempfile, err := ioutil.TempFile("temp/","summary")
 	if err != nil {
 		log.Fatal("Cannot create temp file ", err)
 	}
