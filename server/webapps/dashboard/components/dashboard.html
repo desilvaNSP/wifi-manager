@@ -1,4 +1,4 @@
-<div class="row">
+ <div class="row">
     <div class="col-md-offset-1 col-lg-7" style="margin-bottom: 50px;">
         <input type="text" id="range" value="" name="range"/>
     </div>
@@ -54,7 +54,12 @@
             $.get('components/dashboard-metrics.html', function (template) {
 //                $('#dashboard-metric-content').empty()
                 var rendered = Mustache.render(template, {});
-                $('#dashboard-metric-content').html(rendered)
+                $('#dashboard-metric-content').html(rendered);
+                if(Cookies.get("username")!="admin"){
+                    $("#exportCSV").hide();
+                }else{
+                    $("#exportCSV").show();
+                }
             })
         }
 
