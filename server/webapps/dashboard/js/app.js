@@ -218,7 +218,7 @@ function getPieChartData(data) {
 
 function convertToHighChartSeries(arr, devider) {
     return data = $.map(arr, function (val, i) {
-        return [[moment(val.name, 'YYYY-M-D H:m:s').add(1, "days").valueOf(), val.value / devider]];
+        return [[moment(val.name, 'YYYY-M-D H:m:s').valueOf(), val.value / devider]];
     });
 }
 
@@ -248,7 +248,7 @@ function renderTimeSeries(element, toolTipHeader, yAxisTitle, dataSeries) {
         },
         tooltip: {
             headerFormat: '<b>' + toolTipHeader + '</b><br>',
-            pointFormat: '{point.x:%e. %b}: {point.y:.2f} m'
+            pointFormat: '{point.x:%e. %b}: {point.y:.2f}'
         },
         plotOptions: {
             spline: {
