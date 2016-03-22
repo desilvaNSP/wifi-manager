@@ -217,7 +217,7 @@ function getPieChartData(data) {
 
 function convertToHighChartSeries(arr, devider) {
     return data = $.map(arr, function (val, i) {
-        return [[moment(val.name, 'YYYY-M-D H:m:s').valueOf(), val.value / devider]];
+        return [[moment.utc(val.name, 'YYYY-M-D H:m:s').valueOf(), val.value / devider]];
     });
 }
 

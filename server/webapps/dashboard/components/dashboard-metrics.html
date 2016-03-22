@@ -439,9 +439,7 @@
                     row++;
                 }else{
                     leftMargin = 25 ;
-                }
-
-                doc.text(leftMargin,top-7 ,  $(this).data("title"));
+                }doc.text(leftMargin,top-7 ,  $(this).data("title"));
                 doc.addImage(imageData, 'JPEG',leftMargin , top, pieCharWidth, pieCharHeight);
 
             });
