@@ -11,6 +11,7 @@ import (
 	"bytes"
 	"encoding/csv"
 	"log"
+	"wislabs.wifi.manager/commons"
 )
 
 
@@ -175,7 +176,8 @@ func DownlaodCSVSummaryDetailsDashboard(w http.ResponseWriter,r *http.Request){
 
 	//generate temp file
 	CSVcontent := wifi.SummaryDetailsFromTo(constrains)
-	tempfile, err := ioutil.TempFile("temp/","summary")
+	serverHome := os.Getenv(commons.SERVER_HOME)
+	tempfile, err := ioutil.TempFile(serverHome + "/tmp/","summary")
 	if err != nil {
 		log.Fatal("Cannot create temp file ", err)
 	}
