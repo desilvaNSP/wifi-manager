@@ -80,9 +80,16 @@ var routes = Routes{
 		dashboard_handlers.UpdateUser,
 	},
 	Route{
+		"Update user profile",
+		"POST",
+		"/dashboard/userupdate",
+		true,
+		dashboard_handlers.UpdateUserProfile,
+	},
+	Route{
 		"Update Dashboard user",
 		"POST",
-		"/dashboard/users/changepassword",
+		"/dashboard/userprofile/changepassword",
 		true,
 		dashboard_handlers.UpdateUserPasswordHandler,
 	},
@@ -344,5 +351,12 @@ var routes = Routes{
 		"/wifi/summary/downloadrawdata",
 		true,
 		dashboard_handlers.DownlaodCSVSummaryDetailsDashboard,
+	},
+	Route{
+		"Upload files wifi manager",
+		"POST",
+		"/dashboard/upload",
+		true,
+		dashboard_handlers.UploadFilesHandler,
 	},
 }

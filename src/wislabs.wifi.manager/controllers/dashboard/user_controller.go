@@ -7,6 +7,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"database/sql"
 	"wislabs.wifi.manager/commons"
+	"fmt"
 )
 
 func IsUserAuthenticated(user dao.DashboardUser) bool {
@@ -74,11 +75,32 @@ func UpdateDashboardUser(user dao.DashboardUser) error {
 	return err
 }
 
+func UpdateDashboardUserProfile(userprofile dao.DashboardUserProfile) error{
+	dbMap := utils.GetDBConnection("dashboard");
+	defer dbMap.Db.Close()
+
+	stmtIns, err := dbMap.Db.Prepare(commons.UPDATE_DASHBORD_USER_PROFILE)
+	defer stmtIns.Close()
+
+	if err != nil {
+		return err
+	}
+	_, err = stmtIns.Exec(userprofile.NewUsername, userprofile.Email, userprofile.OldUsername,userprofile.TenantId)
+	if err != nil {
+		return err
+	}
+	return err
+
+}
+
 func UpdateDashboardUserPassword(tenantId int, username string, oldPassword string, newPassword string)error {
 	var user dao.DashboardUser
 	user.Username = username
 	user.Password = oldPassword
 	user.TenantId = tenantId
+	fmt.Printf(username)
+	fmt.Printf(newPassword)
+	fmt.Printf(oldPassword)
 	var err error
 	if (IsUserAuthenticated(user)) {
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
