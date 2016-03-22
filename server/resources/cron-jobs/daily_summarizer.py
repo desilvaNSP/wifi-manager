@@ -304,7 +304,7 @@ def updateLocationGroups(date):
                 except KeyError, e:
                     updatequery = "UPDATE dailyacct SET ssid='%s', calledstationmac='%s' WHERE calledstationid='%s' AND date >= '%s'" % (
                         values[1], values[0], tmp, date)
-            else: # MKT case
+            else:  # MKT case
                 updatequery = "UPDATE dailyacct SET groupname='%s' WHERE calledstationid='%s' AND date >= '%s'" % (
                     group, tmp, date)
             radiuscursor.execute(updatequery)
