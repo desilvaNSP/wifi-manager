@@ -7940,3 +7940,9 @@ img.thumbnail  { position: absolute; width: 178px;height: 178px ;z-index: 10}
     outline: 1px dotted #000;
     outline: -webkit-focus-ring-color auto 5px;
 }
+
+.password-reset-container{
+    top: 50px;
+    left: 50px;
+    position: relative;
+}

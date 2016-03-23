@@ -98,9 +98,6 @@ func UpdateDashboardUserPassword(tenantId int, username string, oldPassword stri
 	user.Username = username
 	user.Password = oldPassword
 	user.TenantId = tenantId
-	fmt.Printf(username)
-	fmt.Printf(newPassword)
-	fmt.Printf(oldPassword)
 	var err error
 	if (IsUserAuthenticated(user)) {
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)

@@ -11,7 +11,6 @@ import (
 	"log"
 	"wislabs.wifi.manager/authenticator"
 	"wislabs.wifi.manager/utils"
-	"fmt"
 )
 
 func AuthenticateUser(w http.ResponseWriter, r *http.Request) {
@@ -81,14 +80,12 @@ func UpdateUserProfile(w http.ResponseWriter, r *http.Request) {
 
 
 func UpdateUserPasswordHandler(w http.ResponseWriter, r *http.Request) {
-	log.Printf("sasas")
 	decoder := json.NewDecoder(r.Body)
 	var user dao.DashboardUserResetPassword
 	err := decoder.Decode(&user)
 	if err != nil {
 		panic("Error while decoding json")
 	}
-	fmt.Printf(user.Username)
 	tenantId, err := strconv.Atoi(r.Header.Get("tenantid"))
 	err = dashboard.UpdateDashboardUserPassword(tenantId, user.Username, user.OldPassword, user.NewPassword)
 	w.WriteHeader(http.StatusOK)
