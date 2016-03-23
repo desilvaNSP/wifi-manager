@@ -352,11 +352,4 @@ var routes = Routes{
 		true,
 		dashboard_handlers.DownlaodCSVSummaryDetailsDashboard,
 	},
-	Route{
-		"Upload files wifi manager",
-		"POST",
-		"/dashboard/upload",
-		true,
-		dashboard_handlers.UploadFilesHandler,
-	},
 }

@@ -6,14 +6,14 @@
                 <form enctype="multipart/form-data">
                     <div id="profile" class="fileupload">
                         <a href="javascript:void(0);">
-                            <input type="file" name="profile-images"  id="file-id" class="inputfile active"/>
+                            <input type="file" name="profile-images"  id="file-id" class="inputfile" disabled/>
                             <label for="file-id" id="">Change Profie Picture</label>
                         </a>
                     </div>
                 </form>
                 <div class="product_image">
-                    <img class="profile-image thumbnail"/>
                     <img class="overlay thumbnail" src="./img/profile-ovelay.jpg"/>
+                    <img class="profile-image thumbnail"/>
                 </div>
                 <div class="alert-message">
                     <div id="status_msg"> </div>
@@ -69,6 +69,7 @@
                             </div>
                         </div>
                     </div>
+                    <div class="updatefrom-success alert" role="alert" style="display: none"></div>
                     <div class="form-group">
                         <label class="col-md-3 control-label"></label>
                         <div class="col-md-8">
@@ -183,9 +184,16 @@
              contentType: "application/json",
              data: JSON.stringify(payload),
              success: function (result) {
+                 $('.updatefrom-success').html("Sucessfully done update user details").addClass('alert-success').fadeIn(1500);
+                 setTimeout(function(){
+                     $('.updatefrom-success').fadeOut();
+                 },1000);
              },
              error: function (e) {
-
+                 $('.updatefrom-success').html("Sorry error happen").addClass('alert-danger').fadeIn(1500);
+                 setTimeout(function(){
+                     $('.updatefrom-success').fadeOut();
+                 },1000);
              }
              });
         }
@@ -250,65 +258,6 @@
     }).mouseleave(function() {
         $(".fileupload").hide();
     });
-
-        $(":file").change(function() {
-
-            var file = this.files[0],  name = file.name, size = file.size, type = file.type;
-
-            var imageType = new Array("image/png","image/jpeg", "image/gif", "image/bmp");
-
-            if(jQuery.inArray(type, imageType )  == -1) {
-                $("#status_msg").html("Valid file formats are: jpg, jpeg,png, gif").css('color', '#F00000');
-                return false;
-            }  else {
-
-                $("#status_msg").html(" ");
-                if ($("#file-id").val() !== '') {
-                    var formData = new FormData($('form')[0]);
-
-                    $.ajax({
-                        url: '/dashboard/upload',  //Server script to process data
-                        type: 'POST',
-                        //Ajax events
-                        beforeSend: function () {
-                            $('.profile-image').addClass( 'profile-image-loading')
-                                    .removeClass('profile-image')
-                                    .attr('src', '/assets/img/fb_loading.gif');
-                        },
-                        success: function (data) {
-                            console.log(data);
-                            if (data) {
-                                var reader = new FileReader();
-                                reader.onload = function (e) {
-                                    console.log(e.target.result);
-                                    $('.profile-image-loading')
-                                            .addClass('profile-image')
-                                            .removeClass('profile-image-loading')
-                                            .attr('src', e.target.result);
-                                    return false;
-                                }
-                                reader.readAsDataURL(file);
-
-                                $("#status_msg").html(data).css('color', '#009900');
-                            } else {
-                                $("#status_msg").html(data).css('color', '#F00000');
-                                return false;
-                            }
-                        },
-                        // Form data
-                        data: formData,
-                        //Options to tell jQuery not to process data or worry about content-type.
-                        cache: false,
-                        contentType: false,
-                        processData: false
-                    });
-                } else {
-                    alert("Please select valid image.");
-                    return false;
-                }
-            }
-
-        });
 });
 
 </script>

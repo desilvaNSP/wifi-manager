@@ -7883,14 +7883,13 @@ img.overlay {
     width: 178px;
     top: 0px;
     left: 0px;
-    z-index: 10;
 }
 
 .profile-image{
-    z-index: 20 !important;
+    z-index: 10 !important;
 }
 
-img.thumbnail  { position: absolute; width: 178px;height: 178px ;z-index: 10}
+img.thumbnail  { position: absolute; width: 178px;height: 178px ;z-index: 20}
 
 #thumbnail{
     float:left;
@@ -7942,7 +7941,6 @@ img.thumbnail  { position: absolute; width: 178px;height: 178px ;z-index: 10}
 }
 
 .password-reset-container{
-    top: 50px;
     left: 50px;
     position: relative;
 }

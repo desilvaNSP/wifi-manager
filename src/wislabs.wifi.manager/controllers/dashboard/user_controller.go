@@ -7,7 +7,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"database/sql"
 	"wislabs.wifi.manager/commons"
-	"fmt"
 )
 
 func IsUserAuthenticated(user dao.DashboardUser) bool {
