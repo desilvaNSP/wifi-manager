@@ -1,6 +1,7 @@
 package dao
 import (
 	"wislabs.wifi.manager/utils"
+	"net/textproto"
 )
 
 type NameValue struct {
@@ -45,6 +46,14 @@ type DashboardUser struct {
 	Roles       []string  `json:"roles"`
 	Permissions []string  `json:"permissions"`
 	ApGroups    []string  `json:"apgroups"`
+}
+
+type DashboardUserProfile struct {
+	TenantId    int       `json:"tenantid"`
+	OldUsername    string    `json:"oldusername"`
+	NewUsername    string    `json:"newusername"`
+	Email       string    `json:"email"`
+	ContactNo    string  `json:"contactno"`
 }
 
 type DashboardUserResetPassword struct {
@@ -173,4 +182,10 @@ type ServerConfigs struct {
 	HttpsPort    int
 	ReadTimeOut  int
 	WriteTimeOut int
+}
+
+type FileHeader struct {
+	Filename string
+	Header   textproto.MIMEHeader
+	// contains filtered or unexported fields
 }

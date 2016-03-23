@@ -74,5 +74,12 @@ function renderReportPage() {
     })
 }
 
+function renderProfilePage() {
+    $.get('components/profile.html', function (template) {
+        var rendered = Mustache.render(template, {});
+        $('#content-main').html(rendered)
+    })
+}
+
 
 
