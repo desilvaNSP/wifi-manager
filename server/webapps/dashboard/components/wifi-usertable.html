@@ -184,6 +184,8 @@
             ajax: {
                 "url": serverOriginUrl + "/wifi/users",
                 "type": "GET",
+                "error": function (e) {
+                },
                 "dataSrc": function (d) {
                     return d.data
                 }

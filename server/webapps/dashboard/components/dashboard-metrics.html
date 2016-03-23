@@ -295,319 +295,317 @@
 </div>
 
 <div class="row">
-    <!--<a id="exportpdf" class="btn btn-primary" >PDF Download</a>-->
+    <a id="exportpdf" class="btn btn-primary" >PDF Download</a>
     <a id="exportCSV" class="btn btn-primary" >CSV Download</a>
 </div>
 
 <script type="text/javascript">
 
-    (function (H) {
-        H.Chart.prototype.createCanvas = function (divId) {
-            var svg = this.getSVG(),
-                    width = parseInt(svg.match(/width="([0-9]+)"/)[1]),
-                    height = parseInt(svg.match(/height="([0-9]+)"/)[1]),
-                    canvas = document.createElement('canvas');
+    $(document).ready(function(){
+        var totalDownloadFormat;
+        var totalUploadFormat;
+        var totalUserFormat;
+        var avgDataUsagePerUserFormat;
+        var avgUserSessionTimeFormat;
+        var totalSessionFormat;
+        var noofUniqueUserFormat;
+        var returningUserFormat;
 
-            canvas.setAttribute('width', width);
-            canvas.setAttribute('height', height);
+        (function (H) {
+            H.Chart.prototype.createCanvas = function (divId) {
+                var svg = this.getSVG(),
+                        width = parseInt(svg.match(/width="([0-9]+)"/)[1]),
+                        height = parseInt(svg.match(/height="([0-9]+)"/)[1]),
+                        canvas = document.createElement('canvas');
 
-            if (canvas.getContext && canvas.getContext('2d')) {
+                canvas.setAttribute('width', width);
+                canvas.setAttribute('height', height);
 
-                canvg(canvas, svg);
+                if (canvas.getContext && canvas.getContext('2d')) {
 
-                return canvas.toDataURL("image/jpeg");
+                    canvg(canvas, svg);
+
+                    return canvas.toDataURL("image/jpeg");
+
+                }
+                else {
+                    alert("Your browser doesn't support this feature, please use a modern browser");
+                    return false;
+                }
 
             }
-            else {
-                alert("Your browser doesn't support this feature, please use a modern browser");
-                return false;
-            }
+        }(Highcharts));
 
-        }
-    }(Highcharts));
+        $('#exportpdf').click(function () {
+            var doc = new jsPDF();
 
-    $('#exportpdf').click(function () {
-        var doc = new jsPDF();
+            var chartHeight = 55;
 
-        var chartHeight = 50;
+            doc.setFontSize(25);
+            doc.text(25, 20, "Home Dashboard Summary");
+            doc.setFontSize(15);
+            doc.text(25, 30, "WiFi+ manager");
 
-        doc.setFontSize(25);
-        doc.text(25, 20, "Home Dashboard Summary");
-        doc.setFontSize(15);
-        doc.text(25, 30, "WiFi+ manager");
+            var titleTop = 0;
+            var chartTop = 0;
+
+            $('.pdfChartLine').each(function (index) {
+
+                var imageData = $(this).highcharts().createCanvas();
+                doc.setFontSize(9);
+
+                titleTop = 20;
+                chartTop = 35;
+
+                doc.text(25,(index * chartHeight+24) + titleTop , $(this).data("title"));
+                doc.addImage(imageData, 'JPEG', 25, (index * chartHeight+10) + chartTop, 140, chartHeight);
+
+            });
+
+            doc.addPage()
+
+            currentHight = 15
+
+            // block 01
+            doc.setFontSize(9);
+            doc.text(25, currentHight + 5 , "Total Downloads : ");
+            doc.setFontSize(11);
+            doc.text(75, currentHight + 5 , totalDownloadFormat);
 
 
+            doc.setFontSize(9);
+            doc.text(110, currentHight + 5 , "Total Uploads : ");
+            doc.setFontSize(11);
+            doc.text(160, currentHight + 5 , totalUploadFormat);
+
+            currentHight+=10;
+
+            doc.setFontSize(9);
+            doc.text(25, currentHight + 5 , "Total Users : ");
+            doc.setFontSize(11);
+            doc.text(75 , currentHight + 5 , totalUserFormat);
 
 
-        var titleTop = 0;
-        var chartTop = 0;
-
-
-        $('.pdfChartLine').each(function (index) {
-
-            var imageData = $(this).highcharts().createCanvas();
+            doc.setFontSize(9);
+            doc.text(110, currentHight + 5 , "Avg Data Usage per User : ");
             doc.setFontSize(10);
+            doc.text(160, currentHight + 5 , avgDataUsagePerUserFormat);
 
-            titleTop = 40;
-            chartTop = 45;
+            currentHight+=10;
 
-            doc.text(25,(index * chartHeight) + titleTop , $(this).data("title"));
-            doc.addImage(imageData, 'JPEG', 25, (index * chartHeight) + chartTop, 140, chartHeight);
 
+            doc.setFontSize(9);
+            doc.text(25, currentHight + 5 , "Avg User session time : ");
+            doc.setFontSize(11);
+            doc.text(75, currentHight + 5 , avgUserSessionTimeFormat);
+
+
+            doc.setFontSize(9);
+            doc.text(110, currentHight + 5 , "Total Sessions : ");
+            doc.setFontSize(11);
+            doc.text(160, currentHight + 5 , totalSessionFormat);
+
+            currentHight+=10;
+
+            doc.setFontSize(9);
+            doc.text(25, currentHight + 5 , "Unique Users (>1MB)");
+            doc.setFontSize(11);
+            doc.text(75, currentHight + 5 , noofUniqueUserFormat);
+
+
+            doc.setFontSize(9);
+            doc.text(110, currentHight + 5 , "Returning Users");
+            doc.setFontSize(11);
+            doc.text(160, currentHight + 5 , returningUserFormat);
+
+            currentHight+=20;
+
+
+            var pieCharHeight = 80;
+            var pieCharWidth = 80;
+
+            var row = 0;
+
+            $('.pdfChartPie').each(function (index) {
+
+                var imageData = $(this).highcharts().createCanvas();
+                doc.setFontSize(10);
+                var top = currentHight+20;
+                var leftMargin ;
+
+                if(index%2 != 0){
+                    top += (row  * pieCharHeight);
+                    leftMargin = 40 + pieCharWidth;
+                    row++;
+                }else{
+                    leftMargin = 25 ;
+                }doc.text(leftMargin,top-7 ,  $(this).data("title"));
+                doc.addImage(imageData, 'JPEG',leftMargin , top, pieCharWidth, pieCharHeight);
+
+            });
+            doc.save('home-dashboard.pdf');
         });
 
-        doc.addPage()
+        $(
+                function () {
+                    pageSetUp();
+                    var payload = {
+                        from: from_,
+                        to: to_,
+                        groupnames: window.datagroups,
+                        tenantid: parseInt(Cookies.get("tenantid"))
+                    };
+                    window.payload = payload
+                    var totaldownloads = 0, totaluploads = 0, uniqueuserscount = 0
 
-        currentHight = 15
-
-        // block 01
-
-        doc.setFontSize(12);
-        doc.text(25, currentHight + 5 , "Total Downloads : ");
-        doc.setFontSize(18);
-        doc.text(60, currentHight + 5 , "26.62GB ");
-
-
-        doc.setFontSize(12);
-        doc.text(110, currentHight + 5 , "Total Uploads : ");
-        doc.setFontSize(18);
-        doc.text(145, currentHight + 5 , "42.625GB ");
-
-        currentHight+=20;
-
-        doc.setFontSize(12);
-        doc.text(25, currentHight + 5 , "Total Downloads : ");
-        doc.setFontSize(18);
-        doc.text(60, currentHight + 5 , "26.62GB ");
-
-
-        doc.setFontSize(12);
-        doc.text(110, currentHight + 5 , "Total Uploads : ");
-        doc.setFontSize(18);
-        doc.text(145, currentHight + 5 , "42.625GB ");
-
-        currentHight+=20;
-
-
-        doc.setFontSize(12);
-        doc.text(25, currentHight + 5 , "Total Downloads : ");
-        doc.setFontSize(18);
-        doc.text(60, currentHight + 5 , "26.62GB ");
-
-
-        doc.setFontSize(12);
-        doc.text(110, currentHight + 5 , "Total Uploads : ");
-        doc.setFontSize(18);
-        doc.text(145, currentHight + 5 , "42.625GB ");
-
-        currentHight+=20;
-
-        doc.setFontSize(12);
-        doc.text(25, currentHight + 5 , "Total Downloads : ");
-        doc.setFontSize(18);
-        doc.text(60, currentHight + 5 , "26.62GB ");
-
-
-        doc.setFontSize(12);
-        doc.text(110, currentHight + 5 , "Total Uploads : ");
-        doc.setFontSize(18);
-        doc.text(145, currentHight + 5 , "42.625GB ");
-
-        currentHight+=20;
-
-
-        doc.setFontSize(12);
-        doc.text(25, currentHight + 5 , "Total Downloads : ");
-        doc.setFontSize(18);
-        doc.text(60, currentHight + 5 , "26.62GB ");
-
-
-        doc.setFontSize(12);
-        doc.text(110, currentHight + 5 , "Total Uploads : ");
-        doc.setFontSize(18);
-        doc.text(145, currentHight + 5 , "42.625GB ");
-
-        currentHight+=20;
-
-
-        var pieCharHeight = 80;
-        var pieCharWidth = 80;
-
-        var row = 0;
-
-        $('.pdfChartPie').each(function (index) {
-
-            var imageData = $(this).highcharts().createCanvas();
-            doc.setFontSize(10);
-            var top = currentHight+20;
-            var leftMargin ;
-
-            if(index%2 != 0){
-                top += (row  * pieCharHeight);
-                leftMargin = 40 + pieCharWidth;
-                row++;
-            }else{
-                leftMargin = 25 ;
-            }
-
-            doc.text(leftMargin,top-7 , "Device Statistics");
-            doc.addImage(imageData, 'JPEG',leftMargin , top, pieCharWidth, pieCharHeight);
-
-        });
-        doc.save('home-dashboard.pdf');
-    });
-
-    $(
-            function () {
-                pageSetUp();
-                var payload = {
-                    from: from_,
-                    to: to_,
-                    groupnames: window.datagroups,
-                    tenantid: parseInt(Cookies.get("tenantid"))
-                };
-                window.payload = payload
-                var totaldownloads = 0, totaluploads = 0, uniqueuserscount = 0
-
-                var renderTotalDownloads = $.post('/wifi/usage/downloads', JSON.stringify(payload), function (data, status) {
-                    totaldownloads = data
-                    $.get('components/metric-base.html', function (template) {
-                        var rendered = Mustache.render(template, {
-                            caption: 'Total Downloads',
-                            value: numeral(data).format('0.00b'),
-                            titlecolor: '#12A6A8'
-                        });
-                        $('#metric-downloads').html(rendered)
-                    })
-                });
-
-                var renderTotalUploads = $.post('/wifi/usage/uploads', JSON.stringify(payload), function (data, status) {
-                    totaluploads = data
-                    $.get('components/metric-base.html', function (template) {
-                        var rendered = Mustache.render(template, {
-                            caption: 'Total Uploads',
-                            value: numeral(data).format('0.00b'),
-                            titlecolor: '#12A6A8'
-                        });
-                        $('#metric-uploads').html(rendered)
-                    })
-                });
-
-                var renderTotalUserCount = $.post('/wifi/users/count', JSON.stringify(payload), function (data, status) {
-                    uniqueuserscount = (data === 0 ? 1 : data);
-                    $.get('components/metric-base.html', function (template) {
-                        var rendered = Mustache.render(template, {
-                            caption: 'Total Users',
-                            value: data,
-                            titlecolor: '#12A6A8'
-                        });
-                        $('#metric-totalusers').html(rendered)
-                    })
-                });
-
-                $.post('/wifi/sessions/avg', JSON.stringify(payload), function (data, status) {
-                    $.get('components/metric-base.html', function (template) {
-                        var rendered = Mustache.render(template, {
-                            caption: 'Avg User session time',
-                            value: numeral(data).format('00:00:00'),
-                            titlecolor: '#12A6A8'
-                        });
-                        $('#metric-avgsessiontime').html(rendered)
-                    })
-                });
-
-                $.post('/wifi/sessions/count', JSON.stringify(payload), function (data, status) {
-                    $.get('components/metric-base.html', function (template) {
-                        var rendered = Mustache.render(template, {
-                            caption: 'Total Sessions',
-                            value: data,
-                            titlecolor: '#12A6A8'
-                        });
-                        $('#metric-totalsessioncount').html(rendered)
-                    })
-                });
-
-                $.post('/wifi/users/countbydownlods/1000000', JSON.stringify(payload), function (data, status) {
-                    $.get('components/metric-base.html', function (template) {
-                        var rendered = Mustache.render(template, {
-                            caption: 'Unique Users (>1MB)',
-                            value: data,
-                            titlecolor: '#12A6A8'
-                        });
-                        $('#metric-usercountover1MB').html(rendered)
-                    })
-                });
-
-                $.when(renderTotalDownloads, renderTotalUploads, renderTotalUserCount).done(function () {
-                    $.get('components/metric-base.html', function (template) {
-                        var rendered = Mustache.render(template, {
-                            caption: 'Avg Data Usage per User',
-                            value: numeral((totaldownloads + totaluploads) / uniqueuserscount).format('0.00b'),
-                            titlecolor: '#12A6A8'
-                        });
-                        $('#metric-avgdatausageperuser').html(rendered)
-                    })
-                });
-
-                $.post('/wifi/users/returncount', JSON.stringify(payload), function (data, status) {
-                    $.get('components/metric-base.html', function (template) {
-                        var rendered = Mustache.render(template, {
-                            caption: 'Returning Users',
-                            value: data,
-                            titlecolor: '#12A6A8'
-                        });
-                        $('#metric-returningusers').html(rendered)
-                    })
-                });
-
-                $.post('/wifi/devices/osstats', JSON.stringify(payload), function (data, status) {
-                    $.get('components/metric-piechart-base.html', function (template) {
-                        var rendered = Mustache.render(template, {
-                            id: 0,
-                            caption: 'Browser Stats',
-                            style: 'success',
-                            data: JSON.stringify(getPieChartData(data)),
-                            titlecolor: '#2F4050'
-                        });
-                        $('#metric-usersbyos').html(rendered)
-                    })
-                });
-
-                $.post('/wifi/devices/devicestats', JSON.stringify(payload), function (data, status) {
-                    $.get('components/metric-piechart-base.html', function (template) {
-                        var rendered = Mustache.render(template, {
-                            id: 1,
-                            caption: 'Device Stats',
-                            style: 'success',
-                            data: JSON.stringify(getPieChartData(data)),
-                            titlecolor: '#2F4050'
+                    var renderTotalDownloads = $.post('/wifi/usage/downloads', JSON.stringify(payload), function (data, status) {
+                        totaldownloads = data;
+                        totalDownloadFormat = numeral(data).format('0.00b')
+                        $.get('components/metric-base.html', function (template) {
+                            var rendered = Mustache.render(template, {
+                                caption: 'Total Downloads',
+                                value: numeral(data).format('0.00b'),
+                                titlecolor: '#12A6A8'
+                            });
+                            $('#metric-downloads').html(rendered)
                         })
-                        $('#metric-usersbydevicetype').html(rendered)
-                    })
-                });
-
-                // Summary Data CSV download ajax call
-                var a = document.createElement("a");
-                document.body.appendChild(a);
-                a.style = "display: none";
-
-                var fileName = "dashboard.csv";
-
-                $('#exportCSV').click(function () {
-                    $.post('/wifi/summary/downloadrawdata', JSON.stringify(payload), function (data, status) {
-                        var csvfile = new Blob([data], {type: "text/csv"}),
-                                url = window.URL.createObjectURL(csvfile);
-                        a.href = url;
-                        a.download = fileName;
-                        a.click();
-                        setTimeout(function(){
-                            document.body.removeChild(a);
-                            window.URL.revokeObjectURL(url);
-                        }, 100);
                     });
-                });
 
-            }
-    );
+                    var renderTotalUploads = $.post('/wifi/usage/uploads', JSON.stringify(payload), function (data, status) {
+                        totaluploads = data;
+                        totalUploadFormat = numeral(data).format('0.00b');
+                        $.get('components/metric-base.html', function (template) {
+                            var rendered = Mustache.render(template, {
+                                caption: 'Total Uploads',
+                                value: totalDownloadFormat,
+                                titlecolor: '#12A6A8'
+                            });
+                            $('#metric-uploads').html(rendered)
+                        })
+                    });
+
+                    var renderTotalUserCount = $.post('/wifi/users/count', JSON.stringify(payload), function (data, status) {
+                        uniqueuserscount = (data === 0 ? 1 : data);
+                        totalUserFormat = uniqueuserscount.toString();
+                        $.get('components/metric-base.html', function (template) {
+                            var rendered = Mustache.render(template, {
+                                caption: 'Total Users',
+                                value: data,
+                                titlecolor: '#12A6A8'
+                            });
+                            $('#metric-totalusers').html(rendered)
+                        })
+                    });
+
+                    $.post('/wifi/sessions/avg', JSON.stringify(payload), function (data, status) {
+                        $.get('components/metric-base.html', function (template) {
+                            avgUserSessionTimeFormat=numeral(data).format('00:00:00');
+                            var rendered = Mustache.render(template, {
+                                caption: 'Avg User session time',
+                                value: avgUserSessionTimeFormat,
+                                titlecolor: '#12A6A8'
+                            });
+                            $('#metric-avgsessiontime').html(rendered)
+                        })
+                    });
+
+                    $.post('/wifi/sessions/count', JSON.stringify(payload), function (data, status) {
+                        $.get('components/metric-base.html', function (template) {
+                            totalSessionFormat=data.toString();
+                            var rendered = Mustache.render(template, {
+                                caption: 'Total Sessions',
+                                value: data,
+                                titlecolor: '#12A6A8'
+                            });
+                            $('#metric-totalsessioncount').html(rendered)
+                        })
+                    });
+
+                    $.post('/wifi/users/countbydownlods/1000000', JSON.stringify(payload), function (data, status) {
+                        $.get('components/metric-base.html', function (template) {
+                            noofUniqueUserFormat=data.toString();
+                            var rendered = Mustache.render(template, {
+                                caption: 'Unique Users (>1MB)',
+                                value: data,
+                                titlecolor: '#12A6A8'
+                            });
+                            $('#metric-usercountover1MB').html(rendered)
+                        })
+                    });
+
+                    $.when(renderTotalDownloads, renderTotalUploads, renderTotalUserCount).done(function () {
+                        $.get('components/metric-base.html', function (template) {
+                            avgDataUsagePerUserFormat= numeral((totaldownloads + totaluploads) / uniqueuserscount).format('0.00b');
+                            var rendered = Mustache.render(template, {
+                                caption: 'Avg Data Usage per User',
+                                value: avgDataUsagePerUserFormat,
+                                titlecolor: '#12A6A8'
+                            });
+                            $('#metric-avgdatausageperuser').html(rendered)
+                        })
+                    });
+
+                    $.post('/wifi/users/returncount', JSON.stringify(payload), function (data, status) {
+                        $.get('components/metric-base.html', function (template) {
+                            returningUserFormat=data.toString();
+                            var rendered = Mustache.render(template, {
+                                caption: 'Returning Users',
+                                value: returningUserFormat,
+                                titlecolor: '#12A6A8'
+                            });
+                            $('#metric-returningusers').html(rendered)
+                        })
+                    });
+
+                    $.post('/wifi/devices/osstats', JSON.stringify(payload), function (data, status) {
+                        $.get('components/metric-piechart-base.html', function (template) {
+                            var rendered = Mustache.render(template, {
+                                id: 0,
+                                caption: 'Browser Stats',
+                                style: 'success',
+                                data: JSON.stringify(getPieChartData(data)),
+                                titlecolor: '#2F4050'
+                            });
+                            $('#metric-usersbyos').html(rendered)
+                        })
+                    });
+
+                    $.post('/wifi/devices/devicestats', JSON.stringify(payload), function (data, status) {
+                        $.get('components/metric-piechart-base.html', function (template) {
+                            var rendered = Mustache.render(template, {
+                                id: 1,
+                                caption: 'Device Stats',
+                                style: 'success',
+                                data: JSON.stringify(getPieChartData(data)),
+                                titlecolor: '#2F4050'
+                            })
+                            $('#metric-usersbydevicetype').html(rendered)
+                        })
+                    });
+
+                    // Summary Data CSV download ajax call
+                    var a = document.createElement("a");
+                    document.body.appendChild(a);
+                    a.style = "display: none";
+
+                    var fileName = "dashboard.csv";
+
+                    $('#exportCSV').click(function () {
+                        $.post('/wifi/summary/downloadrawdata', JSON.stringify(payload), function (data, status) {
+                            var csvfile = new Blob([data], {type: "text/csv"}),
+                                    url = window.URL.createObjectURL(csvfile);
+                            a.href = url;
+                            a.download = fileName;
+                            a.click();
+                            setTimeout(function(){
+                                document.body.removeChild(a);
+                                window.URL.revokeObjectURL(url);
+                            }, 100);
+                        });
+                    });
+
+                }
+        );
+    });
 
 </script>
