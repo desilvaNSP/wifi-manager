@@ -173,14 +173,13 @@
         if ($("#personal-info-form").valid()) {
             var payload = {
                 tenantid: parseInt(Cookies.get('tenantid')),
-                oldusername: Cookies.get('username'),
-                newusername: $('#editProfileUserName').val(),
+                username: Cookies.get('username'),
                 email: $('#editProfileEmail').val(),
                 contactno:$('#editProfileContact').val()
             };
             $.ajax({
-             url: '/dashboard/userupdate',
-             type: 'POST',
+             url: '/dashboard/user',
+             type: 'PUT',
              contentType: "application/json",
              data: JSON.stringify(payload),
              success: function (result) {
@@ -223,7 +222,7 @@
                 newpassword:newpassword
             };
             $.ajax({
-                url: '/dashboard/userprofile/changepassword',
+                url: '/dashboard/users/changepassword',
                 type: 'POST',
                 contentType: "application/json",
                 data: JSON.stringify(payloadresetpassword),

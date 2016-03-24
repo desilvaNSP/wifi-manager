@@ -48,10 +48,9 @@ type DashboardUser struct {
 	ApGroups    []string  `json:"apgroups"`
 }
 
-type DashboardUserProfile struct {
+type DashboardUserDetails struct {
 	TenantId    int       `json:"tenantid"`
-	OldUsername    string    `json:"oldusername"`
-	NewUsername    string    `json:"newusername"`
+	Username    string    `json:"username"`
 	Email       string    `json:"email"`
 	ContactNo    string  `json:"contactno"`
 }

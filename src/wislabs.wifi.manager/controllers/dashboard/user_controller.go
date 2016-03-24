@@ -70,11 +70,11 @@ func UpdateDashboardUser(user dao.DashboardUser) error {
 	if err != nil {
 		return err
 	}
-	AddDashboardUserApGroups(GetUserId(user.TenantId, user.Username), user)
+	es(GetUserId(user.TenantId, user.Username), user)
 	return err
 }
 
-func UpdateDashboardUserProfile(userprofile dao.DashboardUserProfile) error{
+func UpdateDashboardUserDetails(user dao.DashboardUserDetails) error{
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 
@@ -84,7 +84,7 @@ func UpdateDashboardUserProfile(userprofile dao.DashboardUserProfile) error{
 	if err != nil {
 		return err
 	}
-	_, err = stmtIns.Exec(userprofile.NewUsername, userprofile.Email, userprofile.OldUsername,userprofile.TenantId)
+	_, err = stmtIns.Exec(user.Email, user.Username,user.TenantId)
 	if err != nil {
 		return err
 	}

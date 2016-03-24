@@ -56,7 +56,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func UpdateUser(w http.ResponseWriter, r *http.Request) {
+func UpdateUserbyAdminHandler(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var user dao.DashboardUser
 	err := decoder.Decode(&user)
@@ -67,14 +67,14 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func UpdateUserProfile(w http.ResponseWriter, r *http.Request) {
+func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
-	var userprofile dao.DashboardUserProfile
-	err := decoder.Decode(&userprofile)
+	var updateuser dao.DashboardUserDetails
+	err := decoder.Decode(&updateuser)
 	if err != nil {
 		panic("Error while decoding json")
 	}
-	err = dashboard.UpdateDashboardUserProfile(userprofile)
+	err = dashboard.UpdateDashboardUserDetails(updateuser)
 	w.WriteHeader(http.StatusOK)
 }
 

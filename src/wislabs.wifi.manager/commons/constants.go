@@ -31,7 +31,7 @@ const ADD_DASHBOARD_USER_PERMISSIONS string   		= "INSERT INTO userpermissions (
 const GET_DASHBOARD_USER_PERMISSIONS string     	= "SELECT name  FROM permissions WHERE permissionid IN (SELECT permissionid FROM userpermissions WHERE  userid IN (SELECT  userid from users WHERE username=? AND tenantid=?)) GROUP BY name"
 const GET_DASHBOARD_USER_AP_GROUPS string     		= "SELECT groupname  FROM apgroups WHERE groupid IN (SELECT groupid FROM userapgroups WHERE  userid IN (SELECT  userid from users WHERE username=? AND tenantid=?)) GROUP BY groupname"
 const UPDATE_DASHBOARD_USER string      			= "UPDATE users SET email=?, status=? WHERE username=? and tenantid=?"
-const UPDATE_DASHBORD_USER_PROFILE string              = "UPDATE users SET username=?, email=? WHERE username=? and tenantid=?"
+const UPDATE_DASHBORD_USER_PROFILE string              = "UPDATE users SET email=? WHERE username=? and tenantid=?"
 const UPDATE_DASHBOARD_USER_PASSWORD string  		= "UPDATE users SET password=? WHERE username=? and tenantid=?"
 const DELETE_DASHBOARD_USER string   				= "DELETE FROM users WHERE tenantid=? AND username=?"
 
