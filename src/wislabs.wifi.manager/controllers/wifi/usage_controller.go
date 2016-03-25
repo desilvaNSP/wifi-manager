@@ -71,6 +71,40 @@ func SummaryDetailsFromTo(constrains dao.Constrains) [][]string {
 	return  CSVcontent
 }
 
+func GetAccessPointAgregatedDataFromTo(constrains dao.Constrains) [] dao.AccessPoint{
+
+	dbMap := utils.GetDBConnection("summary");
+	defer dbMap.Db.Close()
+	var accespointdata[] dao.AccessPoint
+
+	query := "SELECT calledstationmac as calledstationmac,"+
+		"ssid as ssid,"+
+		"SUM(outputoctets) as totaloutputoctets,"+
+		"SUM(inputoctets) as totalinputoctets,"+
+		"SUM(noofsessions) as totalsessions ,"+
+		"COUNT(DISTINCT username) as totalusers,"+
+		"SUM(inputoctets)/COUNT(DISTINCT username) as avgdataperuser,"+
+		"SUM(totalsessionduration)/SUM(noofsessions) as avgdatapersessiontime "+
+		"FROM dailyacct "+
+		"WHERE date >= ? AND date < ? AND tenantid=?"
+
+	if len(constrains.GroupNames) > 0 {
+		args := getArgs(&constrains)
+		query = query + " AND ( groupname=? "
+		for i := 1; i< len(constrains.GroupNames); i++ {
+			query = query + " OR groupname=? "
+		}
+		query = query + ") Group By calledstationmac,ssid"
+
+
+
+		_, err := dbMap.Select(&accespointdata, query, args...)
+		if err != nil {
+			panic(err.Error()) // proper error handling instead of panic
+		}
+	}
+	return accespointdata
+}
 
 func GetAggregatedDownloadsFromTo(constrains dao.Constrains) [] dao.NameValue {
 	dbMap := utils.GetDBConnection("summary");
@@ -132,6 +166,7 @@ func GetAvgDailyDownloadsPerUserFromTo(constrains dao.Constrains) [] dao.NameVal
 			panic(err.Error()) // proper error handling instead of panic
 		}
 	}
+
 	return totalDailyDownloads
 }
 

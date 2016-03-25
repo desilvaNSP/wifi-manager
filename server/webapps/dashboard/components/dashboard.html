@@ -14,17 +14,40 @@
         </div>
     </div>
 </div>
-<div id="xxx">
-    <div id="dashboard-metric-content" class="row">
 
-    </div>
-</div>
+ <div id="dashboard-tabs">
+     <ul class="nav nav-pills">
+         <li class="active">
+             <a  href="#overview-content" data-toggle="tab">Overview</a>
+         </li>
+         <li><a href="#apreort-content" data-toggle="tab">AP Reports</a>
+         </li>
+     </ul>
+     <div class="tab-content">
+         <div class="tab-pane active" id="overview-content">
+             <div id="metrics-container">
+                 <div id="dashboard-metric-content" class="row">
+
+                 </div>
+             </div>
+         </div>
+         <div class="tab-pane" id="apreort-content">
+             <div id="apreport-container">
+                 <div id="dashboard-apreport-content" class="row">
+
+                 </div>
+             </div>
+         </div>
+     </div>
+ </div>
+
 
 
 <script type="text/javascript">
     from_ = 0, to_ = 0;
     $(document).ready(function () {
-        renderMetrics()
+        renderMetrics();
+        reenderAPreport();
         var saveResult = function (data) {
             from_ = moment(data.from, "X").format('YYYY-MM-DD');
             to_ = moment(data.to, "X").format('YYYY-MM-DD');
@@ -46,7 +69,8 @@
             onChange: saveResult,
             onFinish: function (data) {
                 saveResult(data);
-                renderMetrics()
+                renderMetrics();
+                reenderAPreport();
             }
         });
 
@@ -60,6 +84,13 @@
                 }else{
                     $("#exportCSV").show();
                 }
+            })
+        }
+
+        function reenderAPreport(){
+            $.get('components/dashboard-apreport.html', function (template) {
+                var rendered = Mustache.render(template, {});
+                $('#dashboard-apreport-content').html(rendered);
             })
         }
 

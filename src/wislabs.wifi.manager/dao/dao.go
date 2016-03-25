@@ -1,6 +1,7 @@
 package dao
 import (
 	"wislabs.wifi.manager/utils"
+	"net/textproto"
 )
 
 type NameValue struct {
@@ -28,6 +29,17 @@ type SummaryDailyAcctAll struct {
 	Locationid           utils.NullString            `db:"locationid"json:"locationid"`
 }
 
+type AccessPoint struct {
+	TotalSessions         int            `db:"totalsessions"json:"totalsessions"`
+	TotalUsers   int            `db:"totalusers"json:"totalusers"`
+	AvgdataperUser   utils.NullString            `db:"avgdataperuser"json:"avgdataperuser"`
+	Avgdatapersessiontime   utils.NullString           `db:"avgdatapersessiontime"json:"avgdatapersessiontime"`
+	Totalinputoctets          int64            `db:"totalinputoctets"json:"totalinputoctets"`
+	Totaloutputoctets         int64            `db:"totaloutputoctets"json:"totaloutputoctets"`
+	Ssid                 utils.NullString            `db:"ssid"json:"ssid"`
+	Calledstationmac     utils.NullString            `db:"calledstationmac"json:"calledstationmac"`
+}
+
 type Tenant struct {
 	TenantId  int       `db:"tenantid"json:"tenantid"`
 	Domain    string    `db:"domain"json:"domain"`
@@ -45,6 +57,13 @@ type DashboardUser struct {
 	Roles       []string  `json:"roles"`
 	Permissions []string  `json:"permissions"`
 	ApGroups    []string  `json:"apgroups"`
+}
+
+type DashboardUserDetails struct {
+	TenantId    int       `json:"tenantid"`
+	Username    string    `json:"username"`
+	Email       string    `json:"email"`
+	ContactNo    string  `json:"contactno"`
 }
 
 type DashboardUserResetPassword struct {
@@ -173,4 +192,10 @@ type ServerConfigs struct {
 	HttpsPort    int
 	ReadTimeOut  int
 	WriteTimeOut int
+}
+
+type FileHeader struct {
+	Filename string
+	Header   textproto.MIMEHeader
+	// contains filtered or unexported fields
 }

@@ -12,7 +12,7 @@
 		                     </span> <span class="text-muted text-xs block">{{data.email}} <b class="caret"></b></span> </span>
                     </a>
                     <ul class="dropdown-menu animated fadeInRight m-t-xs">
-                        <li><a href="#profile" class="">Profile</a></li>
+                        <li><a href="#" id="href-user-profile" class="">Profile</a></li>
                         <li><a href="#" class="logout">Logout</a></li>
                     </ul>
                 </div>
@@ -124,6 +124,9 @@
         $(".logout").on('click', function () {
             Cookies.remove();
             window.location.href = "/dashboard/login"
+        });
+        $("#href-user-profile").click(function () {
+            renderProfilePage()
         });
     });
 </script>

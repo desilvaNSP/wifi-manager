@@ -8,7 +8,7 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"strconv"
-	log "github.com/Sirupsen/logrus"
+	"log"
 	"wislabs.wifi.manager/authenticator"
 	"wislabs.wifi.manager/utils"
 )
@@ -50,13 +50,13 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	}
 	err = dashboard.RegisterDashboardUser(user)
 	if (err != nil) {
-		log.Error(err.Error())
+		//log.Error(err.Error())
 	}
 
 	w.WriteHeader(http.StatusOK)
 }
 
-func UpdateUser(w http.ResponseWriter, r *http.Request) {
+func UpdateUserbyAdminHandler(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var user dao.DashboardUser
 	err := decoder.Decode(&user)
@@ -66,6 +66,18 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	err = dashboard.UpdateDashboardUser(user)
 	w.WriteHeader(http.StatusOK)
 }
+
+func UpdateUser(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var updateuser dao.DashboardUserDetails
+	err := decoder.Decode(&updateuser)
+	if err != nil {
+		panic("Error while decoding json")
+	}
+	err = dashboard.UpdateDashboardUserDetails(updateuser)
+	w.WriteHeader(http.StatusOK)
+}
+
 
 func UpdateUserPasswordHandler(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)

@@ -7867,3 +7867,95 @@ body.skin-3 {
     width: 100%;
     height: 100%;
 }
+
+.profile-image-container {
+    width: 178px;
+    height: 178px;
+    margin: 0 auto;
+    display:block;
+    text-align:center;
+    position: relative;
+}
+
+img.overlay {
+    position: absolute;
+    height: 178px;
+    width: 178px;
+    top: 0px;
+    left: 0px;
+}
+
+.profile-image{
+    z-index: 10 !important;
+}
+
+img.thumbnail  { position: absolute; width: 178px;height: 178px ;z-index: 20}
+
+#thumbnail{
+    float:left;
+}
+
+
+.fileupload{
+    display: none;
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    width: 178px;
+    height: 40px;
+    z-index: 200;
+    background-color: #1ab394;
+}
+
+.inputfile {
+    width: 178px;
+    height: 40px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+.inputfile + label {
+    width: 178px;
+    height: 40px;
+    padding: 5px;
+    font-size: 1.0em;
+    font-weight: 500;
+    color: white;
+    background-color: #1ab394;
+    display: inline-block;
+}
+
+.inputfile:focus + label,
+.inputfile + label:hover {
+    background-color: black;
+}
+
+.inputfile + label {
+    cursor: pointer; /* "hand" cursor */
+}
+.inputfile:focus + label {
+    outline: 1px dotted #000;
+    outline: -webkit-focus-ring-color auto 5px;
+}
+
+.password-reset-container{
+    left: 50px;
+    position: relative;
+}
+
+#dashboard-tabs .tab-content {
+    padding : 10px 15px;
+}
+
+#dashboard-tabs .nav-pills > li > a {
+    border-radius: 0;
+    color: #676a6c;
+}
+#dashboard-tabs .nav-pills > li.active > a {
+    border-radius: 0;
+    background-color: #1ab394;
+    border-color: #1ab394;
+    color: #FFFFFF;
+}

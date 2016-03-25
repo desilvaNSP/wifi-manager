@@ -77,6 +77,13 @@ var routes = Routes{
 		"PUT",
 		"/dashboard/users",
 		true,
+		dashboard_handlers.UpdateUserbyAdminHandler,
+	},
+	Route{
+		"Update user profile",
+		"PUT",
+		"/dashboard/user",
+		true,
 		dashboard_handlers.UpdateUser,
 	},
 	Route{
@@ -344,5 +351,12 @@ var routes = Routes{
 		"/wifi/summary/downloadrawdata",
 		true,
 		dashboard_handlers.DownlaodCSVSummaryDetailsDashboard,
+	},
+	Route{
+		"Get Access Point Details Dashboard",
+		"POST",
+		"/wifi/summary/accespoint",
+		true,
+		dashboard_handlers.GetAccessPointAgregatedDataFromToHandler,
 	},
 }
