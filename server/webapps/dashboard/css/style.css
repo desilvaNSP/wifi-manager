@@ -7942,9 +7942,15 @@ img.thumbnail  { position: absolute; width: 178px;height: 178px ;z-index: 20}
 
 .password-reset-container{
     left: 50px;
+    margin: 60px;
     position: relative;
 }
 
 #dashboard-tabs .tab-content {
     padding : 10px 15px;
+}
+
+.profile-container{
+    padding-top: 20px;
+    margin-top: 50px;
 }
