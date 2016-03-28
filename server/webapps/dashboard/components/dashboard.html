@@ -16,7 +16,7 @@
 </div>
 
  <div id="dashboard-tabs">
-     <ul class="nav nav-pills">
+     <ul class="nav nav-tabs">
          <li class="active">
              <a  href="#overview-content" data-toggle="tab" data-id="overview">Overview</a>
          </li>
@@ -48,18 +48,13 @@
 
 
         var selectedtabid ="overview";
-        var activeForMatrics=true;
-        var activeForAP=false;
         renderMetrics();
-
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             selectedtabid = $(this).data("id");
-            if(selectedtabid=="overview" && !activeForMatrics){
+            if(selectedtabid=="overview"){
                 renderMetrics();
-                activeForMatrics=true;
-            }else if(selectedtabid=="apreport" && !activeForAP){
+            }else if(selectedtabid=="apreport"){
                 renderAPreport();
-                activeForAP=true;
             }
         });
 
@@ -88,12 +83,8 @@
                 saveResult(data);
                 if(selectedtabid=="overview"){
                     renderMetrics();
-                    activeForMatrics=true;
-                    activeForAP=false;
                 }else{
                     renderAPreport();
-                    activeForAP=true;
-                    activeForMatrics=false;
                 }
 
             }
@@ -119,19 +110,13 @@
             })
         }
 
-
-
         $('#select-wifilocation').on('change', function (e) {
             window.datagroups = [this.value];
             window.appName = [this.value];
             if(selectedtabid=="overview"){
                 renderMetrics();
-                activeForMatrics=true;
-                activeForAP=false;
             }else{
                 renderAPreport();
-                activeForAP=true;
-                activeForMatrics=false;
             }
         });
     });

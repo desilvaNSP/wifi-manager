@@ -78,7 +78,6 @@ func GetAccessPointAgregatedDataFromTo(constrains dao.Constrains) [] dao.AccessP
 	var accespointdata[] dao.AccessPoint
 
 	query := "SELECT calledstationmac as calledstationmac,"+
-		"ssid as ssid,"+
 		"SUM(outputoctets) as totaloutputoctets,"+
 		"SUM(inputoctets) as totalinputoctets,"+
 		"SUM(noofsessions) as totalsessions ,"+
@@ -94,7 +93,7 @@ func GetAccessPointAgregatedDataFromTo(constrains dao.Constrains) [] dao.AccessP
 		for i := 1; i< len(constrains.GroupNames); i++ {
 			query = query + " OR groupname=? "
 		}
-		query = query + ") Group By calledstationmac,ssid"
+		query = query + ") Group By calledstationmac"
 
 
 
