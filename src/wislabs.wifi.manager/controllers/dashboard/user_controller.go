@@ -70,7 +70,7 @@ func UpdateDashboardUser(user dao.DashboardUser) error {
 	if err != nil {
 		return err
 	}
-	es(GetUserId(user.TenantId, user.Username), user)
+	AddDashboardUserApGroups(GetUserId(user.TenantId, user.Username), user)
 	return err
 }
 

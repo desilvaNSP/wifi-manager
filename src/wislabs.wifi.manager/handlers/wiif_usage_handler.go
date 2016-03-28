@@ -165,6 +165,30 @@ func GetTotalSessionCountTimeFromToHandler(w http.ResponseWriter, r *http.Reques
 
 /**
 * POST
+* @path /wifi/summary/accespoint
+*
+*/
+
+func GetAccessPointAgregatedDataFromToHandler(w http.ResponseWriter, r*http.Request){
+	decoder := json.NewDecoder(r.Body)
+	var constrains dao.Constrains
+	decoder.Decode(&constrains)
+
+	var accespoint[] dao.AccessPoint
+
+	accespoint = wifi.GetAccessPointAgregatedDataFromTo(constrains)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+
+	if err := json.NewEncoder(w).Encode(accespoint); err != nil {
+		panic(err)
+	}
+}
+
+
+/**
+* POST
 * @path /wifi/summary/downloadrawdata
 *
 */

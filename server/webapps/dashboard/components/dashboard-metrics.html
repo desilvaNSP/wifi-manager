@@ -120,6 +120,66 @@
             </div>
         </article>
     </div>
+    <div class="row">
+        <article class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <div class="jarviswidget" id="wid-id-5" data-widget-refresh="2000"
+                 data-widget-load="components/widgets/osstat-piechart.html"  data-widget-colorbutton="false" data-widget-fullscreenbutton="false">
+                <header>
+                    <h2>Browser Statistics</h2>
+                </header>
+                <div>
+                    <!-- widget edit box -->
+                    <div class="jarviswidget-editbox">
+                        <!-- This area used as dropdown edit box -->
+                        <input class="form-control" type="text">
+                        <span class="note"><i class="fa fa-check text-success"></i> Change title to update and save instantly!</span>
+                    </div>
+                    <!-- end widget edit box -->
+
+                    <!-- widget content -->
+                    <div class="widget-body">
+                        <div>
+                            <div class="sk-spinner sk-spinner-three-bounce">
+                                <div class="sk-bounce1"></div>
+                                <div class="sk-bounce2"></div>
+                                <div class="sk-bounce3"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end widget content -->
+                </div>
+            </div>
+        </article>
+        <article class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <div class="jarviswidget" id="wid-id-6" data-widget-refresh="2000"
+                 data-widget-load="components/widgets/device-piechart.html"  data-widget-colorbutton="false" data-widget-fullscreenbutton="false">
+                <header>
+                    <h2>Device Statistics</h2>
+                </header>
+                <div>
+                    <!-- widget edit box -->
+                    <div class="jarviswidget-editbox">
+                        <!-- This area used as dropdown edit box -->
+                        <input class="form-control" type="text">
+                        <span class="note"><i class="fa fa-check text-success"></i> Change title to update and save instantly!</span>
+                    </div>
+                    <!-- end widget edit box -->
+
+                    <!-- widget content -->
+                    <div class="widget-body">
+                        <div>
+                            <div class="sk-spinner sk-spinner-three-bounce">
+                                <div class="sk-bounce1"></div>
+                                <div class="sk-bounce2"></div>
+                                <div class="sk-bounce3"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end widget content -->
+                </div>
+            </div>
+        </article>
+    </div>
 </section>
 
 <div class="row">
@@ -221,46 +281,7 @@
 <div class="row" style="margin-top: 40px;">
 
     <div class="col-lg-4">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="ibox float-e-margins" id="metric-usercountover1MB">
-                    <div class="ibox-title">
-                        <span class="label label-{{{style}}} pull-right">Today</span>
-                        <h5></h5>
-                    </div>
-                    <div class="ibox-content">
-                        <div class="sk-spinner sk-spinner-three-bounce">
-                            <div class="sk-bounce1"></div>
-                            <div class="sk-bounce2"></div>
-                            <div class="sk-bounce3"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="ibox float-e-margins" id="metric-returningusers">
-                    <div class="ibox-title">
-                        <span class="label label-{{{style}}} pull-right">Today</span>
-                        <h5></h5>
-                    </div>
-                    <div class="ibox-content">
-                        <div class="sk-spinner sk-spinner-three-bounce">
-                            <div class="sk-bounce1"></div>
-                            <div class="sk-bounce2"></div>
-                            <div class="sk-bounce3"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="col-lg-4">
-        <div class="ibox float-e-margins" id="metric-usersbyos">
+        <div class="ibox float-e-margins" id="metric-usercountover1MB">
             <div class="ibox-title">
                 <span class="label label-{{{style}}} pull-right">Today</span>
                 <h5></h5>
@@ -276,18 +297,16 @@
     </div>
 
     <div class="col-lg-4">
-        <div class="ibox float-e-margins">
-            <div class="ibox float-e-margins" id="metric-usersbydevicetype">
-                <div class="ibox-title">
-                    <span class="label label-{{{style}}} pull-right">Today</span>
-                    <h5></h5>
-                </div>
-                <div class="ibox-content">
-                    <div class="sk-spinner sk-spinner-three-bounce">
-                        <div class="sk-bounce1"></div>
-                        <div class="sk-bounce2"></div>
-                        <div class="sk-bounce3"></div>
-                    </div>
+        <div class="ibox float-e-margins" id="metric-returningusers">
+            <div class="ibox-title">
+                <span class="label label-{{{style}}} pull-right">Today</span>
+                <h5></h5>
+            </div>
+            <div class="ibox-content">
+                <div class="sk-spinner sk-spinner-three-bounce">
+                    <div class="sk-bounce1"></div>
+                    <div class="sk-bounce2"></div>
+                    <div class="sk-bounce3"></div>
                 </div>
             </div>
         </div>
@@ -554,32 +573,6 @@
                                 titlecolor: '#12A6A8'
                             });
                             $('#metric-returningusers').html(rendered)
-                        })
-                    });
-
-                    $.post('/wifi/devices/osstats', JSON.stringify(payload), function (data, status) {
-                        $.get('components/metric-piechart-base.html', function (template) {
-                            var rendered = Mustache.render(template, {
-                                id: 0,
-                                caption: 'Browser Stats',
-                                style: 'success',
-                                data: JSON.stringify(getPieChartData(data)),
-                                titlecolor: '#2F4050'
-                            });
-                            $('#metric-usersbyos').html(rendered)
-                        })
-                    });
-
-                    $.post('/wifi/devices/devicestats', JSON.stringify(payload), function (data, status) {
-                        $.get('components/metric-piechart-base.html', function (template) {
-                            var rendered = Mustache.render(template, {
-                                id: 1,
-                                caption: 'Device Stats',
-                                style: 'success',
-                                data: JSON.stringify(getPieChartData(data)),
-                                titlecolor: '#2F4050'
-                            })
-                            $('#metric-usersbydevicetype').html(rendered)
                         })
                     });
 

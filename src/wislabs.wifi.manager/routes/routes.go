@@ -352,4 +352,11 @@ var routes = Routes{
 		true,
 		dashboard_handlers.DownlaodCSVSummaryDetailsDashboard,
 	},
+	Route{
+		"Get Access Point Details Dashboard",
+		"POST",
+		"/wifi/summary/accespoint",
+		true,
+		dashboard_handlers.GetAccessPointAgregatedDataFromToHandler,
+	},
 }
