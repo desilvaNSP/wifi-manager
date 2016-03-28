@@ -307,9 +307,15 @@
                     longitude: parseFloat($('#edit-longitude').val()),
                     groupname: $('#edit-group-name').val()
                 };
+                $("#editlocation-body").loadingOverlay({
+                    loadingText: 'Updating location'
+                });
                 $.post('/wifi/locationsupdate', JSON.stringify(payload), function (result) {
-                    $('#update-wifilocation-modal').modal('hide');
-                    locationTable.ajax.reload();
+                    setTimeout(function(){
+                        $("#editlocation-body").loadingOverlay('remove');
+                        $('#update-wifilocation-modal').modal('hide');
+                        locationTable.ajax.reload();
+                    },2000);
                 });
             });
         });
@@ -420,3 +426,4 @@
         });
     });
 </script>
+

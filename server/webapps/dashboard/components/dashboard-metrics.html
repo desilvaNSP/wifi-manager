@@ -3,7 +3,7 @@
     <div class="row">
         <article class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
             <div class="jarviswidget" id="wid-id-1" data-widget-refresh="2000"
-                 data-widget-load="components/widgets/downloads-series.html"  data-widget-colorbutton="false" data-widget-fullscreenbutton="false">
+                 data-widget-load="components/widgets/downloads-series.html"  data-widget-colorbutton="false"  data-id="downloads-series">
                 <header>
                     <h2>Total Daily Downloads Distribution</h2>
                 </header>
@@ -31,7 +31,7 @@
             </div>
         </article>
         <article class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-            <div class="jarviswidget" id="wid-id-2" data-widget-refresh="2000"  data-widget-colorbutton="false"  data-widget-fullscreenbutton="false"
+            <div class="jarviswidget" id="wid-id-2" data-widget-refresh="2000"  data-widget-colorbutton="false"   data-id="time-series-daily-users"
                  data-widget-load="components/widgets/dailyusers-series.html">
                 <header>
                     <h2>Total Daily Users Distribution</h2>
@@ -62,7 +62,7 @@
     </div>
     <div class="row">
         <article class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-            <div class="jarviswidget" id="wid-id-3" data-widget-refresh="2000"  data-widget-colorbutton="false"  data-widget-fullscreenbutton="false"
+            <div class="jarviswidget" id="wid-id-3" data-widget-refresh="2000"  data-widget-colorbutton="false"  data-id="daily-user-downloads-series"
                  data-widget-load="components/widgets/dailyuserdownloads-series.html">
                 <header>
                     <h2><strong>Average Daily Users Downloads Distribution</strong></h2>
@@ -91,7 +91,7 @@
             </div>
         </article>
         <article class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-            <div class="jarviswidget" id="wid-id-4" data-widget-refresh="2000"  data-widget-colorbutton="false"  data-widget-fullscreenbutton="false"
+            <div class="jarviswidget" id="wid-id-4" data-widget-refresh="2000"  data-widget-colorbutton="false"  data-id="avg-user-sessions-series"
                  data-widget-load="components/widgets/avgusersession-series.html">
                 <header>
                     <h2><strong>Average Daily Users Session Distribution</strong></h2>
@@ -123,7 +123,7 @@
     <div class="row">
         <article class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
             <div class="jarviswidget" id="wid-id-5" data-widget-refresh="2000"
-                 data-widget-load="components/widgets/osstat-piechart.html"  data-widget-colorbutton="false" data-widget-fullscreenbutton="false">
+                 data-widget-load="components/widgets/osstat-piechart.html"  data-widget-colorbutton="false" data-id="osstats-piechart">
                 <header>
                     <h2>Browser Statistics</h2>
                 </header>
@@ -152,7 +152,7 @@
         </article>
         <article class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
             <div class="jarviswidget" id="wid-id-6" data-widget-refresh="2000"
-                 data-widget-load="components/widgets/device-piechart.html"  data-widget-colorbutton="false" data-widget-fullscreenbutton="false">
+                 data-widget-load="components/widgets/device-piechart.html"  data-widget-colorbutton="false" data-id="devicestat-piechart">
                 <header>
                     <h2>Device Statistics</h2>
                 </header>
@@ -599,6 +599,25 @@
 
                 }
         );
+
+        var fullscreenchartid;
+       $('#widget-grid').jarvisWidgets({
+           toggleClass : 'fa fa-minus | fa fa-plus',
+           deleteClass : 'fa fa-times',
+           editClass : 'fa fa-cog | fa fa-save',
+           fullscreenClass : 'fa fa-expand | fa fa-compress',
+           refreshButtonClass : 'fa fa-refresh',
+           onFullscreen: function () {
+                if(!fullscreenchartid){
+                    var selectedwidgetid = $("#jarviswidget-fullscreen-mode >:first-child").data("id");
+                    fullscreenchartid=selectedwidgetid;
+                    $("#"+selectedwidgetid).highcharts().reflow();
+                }else{
+                    $("#"+fullscreenchartid).highcharts().reflow();
+                    fullscreenchartid="";
+                }
+            }
+        });
     });
 
 </script>
