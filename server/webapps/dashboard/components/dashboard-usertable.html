@@ -43,7 +43,7 @@
                         class="sr-only">Close</span></button>
                 <h4 class="modal-title" style="text-align: center">Delete User</h4>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" id="dbuserdelete-body">
                 <p id="message"><strong>Are you sure you want to delete the user?</strong></p>
             </div>
             <div class="modal-footer">
@@ -64,7 +64,7 @@
                 <h4 class="modal-title">Add User</h4>
                 <small class="font-bold">Add system users and assign privileges</small>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" id="dbadduser-body">
                 <form role="form" id="adduser-form">
                     <div class="form-group">
                         <label for="inputTenantDomain">Tenant Domain</label>
@@ -142,7 +142,7 @@
                 <h4 class="modal-title">Edit User</h4>
                 <small class="font-bold">Edit system users and assign privileges</small>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" id="dbedituser-body">
                 <form role="form" id="edituser-form">
                     <div class="form-group">
                         <label for="inputEditTenantDomain">Tenant Domain</label>
@@ -279,7 +279,13 @@
             $.ajax({
                 url: '/dashboard/' + Cookies.get('tenantid') + '/users/' + selectedUser.username,
                 type: 'DELETE',
+                beforeSend:function(){
+                    $("#dbuserdelete-body").loadingOverlay({
+                        loadingText: 'Deleting Dashboard User'
+                    });
+                },
                 success: function (result) {
+                    $("#dbuserdelete-body").loadingOverlay('remove');
                     $('#confirm-delete-modal').modal('hide');
                     rawTodelete.remove();
                 },
@@ -331,7 +337,13 @@
                     type: 'PUT',
                     contentType: "application/json",
                     data: JSON.stringify(payload),
+                    beforeSend:function(){
+                        $("#dbedituser-body").loadingOverlay({
+                            loadingText: 'Updating location'
+                        });
+                    },
                     success: function (result) {
+                        $("#dbedituser-body").loadingOverlay('remove');
                         $('#edituser-modal').modal('hide');
                         userTable.ajax.reload();
                     },
@@ -363,8 +375,12 @@
                     status: newUserStatus,
                     apgroups: getCheckedDataScopes('datascope'),
                     roles: getCheckedDataScopes('role')
-                }
+                };
+                $("#dbadduser-body").loadingOverlay({
+                    loadingText: 'Updating location'
+                });
                 $.post('/dashboard/users', JSON.stringify(payload), function (result) {
+                    $("#dbadduser-body").loadingOverlay('remove');
                     $('#adduser-modal').modal('hide');
                     userTable.ajax.reload();
                 });

@@ -72,7 +72,7 @@
                         class="sr-only">Close</span></button>
                 <h4 class="modal-title">Delete Location</h4>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" id="deletelocation-body">
                 <p><strong>Are you sure you want to delete the location?</strong></p>
             </div>
             <div class="modal-footer">
@@ -220,7 +220,13 @@
             $.ajax({
                 url: '/wifi/' + Cookies.get('tenantid') + '/locations/' + selectedLocation.mac + '/' + selectedLocation.ssid + '/' + selectedLocation.groupname,
                 type: 'DELETE',
+                beforeSend:function(){
+                    $("#deletelocation-body").loadingOverlay({
+                        loadingText: 'Updating location'
+                    });
+                },
                 success: function (result) {
+                    $("#deletelocation-body").loadingOverlay('remove');
                     $('#confirm-delete-modal').modal('hide');
                     locationTable.ajax.reload();
                 },
@@ -311,11 +317,9 @@
                     loadingText: 'Updating location'
                 });
                 $.post('/wifi/locationsupdate', JSON.stringify(payload), function (result) {
-                    setTimeout(function(){
                         $("#editlocation-body").loadingOverlay('remove');
                         $('#update-wifilocation-modal').modal('hide');
                         locationTable.ajax.reload();
-                    },2000);
                 });
             });
         });
@@ -378,7 +382,11 @@
                         longitude: parseFloat($('#input-longitude').val()),
                         groupname: $('#input-group-name').val()
                     };
+                    $("#addlocation-body").loadingOverlay({
+                        loadingText: 'Creating Location'
+                    });
                     $.post('/wifi/locations', JSON.stringify(payload), function (result) {
+                        $("#addlocation-body").loadingOverlay('remove');
                         $('#add-wifilocation-modal').modal('hide');
                         locationTable.ajax.reload();
                     });

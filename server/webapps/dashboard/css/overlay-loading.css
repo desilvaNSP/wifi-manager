@@ -106,7 +106,7 @@
   -moz-animation: loadingStart 3s 300ms linear 1 both;
   -o-animation: loadingStart 3s 300ms linear 1 both;
   animation: loadingStart 3s 300ms linear 1 both;
-  background: rgba(29, 192, 159, 0.5);
+  background: rgba(255, 255, 255, 0.5);
   text-align: center;
 }
 .loading .loading-text {
