@@ -16,11 +16,11 @@
 </div>
 
  <div id="dashboard-tabs">
-     <ul class="nav nav-pills">
+     <ul class="nav nav-tabs">
          <li class="active">
-             <a  href="#overview-content" data-toggle="tab">Overview</a>
+             <a  href="#overview-content" data-toggle="tab" data-id="overview">Overview</a>
          </li>
-         <li><a href="#apreort-content" data-toggle="tab">AP Reports</a>
+         <li><a href="#apreort-content" data-toggle="tab" data-id="apreport">AP Reports</a>
          </li>
      </ul>
      <div class="tab-content">
@@ -34,7 +34,6 @@
          <div class="tab-pane" id="apreort-content">
              <div id="apreport-container">
                  <div id="dashboard-apreport-content" class="row">
-
                  </div>
              </div>
          </div>
@@ -46,8 +45,21 @@
 <script type="text/javascript">
     from_ = 0, to_ = 0;
     $(document).ready(function () {
+
+
+        var selectedtabid ="overview";
         renderMetrics();
-        reenderAPreport();
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            selectedtabid = $(this).data("id");
+            if(selectedtabid=="overview"){
+                renderMetrics();
+            }else if(selectedtabid=="apreport"){
+                renderAPreport();
+            }
+        });
+
+
+
         var saveResult = function (data) {
             from_ = moment(data.from, "X").format('YYYY-MM-DD');
             to_ = moment(data.to, "X").format('YYYY-MM-DD');
@@ -69,8 +81,12 @@
             onChange: saveResult,
             onFinish: function (data) {
                 saveResult(data);
-                renderMetrics();
-                reenderAPreport();
+                if(selectedtabid=="overview"){
+                    renderMetrics();
+                }else{
+                    renderAPreport();
+                }
+
             }
         });
 
@@ -87,7 +103,7 @@
             })
         }
 
-        function reenderAPreport(){
+        function renderAPreport(){
             $.get('components/dashboard-apreport.html', function (template) {
                 var rendered = Mustache.render(template, {});
                 $('#dashboard-apreport-content').html(rendered);
@@ -97,7 +113,11 @@
         $('#select-wifilocation').on('change', function (e) {
             window.datagroups = [this.value];
             window.appName = [this.value];
-            renderMetrics()
+            if(selectedtabid=="overview"){
+                renderMetrics();
+            }else{
+                renderAPreport();
+            }
         });
     });
 </script>

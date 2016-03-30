@@ -60,7 +60,7 @@
                 <h4 class="modal-title">Add WiFi User</h4>
                 <small class="font-bold">Add wifi users and configure Access Control</small>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" id="adduser-body">
                 <hr>
                 <form role="form" id="adduser-form">
                     <div class="form-group">
@@ -111,7 +111,7 @@
                         class="sr-only">Close</span></button>
                 <h4 class="modal-title" style="text-align: center">Delete User</h4>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" id="userdelete-body">
                 <p id="message"><strong>Are you sure you want to delete the user?</strong></p>
             </div>
             <div class="modal-footer">
@@ -132,7 +132,7 @@
                 <h4 class="modal-title">Edit WiFi User</h4>
                 <small class="font-bold">Edit wifi users' options</small>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" id="edituser-body">
                 <form role="form" id="edituser-form">
                     <div class="form-group">
                         <label for="inputEditUsername">Username</label>
@@ -246,9 +246,15 @@
             $.ajax({
                 url: '/wifi/' + Cookies.get('tenantid') + '/users/' + selectedUser.username,
                 type: 'DELETE',
+                beforeSend:function(){
+                    $("#userdelete-body").loadingOverlay({
+                        loadingText: 'Updating location'
+                    });
+                },
                 success: function (result) {
-                    $('#confirm-delete-modal').modal('hide')
-                    rawTodelete.remove();
+                        $("#userdelete-body").loadingOverlay('remove');
+                        $('#confirm-delete-modal').modal('hide')
+                        rawTodelete.remove();
                 },
                 error: function (e) {
                     console.log(e)
@@ -298,8 +304,14 @@
                     type: 'PUT',
                     contentType: "application/json",
                     data: JSON.stringify(payload),
+                    beforeSend:function(){
+                        $("#edituser-body").loadingOverlay({
+                            loadingText: 'Updating User'
+                        });
+                    },
                     success: function (result) {
-                        $('#edituser-modal').modal('hide');
+                            $("#edituser-body").loadingOverlay('remove');
+                            $('#edituser-modal').modal('hide');
                     },
                     error: function (e) {
                         console.log(e)
@@ -341,8 +353,14 @@
                     groupname: "master",
                     acl: $('.radio:checked').val()
                 };
+                $("#adduser-body").loadingOverlay({
+                    loadingText: 'Wait! Creating User'
+                });
                 $.post('/wifi/users', JSON.stringify(payload), function (result) {
-                    $('#adduser-modal').modal('hide');
+                    setTimeout(function(){
+                        $("#adduser-body").loadingOverlay('remove');
+                        $('#adduser-modal').modal('hide');
+                    },2000);
                 });
             }
             return false;

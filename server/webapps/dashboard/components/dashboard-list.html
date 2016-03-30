@@ -28,7 +28,7 @@
                         class="sr-only">Close</span></button>
                 <h4 class="modal-title" style="text-align: center">Delete Dashboard App</h4>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" id="appdelete-body">
                 <p id="message"><strong>Are you sure you want to delete the dashbloard?</strong></p>
             </div>
             <div class="modal-footer">
@@ -157,10 +157,16 @@
                         groups: getCheckedGroups('group'),
                         metrics: getCheckedMetrices('metric')
                     };
+                    $("#adddbmodal-body").loadingOverlay({
+                        loadingText: 'Creating '+payload.name+' Dashboard'
+                    });
                     $.post('/dashboard/apps', JSON.stringify(payload), function (result) {
-                        $('#add-dashboard-modal').modal('hide');
-                        $grid.shuffle('destroy');
-                        renderDashboardApps();
+                        setTimeout(function(){
+                            $("#adddbmodal-body").loadingOverlay('remove');
+                            $('#add-dashboard-modal').modal('hide');
+                            $grid.shuffle('destroy');
+                            renderDashboardApps();
+                        },2000);
                     });
                 }
                 return false;
@@ -216,10 +222,18 @@
             $.ajax({
                 url: '/dashboard/' + Cookies.get('tenantid') + '/apps/' + deleteAppId,
                 type: 'DELETE',
+                beforeSend:function(){
+                    $("#appdelete-body").loadingOverlay({
+                        loadingText: 'Deleting Dashboad Appgi'
+                    });
+                },
                 success: function (result) {
-                    $('#confirm-delete-modal').modal('hide');
-                    $grid.shuffle('destroy');
-                    renderDashboardApps();
+                    setTimeout(function(){
+                        $("#appdelete-body").loadingOverlay('remove');
+                        $('#confirm-delete-modal').modal('hide');
+                        $grid.shuffle('destroy');
+                        renderDashboardApps();
+                    },2000);
                 },
                 error: function (e) {
                     console.log(e)

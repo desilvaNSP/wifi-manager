@@ -1,84 +1,80 @@
 <div class="col-lg-12">
-    <div class="row">
-        <!-- left column -->
-        <div class="col-md-5">
-            <div class="profile-image-container">
-                <form enctype="multipart/form-data">
-                    <div id="profile" class="fileupload">
-                        <a href="javascript:void(0);">
-                            <input type="file" name="profile-images"  id="file-id" class="inputfile" disabled/>
-                            <label for="file-id" id="">Change Profie Picture</label>
-                        </a>
+    <div class="profile-container">
+        <div class="row">
+            <!-- left column -->
+            <div class="col-md-5">
+                <div class="profile-image-container">
+                    <form enctype="multipart/form-data">
+                        <div id="profile" class="fileupload">
+                            <a href="javascript:void(0);">
+                                <input type="file" name="profile-images"  id="file-id" class="inputfile" disabled/>
+                                <label for="file-id" id="">Change Profie Picture</label>
+                            </a>
+                        </div>
+                    </form>
+                    <div class="product_image">
+                        <img class="overlay thumbnail" src="./img/profile-ovelay.jpg"/>
+                        <img class="profile-image thumbnail"/>
                     </div>
-                </form>
-                <div class="product_image">
-                    <img class="overlay thumbnail" src="./img/profile-ovelay.jpg"/>
-                    <img class="profile-image thumbnail"/>
+                    <div class="alert-message">
+                        <div id="status_msg"> </div>
+                    </div>
                 </div>
-                <div class="alert-message">
-                    <div id="status_msg"> </div>
-                </div>
-            </div>
 
-            <div class="password-reset-container row">
-                <form class="form-horizontal" id="password-reset-form" role="form">
-                    <div class="form-group">
-                        <div class="checkbox">
-                            <div class="row">
-                                <div class="col-lg-8">
-                                    <label>
-                                        <input type="checkbox" id="check-changePassWord" value="">Reset User Password
-                                    </label>
+                <div class="password-reset-container row">
+                    <form class="form-horizontal" id="password-reset-form" role="form">
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <div class="row">
+                                    <div class="col-lg-8">
+                                        <label>
+                                            <input type="checkbox" id="check-changePassWord" value="">Reset User Password
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                    </form>
+                    <div class="alert-message">
+                        <div id="status_msg_password"> </div>
                     </div>
-                </form>
-                <div class="alert-message">
-                    <div id="status_msg_password"> </div>
                 </div>
-            </div>
 
-        </div>
-        <!-- edit form column -->
-        <div class="col-md-7 personal-info">
-            <div class="row">
-                <form class="form-horizontal" id="personal-info-form" role="form">
-                    <h3>User Profile</h3>
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">Username:</label>
-                        <div class="col-lg-6">
+            </div>
+            <!-- edit form column -->
+            <div class="col-md-7 personal-info">
+                <div class="row">
+                    <form class="form-horizontal" id="personal-info-form" role="form">
+                        <h3>User Profile</h3>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">Username:</label>
+                            <div class="col-lg-6">
                                 <input class="form-control" type="text" name="editusername" id="editProfileUserName" readonly>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-lg-3 control-label">Email:</label>
-                        <div class="col-lg-6">
-                            <div class="input-group">
-                                <input class="form-control" type="text" name="editemail" id="editProfileEmail">
-                                <span class="input-group-addon"><input type="checkbox"></span>
                             </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-lg-3 control-label">Contact No:</label>
-                        <div class="col-lg-6">
-                            <div class="input-group">
-                                <input class="form-control" type="text" name="editecontact" id="editProfileContact">
-                                <span class="input-group-addon"><input type="checkbox"></span>
+                        <div class="form-group">
+                            <label class="col-lg-3 control-label">Email:</label>
+                            <div class="col-lg-6">
+                                    <input class="form-control" type="text" name="editemail" id="editProfileEmail">
                             </div>
                         </div>
-                    </div>
-                    <div class="updatefrom-success alert" role="alert" style="display: none"></div>
-                    <div class="form-group">
-                        <label class="col-md-3 control-label"></label>
-                        <div class="col-md-8">
-                            <input type="button" id="btn-edit-user-profile" class="btn btn-primary" value="Save Changes">
-                            <span></span>
-                            <input type="reset" class="btn btn-default" value="Clear">
+                        <div class="form-group">
+                            <label class="col-lg-3 control-label">Contact No:</label>
+                            <div class="col-lg-6">
+                                    <input class="form-control" type="text" name="editecontact" id="editProfileContact">
+                            </div>
                         </div>
-                    </div>
-                </form>
+                        <div class="updatefrom-success alert" role="alert" style="display: none"></div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"></label>
+                            <div class="col-md-8">
+                                <input type="button" id="btn-edit-user-profile" class="btn btn-primary" value="Save Changes">
+                                <span></span>
+                                <input type="reset" class="btn btn-default" value="Clear">
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

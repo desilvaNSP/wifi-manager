@@ -173,9 +173,10 @@ func GetAccessPointAgregatedDataFromToHandler(w http.ResponseWriter, r*http.Requ
 	decoder := json.NewDecoder(r.Body)
 	var constrains dao.Constrains
 	decoder.Decode(&constrains)
-	log.Printf(constrains.To)
 
-	accespoint := wifi.GetAccessPointAgregatedDataFromTo(constrains)
+	var accespoint[] dao.AccessPoint
+
+	accespoint = wifi.GetAccessPointAgregatedDataFromTo(constrains)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)

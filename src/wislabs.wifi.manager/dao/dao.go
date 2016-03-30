@@ -36,7 +36,6 @@ type AccessPoint struct {
 	Avgdatapersessiontime   utils.NullString           `db:"avgdatapersessiontime"json:"avgdatapersessiontime"`
 	Totalinputoctets          int64            `db:"totalinputoctets"json:"totalinputoctets"`
 	Totaloutputoctets         int64            `db:"totaloutputoctets"json:"totaloutputoctets"`
-	Ssid                 utils.NullString            `db:"ssid"json:"ssid"`
 	Calledstationmac     utils.NullString            `db:"calledstationmac"json:"calledstationmac"`
 }
 

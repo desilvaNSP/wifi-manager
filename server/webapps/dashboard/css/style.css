@@ -7942,6 +7942,7 @@ img.thumbnail  { position: absolute; width: 178px;height: 178px ;z-index: 20}
 
 .password-reset-container{
     left: 50px;
+    margin: 60px;
     position: relative;
 }
 
@@ -7949,13 +7950,7 @@ img.thumbnail  { position: absolute; width: 178px;height: 178px ;z-index: 20}
     padding : 10px 15px;
 }
 
-#dashboard-tabs .nav-pills > li > a {
-    border-radius: 0;
-    color: #676a6c;
-}
-#dashboard-tabs .nav-pills > li.active > a {
-    border-radius: 0;
-    background-color: #1ab394;
-    border-color: #1ab394;
-    color: #FFFFFF;
+.profile-container{
+    padding-top: 20px;
+    margin-top: 50px;
 }
