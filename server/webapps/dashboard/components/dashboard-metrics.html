@@ -496,7 +496,7 @@
                         $.get('components/metric-base.html', function (template) {
                             var rendered = Mustache.render(template, {
                                 caption: 'Total Uploads',
-                                value: totalDownloadFormat,
+                                value: totalUploadFormat,
                                 titlecolor: '#12A6A8'
                             });
                             $('#metric-uploads').html(rendered)
