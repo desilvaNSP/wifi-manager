@@ -10,7 +10,7 @@
         $.post('/wifi/usage/dailyavgusersessiontime', JSON.stringify(payload), function (data, status) {
             var locationDist = {type: 'spline', name: window.appName, data: convertToHighChartSeries(data, 60)}
             avgUserSessionTimeSeriesData.push(locationDist);
-            renderTimeSeries('#avg-user-sessions-series', 'Sessoins', "Time (Min)", avgUserSessionTimeSeriesData);
+            renderTimeSeries('#avg-user-sessions-series', 'Sessions', "Time (Min)", avgUserSessionTimeSeriesData);
         });
 
         $('#time-series-avgsessiontime').on('click', '#time-series-avgsessiontime-compare-btn', function (e) {
