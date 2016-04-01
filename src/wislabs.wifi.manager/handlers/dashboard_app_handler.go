@@ -107,6 +107,25 @@ func GetGroupsOfApp(w http.ResponseWriter, r *http.Request){
 		panic(err)
 	}
 }
+/**
+* GET
+* @path dashboard/apps/{appid}/groups
+*
+*/
+func GetAclsOfApp(w http.ResponseWriter, r *http.Request){
+	vars := mux.Vars(r)
+	appId, err := strconv.Atoi(vars["appid"])
+	if(err!= nil){
+		log.Fatalln("Error while reading appid", err)
+	}
+	appacls := dashboard.GetDashboardAclsOfApp(appId)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(appacls); err != nil {
+		panic(err)
+	}
+}
 
 /**
 * GET

@@ -58,6 +58,7 @@ const DELETE_AP string 			  = "DELETE FROM aplocations WHERE mac=? AND tenantid=
 /* Dashboard Apps */
 const GET_DASHBOARD_APP string 		   = "SELECT appid, tenantid, name, aggregate FROM apps WHERE tenantid=? AND name=?"
 const GET_DASHBOARD_APP_GROUPS string  = "SELECT appid, groupname FROM appgroups WHERE appid=?"
+const GET_DASHBOARD_APP_ACLS string  = "SELECT appid, acl FROM appacls WHERE appid=?"
 const GET_DASHBOARD_APP_METRICS string = "SELECT tenantid, metricid, name FROM metrics WHERE metricid IN (SELECT metricid FROM appmetrics WHERE appid=?)"
 const GET_DASHBOARD_APP_USERS string   = "SELECT tenantid, appid, username FROM appusers WHERE appid=?"
 const GET_DASHBOARD_USER_APPS string   = "SELECT tenantid, appid, name, aggregate FROM apps WHERE appid IN (SELECT appid FROM appusers WHERE username=? AND tenantid=?)"
@@ -65,6 +66,7 @@ const ADD_DASHBOARD_APP string 		   = "INSERT INTO apps (tenantid, name, aggrega
 const ADD_DASHBOARD_APP_USER string    = "INSERT INTO appusers (tenantid, appid, username) VALUES(?, ?, ? )"
 const ADD_DASHBOARD_APP_METRIC string  = "INSERT INTO appmetrics (appid, metricid) VALUES( ?, ? )"
 const ADD_DASHBOARD_APP_GROUP string   = "INSERT INTO appgroups (appid, groupname) VALUES( ?, ? )"
+const ADD_DASHBOARD_ACLS string = "INSERT INTO appacls (appid,acl) VALUES( ?, ?)"
 const DELETE_DASHBOARD_APP string      = "DELETE FROM apps WHERE appid=? AND tenantid=?"
 const DELETE_DASHBOARD_APP_USER string = "DELETE FROM appusers WHERE appid=? AND username=?"
 

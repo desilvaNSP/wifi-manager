@@ -155,7 +155,8 @@
                         users: taggedUsers,
                         aggregate: aggregate,
                         groups: getCheckedGroups('group'),
-                        metrics: getCheckedMetrices('metric')
+                        metrics: getCheckedMetrices('metric'),
+                        acls: $('.radio:checked').val()
                     };
                     $("#adddbmodal-body").loadingOverlay({
                         loadingText: 'Creating '+payload.name+' Dashboard'
@@ -213,6 +214,9 @@
                             $grid.shuffle('destroy')
                             $('.container-dashboard').remove('#app-grid')
                             $('.container-dashboard').html(rendered);
+                        });
+                        $.get('/dashboard/apps/' + appId + '/acl', function (result) {
+                            window.aclvalue = result;
                         });
                     }
             );

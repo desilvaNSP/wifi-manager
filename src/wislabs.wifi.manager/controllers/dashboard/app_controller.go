@@ -14,6 +14,7 @@ func CreateNewDashboardApp(dashboardAppInfo dao.DashboardAppInfo) {
 		AddDashboardAppUsers(&dashboardAppInfo.Users, appId)
 		AddDashboardAppGroups(&dashboardAppInfo.Groups, appId)
 		AddDashboardAppMetrics(&dashboardAppInfo.Metrics, appId)
+		AddDashboardAppAcls(dashboardAppInfo.Acls,appId)
 	}
 }
 
@@ -67,6 +68,18 @@ func GetDashboardGroupsOfApp(appId int) []dao.DashboardAppGroup {
 		return groups
 	}
 	return groups
+}
+func GetDashboardAclsOfApp(appId int) string {
+	dbMap := utils.GetDBConnection("dashboard");
+	defer dbMap.Db.Close()
+
+	var acls []dao.DashboardAppAcls
+	_, err := dbMap.Select(&acls, commons.GET_DASHBOARD_APP_ACLS, appId)
+	if err != nil {
+		//panic(err.Error()) // proper error handling instead of panic in your app
+		return acls[0].Acls
+	}
+	return acls[0].Acls
 }
 
 func GetAllDashboardMetrics(tenantId int) []dao.DashboardMetric {
@@ -146,6 +159,24 @@ func AddDashboardAppUsers(appUsers *[]dao.DashboardAppUser, appId int64) error {
 	for i := 0; i < len(*appUsers); i++ {
 		_, err = stmtIns.Exec((*appUsers)[i].TenantId, appId, (*appUsers)[i].UserName)
 	}
+	return err
+}
+
+func AddDashboardAppAcls(acls string, appId int64) error {
+	dbMap := utils.GetDBConnection("dashboard");
+	defer dbMap.Db.Close()
+
+	stmtIns, err := dbMap.Db.Prepare(commons.ADD_DASHBOARD_ACLS)
+	defer stmtIns.Close()
+
+	if err != nil {
+		return err
+	}
+	_, err = stmtIns.Exec(appId, acls)
+	if err != nil {
+		//panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	defer stmtIns.Close()
 	return err
 }
 
