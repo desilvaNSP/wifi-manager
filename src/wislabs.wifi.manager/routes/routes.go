@@ -122,6 +122,13 @@ var routes = Routes{
 		dashboard_handlers.GetAllDashboardMetrics,
 	},
 	Route{
+		"Get All Dashboard ACL types ",
+		"GET",
+		"/dashboard/acltypes",
+		true,
+		dashboard_handlers.GetAclTypes,
+	},
+	Route{
 		"Get Dashboard App Users ",
 		"GET",
 		"/dashboard/apps/{appid}/users",

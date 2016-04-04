@@ -9,6 +9,7 @@ import (
 	"wislabs.wifi.manager/controllers/dashboard"
 	"strconv"
 	"wislabs.wifi.manager/dao"
+	"fmt"
 )
 
 /**
@@ -143,6 +144,25 @@ func GetAllDashboardMetrics(w http.ResponseWriter, r *http.Request){
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(metrics); err != nil {
+		panic(err)
+	}
+}
+
+
+/**
+* GET
+* @path dashboard/{tenantid}/metrics
+*
+*/
+
+func GetAclTypes(w http.ResponseWriter, r *http.Request){
+
+	fmt.Printf("sasasas @ 2")
+	aclTypes := dashboard.GetAllDashboardAclTypes()
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(aclTypes); err != nil {
 		panic(err)
 	}
 }

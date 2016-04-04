@@ -6,6 +6,7 @@ import (
 	"wislabs.wifi.manager/commons"
 //	log "github.com/Sirupsen/logrus"
 //"database/sql"
+	"fmt"
 )
 
 func CreateNewDashboardApp(dashboardAppInfo dao.DashboardAppInfo) {
@@ -93,6 +94,22 @@ func GetAllDashboardMetrics(tenantId int) []dao.DashboardMetric {
 		return metrics
 	}
 	return metrics
+}
+
+
+func GetAllDashboardAclTypes( ) []string {
+	fmt.Printf("sasasas @ 2")
+	dbMap := utils.GetDBConnection("portal");
+	defer dbMap.Db.Close()
+	fmt.Printf("sasasas @ 3")
+	var aclsTypes []string
+
+	_, err := dbMap.Select(&aclsTypes, commons.GET_ALL_DASHBOARD_ACLS)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	fmt.Printf(aclsTypes[0])
+	return aclsTypes
 }
 
 func AddDashboardApp(app *dao.DashboardAppInfo) (int64, error) {

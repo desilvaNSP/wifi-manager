@@ -63,7 +63,7 @@
         });
 
         $("#add-dashboard-btn").on('click', function () {
-            var users, locations, metrics;
+            var users, locations, metrics,acltypes;
             userPermissions = JSON.parse(Cookies.get('userpermissions'));
             hasDashboardUserReadPermission = false
             $.each(userPermissions, function (key, value) {
@@ -86,20 +86,28 @@
 
             var locationsAjax = $.get('/dashboard/' + Cookies.get('tenantid') + '/users/' + Cookies.get('username'), function (result) {
                 locations = result.apgroups
+                console.log(locations);
             });
 
             var metricsAjax = $.get('/dashboard/' + Cookies.get('tenantid') + '/metrics', function (result) {
                 metrics = result
             });
 
+
+            var aclTypes = $.get('/dashboard/acltypes', function (result) {
+                console.log(result);
+                acltypes = result
+            });
+
             var addDashboardFromValidator;
-            $.when(usersAjax, locationsAjax, metricsAjax).done(function () {
+            $.when(usersAjax, locationsAjax, metricsAjax ,aclTypes).done(function () {
                 $.get('components/dashboard-app-modal.html', function (template) {
                             var rendered = Mustache.render(template, {
                                 users: users,
                                 locations: locations,
                                 metrics: metrics,
-                                currentuser: Cookies.get("username")
+                                currentuser: Cookies.get("username"),
+                                acltypes:acltypes
                             });
                             $('#add-dashboard-app-modal-content').html(rendered);
                             $('#add-dashboard-modal').modal();
