@@ -27,6 +27,22 @@ func CreateDashboardApp(w http.ResponseWriter, r *http.Request){
 	dashboard.CreateNewDashboardApp(dashboardApp)
 	w.WriteHeader(http.StatusOK)
 }
+/**
+* PUT
+* @path dashboard/apps/
+*
+*/
+func UpdateDashBoardSettingsHander(w http.ResponseWriter, r *http.Request){
+	decoder := json.NewDecoder(r.Body)
+	var dashboardApp dao.DashboardAppInfo
+	err := decoder.Decode(&dashboardApp)
+	if(err != nil){
+		log.Fatalln("Error while decoding location json")
+	}
+	dashboard.UpdateDashBoardSettings(dashboardApp)
+	w.WriteHeader(http.StatusOK)
+}
+UpdateDashBoardSettings
 
 /**
 * GET
@@ -110,7 +126,7 @@ func GetGroupsOfApp(w http.ResponseWriter, r *http.Request){
 }
 /**
 * GET
-* @path dashboard/apps/{appid}/groups
+* @path dashboard/apps/{appid}/acls
 *
 */
 func GetAclsOfApp(w http.ResponseWriter, r *http.Request){
@@ -121,6 +137,7 @@ func GetAclsOfApp(w http.ResponseWriter, r *http.Request){
 	}
 	appacls := dashboard.GetDashboardAclsOfApp(appId)
 
+	fmt.Printf(appacls);
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(appacls); err != nil {
@@ -156,8 +173,6 @@ func GetAllDashboardMetrics(w http.ResponseWriter, r *http.Request){
 */
 
 func GetAclTypes(w http.ResponseWriter, r *http.Request){
-
-	fmt.Printf("sasasas @ 2")
 	aclTypes := dashboard.GetAllDashboardAclTypes()
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")

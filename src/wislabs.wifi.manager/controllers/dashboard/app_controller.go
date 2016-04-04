@@ -11,12 +11,21 @@ import (
 
 func CreateNewDashboardApp(dashboardAppInfo dao.DashboardAppInfo) {
 	appId, err := AddDashboardApp(&dashboardAppInfo)
+	fmt.Printf("ACL : @")
+	fmt.Printf(dashboardAppInfo.Acls)
 	if (err == nil) {
 		AddDashboardAppUsers(&dashboardAppInfo.Users, appId)
 		AddDashboardAppGroups(&dashboardAppInfo.Groups, appId)
 		AddDashboardAppMetrics(&dashboardAppInfo.Metrics, appId)
 		AddDashboardAppAcls(dashboardAppInfo.Acls,appId)
 	}
+}
+
+func UpdateDashBoardSettings(dashboardAppInfo dao.DashboardAppInfo) {
+
+
+
+
 }
 
 func GetAllDashboardAppsOfUser(username string, tenantId int) []dao.DashboardApp {

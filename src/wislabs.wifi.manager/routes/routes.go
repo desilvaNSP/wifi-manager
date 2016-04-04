@@ -171,6 +171,13 @@ var routes = Routes{
 		dashboard_handlers.CreateDashboardApp,
 	},
 	Route{
+		"Update Dashboard User App Settings",
+		"PUT",
+		"/dashboard/apps",
+		true,
+		dashboard_handlers.UpdateDashBoardSettingsHander,
+	},
+	Route{
 		"Create WIFI user",
 		"POST",
 		"/wifi/users",
