@@ -86,7 +86,6 @@
 
             var locationsAjax = $.get('/dashboard/' + Cookies.get('tenantid') + '/users/' + Cookies.get('username'), function (result) {
                 locations = result.apgroups
-                console.log(locations);
             });
 
             var metricsAjax = $.get('/dashboard/' + Cookies.get('tenantid') + '/metrics', function (result) {
@@ -95,7 +94,6 @@
 
 
             var aclTypes = $.get('/dashboard/acltypes', function (result) {
-                console.log(result);
                 acltypes = result
             });
 
@@ -248,7 +246,6 @@
                     },2000);
                 },
                 error: function (e) {
-                    console.log(e)
                 }
             });
         });

@@ -156,8 +156,6 @@ func GetAllDashboardMetrics(w http.ResponseWriter, r *http.Request){
 */
 
 func GetAclTypes(w http.ResponseWriter, r *http.Request){
-
-	fmt.Printf("sasasas @ 2")
 	aclTypes := dashboard.GetAllDashboardAclTypes()
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")

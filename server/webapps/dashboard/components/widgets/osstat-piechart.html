@@ -7,10 +7,8 @@
 <script>
     $(function () {
         var piechartData;
-        console.log(payload);
         $.post('/wifi/devices/osstats', JSON.stringify(payload), function (data, status) {
             piechartData = getPieChartData(data);
-            console.log(piechartData);
             $('#osstats-piechart').highcharts({
                 chart: {
                     plotBackgroundColor: null,
