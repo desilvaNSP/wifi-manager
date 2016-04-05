@@ -9,7 +9,6 @@ import (
 	"wislabs.wifi.manager/controllers/dashboard"
 	"strconv"
 	"wislabs.wifi.manager/dao"
-	"fmt"
 )
 
 /**
@@ -110,7 +109,7 @@ func GetGroupsOfApp(w http.ResponseWriter, r *http.Request){
 }
 /**
 * GET
-* @path dashboard/apps/{appid}/groups
+* @path dashboard/apps/{appid}/acls
 *
 */
 func GetAclsOfApp(w http.ResponseWriter, r *http.Request){
@@ -151,7 +150,7 @@ func GetAllDashboardMetrics(w http.ResponseWriter, r *http.Request){
 
 /**
 * GET
-* @path dashboard/{tenantid}/metrics
+* @path /dashboard/acltypes
 *
 */
 

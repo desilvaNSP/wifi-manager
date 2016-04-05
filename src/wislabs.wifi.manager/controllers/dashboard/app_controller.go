@@ -6,7 +6,6 @@ import (
 	"wislabs.wifi.manager/commons"
 //	log "github.com/Sirupsen/logrus"
 //"database/sql"
-	"fmt"
 )
 
 func CreateNewDashboardApp(dashboardAppInfo dao.DashboardAppInfo) {

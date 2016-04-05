@@ -22,7 +22,6 @@ func GetAgregatedDownloadsFromToHandler(w http.ResponseWriter, r *http.Request) 
 	decoder := json.NewDecoder(r.Body)
 	var constrains dao.Constrains
 	decoder.Decode(&constrains)
-
 	count := wifi.GetAggregatedDownloadsFromTo(constrains)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")

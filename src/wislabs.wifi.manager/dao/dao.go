@@ -148,7 +148,7 @@ type DashboardAppInfo struct {
 	Users     []DashboardAppUser      `db:"users"json:"users"`
 	Groups    []DashboardAppGroup      `db:"groups"json:"groups"`
 	Metrics   []DashboardAppMetric  `db:"metrics"json:"metrics"`
-	Acls 	  string	`db:"acl"json:"acls"`
+	Acls 	  string	            `db:"acl"json:"acls"`
 }
 
 type DashboardApp struct {
@@ -176,7 +176,7 @@ type DashboardAppGroup struct {
 
 type DashboardAppAcls struct {
 	AppId     int                      `db:"appid"json:"appid"`
-	Acls 	  string	`db:"acl"json:"acls"`
+	Acls 	  string	             `db:"acl"json:"acls"`
 }
 
 type Response struct {
