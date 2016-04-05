@@ -23,6 +23,10 @@ func CreateNewDashboardApp(dashboardAppInfo dao.DashboardAppInfo) {
 
 func UpdateDashBoardSettings(dashboardAppInfo dao.DashboardAppInfo) {
 
+	//UpadateDashboardAppUsers(&dashboardAppInfo);
+	UpadateDashboardAppGroups(&dashboardAppInfo);
+	//UpadateDashboardAppMetrics(&dashboardAppInfo);
+	UpadateDashboardAppAcls(&dashboardAppInfo);
 
 
 
@@ -220,4 +224,73 @@ func DeleteDashboardApp(appId int, tenantId int) error {
 	}
 	defer stmtIns.Close()
 	return err
+}
+
+/*func UpadateDashboardAppUsers(dashboardAppInfo  dao.DashboardAppInfo){
+	dbMap := utils.GetDBConnection("dashboard");
+	defer dbMap.Db.Close()
+
+	stmtIns, err := dbMap.Db.Prepare(commons.UPDATE_DB_APP_USERS)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	_, err = stmtIns.Exec(tenantId, username)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	defer stmtIns.Close()
+}*/
+/*func UpadateDashboardAppGroups(dashboardAppInfo  dao.DashboardAppInfo){
+	dbMap := utils.GetDBConnection("dashboard");
+	defer dbMap.Db.Close()
+
+	var appGroups *[]dao.DashboardAppGroup
+	appGroups = dashboardAppInfo.Groups
+
+
+
+
+	stmtIns, err := dbMap.Db.Prepare(commons.UPDATE_DB_APP_GROUPS)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	_, err = stmtIns.Exec(tenantId, username)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	defer stmtIns.Close()
+}*/
+
+/*func UpadateDashboardAppMetrics(dashboardAppInfo  dao.DashboardAppInfo){
+	dbMap := utils.GetDBConnection("dashboard");
+	defer dbMap.Db.Close()
+
+	stmtIns, err := dbMap.Db.Prepare(commons.UPDATE_DB_APP_METRICS)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	_, err = stmtIns.Exec(tenantId, username)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	defer stmtIns.Close()
+}*/
+
+func UpadateDashboardAppAcls(dashboardAppInfo  *dao.DashboardAppInfo){
+	dbMap := utils.GetDBConnection("dashboard");
+	defer dbMap.Db.Close()
+
+	fmt.Printf("sandun")
+	fmt.Printf(dashboardAppInfo.Acls);
+
+
+	stmtIns, err := dbMap.Db.Prepare(commons.UPDATE_DB_APP_ACLS)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	_, err = stmtIns.Exec(dashboardAppInfo.Acls, dashboardAppInfo.AppId)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	defer stmtIns.Close()
 }

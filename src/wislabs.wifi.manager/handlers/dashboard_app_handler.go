@@ -42,7 +42,6 @@ func UpdateDashBoardSettingsHander(w http.ResponseWriter, r *http.Request){
 	dashboard.UpdateDashBoardSettings(dashboardApp)
 	w.WriteHeader(http.StatusOK)
 }
-UpdateDashBoardSettings
 
 /**
 * GET

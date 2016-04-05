@@ -70,6 +70,11 @@ const ADD_DASHBOARD_ACLS string = "INSERT INTO appacls (appid,acl) VALUES( ?, ?)
 const DELETE_DASHBOARD_APP string      = "DELETE FROM apps WHERE appid=? AND tenantid=?"
 const DELETE_DASHBOARD_APP_USER string = "DELETE FROM appusers WHERE appid=? AND username=?"
 
+const UPDATE_DB_APP_ACLS string = "UPDATE appacls SET acl=? WHERE appid=?"
+const UPDATE_DB_APP_METRICS string = ""
+const UPDATE_DB_APP_GROUPS string = ""
+const UPDATE_DB_APP_USERS string = ""
+
 /* Metrics */
 const GET_ALL_DASHBOARD_METRICS string = "SELECT tenantid, metricid, name FROM metrics WHERE tenantid=?"
 const GET_ALL_DASHBOARD_ACLS string = "SELECT DISTINCT acl FROM accounting"
