@@ -71,9 +71,14 @@ const DELETE_DASHBOARD_APP string      = "DELETE FROM apps WHERE appid=? AND ten
 const DELETE_DASHBOARD_APP_USER string = "DELETE FROM appusers WHERE appid=? AND username=?"
 
 const UPDATE_DB_APP_ACLS string = "UPDATE appacls SET acl=? WHERE appid=?"
+
 const UPDATE_DB_APP_METRICS string = ""
-const UPDATE_DB_APP_GROUPS string = ""
-const UPDATE_DB_APP_USERS string = ""
+
+const UPDATE_DB_APP_GROUPS string     = "UPDATE appgroups SET groupname=? where appid=? and groupid=?"
+const DELETE_OLD_DB_APP_GROUPS string = "DELETE FROM appgroups WHERE appid=? and groupid=?"
+const ADD_NEW_DB_APP_GROUPS string    = "INSERT INTO appgroups (appid,groupid,groupname) VALUES( ?, ?, ?)"
+
+const UPDATE_DB_APP_USERS string      = ""
 
 /* Metrics */
 const GET_ALL_DASHBOARD_METRICS string = "SELECT tenantid, metricid, name FROM metrics WHERE tenantid=?"

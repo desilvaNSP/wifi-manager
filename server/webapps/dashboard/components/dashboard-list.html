@@ -184,8 +184,6 @@
                         metrics: getCheckedMetrices('metric'),
                         acls: $('.acltypes-radio:checked').val()
                     };
-                    console.log("name : "+payload.name);
-                    console.log("acl : "+payload.acls);
                     $("#adddbmodal-body").loadingOverlay({
                         loadingText: 'Creating '+payload.name+' Dashboard'
                     });
@@ -422,6 +420,9 @@
                     metrics: getCheckedMetrices('metric'),
                     acls: $('.update-acltypes-radio:checked').val()
                 };
+
+                console.log(payload.groups);
+
                 $.ajax({
                     url: '/dashboard/apps',
                     type: 'PUT',
@@ -435,8 +436,6 @@
                     success: function (result) {
                         $("#settingsdbmodal-body").loadingOverlay('remove');
                         $('#settings-dashboard-modal').modal('hide');
-                        $grid.shuffle('destroy');
-                        renderDashboardApps();
                     },
                     error: function (e) {
                         console.log(e)
@@ -462,6 +461,7 @@
     }
 
     function getCheckedGroups(chkboxName) {
+        console.log(chkboxName);
         var checkboxes = document.getElementsByName(chkboxName);
         var checkboxesChecked = [];
         for (var i = 0; i < checkboxes.length; i++) {
