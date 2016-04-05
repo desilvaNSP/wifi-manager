@@ -166,7 +166,7 @@ func AddDashboardAppGroups(appGroup *[]dao.DashboardAppGroup, appId int64) error
 		return err
 	}
 	for i := 0; i < len(*appGroup); i++ {
-		_, err = stmtIns.Exec(appId, (*appGroup)[i].GroupName)
+		_, err = stmtIns.Exec(appId,i+1, (*appGroup)[i].GroupName)
 	}
 	return err
 }
