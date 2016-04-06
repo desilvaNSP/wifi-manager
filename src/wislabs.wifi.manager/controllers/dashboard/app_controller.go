@@ -4,8 +4,7 @@ import (
 	"wislabs.wifi.manager/utils"
 	"wislabs.wifi.manager/dao"
 	"wislabs.wifi.manager/commons"
-//	log "github.com/Sirupsen/logrus"
-//"database/sql"
+	"database/sql"
 )
 
 func CreateNewDashboardApp(dashboardAppInfo dao.DashboardAppInfo) {
@@ -16,6 +15,17 @@ func CreateNewDashboardApp(dashboardAppInfo dao.DashboardAppInfo) {
 		AddDashboardAppMetrics(&dashboardAppInfo.Metrics, appId)
 		AddDashboardAppAcls(dashboardAppInfo.Acls,appId)
 	}
+}
+
+func UpdateDashBoardSettings(dashboardAppInfo dao.DashboardAppInfo) {
+
+	//UpadateDashboardAppUsers(&dashboardAppInfo);
+	UpadateDashboardAppGroups(&dashboardAppInfo);
+	//UpadateDashboardAppMetrics(&dashboardAppInfo);
+	UpadateDashboardAppAcls(&dashboardAppInfo);
+
+
+
 }
 
 func GetAllDashboardAppsOfUser(username string, tenantId int) []dao.DashboardApp {
@@ -154,7 +164,7 @@ func AddDashboardAppGroups(appGroup *[]dao.DashboardAppGroup, appId int64) error
 		return err
 	}
 	for i := 0; i < len(*appGroup); i++ {
-		_, err = stmtIns.Exec(appId, (*appGroup)[i].GroupName)
+		_, err = stmtIns.Exec(appId,i+1, (*appGroup)[i].GroupName)
 	}
 	return err
 }
@@ -207,4 +217,106 @@ func DeleteDashboardApp(appId int, tenantId int) error {
 	}
 	defer stmtIns.Close()
 	return err
+}
+
+/*func UpadateDashboardAppUsers(dashboardAppInfo  dao.DashboardAppInfo){
+	dbMap := utils.GetDBConnection("dashboard");
+	defer dbMap.Db.Close()
+
+	stmtIns, err := dbMap.Db.Prepare(commons.UPDATE_DB_APP_USERS)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	_, err = stmtIns.Exec(tenantId, username)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	defer stmtIns.Close()
+}*/
+
+
+func UpadateDashboardAppGroups(dashboardAppInfo  *dao.DashboardAppInfo){
+	dbMap := utils.GetDBConnection("dashboard");
+	defer dbMap.Db.Close()
+
+	var appGroups *[]dao.DashboardAppGroup
+	appGroups = &dashboardAppInfo.Groups
+
+        // get count by appid
+	var count sql.NullInt64
+	smtOut, err := dbMap.Db.Prepare("SELECT COUNT(appid) FROM appgroups WHERE appid=? GROUP BY appid")
+	defer smtOut.Close()
+
+	err = smtOut.QueryRow(dashboardAppInfo.AppId).Scan(&count)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+
+	stmtInsUpdate, err := dbMap.Db.Prepare(commons.UPDATE_DB_APP_GROUPS)
+	defer stmtInsUpdate.Close()
+	stmtInsDelete, err := dbMap.Db.Prepare(commons.DELETE_OLD_DB_APP_GROUPS)
+	defer stmtInsDelete.Close()
+	stmtInsAdd, err := dbMap.Db.Prepare(commons.ADD_NEW_DB_APP_GROUPS)
+	defer stmtInsAdd.Close()
+
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+
+	var Length = (len(*appGroups))
+	var countID int
+	countID = int(count.Int64)
+
+	if( Length <= countID){
+		for i := 0; i < countID; i++ {
+			if(Length > i){
+				_, err = stmtInsUpdate.Exec((*appGroups)[i].GroupName,&dashboardAppInfo.AppId,i+1)
+			}else{
+				_,err = stmtInsDelete.Exec(&dashboardAppInfo.AppId,i+1)
+			}
+
+		}
+	}else{
+		for i := 0; i < Length; i++ {
+			if(countID > i){
+				_, err = stmtInsUpdate.Exec((*appGroups)[i].GroupName,&dashboardAppInfo.AppId,i+1)
+			}else{
+				_, err = stmtInsAdd.Exec(&dashboardAppInfo.AppId,i+1,(*appGroups)[i].GroupName)
+			}
+		}
+	}
+
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+}
+
+/*func UpadateDashboardAppMetrics(dashboardAppInfo  dao.DashboardAppInfo){
+	dbMap := utils.GetDBConnection("dashboard");
+	defer dbMap.Db.Close()
+
+	stmtIns, err := dbMap.Db.Prepare(commons.UPDATE_DB_APP_METRICS)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	_, err = stmtIns.Exec(tenantId, username)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	defer stmtIns.Close()
+}*/
+
+func UpadateDashboardAppAcls(dashboardAppInfo  *dao.DashboardAppInfo){
+	dbMap := utils.GetDBConnection("dashboard");
+	defer dbMap.Db.Close()
+
+	stmtIns, err := dbMap.Db.Prepare(commons.UPDATE_DB_APP_ACLS)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	_, err = stmtIns.Exec(dashboardAppInfo.Acls, dashboardAppInfo.AppId)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	defer stmtIns.Close()
 }

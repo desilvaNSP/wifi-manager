@@ -1,23 +1,18 @@
-<div class="modal inmodal" id="add-dashboard-modal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal inmodal" id="settings-dashboard-modal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content animated fadeIn">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
                         class="sr-only">Close</span></button>
                 <i class="fa fa-dashboard modal-icon"></i>
-                <h4 class="modal-title">Add Dashboard App</h4>
-                <small class="font-bold">Select WiFi location scopes and generate dashboards</small>
+                <h4 class="modal-title">Dashboard Settings</h4>
             </div>
-            <div class="modal-body" id="adddbmodal-body">
+            <div class="modal-body" id="settingsdbmodal-body">
                 <form role="form" id="add-dashboard-form">
                     <div class="form-group">
-                        <label for="input-dashboard-name">Name</label>
-                        <input type="text" class="form-control" id="input-dashboard-name" name="appName"
-                               placeholder="Name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="exampleInputFile">Icon</label>
-                        <input type="file" id="exampleInputFile">
+                        <label for="update-input-dashboard-name">Name</label>
+                        <input type="text" class="form-control" id="update-input-dashboard-name" name="appName"
+                               placeholder="Name" required value="{{appname}}" disabled>
                     </div>
                     <div class="form-group">
                         <label>Wifi Groups</label>
@@ -27,7 +22,7 @@
                             {{#locations}}
                             <div class="col-sm-6">
                                 <label>
-                                    <input type="checkbox" name="group" value="{{.}}"  >{{.}}
+                                    <input type="checkbox" name="group" value="{{.}}" class="location-inputs" {{checkedGroups}}>{{.}}
                                 </label>
                             </div>
                             {{/locations}}
@@ -41,7 +36,7 @@
                             {{#metrics}}
                             <div class="col-sm-6">
                                 <label>
-                                    <input type="checkbox" name="metric" value="{{metricid}}">{{name}}
+                                    <input type="checkbox" name="metric" value="{{metricid}}" >{{name}}
                                 </label>
                             </div>
                             {{/metrics}}
@@ -55,7 +50,7 @@
                             {{#acltypes}}
                             <div class="col-sm-6">
                                 <label class="radio inline control-label">
-                                    <input type="radio" class="acltypes-radio" name="acl" value="{{.}}">{{.}}
+                                    <input type="radio" class="update-acltypes-radio" name="acl" value="{{.}}" {{checkedACL}}>{{.}}
                                 </label>
                             </div>
                             {{/acltypes}}
@@ -76,9 +71,9 @@
                     </div>
                     <div class="checkbox">
                         <div class="row">
-                            <div class="col-sm-6">
+                            <div class="col- sm-6">
                                 <label>
-                                    <input type="checkbox" id="chkAggregate" value="">Aggregate Location data
+                                    <input type="checkbox" id="update-chkAggregate" value="">Aggregate Location data
                                 </label>
                             </div>
                         </div>
@@ -87,8 +82,12 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="btn-add-dashboard">Add Dashboard</button>
+                <button type="button" class="btn btn-primary" id="export-sett-dashboard">Export Dashboard Settings</button>
+                <button type="button" class="btn btn-primary" id="update-sett-dashboard">Update Dashboard Settings</button>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+</script>

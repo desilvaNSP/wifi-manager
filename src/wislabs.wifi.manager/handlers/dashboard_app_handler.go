@@ -26,6 +26,21 @@ func CreateDashboardApp(w http.ResponseWriter, r *http.Request){
 	dashboard.CreateNewDashboardApp(dashboardApp)
 	w.WriteHeader(http.StatusOK)
 }
+/**
+* PUT
+* @path dashboard/apps/
+*
+*/
+func UpdateDashBoardSettingsHander(w http.ResponseWriter, r *http.Request){
+	decoder := json.NewDecoder(r.Body)
+	var dashboardApp dao.DashboardAppInfo
+	err := decoder.Decode(&dashboardApp)
+	if(err != nil){
+		log.Fatalln("Error while decoding location json")
+	}
+	dashboard.UpdateDashBoardSettings(dashboardApp)
+	w.WriteHeader(http.StatusOK)
+}
 
 /**
 * GET
@@ -120,6 +135,7 @@ func GetAclsOfApp(w http.ResponseWriter, r *http.Request){
 	}
 	appacls := dashboard.GetDashboardAclsOfApp(appId)
 
+	fmt.Printf(appacls);
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(appacls); err != nil {

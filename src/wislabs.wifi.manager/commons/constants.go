@@ -65,10 +65,22 @@ const GET_DASHBOARD_USER_APPS string   = "SELECT tenantid, appid, name, aggregat
 const ADD_DASHBOARD_APP string 	       = "INSERT INTO apps (tenantid, name, aggregate) VALUES( ?, ?, ?)"
 const ADD_DASHBOARD_APP_USER string    = "INSERT INTO appusers (tenantid, appid, username) VALUES(?, ?, ? )"
 const ADD_DASHBOARD_APP_METRIC string  = "INSERT INTO appmetrics (appid, metricid) VALUES( ?, ? )"
-const ADD_DASHBOARD_APP_GROUP string   = "INSERT INTO appgroups (appid, groupname) VALUES( ?, ? )"
-const ADD_DASHBOARD_ACLS string        = "INSERT INTO appacls (appid,acl) VALUES( ?, ?)"
+
+const ADD_DASHBOARD_APP_GROUP string   = "INSERT INTO appgroups (appid, groupid, groupname) VALUES( ?, ?, ? )"
+const ADD_DASHBOARD_ACLS string = "INSERT INTO appacls (appid,acl) VALUES( ?, ?)"
+
 const DELETE_DASHBOARD_APP string      = "DELETE FROM apps WHERE appid=? AND tenantid=?"
 const DELETE_DASHBOARD_APP_USER string = "DELETE FROM appusers WHERE appid=? AND username=?"
+
+const UPDATE_DB_APP_ACLS string = "UPDATE appacls SET acl=? WHERE appid=?"
+
+const UPDATE_DB_APP_METRICS string = ""
+
+const UPDATE_DB_APP_GROUPS string     = "UPDATE appgroups SET groupname=? where appid=? and groupid=?"
+const DELETE_OLD_DB_APP_GROUPS string = "DELETE FROM appgroups WHERE appid=? and groupid=?"
+const ADD_NEW_DB_APP_GROUPS string    = "INSERT INTO appgroups (appid,groupid,groupname) VALUES( ?, ?, ?)"
+
+const UPDATE_DB_APP_USERS string      = ""
 
 /* Metrics */
 const GET_ALL_DASHBOARD_METRICS string = "SELECT tenantid, metricid, name FROM metrics WHERE tenantid=?"
