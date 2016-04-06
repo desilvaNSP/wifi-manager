@@ -13,10 +13,10 @@ func GetBrowserStats(constrains dao.Constrains) []dao.NameValue {
 	usersByOS := make([]dao.NameValue,11)
 	values := make([]sql.NullFloat64,11)
 	var query string
-	query = "SELECT sum(chrome) as chrome, sum(firefox) as firefox, sum(ie) as ie, sum(iemobile) as iemobile, sum(kindle) as kindle, sum(safari) as safari, sum(safarimobile) as safarimobile, sum(opera) as opera, sum(webkit) as webkit, sum(chromemobile) as chromemobile, sum(other) as other from browserstats WHERE date >= ? AND date < ? AND tenantid=?"
+	query = "SELECT sum(chrome) as chrome, sum(firefox) as firefox, sum(ie) as ie, sum(iemobile) as iemobile, sum(kindle) as kindle, sum(safari) as safari, sum(safarimobile) as safarimobile, sum(opera) as opera, sum(webkit) as webkit, sum(chromemobile) as chromemobile, sum(other) as other from browserstats WHERE date >= ? AND date < ? AND tenantid=? "
 
 	if len(constrains.GroupNames) > 0 {
-		args := getArgs(&constrains)
+		args := getArgs3(&constrains)
 		query = query + " AND groupname=? "
 		for i := 1; i < len(constrains.GroupNames); i++ {
 			query = query + " OR groupname=? "
@@ -46,7 +46,7 @@ func GetUsersByOS(constrains dao.Constrains) []dao.NameValue {
 	query = "SELECT sum(android) as android, sum(ios) as ios, sum(windows) as windows, sum(linux) as linux, sum(macos) as macos, sum(windowsmobile) as windowsmobile, sum(other) as other from osstats WHERE date >= ? AND date < ? AND tenantid=?"
 
 	if len(constrains.GroupNames) > 0 {
-		args := getArgs(&constrains)
+		args := getArgs3(&constrains)
 		query = query + " AND groupname=? "
 		for i := 1; i < len(constrains.GroupNames); i++ {
 			query = query + " OR groupname=? "
@@ -77,7 +77,7 @@ func GetUsersByDevice(constrains dao.Constrains) []dao.NameValue {
 	query = "SELECT sum(mobile) as mobile, sum(tablet) as tablet, sum(smarttv) as smarttv, sum(wearable) as wearable, sum(embedded) as embedded, sum(other) as other from devicestats WHERE date >= ? AND date < ? AND tenantid=?"
 
 	if len(constrains.GroupNames) > 0 {
-		args := getArgs(&constrains)
+		args := getArgs3(&constrains)
 		query = query + " AND groupname=? "
 		for i := 1; i < len(constrains.GroupNames); i++ {
 			query = query + " OR groupname=? "

@@ -113,6 +113,7 @@ type Constrains struct {
 	TenantId   int               `json:"tenantid"`
 	From       string            `json:"from"`
 	To         string            `json:"to"`
+	ACL   string    	     `json:"acl"`
 	GroupNames []string          `json:"groupnames"`
 }
 
@@ -147,6 +148,7 @@ type DashboardAppInfo struct {
 	Users     []DashboardAppUser      `db:"users"json:"users"`
 	Groups    []DashboardAppGroup      `db:"groups"json:"groups"`
 	Metrics   []DashboardAppMetric  `db:"metrics"json:"metrics"`
+	Acls 	  string	            `db:"acl"json:"acls"`
 }
 
 type DashboardApp struct {
@@ -170,6 +172,11 @@ type DashboardAppMetric struct {
 type DashboardAppGroup struct {
 	AppId     int                      `db:"appid"json:"appid"`
 	GroupName string              `db:"groupname"json:"groupname"`
+}
+
+type DashboardAppAcls struct {
+	AppId     int                      `db:"appid"json:"appid"`
+	Acls 	  string	             `db:"acl"json:"acls"`
 }
 
 type Response struct {

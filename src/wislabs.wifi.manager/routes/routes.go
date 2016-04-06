@@ -122,6 +122,13 @@ var routes = Routes{
 		dashboard_handlers.GetAllDashboardMetrics,
 	},
 	Route{
+		"Get All Dashboard ACL types ",
+		"GET",
+		"/dashboard/acltypes",
+		true,
+		dashboard_handlers.GetAclTypes,
+	},
+	Route{
 		"Get Dashboard App Users ",
 		"GET",
 		"/dashboard/apps/{appid}/users",
@@ -141,6 +148,13 @@ var routes = Routes{
 		"/dashboard/apps/{appid}/groups",
 		true,
 		dashboard_handlers.GetGroupsOfApp,
+	},
+	Route{
+		"Get Dashboard App Acl",
+		"GET",
+		"/dashboard/apps/{appid}/acl",
+		true,
+		dashboard_handlers.GetAclsOfApp,
 	},
 	Route{
 		"Delete Dashboard User App",

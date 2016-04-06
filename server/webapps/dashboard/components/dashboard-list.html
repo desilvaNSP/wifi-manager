@@ -63,7 +63,7 @@
         });
 
         $("#add-dashboard-btn").on('click', function () {
-            var users, locations, metrics;
+            var users, locations, metrics,acltypes;
             userPermissions = JSON.parse(Cookies.get('userpermissions'));
             hasDashboardUserReadPermission = false
             $.each(userPermissions, function (key, value) {
@@ -92,14 +92,20 @@
                 metrics = result
             });
 
+
+            var aclTypes = $.get('/dashboard/acltypes', function (result) {
+                acltypes = result
+            });
+
             var addDashboardFromValidator;
-            $.when(usersAjax, locationsAjax, metricsAjax).done(function () {
+            $.when(usersAjax, locationsAjax, metricsAjax ,aclTypes).done(function () {
                 $.get('components/dashboard-app-modal.html', function (template) {
                             var rendered = Mustache.render(template, {
                                 users: users,
                                 locations: locations,
                                 metrics: metrics,
-                                currentuser: Cookies.get("username")
+                                currentuser: Cookies.get("username"),
+                                acltypes:acltypes
                             });
                             $('#add-dashboard-app-modal-content').html(rendered);
                             $('#add-dashboard-modal').modal();
@@ -155,7 +161,8 @@
                         users: taggedUsers,
                         aggregate: aggregate,
                         groups: getCheckedGroups('group'),
-                        metrics: getCheckedMetrices('metric')
+                        metrics: getCheckedMetrices('metric'),
+                        acls: $('.radio:checked').val()
                     };
                     $("#adddbmodal-body").loadingOverlay({
                         loadingText: 'Creating '+payload.name+' Dashboard'
@@ -214,6 +221,9 @@
                             $('.container-dashboard').remove('#app-grid')
                             $('.container-dashboard').html(rendered);
                         });
+                        $.get('/dashboard/apps/' + appId + '/acl', function (result) {
+                            window.aclvalue = result;
+                        });
                     }
             );
         });
@@ -236,7 +246,6 @@
                     },2000);
                 },
                 error: function (e) {
-                    console.log(e)
                 }
             });
         });
