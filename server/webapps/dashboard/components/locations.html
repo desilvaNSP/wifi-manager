@@ -247,7 +247,6 @@
             selectedLocation = locationTable.row($(this).parents('tr')).data();
             var locationsAjax = $.get('/wifi/' + Cookies.get('tenantid') + '/locations/groups', function (result) {
                 locations = result;
-                console.log(locations);
                 var index = locations.indexOf(selectedLocation.groupname);
                 if (index > -1) {
                     locations.splice(index, 1);
@@ -265,7 +264,6 @@
                         longitude:selectedLocation.longitude,
                         latitude:selectedLocation.longitude
                     });
-                    console.log(rendered);
                     $('#add-wifi-location-modal-content').html(rendered);
                     $('#update-wifilocation-modal').modal();
                     updateWifiLocationFromValidator = $("#update-wifilocation-form").validate({

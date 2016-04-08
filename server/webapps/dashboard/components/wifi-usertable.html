@@ -265,7 +265,6 @@
 
         $('.dataTables-user tbody').on('click', '#setting-delete-user', function () {
             selectedUser = userTable.api().row($(this).parents('tr')).data();
-            console.log(selectedUser)
             rawTodelete = $(this).closest('tr');
             $('#confirm-delete-modal').modal()
             $('#message').html('<i class="fa fa-warning fa-3x" style="vertical-align: middle;margin-right: 10%"></i>Are you sure you want to delete the user? <strong>' + selectedUser.username + '</strong>');

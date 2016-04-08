@@ -136,10 +136,30 @@ func GetAclsOfApp(w http.ResponseWriter, r *http.Request){
 	}
 	appacls := dashboard.GetDashboardAclsOfApp(appId)
 
-	fmt.Printf(appacls);
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(appacls); err != nil {
+		panic(err)
+	}
+}
+
+/**
+* GET
+* @path dashboard/apps/{appid}/aggregate
+*
+*/
+func GetAggreagateValueOfApp(w http.ResponseWriter, r *http.Request){
+	vars := mux.Vars(r)
+	appId, err := strconv.Atoi(vars["appid"])
+	if(err!= nil){
+		log.Fatalln("Error while reading appid", err)
+	}
+	appAggregate := dashboard.GetDashboardAggregateOfApp(appId)
+
+	fmt.Printf(appAggregate);
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(appAggregate); err != nil {
 		panic(err)
 	}
 }
