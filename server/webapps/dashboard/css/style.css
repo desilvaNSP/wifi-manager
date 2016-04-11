@@ -7954,3 +7954,10 @@ img.thumbnail  { position: absolute; width: 178px;height: 178px ;z-index: 20}
     padding-top: 20px;
     margin-top: 50px;
 }
+
+#map { height: 100%; }
+
+.map-containner  #map{
+    width:950px;
+    height: 400px;
+}

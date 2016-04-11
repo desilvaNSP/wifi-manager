@@ -135,7 +135,6 @@ func GetAclsOfApp(w http.ResponseWriter, r *http.Request){
 	}
 	appacls := dashboard.GetDashboardAclsOfApp(appId)
 
-	fmt.Printf(appacls);
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(appacls); err != nil {
