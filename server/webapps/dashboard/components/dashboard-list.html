@@ -448,6 +448,7 @@
                     aggregate = 'yes';
                 }
                 var payload = {
+                    tenantid: parseInt(Cookies.get('tenantid')),
                     appid:selectedAppIdForSettings,
                     users: taggedUsers,
                     aggregate: aggregate,

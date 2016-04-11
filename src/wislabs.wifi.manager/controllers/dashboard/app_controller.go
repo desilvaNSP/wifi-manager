@@ -20,7 +20,7 @@ func CreateNewDashboardApp(dashboardAppInfo dao.DashboardAppInfo) {
 
 func UpdateDashBoardSettings(dashboardAppInfo dao.DashboardAppInfo) {
 
-	//UpadateDashboardAppUsers(&dashboardAppInfo);
+	UpadateDashboardAppUsers(&dashboardAppInfo);
 	UpadateDashboardAppGroups(&dashboardAppInfo);
 	UpadateDashboardAppMetrics(&dashboardAppInfo);
 	UpadateDashboardAppAcls(&dashboardAppInfo);
@@ -258,8 +258,6 @@ func UpadateDashboardAppGroups(dashboardAppInfo  *dao.DashboardAppInfo){
 
 	var appGroups *[]dao.DashboardAppGroup
 	appGroups = &dashboardAppInfo.Groups
-
-        // get count by appid
 	var groups []dao.DashboardAppGroup
 	_, err := dbMap.Select(&groups, commons.GET_DASHBOARD_APP_GROUPS, dashboardAppInfo.AppId)
 	if err != nil {
@@ -270,14 +268,12 @@ func UpadateDashboardAppGroups(dashboardAppInfo  *dao.DashboardAppInfo){
 	defer stmtInsDelete.Close()
 	stmtInsAdd, err := dbMap.Db.Prepare(commons.ADD_NEW_DB_APP_GROUPS)
 	defer stmtInsAdd.Close()
-
 	if err != nil {
-		panic(err.Error()) // proper error handling instead of panic in your app
+		panic(err.Error())
 	}
 
 	var Length = (len(*appGroups))
 	var countID = len(groups)
-
 	if( Length <= countID){
 		for i := 0; i < countID; i++ {
 			if !(checkContainsGroups(groups[i].GroupName ,(*appGroups))) {
@@ -293,7 +289,7 @@ func UpadateDashboardAppGroups(dashboardAppInfo  *dao.DashboardAppInfo){
 	}
 
 	if err != nil {
-		panic(err.Error()) // proper error handling instead of panic in your app
+		panic(err.Error())
 	}
 }
 
@@ -303,8 +299,6 @@ func UpadateDashboardAppMetrics(dashboardAppInfo  *dao.DashboardAppInfo){
 
 	var updatedMetrics *[]dao.DashboardAppMetric
 	updatedMetrics = &dashboardAppInfo.Metrics;
-
-
 	var metrics []dao.DashboardAppMetric
 	_, err := dbMap.Select(&metrics, commons.GET_EXIST_DASHBOARD_APP_METRICS, dashboardAppInfo.AppId)
 	if err != nil {
@@ -315,14 +309,12 @@ func UpadateDashboardAppMetrics(dashboardAppInfo  *dao.DashboardAppInfo){
 	defer stmtInsDelete.Close()
 	stmtInsAdd, err := dbMap.Db.Prepare(commons.ADD_NEW_DB_APP_METRICS)
 	defer stmtInsAdd.Close()
-
 	if err != nil {
-		panic(err.Error()) // proper error handling instead of panic in your app
+		panic(err.Error())
 	}
 
 	var Length = (len(*updatedMetrics))
 	var countID = len(metrics)
-
 	if( Length <= countID){
 		for i := 0; i < countID; i++ {
 			if !(checkContainsMetrics(metrics[i].MetricId ,(*updatedMetrics))) {
@@ -336,9 +328,8 @@ func UpadateDashboardAppMetrics(dashboardAppInfo  *dao.DashboardAppInfo){
 			}
 		}
 	}
-
 	if err != nil {
-		panic(err.Error()) // proper error handling instead of panic in your app
+		panic(err.Error())
 	}
 }
 
@@ -349,8 +340,6 @@ func UpadateDashboardAppUsers(dashboardAppInfo  *dao.DashboardAppInfo){
 
 	var updatedUsers *[]dao.DashboardAppUser
 	updatedUsers = &dashboardAppInfo.Users;
-
-
 	var users []dao.DashboardAppUser
 	_, err := dbMap.Select(&users, commons.GET_DASHBOARD_APP_USERS, dashboardAppInfo.AppId)
 	if err != nil {
@@ -361,27 +350,22 @@ func UpadateDashboardAppUsers(dashboardAppInfo  *dao.DashboardAppInfo){
 	defer stmtInsDelete.Close()
 	stmtInsAdd, err := dbMap.Db.Prepare(commons.ADD_NEW_DB_APP_USERS)
 	defer stmtInsAdd.Close()
-
 	if err != nil {
-		panic(err.Error()) // proper error handling instead of panic in your app
+		panic(err.Error())
 	}
 
 	var Length = (len(*updatedUsers))
-	var countID = len(users)
-
-	fmt.Println(strconv.Itoa(Length))
-	fmt.Println(strconv.Itoa(countID))
-
-	if( Length <= countID){
-		for i := 0; i < countID; i++ {
+	var countUsers = len(users)e
+	if( Length <= countUsers){
+		for i := 0; i < countUsers; i++ {
 			if !(checkContainsUsers(users[i].UserName ,(*updatedUsers))) {
 				_,err = stmtInsDelete.Exec(&dashboardAppInfo.AppId, users[i].UserName)
 			}
 		}
 	}else{
-		for j := 0; j < Length; j++ {
+		for j := 0; j < countUsers; j++ {
 			if !(checkContainsUsers((*updatedUsers)[j].UserName ,users)) {
-				_, err = stmtInsAdd.Exec(&dashboardAppInfo.TenantId, &dashboardAppInfo.AppId, (*updatedUsers)[j].UserName)
+				_, err = stmtInsAdd.Exec(1, 2, (*updatedUsers)[j].UserName)
 			}
 		}
 	}
