@@ -4,7 +4,6 @@ import (
 	"wislabs.wifi.manager/utils"
 	"wislabs.wifi.manager/dao"
 	"wislabs.wifi.manager/commons"
-	"database/sql"
 )
 
 func CreateNewDashboardApp(dashboardAppInfo dao.DashboardAppInfo) {
@@ -19,10 +18,11 @@ func CreateNewDashboardApp(dashboardAppInfo dao.DashboardAppInfo) {
 
 func UpdateDashBoardSettings(dashboardAppInfo dao.DashboardAppInfo) {
 
-	//UpadateDashboardAppUsers(&dashboardAppInfo);
+	UpadateDashboardAppUsers(&dashboardAppInfo);
 	UpadateDashboardAppGroups(&dashboardAppInfo);
-	//UpadateDashboardAppMetrics(&dashboardAppInfo);
+	UpadateDashboardAppMetrics(&dashboardAppInfo);
 	UpadateDashboardAppAcls(&dashboardAppInfo);
+	UpadateDashboardAppAggregateValue(&dashboardAppInfo);
 
 
 
@@ -90,6 +90,18 @@ func GetDashboardAclsOfApp(appId int) string {
 		return acls[0].Acls
 	}
 	return acls[0].Acls
+}
+
+func GetDashboardAggregateOfApp(appId int) string{
+	dbMap := utils.GetDBConnection("dashboard");
+	defer dbMap.Db.Close()
+
+	var strAggregate []string
+	_, err := dbMap.Select(&strAggregate, commons.GET_DASHBOARD_APP_AGGREGATE, appId)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	return strAggregate[0]
 }
 
 func GetAllDashboardMetrics(tenantId int) []dao.DashboardMetric {
@@ -180,6 +192,7 @@ func AddDashboardAppUsers(appUsers *[]dao.DashboardAppUser, appId int64) error {
 		return err
 	}
 	for i := 0; i < len(*appUsers); i++ {
+		fmt.Printf((*appUsers)[i].UserName)
 		_, err = stmtIns.Exec((*appUsers)[i].TenantId, appId, (*appUsers)[i].UserName)
 	}
 	return err
@@ -219,20 +232,22 @@ func DeleteDashboardApp(appId int, tenantId int) error {
 	return err
 }
 
-/*func UpadateDashboardAppUsers(dashboardAppInfo  dao.DashboardAppInfo){
+
+func UpadateDashboardAppAggregateValue(dashboardAppInfo  *dao.DashboardAppInfo){
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 
-	stmtIns, err := dbMap.Db.Prepare(commons.UPDATE_DB_APP_USERS)
+	stmtIns, err := dbMap.Db.Prepare(commons.UPDATE_DB_APP_AGGREGATE_VALUE)
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
-	_, err = stmtIns.Exec(tenantId, username)
+	_, err = stmtIns.Exec(dashboardAppInfo.Aggregate, dashboardAppInfo.AppId)
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
 	defer stmtIns.Close()
-}*/
+
+}
 
 
 func UpadateDashboardAppGroups(dashboardAppInfo  *dao.DashboardAppInfo){
@@ -241,47 +256,114 @@ func UpadateDashboardAppGroups(dashboardAppInfo  *dao.DashboardAppInfo){
 
 	var appGroups *[]dao.DashboardAppGroup
 	appGroups = &dashboardAppInfo.Groups
-
-        // get count by appid
-	var count sql.NullInt64
-	smtOut, err := dbMap.Db.Prepare("SELECT COUNT(appid) FROM appgroups WHERE appid=? GROUP BY appid")
-	defer smtOut.Close()
-
-	err = smtOut.QueryRow(dashboardAppInfo.AppId).Scan(&count)
+	var groups []dao.DashboardAppGroup
+	_, err := dbMap.Select(&groups, commons.GET_DASHBOARD_APP_GROUPS, dashboardAppInfo.AppId)
 	if err != nil {
-		panic(err.Error()) // proper error handling instead of panic in your app
+		panic(err.Error())
 	}
 
-	stmtInsUpdate, err := dbMap.Db.Prepare(commons.UPDATE_DB_APP_GROUPS)
-	defer stmtInsUpdate.Close()
 	stmtInsDelete, err := dbMap.Db.Prepare(commons.DELETE_OLD_DB_APP_GROUPS)
 	defer stmtInsDelete.Close()
 	stmtInsAdd, err := dbMap.Db.Prepare(commons.ADD_NEW_DB_APP_GROUPS)
 	defer stmtInsAdd.Close()
-
 	if err != nil {
-		panic(err.Error()) // proper error handling instead of panic in your app
+		panic(err.Error())
 	}
 
 	var Length = (len(*appGroups))
-	var countID int
-	countID = int(count.Int64)
-
+	var countID = len(groups)
 	if( Length <= countID){
 		for i := 0; i < countID; i++ {
-			if(Length > i){
-				_, err = stmtInsUpdate.Exec((*appGroups)[i].GroupName,&dashboardAppInfo.AppId,i+1)
-			}else{
-				_,err = stmtInsDelete.Exec(&dashboardAppInfo.AppId,i+1)
+			if !(checkContainsGroups(groups[i].GroupName ,(*appGroups))) {
+				_,err = stmtInsDelete.Exec(&dashboardAppInfo.AppId, groups[i].GroupName)
 			}
-
 		}
 	}else{
-		for i := 0; i < Length; i++ {
-			if(countID > i){
-				_, err = stmtInsUpdate.Exec((*appGroups)[i].GroupName,&dashboardAppInfo.AppId,i+1)
-			}else{
-				_, err = stmtInsAdd.Exec(&dashboardAppInfo.AppId,i+1,(*appGroups)[i].GroupName)
+		for j := 0; j < Length; j++ {
+			if !(checkContainsGroups((*appGroups)[j].GroupName ,groups)) {
+				_, err = stmtInsAdd.Exec(&dashboardAppInfo.AppId, (*appGroups)[j].GroupName)
+			}
+		}
+	}
+
+	if err != nil {
+		panic(err.Error())
+	}
+}
+
+func UpadateDashboardAppMetrics(dashboardAppInfo  *dao.DashboardAppInfo){
+	dbMap := utils.GetDBConnection("dashboard");
+	defer dbMap.Db.Close()
+
+	var updatedMetrics *[]dao.DashboardAppMetric
+	updatedMetrics = &dashboardAppInfo.Metrics;
+	var metrics []dao.DashboardAppMetric
+	_, err := dbMap.Select(&metrics, commons.GET_EXIST_DASHBOARD_APP_METRICS, dashboardAppInfo.AppId)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	stmtInsDelete, err := dbMap.Db.Prepare(commons.DELETE_OLD_DB_APP_METRICS)
+	defer stmtInsDelete.Close()
+	stmtInsAdd, err := dbMap.Db.Prepare(commons.ADD_NEW_DB_APP_METRICS)
+	defer stmtInsAdd.Close()
+	if err != nil {
+		panic(err.Error())
+	}
+
+	var Length = (len(*updatedMetrics))
+	var countID = len(metrics)
+	if( Length <= countID){
+		for i := 0; i < countID; i++ {
+			if !(checkContainsMetrics(metrics[i].MetricId ,(*updatedMetrics))) {
+				_,err = stmtInsDelete.Exec(&dashboardAppInfo.AppId, metrics[i].MetricId)
+			}
+		}
+	}else{
+		for j := 0; j < Length; j++ {
+			if !(checkContainsMetrics((*updatedMetrics)[j].MetricId ,metrics)) {
+				_, err = stmtInsAdd.Exec(&dashboardAppInfo.AppId, (*updatedMetrics)[j].MetricId)
+			}
+		}
+	}
+	if err != nil {
+		panic(err.Error())
+	}
+}
+
+
+func UpadateDashboardAppUsers(dashboardAppInfo  *dao.DashboardAppInfo){
+	dbMap := utils.GetDBConnection("dashboard");
+	defer dbMap.Db.Close()
+
+	var updatedUsers *[]dao.DashboardAppUser
+	updatedUsers = &dashboardAppInfo.Users;
+	var users []dao.DashboardAppUser
+	_, err := dbMap.Select(&users, commons.GET_DASHBOARD_APP_USERS, dashboardAppInfo.AppId)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	stmtInsDelete, err := dbMap.Db.Prepare(commons.DELETE_OLD_DB_APP_USERS)
+	defer stmtInsDelete.Close()
+	stmtInsAdd, err := dbMap.Db.Prepare(commons.ADD_NEW_DB_APP_USERS)
+	defer stmtInsAdd.Close()
+	if err != nil {
+		panic(err.Error())
+	}
+
+	var Length = (len(*updatedUsers))
+	var countUsers = len(users)e
+	if( Length <= countUsers){
+		for i := 0; i < countUsers; i++ {
+			if !(checkContainsUsers(users[i].UserName ,(*updatedUsers))) {
+				_,err = stmtInsDelete.Exec(&dashboardAppInfo.AppId, users[i].UserName)
+			}
+		}
+	}else{
+		for j := 0; j < countUsers; j++ {
+			if !(checkContainsUsers((*updatedUsers)[j].UserName ,users)) {
+				_, err = stmtInsAdd.Exec(1, 2, (*updatedUsers)[j].UserName)
 			}
 		}
 	}
@@ -290,21 +372,6 @@ func UpadateDashboardAppGroups(dashboardAppInfo  *dao.DashboardAppInfo){
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
 }
-
-/*func UpadateDashboardAppMetrics(dashboardAppInfo  dao.DashboardAppInfo){
-	dbMap := utils.GetDBConnection("dashboard");
-	defer dbMap.Db.Close()
-
-	stmtIns, err := dbMap.Db.Prepare(commons.UPDATE_DB_APP_METRICS)
-	if err != nil {
-		panic(err.Error()) // proper error handling instead of panic in your app
-	}
-	_, err = stmtIns.Exec(tenantId, username)
-	if err != nil {
-		panic(err.Error()) // proper error handling instead of panic in your app
-	}
-	defer stmtIns.Close()
-}*/
 
 func UpadateDashboardAppAcls(dashboardAppInfo  *dao.DashboardAppInfo){
 	dbMap := utils.GetDBConnection("dashboard");
@@ -319,4 +386,31 @@ func UpadateDashboardAppAcls(dashboardAppInfo  *dao.DashboardAppInfo){
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
 	defer stmtIns.Close()
+}
+
+func checkContainsGroups(group string, groups []dao.DashboardAppGroup) bool {
+	for _, v := range groups {
+		if v.GroupName == group {
+			return true
+		}
+	}
+	return false
+}
+
+func checkContainsMetrics(metricid int, groups []dao.DashboardAppMetric) bool {
+	for _, v := range groups {
+		if v.MetricId == metricid {
+			return true
+		}
+	}
+	return false
+}
+
+func checkContainsUsers(username string,users []dao.DashboardAppUser) bool{
+	for _, v := range users {
+		if v.UserName == username {
+			return true
+		}
+	}
+	return false
 }

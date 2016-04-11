@@ -36,7 +36,7 @@
                             {{#metrics}}
                             <div class="col-sm-6">
                                 <label>
-                                    <input type="checkbox" name="metric" value="{{metricid}}" >{{name}}
+                                    <input type="checkbox" name="metric" value="{{metricid}}" {{checkedMetrics}}>{{name}}
                                 </label>
                             </div>
                             {{/metrics}}
@@ -73,7 +73,7 @@
                         <div class="row">
                             <div class="col- sm-6">
                                 <label>
-                                    <input type="checkbox" id="update-chkAggregate" value="">Aggregate Location data
+                                    <input type="checkbox" id="update-chkAggregate" value="" {{checkAggreateLoc}}>Aggregate Location data
                                 </label>
                             </div>
                         </div>
