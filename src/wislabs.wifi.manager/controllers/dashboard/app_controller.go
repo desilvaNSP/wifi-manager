@@ -192,7 +192,6 @@ func AddDashboardAppUsers(appUsers *[]dao.DashboardAppUser, appId int64) error {
 		return err
 	}
 	for i := 0; i < len(*appUsers); i++ {
-		fmt.Printf((*appUsers)[i].UserName)
 		_, err = stmtIns.Exec((*appUsers)[i].TenantId, appId, (*appUsers)[i].UserName)
 	}
 	return err
@@ -353,7 +352,7 @@ func UpadateDashboardAppUsers(dashboardAppInfo  *dao.DashboardAppInfo){
 	}
 
 	var Length = (len(*updatedUsers))
-	var countUsers = len(users)e
+	var countUsers = len(users)
 	if( Length <= countUsers){
 		for i := 0; i < countUsers; i++ {
 			if !(checkContainsUsers(users[i].UserName ,(*updatedUsers))) {

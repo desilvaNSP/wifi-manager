@@ -291,7 +291,6 @@
         });
         var appUsersByID = $.get('/dashboard/apps/' + selectedAppIdForSettings + '/users', function (result) {
             usersOfAppID=result;
-            console.log(usersOfAppID)
         });
         var appMetricsByID = $.get('/dashboard/apps/' + selectedAppIdForSettings + '/metrics', function (result) {
             metricsOfAppID=result;
