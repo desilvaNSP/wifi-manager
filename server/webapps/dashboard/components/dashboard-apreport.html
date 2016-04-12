@@ -43,6 +43,9 @@
     $(document).ready(function () {
 
         var map,heatmap;
+        var apDataArray= [];
+        var longlatDataArray= [];
+
         var serverOriginUrl = window.location.origin;
         var payload = {
             from: from_,
@@ -51,10 +54,9 @@
             tenantid: parseInt(Cookies.get("tenantid"))
         };
 
-        initMap();
+      //  initMap();
 
         function initMap() {
-
             map = new google.maps.Map(document.getElementById('map'), {
                 zoom: 20,
                 center: {lat: 37.782551, lng: -122.445368},
@@ -66,45 +68,19 @@
                 map: map
             });
 
-            /*$.ajax({
-                url: serverOriginUrl +"/wifi/summary/accespoint",
-                type: "POST",
-                contentType: "application/json",
-                data: JSON.stringify(payload),
-                beforeSend:function(){
-                },
-                success: function (data) {
-                   /!* $.get('/dashboard/summary/'+mac+'locationpoint', function(result){
-
-                    });*!/
-                    console.log(result);
-                },
-                error: function (e) {
-                    console.log(e);
-                }
-            });*/
-
-
-
-            var jsonObjects = [
-                {longtitude:37.782551, latitude:-122.445368 , downloadUnits:2000 ,uploadUnits:4000 ,title:"Title 01" ,message:"Hi u there"},
-                {"longtitude":37.782745, "latitude":-122.444586 , "downloadUnits":2000 ,"uploadUnits":4000 ,"title":"Title 01","message":"Hi u there"},
-                {"longtitude":37.782842, "latitude":-122.443688 , "downloadUnits":2000 ,"uploadUnits":4000 ,"title":"Title 01","message":"Hi u there"}
-            ];
-
-            generatePoistionAnchors(map, jsonObjects);
+            generatePoistionAnchors(map,longlatDataArray,apDataArray);
         }
 
 
-        function generatePoistionAnchors(map,jsonObject){
-            for (var key in jsonObject) {
-                if (jsonObject.hasOwnProperty(key)) {
-                    var obj = jsonObject[key];
+        function generatePoistionAnchors(map,longlatObjs,apDataObjs){
+            for (var key in apDataObjs) {
+                if (apDataObjs.hasOwnProperty(key)) {
+                    var obj = longlatObjs[key];
                     var marker = new google.maps.Marker({
-                        position: new google.maps.LatLng(obj.longtitude, obj.latitude) ,
+                        position: new google.maps.LatLng(obj.longitude, obj.latitude) ,
                         map: map
                     });
-                    attachContentForInfobox(marker,obj);
+                    attachContentForInfobox(marker,apDataObjs[key]);
                 }
             }
         }
@@ -148,7 +124,9 @@
                 "error": function (e) {
                 },
                 "dataSrc": function (d) {
-                    return d
+                    formatAPData(d);
+                    initMap();
+                    return apDataArray;
                 }
             },
             columns: [
@@ -213,8 +191,12 @@
             toggleHeatmap();
         });
 
-
-
+        function formatAPData(data) {
+            for (ap in data) {
+                apDataArray.push(data[ap].AccessPointData);
+                longlatDataArray.push(data[ap].LongLatMacData);
+            }
+        }
 
         // Heatmap data: 500 Points
         function getPoints() {

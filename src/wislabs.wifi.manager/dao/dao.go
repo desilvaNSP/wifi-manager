@@ -39,13 +39,17 @@ type AccessPoint struct {
 	Calledstationmac     utils.NullString         `db:"calledstationmac"json:"calledstationmac"`
 }
 
-/*type LocationAccessPoint struct {
-	AccessPointData AccessPoint        `json:"accesspoint"`
-	MAC              string            `json:"mac"`
-	Longitude     utils.NullFloat64    `json:"longitude"`
-	Latitude      utils.NullFloat64    `json:"latitude"`
-}*/
+type LocationAccessPoint struct {
+	AccessPointData AccessPoint
+	LongLatMacData  LongLatMac
+}
 
+
+type LongLatMac struct {
+	MAC        string                  `db:"mac"json:"mac"`
+	Longitude  utils.NullFloat64   `db:"longitude"json:"longitude"`
+	Latitude   utils.NullFloat64    `db:"latitude"json:"latitude"`
+}
 
 type Tenant struct {
 	TenantId  int       `db:"tenantid"json:"tenantid"`
