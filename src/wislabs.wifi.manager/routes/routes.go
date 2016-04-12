@@ -380,4 +380,11 @@ var routes = Routes{
 		true,
 		dashboard_handlers.GetAccessPointAgregatedDataFromToHandler,
 	},
+	/*Route{
+		"Get Access Point Details Dashboard with long and lat",
+		"POST",
+		"/wifi/summary/locationpoint",
+		true,
+		dashboard_handlers.GetAPLongLatandSummaryDataFromToHandler,
+	},*/
 }

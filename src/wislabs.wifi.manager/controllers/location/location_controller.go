@@ -17,6 +17,10 @@ func GetAllLocations(tenantid int) []dao.ApLocation {
 	return apLocations
 }
 
+/*func GetAccessPointLongLatByMac() {
+
+}*/
+
 func GetAllLocationGroups(tenantid int) []string {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()

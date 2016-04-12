@@ -48,7 +48,6 @@
 
     $(document).ready(function () {
 
-
         locationsAjax = $.get('/dashboard/' + Cookies.get('tenantid') + '/users/' + Cookies.get('username'), function (result) {
             locations = result.apgroups
         });
@@ -417,8 +416,6 @@
                     metrics: getCheckedMetrices('metric'),
                     acls: $('.update-acltypes-radio:checked').val()
                 };
-
-                console.log(payload.groups);
 
                 $.ajax({
                     url: '/dashboard/apps',

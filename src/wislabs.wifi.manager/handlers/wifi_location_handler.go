@@ -168,3 +168,25 @@ func DeleteAccessPoint(w http.ResponseWriter, r *http.Request){
 		w.WriteHeader(http.StatusOK)
 	}
 }
+
+/**
+* POST
+* @path /wifi/summary/locationpoint,
+*
+*/
+
+/*
+func GetAPLongLatandSummaryDataFromToHandler(w http.ResponseWriter, r*http.Request){
+	decoder := json.NewDecoder(r.Body)
+	var constrains dao.Constrains
+	decoder.Decode(&constrains)
+
+	locationData := location.GetAccessPointLongLatByMac()
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+
+	if err := json.NewEncoder(w).Encode(accespoint); err != nil {
+		panic(err)
+	}
+}*/

@@ -30,14 +30,22 @@ type SummaryDailyAcctAll struct {
 }
 
 type AccessPoint struct {
-	TotalSessions         int            `db:"totalsessions"json:"totalsessions"`
-	TotalUsers   int            `db:"totalusers"json:"totalusers"`
-	AvgdataperUser   utils.NullString            `db:"avgdataperuser"json:"avgdataperuser"`
-	Avgdatapersessiontime   utils.NullString           `db:"avgdatapersessiontime"json:"avgdatapersessiontime"`
+	TotalSessions             int                 `db:"totalsessions"json:"totalsessions"`
+	TotalUsers                int                     `db:"totalusers"json:"totalusers"`
+	AvgdataperUser          utils.NullString      `db:"avgdataperuser"json:"avgdataperuser"`
+	Avgdatapersessiontime   utils.NullString   `db:"avgdatapersessiontime"json:"avgdatapersessiontime"`
 	Totalinputoctets          int64            `db:"totalinputoctets"json:"totalinputoctets"`
 	Totaloutputoctets         int64            `db:"totaloutputoctets"json:"totaloutputoctets"`
-	Calledstationmac     utils.NullString            `db:"calledstationmac"json:"calledstationmac"`
+	Calledstationmac     utils.NullString         `db:"calledstationmac"json:"calledstationmac"`
 }
+
+/*type LocationAccessPoint struct {
+	AccessPointData AccessPoint        `json:"accesspoint"`
+	MAC              string            `json:"mac"`
+	Longitude     utils.NullFloat64    `json:"longitude"`
+	Latitude      utils.NullFloat64    `json:"latitude"`
+}*/
+
 
 type Tenant struct {
 	TenantId  int       `db:"tenantid"json:"tenantid"`
