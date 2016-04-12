@@ -71,7 +71,7 @@ func SummaryDetailsFromTo(constrains dao.Constrains) [][]string {
 	return  CSVcontent
 }
 
-func GetAccessPointAgregatedDataFromTo(constrains dao.Constrains) [] dao.AccessPoint{
+func  GetAccessPointAgregatedDataFromTo(constrains dao.Constrains) [] dao.AccessPoint{
 
 	dbMap := utils.GetDBConnection("summary");
 	defer dbMap.Db.Close()
@@ -85,17 +85,15 @@ func GetAccessPointAgregatedDataFromTo(constrains dao.Constrains) [] dao.AccessP
 		"SUM(inputoctets)/COUNT(DISTINCT username) as avgdataperuser,"+
 		"SUM(totalsessionduration)/SUM(noofsessions) as avgdatapersessiontime "+
 		"FROM dailyacct "+
-		"WHERE date >= ? AND date < ? AND tenantid=? AND acl=?"
+		"WHERE date >= ? AND date < ? AND tenantid=?"
 
 	if len(constrains.GroupNames) > 0 {
-		args := getArgs(&constrains)
+		args := getArgs3 (&constrains)
 		query = query + " AND ( groupname=? "
 		for i := 1; i< len(constrains.GroupNames); i++ {
 			query = query + " OR groupname=? "
 		}
 		query = query + ") Group By calledstationmac"
-
-
 
 		_, err := dbMap.Select(&accespointdata, query, args...)
 		if err != nil {
@@ -103,6 +101,25 @@ func GetAccessPointAgregatedDataFromTo(constrains dao.Constrains) [] dao.AccessP
 		}
 	}
 	return accespointdata
+}
+
+
+func GetLongLatLocationByMacAddress(mac string) [] dao.LongLatMac{
+	dbMap := utils.GetDBConnection("dashboard");
+	defer dbMap.Db.Close()
+	var longlatbymac[] dao.LongLatMac
+
+	query := "SELECT longitude as longitude,latitude as latitude,mac as mac from aplocations where mac=?"
+	_, err := dbMap.Select(&longlatbymac, query, mac)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic
+	}
+	if len(longlatbymac) > 0 {
+		return  longlatbymac
+	}else{
+		return nil
+	}
+
 }
 
 func GetAggregatedDownloadsFromTo(constrains dao.Constrains) [] dao.NameValue {

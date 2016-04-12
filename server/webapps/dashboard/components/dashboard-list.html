@@ -48,7 +48,6 @@
 
     $(document).ready(function () {
 
-
         locationsAjax = $.get('/dashboard/' + Cookies.get('tenantid') + '/users/' + Cookies.get('username'), function (result) {
             locations = result.apgroups
         });
