@@ -54,6 +54,7 @@
         var payload = {
             from: from_,
             to: to_,
+            acl: window.aclvalue,
             groupnames: window.datagroups,
             tenantid: parseInt(Cookies.get("tenantid"))
         };
@@ -125,6 +126,7 @@
                 "type": "POST",
                 "contentType": "application/json",
                 "data": function(d){
+                    console.log(payload)
                     return  JSON.stringify(payload);
                 },
                 "error": function (e) {

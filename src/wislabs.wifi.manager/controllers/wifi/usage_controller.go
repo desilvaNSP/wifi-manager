@@ -85,7 +85,7 @@ func GetAccessPointAgregatedDataFromTo(constrains dao.Constrains) [] dao.AccessP
 		"SUM(inputoctets)/COUNT(DISTINCT username) as avgdataperuser,"+
 		"SUM(totalsessionduration)/SUM(noofsessions) as avgdatapersessiontime "+
 		"FROM dailyacct "+
-		"WHERE date >= ? AND date < ? AND tenantid=? AND acl=?"
+		"WHERE date >= ? AND date < ? AND tenantid=? AND acl=? "
 
 	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
