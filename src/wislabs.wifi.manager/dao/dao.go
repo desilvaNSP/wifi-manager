@@ -176,7 +176,6 @@ type DashboardAppUser struct {
 	UserName string                  `db:"username"json:"username"`
 }
 
-/// have to foucus on this changes remove appid
 type DashboardAppMetric struct {
 	MetricId int                  `db:"metricid"json:"metricid"`
 	Name     string                      `db:"name"json:"name"`
@@ -196,7 +195,6 @@ type Response struct {
 	Status  string `json:"status"`
 	Message string `json:"message"`
 }
-
 
 type DBConfigs struct {
 	Username string

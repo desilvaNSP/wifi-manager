@@ -113,7 +113,6 @@
                 metrics = result
             });
 
-
             var aclTypes = $.get('/dashboard/acltypes', function (result) {
                 acltypes = result
             });
@@ -309,7 +308,7 @@
         });
 
         userPermissions = JSON.parse(Cookies.get('userpermissions'));
-        hasDashboardUserReadPermission = false
+        hasDashboardUserReadPermission = false;
         $.each(userPermissions, function (key, value) {
             if (value == 'dashboard_users') {
                 hasDashboardUserReadPermission = true
@@ -324,7 +323,7 @@
                 }
             });
         } else {
-            usersAjax = true
+            usersAjax = true;
             userNames.push(Cookies.get('username'))
         }
 

@@ -71,7 +71,7 @@ func SummaryDetailsFromTo(constrains dao.Constrains) [][]string {
 	return  CSVcontent
 }
 
-func  GetAccessPointAgregatedDataFromTo(constrains dao.Constrains) [] dao.AccessPoint{
+func GetAccessPointAgregatedDataFromTo(constrains dao.Constrains) [] dao.AccessPoint{
 
 	dbMap := utils.GetDBConnection("summary");
 	defer dbMap.Db.Close()
@@ -85,10 +85,10 @@ func  GetAccessPointAgregatedDataFromTo(constrains dao.Constrains) [] dao.Access
 		"SUM(inputoctets)/COUNT(DISTINCT username) as avgdataperuser,"+
 		"SUM(totalsessionduration)/SUM(noofsessions) as avgdatapersessiontime "+
 		"FROM dailyacct "+
-		"WHERE date >= ? AND date < ? AND tenantid=?"
+		"WHERE date >= ? AND date < ? AND tenantid=? AND acl=?"
 
 	if len(constrains.GroupNames) > 0 {
-		args := getArgs3 (&constrains)
+		args := getArgs(&constrains)
 		query = query + " AND ( groupname=? "
 		for i := 1; i< len(constrains.GroupNames); i++ {
 			query = query + " OR groupname=? "

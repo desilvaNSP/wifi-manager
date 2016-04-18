@@ -17,15 +17,11 @@ func CreateNewDashboardApp(dashboardAppInfo dao.DashboardAppInfo) {
 }
 
 func UpdateDashBoardSettings(dashboardAppInfo dao.DashboardAppInfo) {
-
 	UpadateDashboardAppUsers(&dashboardAppInfo);
 	UpadateDashboardAppGroups(&dashboardAppInfo);
 	UpadateDashboardAppMetrics(&dashboardAppInfo);
 	UpadateDashboardAppAcls(&dashboardAppInfo);
 	UpadateDashboardAppAggregateValue(&dashboardAppInfo);
-
-
-
 }
 
 func GetAllDashboardAppsOfUser(username string, tenantId int) []dao.DashboardApp {
