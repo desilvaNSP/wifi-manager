@@ -54,11 +54,11 @@ func GetDashboardUsersOfApp(appId int) []dao.DashboardAppUser {
 	return users
 }
 
-func GetDashboardMetricsOfApp(appId int) []dao.DashboardMetric {
+func GetDashboardMetricsOfApp(appId int) []dao.DashboardAppMetric {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 
-	var metrics []dao.DashboardMetric
+	var metrics []dao.DashboardAppMetric
 	_, err := dbMap.Select(&metrics, commons.GET_DASHBOARD_APP_METRICS, appId)
 	if err != nil {
 		//panic(err.Error()) // proper error handling instead of panic in your app

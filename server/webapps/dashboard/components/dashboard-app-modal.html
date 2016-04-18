@@ -27,7 +27,7 @@
                             {{#locations}}
                             <div class="col-sm-6">
                                 <label>
-                                    <input type="checkbox" name="group" value="{{.}}"  >{{.}}
+                                    <input type="checkbox" name="group" value="{{.}}">{{.}}
                                 </label>
                             </div>
                             {{/locations}}
@@ -48,9 +48,12 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="aclaccept" value="">
+                        </label>
                         <label>Access Control</label>
                     </div>
-                    <div class="checkbox">
+                    <div class="checkbox" id="acloptionarea" style="display: none">
                         <div class="row">
                             {{#acltypes}}
                             <div class="col-sm-6">
@@ -92,3 +95,14 @@
         </div>
     </div>
 </div>
+
+<script>
+    $('#aclaccept').change(function() {
+        if(this.checked) {
+            $("#acloptionarea").show();
+        }else{
+            $("#acloptionarea").hide();
+            $(".acltypes-radio").attr("checked",false);
+        }
+    });
+</script>

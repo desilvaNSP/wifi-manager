@@ -164,6 +164,13 @@ var routes = Routes{
 		dashboard_handlers.GetAggreagateValueOfApp,
 	},
 	Route{
+		"Get Dashboard App Acl",
+		"GET",
+		"/dashboard/apps/{appid}/appsettings",
+		true,
+		dashboard_handlers.GetAllAppSettings,
+	},
+	Route{
 		"Delete Dashboard User App",
 		"DELETE",
 		"/dashboard/{tenantid}/apps/{appid}",

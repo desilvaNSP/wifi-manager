@@ -176,9 +176,10 @@ type DashboardAppUser struct {
 	UserName string                  `db:"username"json:"username"`
 }
 
+/// have to foucus on this changes remove appid
 type DashboardAppMetric struct {
-	AppId    int                      `db:"appid"json:"appid"`
 	MetricId int                  `db:"metricid"json:"metricid"`
+	Name     string                      `db:"name"json:"name"`
 }
 
 type DashboardAppGroup struct {
@@ -187,14 +188,15 @@ type DashboardAppGroup struct {
 }
 
 type DashboardAppAcls struct {
-	AppId     int                      `db:"appid"json:"appid"`
-	Acls 	  string	             `db:"acl"json:"acls"`
+	AppId int                      `db:"appid"json:"appid"`
+	Acls  string                     `db:"acl"json:"acls"`
 }
 
 type Response struct {
 	Status  string `json:"status"`
 	Message string `json:"message"`
 }
+
 
 type DBConfigs struct {
 	Username string

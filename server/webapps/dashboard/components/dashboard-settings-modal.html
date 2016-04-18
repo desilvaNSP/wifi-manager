@@ -43,14 +43,17 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="aclacceptupdate" value="">
+                        </label>
                         <label>Access Control</label>
                     </div>
-                    <div class="checkbox">
+                    <div class="checkbox" id="acloptionupdatearea" style="display: none">
                         <div class="row">
                             {{#acltypes}}
                             <div class="col-sm-6">
                                 <label class="radio inline control-label">
-                                    <input type="radio" class="update-acltypes-radio" name="acl" value="{{.}}" {{checkedACL}}>{{.}}
+                                    <input type="radio" class="update-acltypes-radio" name="aclupdate" value="{{.}}" {{checkedACL}}>{{.}}
                                 </label>
                             </div>
                             {{/acltypes}}
@@ -90,4 +93,21 @@
 </div>
 
 <script>
+    $(document).ready(function(){
+        if ($("input[name='aclupdate']").is(':checked')) {
+            $('#aclacceptupdate').attr("checked",true);
+            $("#acloptionupdatearea").show();
+        }else{
+            $('#aclacceptupdate').attr("checked",false);
+            $("#acloptionupdatearea").hide();
+        }
+        $('#aclacceptupdate').change(function() {
+            if(this.checked) {
+                $("#acloptionupdatearea").show();
+            }else{
+                $("#acloptionupdatearea").hide();
+                $(".update-acltypes-radio").attr("checked",false);
+            }
+        });
+    });
 </script>

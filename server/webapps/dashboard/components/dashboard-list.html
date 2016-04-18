@@ -79,6 +79,7 @@
             });
         });
 
+
         $("#add-dashboard-btn").on('click', function () {
             var users, locations, metrics,acltypes;
 
@@ -201,6 +202,8 @@
             });
         });
 
+
+
         function renderDashboardApps() {
             $.get('/dashboard/' + Cookies.get('tenantid') + '/apps/' + Cookies.get('username'), function (result) {
                 $.get('components/dashboard-app.html', function (template) {
@@ -285,21 +288,12 @@
         var appName = $(event).data('appname');
 
         // get app details by id
-        var appGroupsByID = $.get('/dashboard/apps/' + selectedAppIdForSettings + '/groups', function (result) {
-            groupsofAppID=result;
-        });
-        var appUsersByID = $.get('/dashboard/apps/' + selectedAppIdForSettings + '/users', function (result) {
-            usersOfAppID=result;
-        });
-        var appMetricsByID = $.get('/dashboard/apps/' + selectedAppIdForSettings + '/metrics', function (result) {
-            metricsOfAppID=result;
-        });
-        var appAclsByID = $.get('/dashboard/apps/' + selectedAppIdForSettings + '/acl', function (result) {
-            aclofAppID=result;
-        });
-
-        var appAggreagateByID = $.get('/dashboard/apps/' + selectedAppIdForSettings + '/aggregate', function (result) {
-            aggregateValue=result;
+        var allAppSettings  = $.get('/dashboard/apps/' + selectedAppIdForSettings + '/appsettings', function (result) {
+            groupsofAppID= result.groups;
+            metricsOfAppID= result.metrics;
+            aclofAppID = result.acls;
+            aggregateValue= result.aggregate;
+            usersOfAppID=result.users;
         });
 
         var locationsAjax = $.get('/dashboard/' + Cookies.get('tenantid') + '/users/' + Cookies.get('username'), function (result) {
@@ -335,7 +329,7 @@
         }
 
         var updateDashboardFromValidator;
-        $.when(usersAjax, locationsAjax, metricsAjax ,aclTypes, appAclsByID,appGroupsByID,appMetricsByID,appUsersByID,appAggreagateByID).done(function () {
+        $.when(usersAjax, locationsAjax, metricsAjax ,aclTypes,allAppSettings).done(function () {
             $.get('components/dashboard-settings-modal.html', function (template) {
                         var rendered = Mustache.render(template, {
                             appname:appName,

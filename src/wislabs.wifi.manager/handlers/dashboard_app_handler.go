@@ -83,6 +83,27 @@ func GetUsersOfApp(w http.ResponseWriter, r *http.Request){
 	}
 }
 
+func GetAllAppSettings(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	appId, err := strconv.Atoi(vars["appid"])
+	if (err != nil) {
+		log.Fatalln("Error while reading tenantid", err)
+	}
+	var appsettings dao.DashboardAppInfo
+
+	appsettings.Users = dashboard.GetDashboardUsersOfApp(appId)
+	appsettings.Metrics = dashboard.GetDashboardMetricsOfApp(appId)
+	appsettings.Groups = dashboard.GetDashboardGroupsOfApp(appId)
+	appsettings.Acls = dashboard.GetDashboardAclsOfApp(appId)
+	appsettings.Aggregate = dashboard.GetDashboardAggregateOfApp(appId)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(appsettings); err != nil {
+		panic(err)
+	}
+}
+
 /**
 * GET
 * @path dashboard/apps/{appid}/metrics
@@ -181,7 +202,6 @@ func GetAllDashboardMetrics(w http.ResponseWriter, r *http.Request){
 		panic(err)
 	}
 }
-
 
 /**
 * GET
