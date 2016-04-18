@@ -352,13 +352,13 @@ func UpadateDashboardAppUsers(dashboardAppInfo  *dao.DashboardAppInfo){
 	if( Length <= countUsers){
 		for i := 0; i < countUsers; i++ {
 			if !(checkContainsUsers(users[i].UserName ,(*updatedUsers))) {
-				_,err = stmtInsDelete.Exec(&dashboardAppInfo.AppId, users[i].UserName)
+				_,err = stmtInsDelete.Exec(dashboardAppInfo.AppId, users[i].UserName)
 			}
 		}
 	}else{
-		for j := 0; j < countUsers; j++ {
+		for j := 0; j < Length; j++ {
 			if !(checkContainsUsers((*updatedUsers)[j].UserName ,users)) {
-				_, err = stmtInsAdd.Exec(1, 2, (*updatedUsers)[j].UserName)
+				_, err = stmtInsAdd.Exec(dashboardAppInfo.TenantId,dashboardAppInfo.AppId, (*updatedUsers)[j].UserName)
 			}
 		}
 	}
