@@ -31,14 +31,33 @@
         </div>
     </div>
 </div>
-<div class="row map-containner" id="map-body">
+<div class="row" id="map-body">
     <div class="col-lg-12">
-        <div id="floating-panel">
-            <button class="btn btn-default" id="toggleHeatMap">Toggle Heatmap</button>
-            <button class="btn btn-default" id="toggleDownloadHeatMap">Download Heatmap</button>
-            <button class="btn btn-default" id="toggleUploadHeadMap">Upload Heatmap</button>
-        </div>
-        <div id="map"></div>
+        <section id="widget-grid" class="map-containner">
+            <div class="row">
+                <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="jarviswidget" id="wid-id-map" data-widget-refresh="2000" data-widget-colorbutton="false">
+                        <header>
+                            <h2>Location Map</h2>
+                        </header>
+                        <div>
+                            <!-- widget edit box -->
+                            <div class="jarviswidget-editbox">
+                                <!-- This area used as dropdown edit box -->
+                                <input class="form-control" type="text">
+                                <span class="note"><i class="fa fa-check text-success"></i> Change title to update and save instantly!</span>
+                            </div>
+                            <!-- end widget edit box -->
+                            <!-- widget content -->
+                            <div class="widget-body">
+                                <div id="map"></div>
+                            </div>
+                            <!-- end widget content -->
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
     </div>
 </div>
 <script>
@@ -49,6 +68,8 @@
         var longlatDataArray= [];
         var heatmapDownloadDimesionData = [];
         var heatmapUploadDimesionData = [];
+        var allMarkers = [];
+        var infoBoxes = [];
 
         var serverOriginUrl = window.location.origin;
         var payload = {
@@ -58,8 +79,6 @@
             groupnames: window.datagroups,
             tenantid: parseInt(Cookies.get("tenantid"))
         };
-
-      //  initMap();
 
         function initMap() {
             map = new google.maps.Map(document.getElementById('map'), {
@@ -126,7 +145,6 @@
                 "type": "POST",
                 "contentType": "application/json",
                 "data": function(d){
-                    console.log(payload)
                     return  JSON.stringify(payload);
                 },
                 "error": function (e) {
@@ -195,17 +213,91 @@
             }
         });
 
-        $("#toggleHeatMap").click(function(){
-            toggleHeatmap();
-        });
-        $("#toggleDownloadHeatMap").click(function(){
-            heatmap.setMap(map);
-            heatmap.setData(heatmapDownloadDimesionData);
-        });
-        $("#toggleUploadHeadMap").click(function(){
-            heatmap.setMap(map);
-            heatmap.setData(heatmapUploadDimesionData);
-        });
+        $('.dataTables-accesspoint tbody').on( 'click', 'tr', function () {
+            if ( $(this).hasClass('selected') ) {
+                $(this).removeClass('selected');
+            }
+            else {
+                accespointTable.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+                var accesPointData = accespointTable.row(this).data();
+                var long =null ,latitude=null;
+                $.each(longlatDataArray,function(i,obj){
+                    if(obj.mac ==accesPointData.calledstationmac){
+                        latitude = obj.latitude;
+                        long = obj.longitude;
+                        return false;
+                    }
+                });
+                var selectedMarker = allMarkers[0];
+                var selectedIndex=0;
+                var i=0;
+                allMarkers.forEach(function(marker) {
+                    if(long == marker.position.lat() && latitude == marker.position.lng()){
+                        selectedMarker=marker;
+                        selectedIndex=i;
+                    }else{
+                        infoBoxes[i].close();
+                    }
+                    i++;
+                });
+                map.setCenter(selectedMarker.position);
+                infoBoxes[selectedIndex].open(map, selectedMarker);
+            }
+        } );
+
+        function initMap() {
+
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 20,
+                center: {lat: 37.782551, lng: -122.445368},
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            });
+            new DropDownControl();
+
+            generatePoistionAnchors(map,longlatDataArray,apDataArray);
+            setupHeadMapData();
+            heatmap = new google.maps.visualization.HeatmapLayer({
+                data: heatmapDownloadDimesionData,
+                map: map,
+                radius:40
+            });
+        }
+
+
+        function generatePoistionAnchors(map,longlatObjs,apDataObjs){
+            for (var key in apDataObjs) {
+                if (apDataObjs.hasOwnProperty(key)) {
+                    var obj = longlatObjs[key];
+                    var marker = new google.maps.Marker({
+                        position: new google.maps.LatLng(obj.longitude, obj.latitude) ,
+                        map: map
+                    });
+                    allMarkers.push(marker);
+                    attachContentForInfobox(marker,apDataObjs[key]);
+                }
+            }
+        }
+
+        function attachContentForInfobox(marker, obj) {
+            var renderdContent = "";
+            $.get('components/widgets/location-map-details.html', function (template) {
+                renderdContent = Mustache.render(template, obj);
+                var infowindow = new google.maps.InfoWindow({
+                    content: renderdContent
+                });
+                infoBoxes.push(infowindow);
+                marker.addListener('click', function() {
+                    infowindow.open(marker.get('map'), marker);
+                });
+            });
+
+
+        }
+
+        function toggleHeatmap() {
+            heatmap.setMap(heatmap.getMap() ? null : map);
+        }
 
         function formatAPData(data) {
             for (ap in data) {
@@ -231,5 +323,43 @@
             });
         }
 
+
+        function DropDownControl() {
+
+            var g = google.maps;
+
+            var container = document.createElement("div");
+            container.style.margin = "7px";
+            container.id = "select_box";
+            var selMap = document.createElement("select");
+            selMap.id = "selMap";
+            selMap.className="form-control";
+            selMap.title ="Change Map Type";
+
+            selMap.options[0] = new Option("Toggle HeatMap", 0);
+            selMap.options[1] = new Option("Download HeatMap", 1);
+            selMap.options[2] = new Option("Upload HeatMap", 2);
+
+            selMap.selectedIndex = 0;
+
+            container.appendChild(selMap);
+            map.controls[g.ControlPosition.TOP_RIGHT].push(container);
+
+            g.event.addDomListener(selMap, "change", function() {
+                var numSel = selMap.selectedIndex;
+                if( numSel==0 ){
+                    toggleHeatmap();
+                }else if (numSel == 1){
+                    heatmap.setMap(map);
+                    heatmap.setData(heatmapDownloadDimesionData);
+                }else if (numSel == 2){
+                    heatmap.setMap(map);
+                    heatmap.setData(heatmapUploadDimesionData);
+                }
+                this.blur();
+            });
+        }
+
     });
-</script>x
+
+</script>

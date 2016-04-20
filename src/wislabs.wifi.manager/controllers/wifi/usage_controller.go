@@ -13,7 +13,10 @@ func SummaryDetailsFromTo(constrains dao.Constrains) [][]string {
 	dbMap := utils.GetDBConnection("summary");
 	defer dbMap.Db.Close()
 	var dailyAccData[] dao.SummaryDailyAcctAll
-	query := "SELECT * FROM dailyacct where date >= ? AND date < ? AND tenantid=? AND acl=?"
+	query := "SELECT * FROM dailyacct where date >= ? AND date < ? AND tenantid=? "
+	if len(constrains.ACL) > 0 {
+		query = query + " AND acl=? "
+	}
 
 	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
@@ -85,7 +88,11 @@ func GetAccessPointAgregatedDataFromTo(constrains dao.Constrains) [] dao.AccessP
 		"SUM(inputoctets)/COUNT(DISTINCT username) as avgdataperuser,"+
 		"SUM(totalsessionduration)/SUM(noofsessions) as avgdatapersessiontime "+
 		"FROM dailyacct "+
-		"WHERE date >= ? AND date < ? AND tenantid=? AND acl=? "
+		"WHERE date >= ? AND date < ? AND tenantid=? "
+
+	if len(constrains.ACL) > 0 {
+		query = query + " AND acl=? "
+	}
 
 	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
@@ -126,7 +133,10 @@ func GetAggregatedDownloadsFromTo(constrains dao.Constrains) [] dao.NameValue {
 	dbMap := utils.GetDBConnection("summary");
 	defer dbMap.Db.Close()
 	var totalDailyDownloads[] dao.NameValue
-	query := "SELECT SUM(inputoctets) as value ,date as name FROM dailyacct where date >= ? AND date < ? AND tenantid=? AND acl=?"
+	query := "SELECT SUM(inputoctets) as value ,date as name FROM dailyacct where date >= ? AND date < ? AND tenantid=?"
+	if len(constrains.ACL) > 0 {
+		query = query + " AND acl=? "
+	}
 
 	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
@@ -147,7 +157,10 @@ func GetAggregatedUploadsFromTo(constrains dao.Constrains) [] dao.NameValue {
 	dbMap := utils.GetDBConnection("summary");
 	defer dbMap.Db.Close()
 	var totalDailyDownloads[] dao.NameValue
-	query := "SELECT SUM(outputoctets) as value ,date as name FROM dailyacct where date >= ? AND date < ? AND tenantid=? AND acl=? "
+	query := "SELECT SUM(outputoctets) as value ,date as name FROM dailyacct where date >= ? AND date < ? AND tenantid=? "
+	if len(constrains.ACL) > 0 {
+		query = query + " AND acl=? "
+	}
 
 	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
@@ -168,7 +181,10 @@ func GetAvgDailyDownloadsPerUserFromTo(constrains dao.Constrains) [] dao.NameVal
 	dbMap := utils.GetDBConnection("summary");
 	defer dbMap.Db.Close()
 	var totalDailyDownloads[] dao.NameValue
-	query := "SELECT SUM(inputoctets)/COUNT(DISTINCT username) as value ,date as name FROM dailyacct where date >= ? AND date < ? AND tenantid=?  AND acl=?"
+	query := "SELECT SUM(inputoctets)/COUNT(DISTINCT username) as value ,date as name FROM dailyacct where date >= ? AND date < ? AND tenantid=? "
+	if len(constrains.ACL) > 0 {
+		query = query + " AND acl=? "
+	}
 
 	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
@@ -191,7 +207,10 @@ func GetDownloadsFromTo(constrains dao.Constrains) int64 {
 	defer dbMap.Db.Close()
 	var err error
 	var count sql.NullInt64
-	query := "SELECT SUM(inputoctets) FROM dailyacct where date >= ? AND date < ? AND tenantid = ? AND acl=?"
+	query := "SELECT SUM(inputoctets) FROM dailyacct where date >= ? AND date < ? AND tenantid = ? "
+	if len(constrains.ACL) > 0 {
+		query = query + " AND acl=? "
+	}
 
 	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
@@ -220,7 +239,10 @@ func GetUploadsFromTo(constrains dao.Constrains) int64 {
 	defer dbMap.Db.Close()
 	var err error
 	var count sql.NullInt64
-	query := "SELECT SUM(outputoctets) FROM dailyacct where date >= ? AND date < ? AND tenantid = ? AND acl=?"
+	query := "SELECT SUM(outputoctets) FROM dailyacct where date >= ? AND date < ? AND tenantid = ? "
+	if len(constrains.ACL) > 0 {
+		query = query + " AND acl=? "
+	}
 
 	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
@@ -249,7 +271,10 @@ func GetTotalSessionsCountFromTo(constrains dao.Constrains) int64 {
 	defer dbMap.Db.Close()
 	var err error
 	var count sql.NullInt64
-	query := "SELECT SUM(noofsessions) FROM dailyacct where date >= ? AND date < ? AND tenantid = ? AND acl=?"
+	query := "SELECT SUM(noofsessions) FROM dailyacct where date >= ? AND date < ? AND tenantid = ? "
+	if len(constrains.ACL) > 0 {
+		query = query + " AND acl=? "
+	}
 
 	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
@@ -280,7 +305,10 @@ func GetAvgSessionsFromTo(constrains dao.Constrains) float64 {
 	defer dbMap.Db.Close()
 	var err error
 	var count sql.NullFloat64
-	query := "SELECT SUM(totalsessionduration)/SUM(noofsessions) FROM dailyacct where date >= ? AND date < ? AND tenantid = ? AND acl=?"
+	query := "SELECT SUM(totalsessionduration)/SUM(noofsessions) FROM dailyacct where date >= ? AND date < ? AND tenantid = ? "
+	if len(constrains.ACL) > 0 {
+		query = query + " AND acl=? "
+	}
 
 	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
@@ -308,7 +336,10 @@ func GetAvgDailySessionTimePerUserFromTo(constrains dao.Constrains) [] dao.NameV
 	dbMap := utils.GetDBConnection("summary");
 	defer dbMap.Db.Close()
 	var totalDailyDownloads[] dao.NameValue
-	query := "SELECT SUM(totalsessionduration)/SUM(noofsessions) as value ,date as name FROM dailyacct where date >= ? AND date < ? AND tenantid = ? AND acl=?"
+	query := "SELECT SUM(totalsessionduration)/SUM(noofsessions) as value ,date as name FROM dailyacct where date >= ? AND date < ? AND tenantid = ? "
+	if len(constrains.ACL) > 0 {
+		query = query + " AND acl=? "
+	}
 
 	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
@@ -326,12 +357,20 @@ func GetAvgDailySessionTimePerUserFromTo(constrains dao.Constrains) [] dao.NameV
 }
 
 func getArgs(constrains *dao.Constrains) []interface{}{
-	args := make([]interface{}, len(constrains.GroupNames)+4)
+	var startSize = 3 ;
+	var startIndex  = 3
+	if len(constrains.ACL)>0 {
+		startSize = 4
+	}
+	args := make([]interface{}, len(constrains.GroupNames)+ startSize)
 	args[0] = constrains.From
 	args[1] = constrains.To
 	args[2] = constrains.TenantId
-	args[3] = constrains.ACL
-	for index, value := range constrains.GroupNames { args[index+4] = value }
+	if len(constrains.ACL)>0 {
+		args[3] = constrains.ACL
+		startIndex++;
+	}
+	for index, value := range constrains.GroupNames { args[index+startIndex] = value }
 	return args
 }
 
