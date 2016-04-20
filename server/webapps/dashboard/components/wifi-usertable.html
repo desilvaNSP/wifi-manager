@@ -356,10 +356,8 @@
                     loadingText: 'Wait! Creating User'
                 });
                 $.post('/wifi/users', JSON.stringify(payload), function (result) {
-                    setTimeout(function(){
-                        $("#adduser-body").loadingOverlay('remove');
-                        $('#adduser-modal').modal('hide');
-                    },2000);
+                    $("#adduser-body").loadingOverlay('remove');
+                    $('#adduser-modal').modal('hide');
                 });
             }
             return false;

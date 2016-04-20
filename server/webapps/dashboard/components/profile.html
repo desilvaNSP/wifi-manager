@@ -180,15 +180,11 @@
              data: JSON.stringify(payload),
              success: function (result) {
                  $('.updatefrom-success').html("Sucessfully done update user details").addClass('alert-success').fadeIn(1500);
-                 setTimeout(function(){
-                     $('.updatefrom-success').fadeOut();
-                 },1000);
+                 $('.updatefrom-success').fadeOut();
              },
              error: function (e) {
                  $('.updatefrom-success').html("Sorry error happen").addClass('alert-danger').fadeIn(1500);
-                 setTimeout(function(){
-                     $('.updatefrom-success').fadeOut();
-                 },1000);
+                 $('.updatefrom-success').fadeOut();
              }
              });
         }
@@ -224,17 +220,13 @@
                 data: JSON.stringify(payloadresetpassword),
                 success: function (result) {
                     $('.password-success').html("Sucessfully done reset password").addClass('alert-success').show();
-                    setTimeout(function(){
-                        $('.password-success').hide();
-                        $('#confirm-editpassword-modal').modal("hide");
-                    },1000);
+                    $('.password-success').hide();
+                    $('#confirm-editpassword-modal').modal("hide");
                 },
                 error: function (e) {
                     $('.password-success').addClass('alert-danger').show();
-                    setTimeout(function(){
-                        $('.password-success').hide();
-                        $('#confirm-editpassword-modal').modal("hide").html("Reset password faliure");
-                    },1000);
+                    $('.password-success').hide();
+                    $('#confirm-editpassword-modal').modal("hide").html("Reset password faliure");
                 }
             });
         }else{

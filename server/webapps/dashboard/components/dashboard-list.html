@@ -189,12 +189,10 @@
                         loadingText: 'Creating '+payload.name+' Dashboard'
                     });
                     $.post('/dashboard/apps', JSON.stringify(payload), function (result) {
-                        setTimeout(function(){
-                            $("#adddbmodal-body").loadingOverlay('remove');
-                            $('#add-dashboard-modal').modal('hide');
-                            $grid.shuffle('destroy');
-                            renderDashboardApps();
-                        },2000);
+                        $("#adddbmodal-body").loadingOverlay('remove');
+                        $('#add-dashboard-modal').modal('hide');
+                        $grid.shuffle('destroy');
+                        renderDashboardApps();
                     });
                 }
                 return false;
@@ -261,12 +259,10 @@
                     });
                 },
                 success: function (result) {
-                    setTimeout(function(){
-                        $("#appdelete-body").loadingOverlay('remove');
-                        $('#confirm-delete-modal').modal('hide');
-                        $grid.shuffle('destroy');
-                        renderDashboardApps();
-                    },2000);
+                    $("#appdelete-body").loadingOverlay('remove');
+                    $('#confirm-delete-modal').modal('hide');
+                    $grid.shuffle('destroy');
+                    renderDashboardApps()
                 },
                 error: function (e) {
                 }
