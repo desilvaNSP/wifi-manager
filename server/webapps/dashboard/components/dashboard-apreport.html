@@ -80,55 +80,6 @@
             tenantid: parseInt(Cookies.get("tenantid"))
         };
 
-        function initMap() {
-            map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 20,
-                center: {lat: 37.782551, lng: -122.445368},
-                mapTypeId: google.maps.MapTypeId.SATELLITE
-            });
-
-            generatePoistionAnchors(map,longlatDataArray,apDataArray);
-            setupHeadMapData();
-            heatmap = new google.maps.visualization.HeatmapLayer({
-                data: heatmapDownloadDimesionData,
-                map: map,
-                radius:40
-            });
-        }
-
-
-        function generatePoistionAnchors(map,longlatObjs,apDataObjs){
-            for (var key in apDataObjs) {
-                if (apDataObjs.hasOwnProperty(key)) {
-                    var obj = longlatObjs[key];
-                    var marker = new google.maps.Marker({
-                        position: new google.maps.LatLng(obj.longitude, obj.latitude) ,
-                        map: map
-                    });
-                    attachContentForInfobox(marker,apDataObjs[key]);
-                }
-            }
-        }
-
-        function attachContentForInfobox(marker, obj) {
-            var renderdContent = "";
-            $.get('components/widgets/location-map-details.html', function (template) {
-                renderdContent = Mustache.render(template, obj);
-                var infowindow = new google.maps.InfoWindow({
-                    content: renderdContent
-                });
-
-                marker.addListener('click', function() {
-                    infowindow.open(marker.get('map'), marker);
-                });
-            });
-
-
-        }
-
-        function toggleHeatmap() {
-            heatmap.setMap(heatmap.getMap() ? null : map);
-        }
 
         function formatBytes(bytes) {
             return(bytes / 1073741824).toFixed(6) + " GB";
