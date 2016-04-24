@@ -37,6 +37,7 @@ type AccessPoint struct {
 	Totalinputoctets          int64            `db:"totalinputoctets"json:"totalinputoctets"`
 	Totaloutputoctets         int64            `db:"totaloutputoctets"json:"totaloutputoctets"`
 	Calledstationmac     utils.NullString         `db:"calledstationmac"json:"calledstationmac"`
+	Calledstationname    utils.NullString         `db:"calledstationname"json:"calledstationname"`
 }
 
 type LocationAccessPoint struct {

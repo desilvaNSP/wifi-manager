@@ -125,7 +125,7 @@
                                 locations: locations,
                                 metrics: metrics,
                                 currentuser: Cookies.get("username"),
-                                acltypes:acltypes
+                                acltypes:removeEmptyString(acltypes)
                             });
                             $('#add-dashboard-app-modal-content').html(rendered);
                             $('#add-dashboard-modal').modal();
@@ -338,7 +338,7 @@
                                 }
                                 return registeredUsers;
                             },
-                            acltypes:acltypes,
+                            acltypes:removeEmptyString(acltypes),
                             checkedGroups : function() {
                                 var checkibilty;
                                 for(var index in groupsofAppID){
@@ -464,6 +464,16 @@
             }
             return false;
         });
+    }
+
+    function removeEmptyString(arrayContainer){
+        var returnContainer = [];
+        arrayContainer.forEach(function(data){
+            if(data != "" && data != null){
+                returnContainer.push(data);
+            }
+        });
+        return returnContainer;
     }
 
     function getCheckedMetrices(chkboxName) {
