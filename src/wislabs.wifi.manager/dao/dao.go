@@ -30,13 +30,26 @@ type SummaryDailyAcctAll struct {
 }
 
 type AccessPoint struct {
-	TotalSessions         int            `db:"totalsessions"json:"totalsessions"`
-	TotalUsers   int            `db:"totalusers"json:"totalusers"`
-	AvgdataperUser   utils.NullString            `db:"avgdataperuser"json:"avgdataperuser"`
-	Avgdatapersessiontime   utils.NullString           `db:"avgdatapersessiontime"json:"avgdatapersessiontime"`
+	TotalSessions             int                 `db:"totalsessions"json:"totalsessions"`
+	TotalUsers                int                     `db:"totalusers"json:"totalusers"`
+	AvgdataperUser          utils.NullString      `db:"avgdataperuser"json:"avgdataperuser"`
+	Avgdatapersessiontime   utils.NullString   `db:"avgdatapersessiontime"json:"avgdatapersessiontime"`
 	Totalinputoctets          int64            `db:"totalinputoctets"json:"totalinputoctets"`
 	Totaloutputoctets         int64            `db:"totaloutputoctets"json:"totaloutputoctets"`
-	Calledstationmac     utils.NullString            `db:"calledstationmac"json:"calledstationmac"`
+	Calledstationmac     utils.NullString         `db:"calledstationmac"json:"calledstationmac"`
+	Calledstationname    utils.NullString         `db:"calledstationname"json:"calledstationname"`
+}
+
+type LocationAccessPoint struct {
+	AccessPointData AccessPoint
+	LongLatMacData  LongLatMac
+}
+
+
+type LongLatMac struct {
+	MAC        string                  `db:"mac"json:"mac"`
+	Longitude  utils.NullFloat64   `db:"longitude"json:"longitude"`
+	Latitude   utils.NullFloat64    `db:"latitude"json:"latitude"`
 }
 
 type Tenant struct {
@@ -165,8 +178,8 @@ type DashboardAppUser struct {
 }
 
 type DashboardAppMetric struct {
-	AppId    int                      `db:"appid"json:"appid"`
 	MetricId int                  `db:"metricid"json:"metricid"`
+	Name     string                      `db:"name"json:"name"`
 }
 
 type DashboardAppGroup struct {
@@ -175,8 +188,8 @@ type DashboardAppGroup struct {
 }
 
 type DashboardAppAcls struct {
-	AppId     int                      `db:"appid"json:"appid"`
-	Acls 	  string	             `db:"acl"json:"acls"`
+	AppId int                      `db:"appid"json:"appid"`
+	Acls  string                     `db:"acl"json:"acls"`
 }
 
 type Response struct {

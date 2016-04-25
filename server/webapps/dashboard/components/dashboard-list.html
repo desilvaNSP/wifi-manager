@@ -43,7 +43,24 @@
     var userNames = [], taggedUsers = [];
     var $grid, $sizer;
     var deleteAppId;
+
+
+
     $(document).ready(function () {
+
+        locationsAjax = $.get('/dashboard/' + Cookies.get('tenantid') + '/users/' + Cookies.get('username'), function (result) {
+            locations = result.apgroups
+        });
+
+        metricsAjax = $.get('/dashboard/' + Cookies.get('tenantid') + '/metrics', function (result) {
+            metrics = result
+        });
+
+
+        aclTypes = $.get('/dashboard/acltypes', function (result) {
+            acltypes = result
+        });
+
         $grid = $('#app-grid'), $sizer = $grid.find('.shuffle__sizer');
 
         renderDashboardApps();
@@ -62,8 +79,12 @@
             });
         });
 
+
         $("#add-dashboard-btn").on('click', function () {
             var users, locations, metrics,acltypes;
+
+            taggedUsers = [];
+
             userPermissions = JSON.parse(Cookies.get('userpermissions'));
             hasDashboardUserReadPermission = false
             $.each(userPermissions, function (key, value) {
@@ -85,13 +106,12 @@
             }
 
             var locationsAjax = $.get('/dashboard/' + Cookies.get('tenantid') + '/users/' + Cookies.get('username'), function (result) {
-                locations = result.apgroups
+                locations = result.apgroups;
             });
 
             var metricsAjax = $.get('/dashboard/' + Cookies.get('tenantid') + '/metrics', function (result) {
                 metrics = result
             });
-
 
             var aclTypes = $.get('/dashboard/acltypes', function (result) {
                 acltypes = result
@@ -105,7 +125,7 @@
                                 locations: locations,
                                 metrics: metrics,
                                 currentuser: Cookies.get("username"),
-                                acltypes:acltypes
+                                acltypes:removeEmptyString(acltypes)
                             });
                             $('#add-dashboard-app-modal-content').html(rendered);
                             $('#add-dashboard-modal').modal();
@@ -137,6 +157,7 @@
                                     });
                                 }
                             });
+
                             addDashboardFromValidator = $("#add-dashboard-form").validate({
                                 rules: {
                                     appName: {
@@ -162,23 +183,23 @@
                         aggregate: aggregate,
                         groups: getCheckedGroups('group'),
                         metrics: getCheckedMetrices('metric'),
-                        acls: $('.radio:checked').val()
+                        acls: $('.acltypes-radio:checked').val()
                     };
                     $("#adddbmodal-body").loadingOverlay({
                         loadingText: 'Creating '+payload.name+' Dashboard'
                     });
                     $.post('/dashboard/apps', JSON.stringify(payload), function (result) {
-                        setTimeout(function(){
-                            $("#adddbmodal-body").loadingOverlay('remove');
-                            $('#add-dashboard-modal').modal('hide');
-                            $grid.shuffle('destroy');
-                            renderDashboardApps();
-                        },2000);
+                        $("#adddbmodal-body").loadingOverlay('remove');
+                        $('#add-dashboard-modal').modal('hide');
+                        $grid.shuffle('destroy');
+                        renderDashboardApps();
                     });
                 }
                 return false;
             });
         });
+
+
 
         function renderDashboardApps() {
             $.get('/dashboard/' + Cookies.get('tenantid') + '/apps/' + Cookies.get('username'), function (result) {
@@ -238,12 +259,10 @@
                     });
                 },
                 success: function (result) {
-                    setTimeout(function(){
-                        $("#appdelete-body").loadingOverlay('remove');
-                        $('#confirm-delete-modal').modal('hide');
-                        $grid.shuffle('destroy');
-                        renderDashboardApps();
-                    },2000);
+                    $("#appdelete-body").loadingOverlay('remove');
+                    $('#confirm-delete-modal').modal('hide');
+                    $grid.shuffle('destroy');
+                    renderDashboardApps()
                 },
                 error: function (e) {
                 }
@@ -252,8 +271,209 @@
     });
 
     function deleteApp(event) {
-        deleteAppId = $(event).attr('data-appid');
+        deleteAppId = $(event).data('appid');
         $('#confirm-delete-modal').modal();
+    }
+
+    function dashboardSettings(event){
+        var users, locations, metrics,acltypes;
+        var groupsofAppID,usersOfAppID,metricsOfAppID,aclofAppID,aggregateValue;
+
+        var selectedAppIdForSettings = $(event).data('appid');
+        var appName = $(event).data('appname');
+
+        // get app details by id
+        var allAppSettings  = $.get('/dashboard/apps/' + selectedAppIdForSettings + '/appsettings', function (result) {
+            groupsofAppID= result.groups;
+            metricsOfAppID= result.metrics;
+            aclofAppID = result.acls;
+            aggregateValue= result.aggregate;
+            usersOfAppID=result.users;
+        });
+
+        var locationsAjax = $.get('/dashboard/' + Cookies.get('tenantid') + '/users/' + Cookies.get('username'), function (result) {
+            locations = result.apgroups
+        });
+
+        var metricsAjax = $.get('/dashboard/' + Cookies.get('tenantid') + '/metrics', function (result) {
+            metrics = result
+        });
+
+        var aclTypes = $.get('/dashboard/acltypes', function (result) {
+            acltypes = result
+        });
+
+        userPermissions = JSON.parse(Cookies.get('userpermissions'));
+        hasDashboardUserReadPermission = false;
+        $.each(userPermissions, function (key, value) {
+            if (value == 'dashboard_users') {
+                hasDashboardUserReadPermission = true
+            }
+        });
+        if (hasDashboardUserReadPermission) {
+            var usersAjax = $.get('/dashboard/' + Cookies.get('tenantid') + '/users', function (result) {
+                users = result;
+                userNames = [];
+                for (var i = users.length; i--;) {
+                    userNames.push(users[i].username)
+                }
+            });
+        } else {
+            usersAjax = true;
+            userNames.push(Cookies.get('username'))
+        }
+
+        var updateDashboardFromValidator;
+        $.when(usersAjax, locationsAjax, metricsAjax ,aclTypes,allAppSettings).done(function () {
+            $.get('components/dashboard-settings-modal.html', function (template) {
+                        var rendered = Mustache.render(template, {
+                            appname:appName,
+                            users: users,
+                            locations: locations,
+                            metrics: metrics,
+                            currentuser: function(){
+                                var registeredUsers = [];
+                                for(var index in usersOfAppID) {
+                                    registeredUsers.push(usersOfAppID[index].username)
+                                }
+                                return registeredUsers;
+                            },
+                            acltypes:removeEmptyString(acltypes),
+                            checkedGroups : function() {
+                                var checkibilty;
+                                for(var index in groupsofAppID){
+                                    var groupname = groupsofAppID[index].groupname;
+                                    if(this.toString()==groupname){
+                                        checkibilty = 'checked';
+                                        break;
+                                    }else{
+                                        checkibilty = 'unchecked';
+                                    }
+                                }
+                                return checkibilty;
+                            },
+                            checkedACL : function() {
+                                var checkibilty;
+                                var acl = aclofAppID;
+                                if(this.toString()==acl){
+                                    checkibilty = 'checked';
+                                    return checkibilty;
+                                }
+                            },
+                            checkedMetrics : function() {
+                                var checkibilty;
+                                for(var index in metricsOfAppID){
+                                    var metricid = metricsOfAppID[index].metricid;
+                                    if(this.metricid == metricid){
+                                        checkibilty = 'checked';
+                                        break;
+                                    }else{
+                                        checkibilty = 'unchecked';
+                                    }
+                                }
+                                return checkibilty;
+                            },
+                            checkAggreateLoc :function(){
+                                var checkibilty;
+                                if(aggregateValue=="yes"){
+                                    checkibilty = 'checked';
+                                }else{
+                                    checkibilty = 'unchecked';
+                                }
+                                return checkibilty;
+                            }
+                        });
+
+                        $('#add-dashboard-app-modal-content').html(rendered);
+                        $('#settings-dashboard-modal').modal();
+                        $("#username-tags").tagit({
+                            availableTags: userNames,
+                            autocomplete: {delay: 0, minLength: 1},
+                            beforeTagAdded: function (event, ui) {
+                                if (userNames.indexOf(ui.tagLabel) == -1) {
+                                    return false;
+                                }
+                                if (ui.tagLabel == "not found") {
+                                    return false;
+                                }
+                            },
+                            beforeTagRemoved: function (event, ui) {
+                                if (Cookies.get('username') == ui.tagLabel) {
+                                    return false;
+                                }
+                            },
+                            afterTagAdded: function (event, ui) {
+                                taggedUsers.push({
+                                    tenantid: parseInt(Cookies.get('tenantid')),
+                                    username: ui.tagLabel
+                                });
+                            },
+                            afterTagRemoved: function (event, ui) {
+                                taggedUsers = taggedUsers.filter(function (returnableObjects) {
+                                    return returnableObjects.username !== ui.tagLabel;
+                                });
+                            },
+
+                        });
+                        updateDashboardFromValidator = $("#add-dashboard-form").validate({
+                            rules: {
+                                appName: {
+                                    required: true,
+                                    minlength: 1
+                                }
+                            }
+                        });
+                    }
+            );
+        });
+
+        $("#add-dashboard-app-modal-content").off('click').on("click", '#update-sett-dashboard', function (event) {
+            if (updateDashboardFromValidator.valid()) {
+                var aggregate = 'no';
+                if ($('#update-chkAggregate').is(":checked")) {
+                    aggregate = 'yes';
+                }
+                var payload = {
+                    tenantid: parseInt(Cookies.get('tenantid')),
+                    appid:selectedAppIdForSettings,
+                    users: taggedUsers,
+                    aggregate: aggregate,
+                    groups: getCheckedGroups('group'),
+                    metrics: getCheckedMetrices('metric'),
+                    acls: $('.update-acltypes-radio:checked').val()
+                };
+
+                $.ajax({
+                    url: '/dashboard/apps',
+                    type: 'PUT',
+                    contentType: "application/json",
+                    data: JSON.stringify(payload),
+                    beforeSend:function(){
+                        $("#settingsdbmodal-body").loadingOverlay({
+                            loadingText: 'Updating App Settings'
+                        });
+                    },
+                    success: function (result) {
+                        $("#settingsdbmodal-body").loadingOverlay('remove');
+                        $('#settings-dashboard-modal').modal('hide');
+                    },
+                    error: function (e) {
+                        console.log(e)
+                    }
+                });
+            }
+            return false;
+        });
+    }
+
+    function removeEmptyString(arrayContainer){
+        var returnContainer = [];
+        arrayContainer.forEach(function(data){
+            if(data != "" && data != null){
+                returnContainer.push(data);
+            }
+        });
+        return returnContainer;
     }
 
     function getCheckedMetrices(chkboxName) {

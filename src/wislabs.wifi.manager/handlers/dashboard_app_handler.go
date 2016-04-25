@@ -26,6 +26,21 @@ func CreateDashboardApp(w http.ResponseWriter, r *http.Request){
 	dashboard.CreateNewDashboardApp(dashboardApp)
 	w.WriteHeader(http.StatusOK)
 }
+/**
+* PUT
+* @path dashboard/apps/
+*
+*/
+func UpdateDashBoardSettingsHander(w http.ResponseWriter, r *http.Request){
+	decoder := json.NewDecoder(r.Body)
+	var dashboardApp dao.DashboardAppInfo
+	err := decoder.Decode(&dashboardApp)
+	if(err != nil){
+		log.Fatalln("Error while decoding location json")
+	}
+	dashboard.UpdateDashBoardSettings(dashboardApp)
+	w.WriteHeader(http.StatusOK)
+}
 
 /**
 * GET
@@ -64,6 +79,27 @@ func GetUsersOfApp(w http.ResponseWriter, r *http.Request){
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(appUsers); err != nil {
+		panic(err)
+	}
+}
+
+func GetAllAppSettings(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	appId, err := strconv.Atoi(vars["appid"])
+	if (err != nil) {
+		log.Fatalln("Error while reading tenantid", err)
+	}
+	var appsettings dao.DashboardAppInfo
+
+	appsettings.Users = dashboard.GetDashboardUsersOfApp(appId)
+	appsettings.Metrics = dashboard.GetDashboardMetricsOfApp(appId)
+	appsettings.Groups = dashboard.GetDashboardGroupsOfApp(appId)
+	appsettings.Acls = dashboard.GetDashboardAclsOfApp(appId)
+	appsettings.Aggregate = dashboard.GetDashboardAggregateOfApp(appId)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(appsettings); err != nil {
 		panic(err)
 	}
 }
@@ -129,6 +165,26 @@ func GetAclsOfApp(w http.ResponseWriter, r *http.Request){
 
 /**
 * GET
+* @path dashboard/apps/{appid}/aggregate
+*
+*/
+func GetAggreagateValueOfApp(w http.ResponseWriter, r *http.Request){
+	vars := mux.Vars(r)
+	appId, err := strconv.Atoi(vars["appid"])
+	if(err!= nil){
+		log.Fatalln("Error while reading appid", err)
+	}
+	appAggregate := dashboard.GetDashboardAggregateOfApp(appId)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(appAggregate); err != nil {
+		panic(err)
+	}
+}
+
+/**
+* GET
 * @path dashboard/{tenantid}/metrics
 *
 */
@@ -146,7 +202,6 @@ func GetAllDashboardMetrics(w http.ResponseWriter, r *http.Request){
 		panic(err)
 	}
 }
-
 
 /**
 * GET

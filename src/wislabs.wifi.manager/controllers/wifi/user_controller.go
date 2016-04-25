@@ -14,7 +14,10 @@ func GetDailyUserCountSeriesFromTo(constrains dao.Constrains) [] dao.NameValue {
 	dbMap := utils.GetDBConnection("summary");
 	defer dbMap.Db.Close()
 	var totalDailyDownloads[] dao.NameValue
-	query := "SELECT COUNT(DISTINCT username) as value ,date as name FROM dailyacct where date >= ? AND date < ? AND tenantid=? AND acl=? "
+	query := "SELECT COUNT(DISTINCT username) as value ,date as name FROM dailyacct where date >= ? AND date < ? AND tenantid=? "
+	if len(constrains.ACL) > 0 {
+		query = query + " AND acl=? "
+	}
 
 	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)
@@ -151,7 +154,10 @@ func GetUsersCountFromTo(constrains dao.Constrains) int64 {
 	defer dbMap.Db.Close()
 	var err error
 	var count sql.NullInt64
-	query := "SELECT COUNT(DISTINCT username) FROM dailyacct where date >= ? AND date < ? AND tenantid=? AND acl=?"
+	query := "SELECT COUNT(DISTINCT username) FROM dailyacct where date >= ? AND date < ? AND tenantid=? "
+	if len(constrains.ACL) > 0 {
+		query = query + " AND acl=? "
+	}
 
 	if len(constrains.GroupNames) > 0 {
 		args := getArgs(&constrains)

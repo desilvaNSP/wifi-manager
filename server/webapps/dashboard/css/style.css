@@ -7750,7 +7750,7 @@ body.skin-3 {
     position: absolute;
     z-index: 98;
     right: 0px;
-    padding: 6px;
+    padding: 12px;
     background-color: rgba(249, 249, 249, 0);
     top: 0;
     color: #2F4050;
@@ -7953,4 +7953,11 @@ img.thumbnail  { position: absolute; width: 178px;height: 178px ;z-index: 20}
 .profile-container{
     padding-top: 20px;
     margin-top: 50px;
+}
+
+#map { height: 100%; }
+
+.map-containner  #map{
+    width: auto !important;
+    height: 400px !important;
 }

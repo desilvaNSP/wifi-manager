@@ -83,7 +83,6 @@ func GetAgregatedUploadsFromToHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-
 /**
 * POST
 * @path /wifi/usage/downloads
@@ -174,14 +173,22 @@ func GetAccessPointAgregatedDataFromToHandler(w http.ResponseWriter, r*http.Requ
 	var constrains dao.Constrains
 	decoder.Decode(&constrains)
 
-	var accespoint[] dao.AccessPoint
+	var accesPoint[] dao.AccessPoint
+	accesPoint = wifi.GetAccessPointAgregatedDataFromTo(constrains)
 
-	accespoint = wifi.GetAccessPointAgregatedDataFromTo(constrains)
+	accessPointDataWithLocation := make([]dao.LocationAccessPoint, len(accesPoint))
 
+	for index, point := range accesPoint {
+		var longLatPoint[] dao.LongLatMac
+		longLatPoint =  wifi.GetLongLatLocationByMacAddress(point.Calledstationmac.String)
+		if longLatPoint != nil {
+			accessPointDataWithLocation[index].AccessPointData = point;
+			accessPointDataWithLocation[index].LongLatMacData = longLatPoint[0]
+		}
+	}
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-
-	if err := json.NewEncoder(w).Encode(accespoint); err != nil {
+	if err := json.NewEncoder(w).Encode(accessPointDataWithLocation); err != nil {
 		panic(err)
 	}
 }

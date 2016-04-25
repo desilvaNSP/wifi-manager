@@ -157,6 +157,20 @@ var routes = Routes{
 		dashboard_handlers.GetAclsOfApp,
 	},
 	Route{
+		"Get Dashboard App Acl",
+		"GET",
+		"/dashboard/apps/{appid}/aggregate",
+		true,
+		dashboard_handlers.GetAggreagateValueOfApp,
+	},
+	Route{
+		"Get All Dashboard app settings",
+		"GET",
+		"/dashboard/apps/{appid}/appsettings",
+		true,
+		dashboard_handlers.GetAllAppSettings,
+	},
+	Route{
 		"Delete Dashboard User App",
 		"DELETE",
 		"/dashboard/{tenantid}/apps/{appid}",
@@ -169,6 +183,13 @@ var routes = Routes{
 		"/dashboard/apps",
 		true,
 		dashboard_handlers.CreateDashboardApp,
+	},
+	Route{
+		"Update Dashboard User App Settings",
+		"PUT",
+		"/dashboard/apps",
+		true,
+		dashboard_handlers.UpdateDashBoardSettingsHander,
 	},
 	Route{
 		"Create WIFI user",
