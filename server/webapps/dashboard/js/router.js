@@ -81,5 +81,11 @@ function renderProfilePage() {
     })
 }
 
+function renderAAAPage() {
+    $.get('components/radius-aaamonitor.html', function (template) {
+        var rendered = Mustache.render(template, {});
+        $('#content-main').html(rendered)
+    })
+}
 
 
