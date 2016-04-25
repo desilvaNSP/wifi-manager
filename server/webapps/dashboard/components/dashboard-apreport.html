@@ -19,8 +19,8 @@
                     <tr>
                         <th>AP mac</th>
                         <th>AP Name</th>
-                        <th>Total Downloads</th>
                         <th>Total Uploads</th>
+                        <th>Total Downloads</th>
                         <th>Total Sessions</th>
                         <th>Total Users</th>
                         <th>Avg Data Usage per User</th>
@@ -83,7 +83,7 @@
 
 
         function formatBytes(bytes) {
-            return(bytes / 1073741824).toFixed(6) + " GB";
+            return  numeral(bytes).format('0.00b')
         }
 
         var accespointTable = $('.dataTables-accesspoint').DataTable({
@@ -109,8 +109,8 @@
             columns: [
                 {"data": "calledstationmac", "width": "10%"},
                 {"data": "calledstationname", "width": "10%"},
-                {"data": "totaloutputoctets", "width": "8%"},
                 {"data": "totalinputoctets", "width": "8%"},
+                {"data": "totaloutputoctets", "width": "8%"},
                 {"data": "totalsessions", "width": "5%"},
                 {"data": "totalusers", "width": "5%"},
                 {"data": "avgdataperuser", "width": "8%"},
@@ -128,6 +128,12 @@
                         return formatBytes(data);
                     },
                     "targets": 3
+                },
+                {
+                    "render": function ( data ) {
+                        return formatBytes(data);
+                    },
+                    "targets": 6
                 }
             ],
             dom: "<'dt-toolbar'<'col-xs-12 col-sm-6'lf><'col-sm-6 col-xs-6 hidden-xs'CT>r>" +
