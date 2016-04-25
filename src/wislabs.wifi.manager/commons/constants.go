@@ -67,7 +67,7 @@ const GET_DASHBOARD_USER_APPS string       = "SELECT tenantid, appid, name, aggr
 const ADD_DASHBOARD_APP string 		   = "INSERT INTO apps (tenantid, name, aggregate) VALUES( ?, ?, ?)"
 const ADD_DASHBOARD_APP_USER string        = "INSERT INTO appusers (tenantid, appid, username) VALUES(?, ?, ? )"
 const ADD_DASHBOARD_APP_METRIC string      = "INSERT INTO appmetrics (appid, metricid) VALUES( ?, ? )"
-const ADD_DASHBOARD_APP_GROUP string       = "INSERT INTO appgroups (appid, groupid, groupname) VALUES( ?, ?, ? )"
+const ADD_DASHBOARD_APP_GROUP string       = "INSERT INTO appgroups (appid, groupname) VALUES( ?, ? )"
 const ADD_DASHBOARD_ACLS string            = "INSERT INTO appacls (appid,acl) VALUES( ?, ?)"
 const DELETE_DASHBOARD_APP string          = "DELETE FROM apps WHERE appid=? AND tenantid=?"
 const DELETE_DASHBOARD_APP_USER string     = "DELETE FROM appusers WHERE appid=? AND username=?"
