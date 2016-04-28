@@ -37,7 +37,7 @@ const UPDATE_DASHBOARD_USER_PASSWORD string  		= "UPDATE users SET password=? WH
 const DELETE_DASHBOARD_USER string   			= "DELETE FROM users WHERE tenantid=? AND username=?"
 
 /* WIFI users */
-const ADD_WIFI_USER_SQL string  = "INSERT INTO accounting (tenantid, username, acctstarttime, acctlastupdatedtime, acctstoptime, groupname, acl) VALUES( ?, ?, NOW(),NOW(),NOW()+ INTERVAL 1 HOUR, ?, ? )";
+const ADD_WIFI_USER_SQL string  = "INSERT INTO accounting (tenantid, username, acctactivationtime, acctstarttime, maxsessionduration, groupname, acl) VALUES( ?, ?, NOW(),NOW(), 3600, ?, ? )";
 const UPDATE_WIFI_USER string   = "UPDATE accounting SET acl=? WHERE username=? AND tenantid=?";
 const GET_ALL_WIFI_USERS string = "SELECT tenantid, username, acctstarttime, acctlastupdatedtime, acctstoptime, groupname, visits, acl FROM accounting WHERE tenantid=? order by username LIMIT ?, ?";
 const SEARCH_WIFI_USERS string  = "SELECT tenantid, username, acctstarttime, acctlastupdatedtime, acctstoptime, groupname, visits, acl FROM accounting WHERE tenantid=? AND username LIKE ? LIMIT ?,?";

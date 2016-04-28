@@ -100,3 +100,6 @@ CREATE TABLE IF NOT EXISTS devicestats (
   PRIMARY KEY (`date`, `groupname`, `tenantid`)
 )
   ENGINE = InnoDB;
+
+CREATE INDEX calledstationid_date ON dailyacct(calledstationid,date);
+CREATE INDEX groupname_date ON dailyacct(groupname,date);

@@ -29,9 +29,9 @@
                     <th>ACL</th>
                     <th>Group</th>
                     <th>Visit count</th>
-                    <th>Acct start Time</th>
-                    <th>Acct Stop Time</th>
-                    <th>Acct Last Updated Time</th>
+                    <th>Acct. Activation Time</th>
+                    <th>Acct. Last Started Time</th>
+                    <th>MaxSession Duration</th>
                     <th>Settings</th>
                 </tr>
                 <tr>
@@ -61,7 +61,7 @@
                 <small class="font-bold">Add wifi users and configure Access Control</small>
             </div>
             <div class="modal-body" id="adduser-body">
-                <hr>
+
                 <form role="form" id="adduser-form">
                     <div class="form-group">
                         <label for="inputEditUsername">Username</label>
@@ -72,6 +72,27 @@
                         <label for="inputEditPassword">Password</label>
                         <input type="text" class="form-control" id="inputPassword" name="inputpassword"
                                placeholder="Password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputMaxSessionDuration">Max. Session Duration</label>
+                        <input type="text" class="form-control" id="inputMaxSessionDuration" name="inputMaxSessionDuration"
+                               placeholder="Max. Session Duration" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputLocationGroup">Associated Group</label>
+                        <div class="dropdown">
+                            <button class="btn btn-default dropdown-toggle" type="button" id="inputLocationGroup" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                Group
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                <li><a href="#">CSQ</a></li>
+                                <li><a href="#">Fairfield</a></li>
+                                <li><a href="#">Darebin</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="#">Master</a></li>
+                            </ul>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="radioIsBlackListed">Access Control</label>
@@ -88,7 +109,7 @@
                                                                          value="normaluser">Normal User</label><br/>
                     </div>
                     <div class="checkbox">
-                        <hr/>
+                        <br/><hr/><br/>
                         <label>
                             <input type="checkbox" id="chkEditIsActive"> Start Accounting
                         </label>
@@ -196,9 +217,9 @@
                 {"data": "acl", "width": "7%"},
                 {"data": "groupname", "width": "10%"},
                 {"data": "visits", "width": "5%"},
+                {"data": "acctactivationtime", "width": "10%"},
                 {"data": "acctstarttime", "width": "10%"},
-                {"data": "acctstoptime", "width": "10%"},
-                {"data": "acctlastupdatedtime", "width": "10%"},
+                {"data": "maxsessionduration", "width": "10%"},
                 {
                     "data": null,
                     "defaultContent": "<div class='btn-group'><button class='btn btn-white btn-xs dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fa fa-gear'></i></button><ul class='dropdown-menu'><li><a href='#' id='setting-edit-user'>Edit</a></li><li><a href='#' id='setting-change-password'>Change Password</a></li><li><a href='#' id='setting-delete-user'>Delete</a></li></ul></div>",
@@ -222,7 +243,7 @@
                     {"bSortable": false},
                     {type: "select", values: ['Whitelisted', 'Blacklisted', 'normal_user']},
                     {type: "select", values: locationGroups},
-                    {type: "number" , "bSortable": false},
+                    null,
                     {"bSortable": false},
                     {"bSortable": false},
                     {"bSortable": false},
@@ -248,7 +269,7 @@
                 type: 'DELETE',
                 beforeSend:function(){
                     $("#userdelete-body").loadingOverlay({
-                        loadingText: 'Updating location'
+                        loadingText: 'Deleting  User'+selectedUser.username
                     });
                 },
                 success: function (result) {

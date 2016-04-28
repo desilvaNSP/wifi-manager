@@ -25,19 +25,21 @@ type SummaryDailyAcctAll struct {
 	Calledstationid      string            `db:"calledstationid"json:"calledstationid"`
 	Ssid                 utils.NullString            `db:"ssid"json:"ssid"`
 	Calledstationmac     utils.NullString            `db:"calledstationmac"json:"calledstationmac"`
+	Calledstationname    utils.NullString            `db:"calledstationname"json:"calledstationname"`
 	Groupname            utils.NullString            `db:"groupname"json:"groupname"`
 	Locationid           utils.NullString            `db:"locationid"json:"locationid"`
+	ACL                  utils.NullString                 `db:"acl"json:"acl"`
 }
 
 type AccessPoint struct {
-	TotalSessions             int                 `db:"totalsessions"json:"totalsessions"`
-	TotalUsers                int                     `db:"totalusers"json:"totalusers"`
-	AvgdataperUser          utils.NullString      `db:"avgdataperuser"json:"avgdataperuser"`
-	Avgdatapersessiontime   utils.NullString   `db:"avgdatapersessiontime"json:"avgdatapersessiontime"`
-	Totalinputoctets          int64            `db:"totalinputoctets"json:"totalinputoctets"`
-	Totaloutputoctets         int64            `db:"totaloutputoctets"json:"totaloutputoctets"`
-	Calledstationmac     utils.NullString         `db:"calledstationmac"json:"calledstationmac"`
-	Calledstationname    utils.NullString         `db:"calledstationname"json:"calledstationname"`
+	TotalSessions         int                 `db:"totalsessions"json:"totalsessions"`
+	TotalUsers            int                     `db:"totalusers"json:"totalusers"`
+	AvgdataperUser        utils.NullString      `db:"avgdataperuser"json:"avgdataperuser"`
+	Avgdatapersessiontime utils.NullString   `db:"avgdatapersessiontime"json:"avgdatapersessiontime"`
+	Totalinputoctets      int64            `db:"totalinputoctets"json:"totalinputoctets"`
+	Totaloutputoctets     int64            `db:"totaloutputoctets"json:"totaloutputoctets"`
+	Calledstationmac      utils.NullString         `db:"calledstationmac"json:"calledstationmac"`
+	Calledstationname     utils.NullString         `db:"calledstationname"json:"calledstationname"`
 }
 
 type LocationAccessPoint struct {
@@ -47,9 +49,9 @@ type LocationAccessPoint struct {
 
 
 type LongLatMac struct {
-	MAC        string                  `db:"mac"json:"mac"`
-	Longitude  utils.NullFloat64   `db:"longitude"json:"longitude"`
-	Latitude   utils.NullFloat64    `db:"latitude"json:"latitude"`
+	MAC       string                  `db:"mac"json:"mac"`
+	Longitude utils.NullFloat64   `db:"longitude"json:"longitude"`
+	Latitude  utils.NullFloat64    `db:"latitude"json:"latitude"`
 }
 
 type Tenant struct {
@@ -72,10 +74,10 @@ type DashboardUser struct {
 }
 
 type DashboardUserDetails struct {
-	TenantId    int       `json:"tenantid"`
-	Username    string    `json:"username"`
-	Email       string    `json:"email"`
-	ContactNo    string  `json:"contactno"`
+	TenantId  int       `json:"tenantid"`
+	Username  string    `json:"username"`
+	Email     string    `json:"email"`
+	ContactNo string  `json:"contactno"`
 }
 
 type DashboardUserResetPassword struct {
@@ -85,16 +87,15 @@ type DashboardUserResetPassword struct {
 }
 
 type PortalUser struct {
-	TenantId            int                         `db:"tenantid"json:"tenantid"`
-	Username            string                      `db:"username"json:"username"`
-	Password            string                      `json:"password"`
-	Acctstarttime       utils.NullString       `db:"acctstarttime"json:"acctstarttime"`
-	Acctlastupdatedtime utils.NullString `db:"acctlastupdatedtime"json:"acctlastupdatedtime"`
-	Acctactivationtime  utils.NullString  `db:"acctactivationtime"json:"acctactivationtime"`
-	Acctstoptime        utils.NullString        `db:"acctstoptime"json:"acctstoptime"`
-	GroupName           utils.NullString           `db:"groupname"json:"groupname"`
-	ACL                 utils.NullString                 `db:"acl"json:"acl"`
-	Visits              int64                         `db:"visits"json:"visits"`
+	TenantId           int                    `db:"tenantid"json:"tenantid"`
+	Username           string                 `db:"username"json:"username"`
+	Password           string                 `json:"password"`
+	AcctStartTime      utils.NullString       `db:"acctstarttime"json:"acctstarttime"`
+	AcctActivationTime utils.NullString       `db:"acctactivationtime"json:"acctactivationtime"`
+	MaxSessionDuration utils.NullInt64        `db:"maxsessionduration"json:"maxsessionduration"`
+	GroupName          utils.NullString       `db:"groupname"json:"groupname"`
+	ACL                utils.NullString       `db:"acl"json:"acl"`
+	Visits             int64                  `db:"visits"json:"visits"`
 }
 
 type DataTablesResponce struct {
@@ -126,7 +127,7 @@ type Constrains struct {
 	TenantId   int               `json:"tenantid"`
 	From       string            `json:"from"`
 	To         string            `json:"to"`
-	ACL   string    	     `json:"acl"`
+	ACL        string             `json:"acl"`
 	GroupNames []string          `json:"groupnames"`
 }
 
@@ -161,7 +162,7 @@ type DashboardAppInfo struct {
 	Users     []DashboardAppUser      `db:"users"json:"users"`
 	Groups    []DashboardAppGroup      `db:"groups"json:"groups"`
 	Metrics   []DashboardAppMetric  `db:"metrics"json:"metrics"`
-	Acls 	  string	            `db:"acl"json:"acls"`
+	Acls      string                `db:"acl"json:"acls"`
 }
 
 type DashboardApp struct {

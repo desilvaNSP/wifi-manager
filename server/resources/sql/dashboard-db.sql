@@ -105,7 +105,7 @@ CREATE TABLE IF NOT EXISTS `metrics` (
   `metricid` INT NOT NULL AUTO_INCREMENT,
   `name`     VARCHAR(255) DEFAULT NULL,
   PRIMARY KEY (`metricid`),
-  FOREIGN KEY (tenantid) REFERENCES users (tenantid)
+  FOREIGN KEY (tenantid) REFERENCES tenants (tenantid)
     ON DELETE CASCADE
 )
   ENGINE = InnoDB;
@@ -120,7 +120,7 @@ CREATE TABLE IF NOT EXISTS `apps` (
   `aggregate` VARCHAR(255) DEFAULT NULL,
   `createdon` TIMESTAMP,
   PRIMARY KEY (`appid`),
-  FOREIGN KEY (tenantid) REFERENCES users (tenantid)
+  FOREIGN KEY (tenantid) REFERENCES tenants (tenantid)
     ON DELETE CASCADE
 )
   ENGINE = InnoDB;
@@ -139,7 +139,7 @@ CREATE TABLE IF NOT EXISTS `appusers` (
   `username` VARCHAR(255) DEFAULT NULL,
   FOREIGN KEY (appid) REFERENCES apps (appid)
     ON DELETE CASCADE,
-  FOREIGN KEY (tenantid) REFERENCES users (tenantid)
+  FOREIGN KEY (tenantid) REFERENCES tenants (tenantid)
     ON DELETE CASCADE
 )
   ENGINE = InnoDB;
@@ -147,6 +147,14 @@ CREATE TABLE IF NOT EXISTS `appusers` (
 CREATE TABLE IF NOT EXISTS `appmetrics` (
   `appid`    INT,
   `metricid` INT,
+  FOREIGN KEY (appid) REFERENCES apps (appid)
+    ON DELETE CASCADE
+)
+  ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS appacls (
+  appid INT,
+  acl VARCHAR(255) DEFAULT NULL,
   FOREIGN KEY (appid) REFERENCES apps (appid)
     ON DELETE CASCADE
 )
@@ -182,11 +190,3 @@ VALUES (1, 1),
   (1, 8),
   (1, 9);
 
-INSERT IGNORE INTO userapgroups (userid, groupid)
-VALUES
-  (1, 1),
-  (1, 2),
-  (1, 3),
-  (1, 4),
-  (1, 5),
-  (1, 6);

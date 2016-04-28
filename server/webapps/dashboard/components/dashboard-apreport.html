@@ -228,7 +228,7 @@
                 if (apDataObjs.hasOwnProperty(key)) {
                     var obj = longlatObjs[key];
                     var marker = new google.maps.Marker({
-                        position: new google.maps.LatLng(obj.longitude, obj.latitude) ,
+                        position: new google.maps.LatLng(obj.latitude, obj.longitude) ,
                         map: map
                     });
                     allMarkers.push(marker);
@@ -268,11 +268,11 @@
             var index = 0;
             apDataArray.forEach(function () {
                 var downloadObj = {
-                    location: new google.maps.LatLng(longlatDataArray[index].longitude,longlatDataArray[index].latitude),
+                    location: new google.maps.LatLng(longlatDataArray[index].latitude,longlatDataArray[index].longitude),
                     weight: apDataArray[index].totaloutputoctets
                 };
                 var uploadObj = {
-                    location: new google.maps.LatLng(longlatDataArray[index].longitude,longlatDataArray[index].latitude),
+                    location: new google.maps.LatLng(longlatDataArray[index].latitude,longlatDataArray[index].longitude),
                     weight: apDataArray[index].totalinputoctets
                 };
                 heatmapDownloadDimesionData.push(downloadObj);

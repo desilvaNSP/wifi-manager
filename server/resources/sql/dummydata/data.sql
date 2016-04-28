@@ -11,6 +11,15 @@ VALUES
   (1, 7, 'Oohm', 'oohmmkt'),
   (1, 8, 'UAMPS_Test','UAMPS_Test');
 
+INSERT IGNORE INTO userapgroups (userid, groupid)
+VALUES
+  (1, 1),
+  (1, 2),
+  (1, 3),
+  (1, 4),
+  (1, 5),
+  (1, 6);
+
 INSERT IGNORE INTO aplocations (tenantid, locationid, ssid, mac, bssid, groupid, groupname)
 VALUES
   (1, 1, 'CSQ_Free_WiFi', 'f0-b0-52-3b-3f-00', 'f0-b0-52-7b-3f-08', 1, 'Capitol Square'),
@@ -139,3 +148,20 @@ VALUES
   (1, 11, 'Average Daily User Downloads Distribution'),
   (1, 12, 'Average Daily User Uploads Distribution')
 ;
+
+INSERT IGNORE INTO aplocations (tenantid, locationid, ssid, mac, bssid, groupid, groupname, latitude, longitude)
+VALUES
+  (1, 1, 'CSQ_Free_WiFi', 'f0-b0-52-3b-3f-00', 'f0-b0-52-7b-3f-08', 1, 'Capitol Square', 38.91371748,85.75358825 ),
+  (1, 2, 'CSQ_Free_WiFi', 'f0-b0-52-3b-3f-00', 'f0-b0-52-7b-3f-0c', 1, 'Capitol Square', 38.50270436,83.95323105 ),
+  (1, 3, 'CSQ_Free_WiFi', 'f0-b0-52-3a-e2-30', 'f0-b0-52-7a-e2-38', 1, 'Capitol Square', 34.53372458, 83.19985999 ),
+  (1, 4, 'CSQ_Free_WiFi', 'f0-b0-52-3a-e2-30', 'f0-b0-52-7a-e2-3c', 1, 'Capitol Square', 38.63113908, 86.92184999),
+  (1, 5, 'CSQ_Free_WiFi', 'f0-b0-52-3a-d5-70', 'f0-b0-52-7a-d5-78', 1, 'Capitol Square', 43.74065531, 82.67906915 ),
+  (1, 6, 'CSQ_Free_WiFi', 'f0-b0-52-3a-d5-70', 'f0-b0-52-7a-d5-7c', 1, 'Capitol Square', 38.70017439,78.90011293 ),
+  (1, 7, 'CSQ_Free_WiFi', 'f0-b0-52-28-c6-80', 'f0-b0-52-68-c6-88', 1, 'Capitol Square', 36.7372589, 77.78279739),
+  (1, 8, 'CSQ_Free_WiFi', 'f0-b0-52-28-c6-80', 'f0-b0-52-68-c6-8c', 1, 'Capitol Square', 38.96956929, 84.88969479),
+  (1, 9, 'CSQ_Free_WiFi', 'f0-b0-52-28-c2-d0', 'f0-b0-52-68-c2-d8', 1, 'Capitol Square', 39.98705188,79.65908583 ),
+  (1, 10, 'CSQ_Free_WiFi', 'f0-b0-52-28-c2-d0', 'f0-b0-52-68-c2-dc', 1, 'Capitol Square' , 42.30049138, 81.74709872),
+  (1, 11, 'CSQ_Free_WiFi', 'f0-b0-52-3a-d4-50', 'f0-b0-52-7a-d4-58', 1, 'Capitol Square',42.87883446, 83.99054958),
+  (1, 12, 'CSQ_Free_WiFi', 'f0-b0-52-3a-d4-50', 'f0-b0-52-7a-d4-5c', 1, 'Capitol Square', 37.21865155,82.41701441 ),
+  (1, 13, 'CSQ_Free_WiFi', 'f0-b0-52-3b-45-70', 'f0-b0-52-7b-45-78', 1, 'Capitol Square', 42.73489039,80.82822459 ),
+  (1, 14, 'CSQ_Free_WiFi', 'f0-b0-52-3b-45-70', 'f0-b0-52-7b-45-7c', 1, 'Capitol Square', 34.31058597,77.38189249 );

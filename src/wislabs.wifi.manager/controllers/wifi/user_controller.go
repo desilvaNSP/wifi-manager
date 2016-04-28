@@ -111,7 +111,7 @@ func UpdateWiFiUser(user *dao.PortalUser) {
 func GetAllWiFiUsers(tenantId int, draw int, r *http.Request) dao.DataTablesResponce {
 	var users []dao.PortalUser
 	var response dao.DataTablesResponce
-	columns := []string{"username", "acl", "groupname", "visits", "acctstarttime", "acctstoptime", "acctlastupdatedtime"}
+	columns := []string{"username", "acl", "groupname", "visits", "acctstarttime", "acctactivationtime", "maxsessionduration"}
 	totalRecordCountQuery := "SELECT COUNT(username) FROM accounting where tenantid=" + strconv.Itoa(tenantId)
 	var err error
 	response.RecordsFiltered, response.RecordsTotal, err = commons.Fetch(r, "portal", "accounting", totalRecordCountQuery, columns, &users)
