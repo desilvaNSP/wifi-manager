@@ -88,7 +88,7 @@
 <script>
     $(document).ready(function () {
         var serverOriginUrl = window.location.origin;
-        var gdpData = {
+        var mapData = {
             "US": 498,
             "SA": 200,
             "CA": 1300,
@@ -102,41 +102,27 @@
             "RU": 2000
         };
 
-        $(function(){
-            $('#world-map').vectorMap({
-                map: 'world_mill_en',
-                series: {
-                    regions: [{
-                        values: gdpData,
-                        scale: ['#1ab394', '#22d6b1'],
-                        normalizeFunction: 'polynomial'
-                    }]
-                },
-                onRegionTipShow: function(e, el, code){
-                    el.html(el.html()+' (GDP - '+gdpData[code]+')');
-                },
-                normalizeFunction: 'polynomial',
-                hoverOpacity: 0.7,
-                hoverColor: false,
-                markerStyle: {
-                    initial: {
-                        image: 'img/marker.png',
-                        height:'10px',
-                        width:'10px',
-                    }
-                },
-                backgroundColor: "transparent",
-                markers: [
-                    {latLng: [-31.737511, 143.437500], name: 'Vatican City'},
-                    {latLng: [-33.867487, 151.206990], name: 'Syndney'},
-                    {latLng: [-37.706097, 144.953613], name: 'Melborne'},
-                    {latLng: [-34.906487, 138.680420], name: 'Adelade'},
-                    {latLng: [-24.852173, 113.752441], name: 'Caranaron'},
-                    {latLng: [-12.503956, 130.830688], name: 'Darvin'},
-                    {latLng: [-14.505322, 132.868652], name: 'Barunga'}
-                ]
-            });
+        $('#world-map').vectorMap({
+            map: 'world_mill_en',
+            backgroundColor: "transparent",
+            regionStyle: {
+                initial: {
+                    fill: '#e4e4e4',
+                    "fill-opacity": 1,
+                    stroke: 'none',
+                    "stroke-width": 0,
+                    "stroke-opacity": 0
+                }
+            },
+            series: {
+                regions: [{
+                    values: mapData,
+                    scale: ["#1ab394", "#22d6b1"],
+                    normalizeFunction: 'polynomial'
+                }]
+            }
         });
+
         var locationTable = $('.dataTables-location').DataTable({
             responsive: true,
             orderCellsTop: true,

@@ -4762,6 +4762,10 @@ body.modal-open {
     font-size: 170px;
 }
 
+.wrapper .middle-box {
+    margin-top: 140px;
+}
+
 .lock-word {
     z-index: 10;
     position: absolute;
@@ -7958,11 +7962,3 @@ img.thumbnail  { position: absolute; width: 178px;height: 178px ;z-index: 20}
     height: 400px !important;
 }
 
-.fa-icon-themcolor{
-    color: #1ab394;
-}
-
-.jvectormap-marker{
-    height:30px;
-    width: 30px;
-}

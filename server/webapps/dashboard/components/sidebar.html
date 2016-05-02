@@ -40,12 +40,12 @@
                         class="nav-label">Locations</span> </a>
             </li>
             <li>
-                <a href="#" id="href-reports"><i class="fa fa-file-text"></i> <span class="nav-label">Reports</span>
-                </a>
+                <a href="#" id="href-alerts"><i class="fa fa-line-chart"></i> <span
+                        class="nav-label">Alerts</span> </a>
             </li>
             <li>
-                <a href="#" id="href-analytics"><i class="fa fa-line-chart"></i> <span
-                        class="nav-label">Analytics</span> </a>
+                <a href="#" id="href-reports"><i class="fa fa-file-text"></i> <span class="nav-label">Reports</span>
+                </a>
             </li>
             <li>
                 <a href="#" id="href-realtime"><i class="fa fa-lightbulb-o"></i> <span class="nav-label">Realtime</span>
@@ -99,8 +99,8 @@
             renderDashboardList()
         });
 
-        $("#href-analytics").click(function () {
-            renderEmptyPage()
+        $("#href-alerts").click(function () {
+            renderAlertDefinations()
         });
 
         $("#href-campaigns").click(function () {

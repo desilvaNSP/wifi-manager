@@ -1,0 +1,87 @@
+swagger: '2.0'
+info:
+  version: '1.0.0'
+  title: Consumer Mobility Platform API
+  description: Complete API to explore the mobility platfrom.
+  termsOfService: http://vedicsoft.com/mobility/terms/
+  contact:
+    name: Consumer & Mobility API team
+    email: prasanna@vedicsoft.com
+    url: http://vedicsoft.com
+  license:
+    name: Vedicsoft Propriotary Licence v1.1
+    url: http://opensource.org/licenses/MIT
+host: localhost:8081
+basePath: /
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /wifi/usage/dailytotaldownloads:
+    post:
+      description: Creates a new pet in the store.  Duplicates are allowed
+      operationId: addPet
+      produces:
+        - application/json
+      parameters:
+        - name: Authorization
+          in: header
+          type: string
+        - name: constrains
+          in: body
+          description: Pet to add to the store
+          required: true
+          schema:
+            $ref: '#/definitions/constrains'
+      responses:
+        '200':
+          description: daily downloads  response
+          schema:
+           type: array
+           items:
+            $ref: '#/definitions/downloads'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/errorModel'
+
+definitions:
+  constrains:
+    type: object
+    required:
+      - tenantid
+      - from
+      - to
+      - groupnames
+    properties:
+      tenantid:
+        type: integer
+        format: int64
+      from:
+        type: string
+      to:
+        type: string
+      groupnames:
+         type: array
+         items:
+          type: string
+  downloads:
+    properties:
+      name:
+       type: string
+      value:
+       type: string
+  errorModel:
+    type: object
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string

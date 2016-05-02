@@ -35,6 +35,8 @@ func main() {
 	defer httpAccessLogFile.Close()
 	router := routes.NewRouter()
 	router.PathPrefix("/dashboard/").Handler(http.StripPrefix("/dashboard/", http.FileServer(http.Dir(ServerHome+"/webapps/dashboard/"))))
+	router.PathPrefix("/apiexplorer/").Handler(http.StripPrefix("/apiexplorer/", http.FileServer(http.Dir(ServerHome+"/webapps/apiexplorer/"))))
+	router.PathPrefix("/apieditor/").Handler(http.StripPrefix("/apieditor/", http.FileServer(http.Dir(ServerHome+"/webapps/apieditor/"))))
 	http.Handle("/", router)
 
 	s := &http.Server{

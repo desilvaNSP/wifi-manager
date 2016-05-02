@@ -1,0 +1,667 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This single message API provide Account Status Validation as well as Account Ownership Validation based on request. If request contains Account ownership information it will be matched against Account Owner information on the account. \n",
+        "version": "v1",
+        "title": "Account Validation",
+        "termsOfService": "http://api.wellsfargo.com/terms/",
+        "contact": {
+            "name": "api-support",
+            "url": "http://api-team.wellsfargo.com/support/",
+            "email": "apiteam@api.wellsfargo.com"
+        },
+        "license": {
+            "name": "API Wellsfargo license",
+            "url": "http://api.wellsfargo.com/license.html/"
+        }
+    },
+    "basePath": "/avs",
+    "schemes": [
+        "https"
+    ],
+    "paths": {
+        "/account-validations/status": {
+            "post": {
+                "tags": [
+                    "account-status"
+                ],
+                "summary": "Provides the ability for customers to know the status of  Account for a transaction real-time.  The Account Validation system will validate the request received from the customer and will return a valid response code.",
+                "parameters": [
+                    {
+                        "schema": {
+                            "$ref": "#/definitions/account_status_request"
+                        },
+                        "description": "Account information to be validated",
+                        "name": "body",
+                        "required": true,
+                        "in": "body"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK or Successful operation",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/account_status_response"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication Failed",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden Failed",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "default": {
+                        "description": "unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": []
+                    }
+                ],
+                "deprecated": false
+            }
+        },
+        "/account-validations/status-and-ownership": {
+            "post": {
+                "tags": [
+                    "account-ownership"
+                ],
+                "summary": "Provides the ability for customers to validate Account owner information for a transaction real-time.  The Account Validation system will validate the request received from the customer and will return a valid response code.",
+                "description": "",
+                "parameters": [
+                    {
+                        "schema": {
+                            "$ref": "#/definitions/account_owner_status_request"
+                        },
+                        "description": "Account information to be validated",
+                        "name": "body",
+                        "required": true,
+                        "in": "body"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK or uccessful operation",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/account_owner_status_response"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication Failed",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden Failed",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "407": {
+                        "description": "Authentication Failed",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "default": {
+                        "description": "unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": []
+                    }
+                ],
+                "deprecated": false,
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ]
+            }
+        }
+    },
+    "securityDefinitions": {
+        "api_key": {
+            "type": "apiKey",
+            "name": "api_key",
+            "in": "header"
+        }
+    },
+    "definitions": {
+        "Error": {
+            "type": "object",
+            "required": [
+                "errorCode",
+                "errorDesc"
+            ],
+            "properties": {
+                "errorCode": {
+                    "type": "string",
+                    "description": "error code",
+                    "example": 1000
+                },
+                "errorDesc": {
+                    "type": "string",
+                    "description": "error description",
+                    "example": "loginId not found"
+                }
+            }
+        },
+        "MatchCodeYNU": {
+            "type": "string",
+            "description": "Match Code, values can be Y, N, or U Y = The inquiry field closely or exactly matches the database. N = The inquiry field does not match the database. U = No identifying data is available in the database for the account provided."
+        },
+        "MatchCodeYNUC": {
+            "type": "string",
+            "description": "Match Code, values can be Y, N, or U Y = The inquiry field closely or exactly matches the database. N = The inquiry field does not match the database. U = No identifying data is available in the database for the account provided. C = The inquiry field conditionally (partially) matches the database (see descriptions and examples for each element)."
+        },
+        "account_status_res_obj": {
+            "type": "object",
+            "required": [
+                "condition_code"
+            ],
+            "properties": {
+                "condition_code": {
+                    "type": "string"
+                },
+                "primary_status_code": {
+                    "type": "string"
+                },
+                "secondary_status_code": {
+                    "type": "string"
+                },
+                "additional_status_code": {
+                    "type": "string"
+                },
+                "number_of_returns": {
+                    "type": "string"
+                },
+                "last_return_date": {
+                    "type": "string"
+                },
+                "last_return_reason": {
+                    "type": "string"
+                },
+                "last_update": {
+                    "type": "string"
+                },
+                "add_closed_date": {
+                    "type": "string"
+                },
+                "previous_status": {
+                    "type": "string"
+                }
+            }
+        },
+        "account_status_response": {
+            "type": "object",
+            "required": [
+                "request_id",
+                "request_status",
+                "bank_routing_number",
+                "bank_account_number"
+            ],
+            "properties": {
+                "request_id": {
+                    "type": "string",
+                    "description": "Identifier of API request message instance, to provide tracking. Echoed from Request."
+                },
+                "request_status": {
+                    "type": "string"
+                },
+                "error_list": {
+                    "type": "string"
+                },
+                "bank_routing_number": {
+                    "type": "string",
+                    "description": "Routing number, echoed from Request",
+                    "example": 1111000111
+                },
+                "bank_account_number": {
+                    "type": "string",
+                    "description": "Account number,  echoed from Request",
+                    "example": 9998887777
+                },
+                "account_status": {
+                    "$ref": "#/definitions/account_status_res_obj",
+                    "description": "Complex object it define basic account status."
+                }
+            }
+        },
+        "account_owner_res_obj": {
+            "type": "object",
+            "required": [
+                "condition_code",
+                "name_match",
+                "first_name_match",
+                "last_name_match",
+                "business_name_match"
+            ],
+            "properties": {
+                "condition_code": {
+                    "type": "string"
+                },
+                "name_match": {
+                    "type": "string",
+                    "$ref": "#/definitions/MatchCodeYNU"
+                },
+                "first_name_match": {
+                    "type": "string",
+                    "$ref": "#/definitions/MatchCodeYNU"
+                },
+                "last_name_match": {
+                    "type": "string",
+                    "$ref": "#/definitions/MatchCodeYNU"
+                },
+                "middle_name_match": {
+                    "type": "string",
+                    "$ref": "#/definitions/MatchCodeYNU"
+                },
+                "name_suffix_match": {
+                    "type": "string",
+                    "$ref": "#/definitions/MatchCodeYNU"
+                },
+                "name_prefix_match": {
+                    "type": "string",
+                    "$ref": "#/definitions/MatchCodeYNU"
+                },
+                "business_name_match": {
+                    "type": "string",
+                    "$ref": "#/definitions/MatchCodeYNUC"
+                },
+                "full_address_match": {
+                    "type": "string",
+                    "$ref": "#/definitions/MatchCodeYNUC"
+                },
+                "city_match": {
+                    "type": "string",
+                    "$ref": "#/definitions/MatchCodeYNUC"
+                },
+                "state_match": {
+                    "type": "string",
+                    "$ref": "#/definitions/MatchCodeYNU"
+                },
+                "zip_match": {
+                    "type": "string",
+                    "$ref": "#/definitions/MatchCodeYNUC"
+                },
+                "home_phone_match": {
+                    "type": "string",
+                    "$ref": "#/definitions/MatchCodeYNUC"
+                },
+                "work_phone_match": {
+                    "type": "string",
+                    "$ref": "#/definitions/MatchCodeYNUC"
+                },
+                "ssn_match": {
+                    "type": "string",
+                    "$ref": "#/definitions/MatchCodeYNUC"
+                },
+                "date_of_birth_match": {
+                    "type": "string",
+                    "$ref": "#/definitions/MatchCodeYNUC"
+                },
+                "document_id_type_match": {
+                    "type": "string",
+                    "$ref": "#/definitions/MatchCodeYNU"
+                },
+                "document_id_number_match": {
+                    "type": "string",
+                    "$ref": "#/definitions/MatchCodeYNUC"
+                },
+                "document_issuer_match": {
+                    "type": "string",
+                    "$ref": "#/definitions/MatchCodeYNU"
+                },
+                "overall_match_score": {
+                    "type": "string",
+                    "description": "0-100. Measure of how closely the inquiry attributes match the information in the Account Owner Elements Database.  Derived by examining all information sent; incorporates name variations (for name fields), edit distances, abbreviations, phonetic encoding, and other matching algorithms."
+                },
+                "primary_status_code": {
+                    "type": "string",
+                    "description": "Primary Status Code"
+                },
+                "secondary_status_code": {
+                    "type": "string",
+                    "description": "Secondary Status Code"
+                },
+                "additional_status_code": {
+                    "type": "string",
+                    "description": "Additional Status Code"
+                },
+                "number_of_returns": {
+                    "type": "string",
+                    "description": "Number of Returns"
+                },
+                "last_return_date": {
+                    "type": "string",
+                    "description": "Last Return Date MMDD"
+                },
+                "last_return_reason": {
+                    "type": "string",
+                    "description": "Last Return Reason"
+                },
+                "last_update": {
+                    "type": "string",
+                    "description": "Last Update YYYYMMDD"
+                },
+                "add_closed_date": {
+                    "type": "string",
+                    "description": "Add Closed Date YYYYMMDD"
+                },
+                "previous_status": {
+                    "type": "string",
+                    "description": "Previous Status"
+                },
+                "FCRA_dispute": {
+                    "type": "string",
+                    "description": "FCRA Dispute.  Required when applicable."
+                },
+                "scored_account_reason1": {
+                    "type": "string",
+                    "description": "Stored Account Reason 1"
+                },
+                "scored_account_reason2": {
+                    "type": "string",
+                    "description": "Stored Account Reason 2"
+                },
+                "scored_account_reason3": {
+                    "type": "string",
+                    "description": "Stored Account Reason 3"
+                },
+                "scored_account_reason4": {
+                    "type": "string",
+                    "description": "Stored Account Reason 4"
+                },
+                "scored_account_reason5": {
+                    "type": "string",
+                    "description": "Stored Account Reason 5"
+                }
+            }
+        },
+        "account_owner_status_response": {
+            "type": "object",
+            "required": [
+                "request_id",
+                "request_status",
+                "bank_routing_number",
+                "bank_account_number"
+            ],
+            "properties": {
+                "request_id": {
+                    "type": "string",
+                    "description": "Request Id, echoed from Request."
+                },
+                "request_status": {
+                    "type": "string",
+                    "description": "Generate by Channel Side."
+                },
+                "error_list": {
+                    "type": "string"
+                },
+                "bank_routing_number": {
+                    "type": "string",
+                    "description": "Routing number, echoed from Request.",
+                    "example": 1111000111
+                },
+                "bank_account_number": {
+                    "type": "string",
+                    "description": "Account number,  echoed from Request",
+                    "example": 9998887777
+                },
+                "account_status": {
+                    "$ref": "#/definitions/account_status_res_obj",
+                    "description": "Complex objet will return basic account Info."
+                },
+                "account_owner": {
+                    "$ref": "#/definitions/account_owner_res_obj",
+                    "description": "Complex objet will return account ownership information."
+                }
+            }
+        },
+        "account_status_request": {
+            "type": "object",
+            "required": [
+                "request_id",
+                "baas_client_id",
+                "bank_routing_number",
+                "bank_account_number"
+            ],
+            "properties": {
+                "request_id": {
+                    "type": "string",
+                    "minimum": 1,
+                    "maximum": 36,
+                    "description": "Required. Identifier of API request message instance, to provide tracking. Length must be between 1 and 36"
+                },
+                "baas_client_id": {
+                    "type": "string",
+                    "minimum": 16,
+                    "maximum": 16,
+                    "description": "Required. Channel Id of WF customer that request is on behalf of. Will be used for authorization and billing. Length must be 16."
+                },
+                "bank_routing_number": {
+                    "type": "string",
+                    "minimum": 9,
+                    "maximum": 9,
+                    "description": "Required. Bank routing number (RTN, ABA). Length must be 9",
+                    "example": 1111000111
+                },
+                "bank_account_number": {
+                    "type": "string",
+                    "minimum": 17,
+                    "maximum": 17,
+                    "description": "Required. Bank account number.  Do not pad with zeroes. Length must be 17.",
+                    "example": 9998887777
+                }
+            }
+        },
+        "account_owner_status_request": {
+            "type": "object",
+            "required": [
+                "request_id",
+                "baas_client_id",
+                "bank_routing_number",
+                "bank_account_number",
+                "first_name",
+                "last_name",
+                "business_name"
+            ],
+            "properties": {
+                "request_id": {
+                    "type": "string",
+                    "minimum": 1,
+                    "maximum": 36,
+                    "description": "Required. Identifier of API request message instance, to provide tracking. Length must be between 1 and 36"
+                },
+                "baas_client_id": {
+                    "type": "string",
+                    "minimum": 16,
+                    "maximum": 16,
+                    "description": "Required. Channel Id of WF customer that request is on behalf of. Will be used for authorization and billing. Length must be 16."
+                },
+                "bank_routing_number": {
+                    "type": "string",
+                    "minimum": 9,
+                    "maximum": 9,
+                    "description": "Required. Bank routing number (RTN, ABA). Length must be 9",
+                    "example": 1111000111
+                },
+                "bank_account_number": {
+                    "type": "string",
+                    "minimum": 17,
+                    "maximum": 17,
+                    "description": "Required. Bank account number.  Do not pad with zeroes. Length must be 17.",
+                    "example": 9998887777
+                },
+                "name_prefix": {
+                    "type": "string",
+                    "maximum": 4,
+                    "description": "Optional. Name prefix. When applicable, maximum length can be 4."
+                },
+                "first_name": {
+                    "type": "string",
+                    "maximum": 40,
+                    "description": "Required - Either first_name and last_name should be present OR business_name should be present. When applicable maximum length can be 40."
+                },
+                "middle_name": {
+                    "type": "string",
+                    "maximum": 40,
+                    "description": "Optional. Middle name or middle initial (no period after). When applicable maximum length can be 40."
+                },
+                "last_name": {
+                    "type": "string",
+                    "maximum": 40,
+                    "description": "Required - Either first_name and last_name should be present OR business_name should be present. When applicable maximum length can be 40."
+                },
+                "name_suffix": {
+                    "type": "string",
+                    "maximum": 4,
+                    "description": "Optional. Name suffix. When applicable maximum length can be 4."
+                },
+                "business_name": {
+                    "type": "string",
+                    "maximum": 87,
+                    "description": "Required - Either first_name and last_name should be present OR business_name should be present. When applicable Business name maximum length can be 87."
+                },
+                "address_line1": {
+                    "type": "string",
+                    "maximum": 40,
+                    "description": "Optional. Street address line 1. When applicable maximum length can be 40."
+                },
+                "address_line2": {
+                    "type": "string",
+                    "maximum": 40,
+                    "description": "Optional. Street address line 1. When applicable maximum length can be 40."
+                },
+                "city": {
+                    "type": "string",
+                    "maximum": 25,
+                    "description": "Optional. City or locality. When applicable maximum length can be 25."
+                },
+                "state": {
+                    "type": "string",
+                    "minimum": 2,
+                    "maximum": 2,
+                    "description": "Optional. State, Province, or other country sub-division. When applicable length must be 2."
+                },
+                "zip": {
+                    "type": "string",
+                    "minimum": 5,
+                    "maximum": 10,
+                    "description": "Optional. Postal Code. When applicable length must be in range (4-9)."
+                },
+                "home_phone": {
+                    "type": "string",
+                    "minimum": 10,
+                    "maximum": 10,
+                    "description": "Optional. Home phone number (can be mobile). When applicable, length must be 10."
+                },
+                "work_phone": {
+                    "type": "string",
+                    "minimum": 10,
+                    "maximum": 10,
+                    "description": "Optional. Work phone number. When applicable. When applicable, length must be 10."
+                },
+                "tax_id": {
+                    "type": "string",
+                    "maximum": 9,
+                    "description": "Optional. Full Social Security Number (SSN), or Tax Identification Number (TIN), or last 4-digits only. When applicable, length must be either 4 or 9."
+                },
+                "date_of_birth": {
+                    "type": "string",
+                    "minimum": 8,
+                    "maximum": 8,
+                    "description": "Optional. Date of birth, YYYYMMDD. When applicable, length must be 8."
+                },
+                "document_type": {
+                    "type": "string",
+                    "minimum": 1,
+                    "maximum": 1,
+                    "description": "Optional. Document type, used to identify party being authorized."
+                },
+                "document_id_number": {
+                    "type": "string",
+                    "maximum": 28,
+                    "description": "Optional. Document number. When applicable, maximum length can be 28."
+                },
+                "document_id_issuer": {
+                    "type": "string",
+                    "minimum": 2,
+                    "maximum": 6,
+                    "description": "Optional. Document issuer, state or other agency which issues document. When applicable length must be in range of (2-6)."
+                }
+            }
+        }
+    }
+}

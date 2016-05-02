@@ -1,0 +1,365 @@
+<div class="row">
+    <div class="col-lg-12">
+        <div class="wrapper wrapper-content animated fadeInUp">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>Alert Management</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="row m-b-sm m-t-sm">
+                        <div class="col-md-1">
+                            <a href="#" id="create-alert" class="btn btn-primary btn-sm">+</a>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="input-group"><input type="text" placeholder="Search" class="input-sm form-control"> <span class="input-group-btn">
+                                        <button type="button" class="btn btn-sm btn-primary"> Go!</button> </span></div>
+                        </div>
+                        <div class="col-md-1">
+                            <button type="button" id="loading-example-btn" class="btn btn-white btn-sm" ><i class="fa fa-refresh"></i> Refresh</button>
+                        </div>
+                    </div>
+                    <div class="row m-t-sm">
+                        <div class="col-lg-12">
+                            <div class="panel blank-panel">
+                                <div class="panel-heading">
+                                    <div class="panel-options">
+                                        <ul class="nav nav-tabs">
+                                            <li class="active"><a href="#tab-1" data-toggle="tab">Defined Alerts</a></li>
+                                            <li class=""><a href="#tab-2" data-toggle="tab">Triggered Alerts</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="panel-body">
+
+                                    <div class="tab-content">
+                                        <div class="tab-pane active" id="tab-1">
+                                                <div class="project-list">
+                                                    <table class="table table-hover">
+                                                        <tbody>
+                                                        <tr>
+                                                            <td class="project-status">
+                                                                <span class="label label-primary">Low</span>
+                                                            </td>
+                                                            <td class="project-title">
+                                                                <a href="project_detail.html">Heart beat faliure</a>
+                                                                <br/>
+                                                                <small>Hear Beat are Missing</small><br/>
+                                                                <small>Created 14.07.2014</small>
+                                                            </td>
+                                                            <td class="project-people">
+                                                                <span class="m-l-xs">Trigger if number results are : Greater that or equal to 1</span>
+                                                                <small class="label label-info"><i class="fa fa-clock-o"></i>Every 7 minutes</small>
+                                                            </td>
+                                                            <td class="project-actions">
+                                                                <a href="#" class="btn btn-white btn-sm"><i class="fa fa-folder"></i> View </a>
+                                                                <a href="#" class="btn btn-white btn-sm"><i class="fa fa-pencil"></i> Edit </a>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="project-status">
+                                                                <span class="label label-danger">High</span>
+                                                            </td>
+                                                            <td class="project-title">
+                                                                <a href="project_detail.html">Curator Snapshot failed</a>
+                                                                <br/>
+                                                                <small>Created 22.07.2014</small>
+                                                            </td>
+                                                            <td class="project-people">
+                                                                <span class="m-l-xs">Trigger if number results are : Greater that or equal to 1</span>
+                                                                <small class="label label-info"><i class="fa fa-clock-o"></i>Every 3 minutes</small>
+                                                            </td>
+                                                            <td class="project-actions">
+                                                                <a href="#" class="btn btn-white btn-sm"><i class="fa fa-folder"></i> View </a>
+                                                                <a href="#" class="btn btn-white btn-sm"><i class="fa fa-pencil"></i> Edit </a>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="project-status">
+                                                                <span class="label label-warning">Medium</span>
+                                                            </td>
+                                                            <td class="project-title">
+                                                                <a href="project_detail.html">Alerts Emails Sent Treshold Reached</a>
+                                                                <br/>
+                                                                <small>Created 11.08.2014</small>
+                                                            </td>
+                                                            <td class="project-people">
+                                                                <span class="m-l-xs">Trigger if number results are : Greater than  100</span>
+                                                                <small class="label label-info"><i class="fa fa-clock-o"></i>Every 9 minutes</small>
+                                                            </td>
+                                                            <td class="project-actions">
+                                                                <a href="#" class="btn btn-white btn-sm"><i class="fa fa-folder"></i> View </a>
+                                                                <a href="#" class="btn btn-white btn-sm"><i class="fa fa-pencil"></i> Edit </a>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="project-status">
+                                                                <span class="label label-danger">High</span>
+                                                            </td>
+                                                            <td class="project-title">
+                                                                <a href="project_detail.html">Curator Snapshot failed</a>
+                                                                <br/>
+                                                                <small>Created 22.07.2014</small>
+                                                            </td>
+                                                            <td class="project-people">
+                                                                <span class="m-l-xs">Trigger if number results are : Greater that or equal to 1</span>
+                                                                <small class="label label-info"><i class="fa fa-clock-o"></i>Every 3 minutes</small>
+                                                            </td>
+                                                            <td class="project-actions">
+                                                                <a href="#" class="btn btn-white btn-sm"><i class="fa fa-folder"></i> View </a>
+                                                                <a href="#" class="btn btn-white btn-sm"><i class="fa fa-pencil"></i> Edit </a>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="project-status">
+                                                                <span class="label label-primary">Low</span>
+                                                            </td>
+                                                            <td class="project-title">
+                                                                <a href="project_detail.html">Hear Beat are Missing</a>
+                                                                <br/>
+                                                                <h5>Hea</h5>
+                                                                <small>Created 14.07.2014</small>
+                                                            </td>
+                                                            <td class="project-people">
+                                                                <span class="m-l-xs">Trigger if number results are : Greater that or equal to 1</span>
+                                                                <small class="label label-info"><i class="fa fa-clock-o"></i>Every 7 minutes</small>
+                                                            </td>
+                                                            <td class="project-actions">
+                                                                <a href="#" class="btn btn-white btn-sm"><i class="fa fa-folder"></i> View </a>
+                                                                <a href="#" class="btn btn-white btn-sm"><i class="fa fa-pencil"></i> Edit </a>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="project-status">
+                                                                <span class="label label-warning">Medium</span>
+                                                            </td>
+                                                            <td class="project-title">
+                                                                <a href="project_detail.html">Alerts Emails Sent Treshold Reached</a>
+                                                                <br/>
+                                                                <small>Created 11.08.2014</small>
+                                                            </td>
+                                                            <td class="project-people">
+                                                                <span class="m-l-xs">Trigger if number results are : Greater than  100</span>
+                                                                <small class="label label-info"><i class="fa fa-clock-o"></i>Every 9 minutes</small>
+                                                            </td>
+                                                            <td class="project-actions">
+                                                                <a href="#" class="btn btn-white btn-sm"><i class="fa fa-folder"></i> View </a>
+                                                                <a href="#" class="btn btn-white btn-sm"><i class="fa fa-pencil"></i> Edit </a>
+                                                            </td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                        </div>
+                                        <div class="tab-pane" id="tab-2">
+
+                                            <table class="table table-striped">
+                                                <thead>
+                                                <tr>
+                                                    <th>Priority</th>
+                                                    <th>Status Type</th>
+                                                    <th>Updated Time</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <span class="label label-warning"><i class="fa fa-check"></i> Medium</span>
+                                                    </td>
+                                                    <td>
+                                                        Download threshold Alert
+                                                    </td>
+                                                    <td>
+                                                        12.06.2015 08:10:31
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span class="label label-warning"><i class="fa fa-check"></i> Medium</span>
+                                                    </td>
+                                                    <td>
+                                                        Bandwidth Throttling Applied
+                                                    </td>
+                                                    <td>
+                                                        12.07.2015 10:10:1
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span class="label label-danger"><i class="fa fa-check"></i> Critical</span>
+                                                    </td>
+                                                    <td>
+                                                        Bandwidth Throttling Applied
+                                                    </td>
+                                                    <td>
+                                                        11.07.2015 10:10:1
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span class="label label-warning"><i class="fa fa-check"></i> Medium</span>
+                                                    </td>
+                                                    <td>
+                                                        Bandwidth Throttling Applied
+                                                    </td>
+                                                    <td>
+                                                        13.07.2015 10:10:1
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span class="label label-danger"><i class="fa fa-check"></i> Critical</span>
+                                                    </td>
+                                                    <td>
+                                                        Bandwidth Throttling Applied
+                                                    </td>
+                                                    <td>
+                                                        14.07.2015 10:10:1
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span class="label label-warning"><i class="fa fa-check"></i> Medium</span>
+                                                    </td>
+                                                    <td>
+                                                        Bandwidth Throttling Applied
+                                                    </td>
+                                                    <td>
+                                                        15.07.2015 10:10:1
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span class="label label-warning"><i class="fa fa-check"></i> Medium</span>
+                                                    </td>
+                                                    <td>
+                                                        Bandwidth Throttling Applied
+                                                    </td>
+                                                    <td>
+                                                        17.07.2015 10:10:1
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span class="label label-warning"><i class="fa fa-check"></i> Medium</span>
+                                                    </td>
+                                                    <td>
+                                                        Bandwidth Throttling Applied
+                                                    </td>
+                                                    <td>
+                                                        14.07.2015 10:16:36
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span class="label label-warning"><i class="fa fa-check"></i> Medium</span>
+                                                    </td>
+                                                    <td>
+                                                        Bandwidth Throttling Applied
+                                                    </td>
+                                                    <td>
+                                                        18.07.2015 10:10:1
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal inmodal" id="add-alert-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content animated fadeIn">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
+                        class="sr-only">Close</span></button>
+                <i class="fa fa-bell modal-icon"></i>
+                <h4 class="modal-title">Add Alert definition</h4>
+                <small>Alerts are used in all sorts of ways, from notifying about inactivity, alerting on unauthorized access or when a certain threshold has been breached</small>
+            </div>
+            <div class="modal-body" id="addalertmodal-body">
+                <form role="form" id="add-alert-form">
+
+                    <div class="form-group">
+                        <label for="input-query-name">Query</label>
+                        <input type="text" class="form-control" id="input-query-name" name="appName"
+                               placeholder="Query" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="input-alert-name">Name</label>
+                        <input type="text" class="form-control" id="input-alert-name" name="appName"
+                               placeholder="Name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="input-decription">Description</label>
+                        <textarea class="form-control" rows="5" id="input-decription"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="input-timerange">Time Range</label>
+                        <select class="form-control" id="input-timerange">
+                            <option>Every Hour</option>
+                            <option>Every Minute</option>
+                            <option>Every Second</option>
+                            <option>Cron</option>
+                        </select>
+                    </div>
+                    <div class="form-group input-group">
+                            <label for="input-trigger">Triggers </label>
+                            <select class="form-control" id="input-trigger">
+                                <option>Greater than or equal</option>
+                                <option>Less than or equal</option>
+                                <option>Less than</option>
+                                <option>Greater than</option>
+                            </select>
+                            <input type="text" class="form-control" id="input-trigger-value" name="appName"
+                                       placeholder="" required >
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Severity</label>
+                        <label class="radio-inline"> <input type="radio" value="option1" id="inlineradio1">  <span class="label label-primary"> Low</span> </label> <label class="radio-inline">
+                            <input type="radio" value="option2" id="inlineradio2"> <span class="label label-warning"> Medium</span></label> <label class="radio-inline">
+                            <input type="radio" value="option3" id="inlineradio3"> <span class="label label-danger"> High</span> </label>
+                    </div>
+                    <div class="form-group">
+                        <label for="input-alert-name">Send email to </label>
+                        <input type="text" class="form-control" id="input-email" name="appName"
+                               placeholder="" >
+                    </div>
+                    <div class="form-group inline">
+                            <label for="input-time">Suppress triggering for  </label>
+                            <input type="text" class="form-control" id="input" name="appName"
+                                   placeholder="" required >
+                            <select class="form-control" id="input-time">
+                                <option>Hours</option>
+                                <option>Min</option>
+                                <option>Seconds</option>
+                            </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="btn-add-alert">Create Alert</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function(){
+        $("#create-alert").on('click', function () {
+            $("#add-alert-modal").modal('show');
+        });
+    });
+</script>
