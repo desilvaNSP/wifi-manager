@@ -394,4 +394,42 @@ var routes = Routes{
 		true,
 		dashboard_handlers.GetAccessPointAgregatedDataFromToHandler,
 	},
+	Route{
+		"Radius Server Authentication Testing",
+		"POST",
+		"/radius/user/connection",
+		true,
+		dashboard_handlers.TestRadiusAuthConnection,
+	},
+	Route{
+		"Create Radius Server",
+		"POST",
+		"/radius/createserver",
+		true,
+		dashboard_handlers.CreateRadiusServerHandler,
+	},
+	Route{
+		"Get Radius Details of User",
+		"GET",
+		"/radius/{tenantid}/radiusdetails/{username}",
+		true,
+		dashboard_handlers.GetRadiusServerDetailsHandler,
+	},
+	Route{
+		"Delete Radius Instance",
+		"DELETE",
+		"/radius/{tenantid}/radiusdetails/{radiusinstid}",
+		true,
+		dashboard_handlers.DeleteRadiusInstanceHandler,
+	},
+	Route{
+		"Update Radius Instance",
+		"PUT",
+		"/radius/{tenantid}/radiusdetails/{radiusinstid}",
+		true,
+		dashboard_handlers.UpdateRadiusInstanceHandler,
+	},
+
+
+
 }
