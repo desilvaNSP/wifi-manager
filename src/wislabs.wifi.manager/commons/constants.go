@@ -84,8 +84,14 @@ const DELETE_OLD_DB_APP_USERS  string		= "DELETE FROM appusers WHERE appid=? and
 const ADD_NEW_DB_APP_USERS string 		= "INSERT INTO appusers (tenantid, appid, username) VALUES( ?, ?, ?)"
 
 /* Metrics */
-const GET_ALL_DASHBOARD_METRICS string = "SELECT tenantid, metricid, name FROM metrics WHERE tenantid=?"
-const GET_ALL_DASHBOARD_ACLS string    = "SELECT DISTINCT acl FROM accounting"
+const GET_ALL_DASHBOARD_METRICS string 		= "SELECT tenantid, metricid, name FROM metrics WHERE tenantid=?"
+const GET_ALL_DASHBOARD_ACLS string    		= "SELECT DISTINCT acl FROM accounting"
+
+/* ADD_RADIUS_SERVER */
+const  ADD_RADIUS_SERVER string  		= "INSERT INTO radiusservers (tenantid,username,servername,serverip,authport,accounting,sharedsecret) VALUES( ?, ?, ?, ?, ?, ?, ?)"
+const  GET_ALL_RADIUS_CONFIGS string	 	= "SELECT instid, servername, serverip, authport, accounting, sharedsecret FROM radiusservers WHERE tenantid=? and username=? "
+const  DELETE_RADIUS_SERVER_INST string 	= "DELETE FROM radiusservers WHERE tenantid=? AND instid=?"
+const  UPDATE_RADIUS_SERVER_INST string 	= "UPDATE radiusservers SET servername =?, serverip =?, authport= ?, accounting=?, sharedsecret=? WHERE tenantid=? and instid=?"
 
 /* RADIUS */
-const ADD_RADIUS_USER string 	 	   = "INSERT INTO radcheck (username,attribute,op,value) VALUES( ?, ?, ?, ?)"
+const ADD_RADIUS_USER string 	 	   	= "INSERT INTO radcheck (username,attribute,op,value) VALUES( ?, ?, ?, ?)"

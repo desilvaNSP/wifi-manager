@@ -219,3 +219,27 @@ type FileHeader struct {
 	Header   textproto.MIMEHeader
 	// contains filtered or unexported fields
 }
+
+type RadiusConfigsInfo struct  {
+	RadiusInstId        int				`db:"instid"json:"radiusinstid"`
+	TenantId            int                         `db:"tenantid"json:"tenantid"`
+	Username            string                      `db:"username"json:"username"`
+	ServerName	    string			`db:"servername"json:"servername"`
+	ServerIP    	    string   			`db:"serverip"json:"serverip"`
+	AuthPort  	    string   			`db:"authport"json:"authport"`
+	SharedSecret  	    string  			`db:"sharedsecret"json:"secret"`
+	Accounting          string			`db:"accounting"json:"accounting"`
+	TestUsername 	    string 			`json:"testusername"`
+	Password	    string  			`json:"password"`
+}
+
+type RadiusConfigs struct  {
+	RadiusInstId        int				`db:"instid"json:"radiusinstid"`
+	TenantId            int                         `db:"tenantid"json:"tenantid"`
+	Username            string                      `db:"username"json:"username"`
+	ServerName	    string			`db:"servername"json:"servername"`
+	ServerIP    	    string   			`db:"serverip"json:"serverip"`
+	AuthPort  	    string   			`db:"authport"json:"authport"`
+	SharedSecret  	    string  			`db:"sharedsecret"json:"secret"`
+	Accounting          string			`db:"accounting"json:"accounting"`
+}

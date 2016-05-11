@@ -7961,4 +7961,6 @@ img.thumbnail  { position: absolute; width: 178px;height: 178px ;z-index: 20}
     width: auto !important;
     height: 400px !important;
 }
-
+.btn-tools{
+    margin-top: -5px !important;
+}
