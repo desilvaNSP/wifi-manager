@@ -79,13 +79,13 @@ func GetDashboardAclsOfApp(appId int) string {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 
-	var acls []dao.DashboardAppAcls
-	_, err := dbMap.Select(&acls, commons.GET_DASHBOARD_APP_ACLS, appId)
+	var acls dao.DashboardAppAcls
+	err := dbMap.SelectOne(&acls, commons.GET_DASHBOARD_APP_ACLS, appId)
 	if err != nil {
 		//panic(err.Error()) // proper error handling instead of panic in your app
-		return acls[0].Acls
+		return acls.Acls
 	}
-	return acls[0].Acls
+	return acls.Acls
 }
 
 func GetDashboardAggregateOfApp(appId int) string{
