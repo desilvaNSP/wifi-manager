@@ -7,7 +7,6 @@ import (
 	"strconv"
 )
 
-
 func SummaryDetailsFromTo(constrains dao.Constrains) [][]string {
 
 	dbMap := utils.GetDBConnection("summary");
@@ -110,7 +109,6 @@ func GetAccessPointAgregatedDataFromTo(constrains dao.Constrains) [] dao.AccessP
 	}
 	return accespointdata
 }
-
 
 func GetLongLatLocationByMacAddress(mac string) [] dao.LongLatMac{
 	dbMap := utils.GetDBConnection("dashboard");
