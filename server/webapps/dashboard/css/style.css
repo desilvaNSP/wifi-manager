@@ -7964,3 +7964,8 @@ img.thumbnail  { position: absolute; width: 178px;height: 178px ;z-index: 20}
 .btn-tools{
     margin-top: -5px !important;
 }
+
+.bootbox-alert .modal-dialog{
+    width: 30% !important;
+    margin-top: 20% !important;
+}

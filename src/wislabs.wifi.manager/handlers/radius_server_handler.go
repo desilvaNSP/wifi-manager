@@ -32,10 +32,8 @@ func CreateRadiusServerHandler(w http.ResponseWriter, r*http.Request){
 	var radiusConfig dao.RadiusConfigsInfo
 	decoder.Decode(&radiusConfig)
 
-	status := radius.TestAuthenticationOnUser(radiusConfig)
-	if(status){
-		radius.CreateRadiusServer(radiusConfig);
-	}
+	radius.CreateRadiusServer(radiusConfig);
+
 	w.WriteHeader(http.StatusOK)
 }
 

@@ -78,37 +78,39 @@
                                    placeholder="Name"  required>
                         </div>
                     </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="headingEdit">
-                            <h4 class="panel-title">
-                                <a class="collapsed" role="button" data-toggle="collapse" parent="#accordion" data- href="#collapse-testedituser" aria-expanded="false" aria-controls="collapse-testedituser">
-                                    Test User Authentication
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="collapse-testedituser" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingEdit">
-                            <div class="panel-body">
+                </form>
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingEdit">
+                        <h4 class="panel-title">
+                            <a class="collapsed" role="button" data-toggle="collapse" parent="#accordion" data- href="#collapse-testedituser" aria-expanded="false" aria-controls="collapse-testedituser">
+                                Test User Authentication
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapse-testedituser" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingEdit">
+                        <div class="panel-body">
+                            <form role="form" id="testedituserconform">
                                 <div class="row">
                                     <div class="form-group col-lg-6">
                                         <label for="edit-radius-test-username">User Name</label>
-                                        <input class="form-control" type="input" name="testusername" id="edit-radius-test-username">
+                                        <input class="form-control" type="input" name="testusernameedit" id="edit-radius-test-username">
                                     </div>
                                     <div class="form-group col-lg-6">
                                         <label for="edit-radius-test-password">Password</label>
-                                        <input class="form-control"  type="password" name="testpassword" id="edit-radius-test-password">
+                                        <input class="form-control"  type="password" name="testpasswordedit" id="edit-radius-test-password">
                                     </div>
                                 </div>
                                 <div class="form-group col-lg-12" align="right">
                                     <button type="button " class="btn btn-primary" id="btn-edit-testconnection">Test Connection</button>
                                 </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
-                </form>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="btn-edit-radiusclient" disabled>Save</button>
+                <button type="button" class="btn btn-primary" id="btn-edit-radiusclient">Save</button>
             </div>
         </div>
     </div>
@@ -157,37 +159,37 @@
                                    placeholder="Name"  required>
                         </div>
                     </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="headingInput">
-                            <h4 class="panel-title">
-                                <a class="collapsed" role="button" data-toggle="collapse" parent="#accordion" data- href="#collapse-testinputuser" aria-expanded="false" aria-controls="collapse-testinputuser">
-                                    Test User Authentication
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="collapse-testinputuser" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingInput">
-                            <div class="panel-body">
-                                <form role="form" id="testuserconform">
-                                    <div class="form-group col-lg-6">
-                                        <label for="radius-test-username">User Name</label>
-                                        <input class="form-control" type="input" name="testusername" id="radius-test-username">
-                                    </div>
-                                    <div class="form-group col-lg-6">
-                                        <label for="radius-test-password">Password</label>
-                                        <input class="form-control"  type="password" name="testpassword" id="radius-test-password">
-                                    </div>
-                                    <div class="form-group col-lg-12" align="right">
-                                        <button type="button" class="btn btn-primary" id="btn-testconnection">Test Connection</button>
-                                    </div>
-                                </form>
-                            </div>
+                </form>
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingInput">
+                        <h4 class="panel-title">
+                            <a class="collapsed" role="button" data-toggle="collapse" parent="#accordion" data- href="#collapse-testinputuser" aria-expanded="false" aria-controls="collapse-testinputuser">
+                                Test User Authentication
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapse-testinputuser" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingInput">
+                        <div class="panel-body">
+                            <form role="form" id="testuserconform">
+                                <div class="form-group col-lg-6">
+                                    <label for="radius-test-username">User Name</label>
+                                    <input class="form-control" type="input" name="testusername" id="radius-test-username">
+                                </div>
+                                <div class="form-group col-lg-6">
+                                    <label for="radius-test-password">Password</label>
+                                    <input class="form-control"  type="password" name="testpassword" id="radius-test-password">
+                                </div>
+                                <div class="form-group col-lg-12" align="right">
+                                    <button type="button" class="btn btn-primary" id="btn-testconnection">Test Connection</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
-                </form>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="btn-add-radiusclient" disabled>Save</button>
+                <button type="button" class="btn btn-primary" id="btn-add-radiusclient" >Save</button>
             </div>
         </div>
     </div>
@@ -220,21 +222,10 @@
         var data = [];
         var aaaTable;
 
-        toastr.options = {
-            "closeButton": true,
-            "debug": false,
-            "progressBar": true,
-            "positionClass": "toast-top-right",
-            "onclick": null,
-            "showDuration": "100",
-            "hideDuration": "1000",
-            "timeOut": "2000",
-            "extendedTimeOut": "1000",
-            "showEasing": "swing",
-            "hideEasing": "linear",
-            "showMethod": "fadeIn",
-            "hideMethod": "fadeOut",
-        };
+        $.validator.addMethod('IP4Checker', function(value) {
+            var ip = /^(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[0-9]{2}|[0-9])(\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[0-9]{2}|[0-9])){3}$/;
+            return value.match(ip);
+        }, 'Invalid IP address');
 
         var aaaListData;
         aaaTable = $('.dataTables-aaalist').DataTable( {
@@ -262,204 +253,15 @@
                     "sortable": false
                 }
             ]
-        } );
-
-        $("#add-radiusclient").on('click', function () {
-            $("#radiuserver-modal").modal('show');
         });
-
-        $("#btn-testconnection").on('click', function () {
-            if(inputformuserconvalidator.valid()){
-                var payload = {
-                    tenantid : parseInt(Cookies.get("tenantid")),
-                    username : Cookies.get("username"),
-                    servername : $('#input-server-name').val(),
-                    serverip: $('#input-serverip').val(),
-                    authport: $('#input-auth-port').val(),
-                    secret: $('#input-shared-secret').val(),
-                    testusername: $('#radius-test-username').val(),
-                    password: $('#radius-test-password').val()
-                };
-                connEst = false;
-                $("#rad-config-bodymodal").loadingOverlay({
-                    loadingText: 'Creating Radius Server'
-                });
-                $.post('/radius/user/connection',JSON.stringify(payload), function (result) {
-                    connEst = result;
-                    if (connEst){
-                        $('#btn-add-radiusclient').prop("disabled", false);
-                        toastr.success("Healthy Connection");
-                    }else{
-                        toastr.error("Radius Server Authentication Failed")
-                    }
-                    $("#rad-config-bodymodal").loadingOverlay('remove');
-                });
-            }
-        });
-
 
         var addradiusclientvalidator;
         var editradiusclientvalidator;
-        var inputformuserconvalidator;
-        var editformuserconvalidator;
+        var passwordvalidationinput;
+        var passwordvalidationedit;
 
-        $("#btn-add-radiusclient").on('click', function () {
-            if (addradiusclientvalidator.valid()) {
-                var payload = {
-                    tenantid: parseInt(Cookies.get("tenantid")),
-                    username: Cookies.get("username"),
-                    servername: $('#input-server-name').val(),
-                    serverip: $('#input-serverip').val(),
-                    authport: $('#input-auth-port').val(),
-                    secret: $('#input-shared-secret').val(),
-                    testusername: $('#edit-radius-test-username').val(),
-                    password: $('#edit-radius-test-password').val()
-                };
-                if (connEst) {
-                    $("#rad-config-bodymodal").loadingOverlay({
-                        loadingText: 'Creating Radius Server'
-                    });
-                    $.post('/radius/createserver', JSON.stringify(payload), function (result) {
-                        $("#radiuserver-modal").modal('hide');
-                        $("#rad-config-bodymodal").loadingOverlay('remove');
-                        aaaTable.ajax.reload();
-                    });
-                }
-            }
-        });
-
-
-
-        var currentUpdateRow;
-        var selectedRadiusInstance;
-
-        $('#delete-radius-server').on("click", function (event) {
-            $.ajax({
-                url: '/radius/' + Cookies.get('tenantid') + '/radiusdetails/' + selectedRadiusInstance.radiusinstid,
-                type: 'DELETE',
-                beforeSend:function(){
-                    $("#deleteradius-body").loadingOverlay({
-                        loadingText: 'Deleting Radius Server'
-                    });
-                },
-                success: function (result) {
-                    $("#deleteradius-body").loadingOverlay('remove');
-                    $('#confirm-deleteradius-modal').modal('hide');
-                    aaaTable.ajax.reload();
-                },
-                error: function (e) {
-                    console.log(e)
-                }
-            });
-            return false;
-        });
-
-        $('.dataTables-aaalist tbody').on('click', '#setting-delete-radiusinst', function () {
-            selectedRadiusInstance = aaaTable.row($(this).parents('tr')).data();
-            $('#confirm-deleteradius-modal').modal()
-        });
-
-
-        $('.dataTables-aaalist tbody').on('click', '#setting-edit-radiusserver', function () {
-            currentUpdateRow = $(this).parents('tr');
-            selectedRadiusInstance = aaaTable.row($(this).parents('tr')).data();
-            $('#edit-server-name').val(selectedRadiusInstance.servername);
-            $('#edit-serverip').val(selectedRadiusInstance.serverip);
-            $('#edit-auth-port').val(selectedRadiusInstance.authport);
-            $('#edit-shared-secret').val(selectedRadiusInstance.secret);
-            $('#edit-radiuserver-modal').modal('show');
-        });
-
-        $("#btn-edit-testconnection").on('click', function () {
-            if (editformuserconvalidator.valid()){
-                var payload = {
-                    tenantid : parseInt(Cookies.get("tenantid")),
-                    username : Cookies.get("username"),
-                    servername : $('#edit-server-name').val(),
-                    serverip: $('#edit-serverip').val(),
-                    authport: $('#edit-auth-port').val(),
-                    secret: $('#edit-shared-secret').val(),
-                    testusername: $('#edit-radius-test-username').val(),
-                    password: $('#edit-radius-test-password').val()
-                };
-                connEst = false;
-                $.post('/radius/user/connection',JSON.stringify(payload), function (result) {
-                    connEst = result;
-                    if (connEst){
-                        $('#btn-edit-radiusclient').prop("disabled", false);
-                        toastr.success("Healthy Connection")
-                        // $('#collapse-testedituser').collapse('hide')
-                    }else{
-                        toastr.error("Radius Server Authentication Failed")
-                    }
-                });
-            }
-        });
-
-        $("#btn-edit-radiusclient").on("click", function (event) {
-            if (editradiusclientvalidator.valid()) {
-                var payload = {
-                    tenantid: parseInt(Cookies.get("tenantid")),
-                    username: Cookies.get("username"),
-                    servername: $('#edit-server-name').val(),
-                    serverip: $('#edit-serverip').val(),
-                    authport: $('#edit-auth-port').val(),
-                    secret: $('#edit-shared-secret').val(),
-                    testusername: $('#edit-radius-test-username'),
-                    password: $('#edit-radius-test-password').val()
-                };
-                if (connEst) {
-                    $.ajax({
-                        url: '/radius/' + Cookies.get('tenantid') + '/radiusdetails/' + selectedRadiusInstance.radiusinstid,
-                        type: 'PUT',
-                        data: JSON.stringify(payload),
-                        beforeSend: function () {
-                            $("#rad-editconfig-bodymodal").loadingOverlay({
-                                loadingText: 'Updating Radius Server'
-                            });
-                        },
-                        success: function (result) {
-                            $("#rad-editconfig-bodymodal").loadingOverlay('remove');
-                            $("#edit-radiuserver-modal").modal('hide');
-                            aaaTable.ajax.reload();
-                        },
-                        error: function (e) {
-                            console.log(e)
-                        }
-                    });
-                }
-            }
-        });
-
-
-        $.validator.addMethod('IP4Checker', function(value) {
-            var ip = /^(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[0-9]{2}|[0-9])(\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[0-9]{2}|[0-9])){3}$/;
-            return value.match(ip);
-        }, 'Invalid IP address');
-
-        //validation
-        inputformuserconvalidator = $("#radiusconfiginputform").validate({
+        passwordvalidationinput = $("#testuserconform").validate({
             rules: {
-                servername: {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 25
-                },
-                serverip: {
-                    required: true,
-                    IP4Checker: true
-                },
-                authport: {
-                    required: true,
-                    number:true
-                },
-                sharedsecret: {
-                    required: true,
-                },
-                confirmsecret: {
-                    required: true,
-                    equalTo: "#input-shared-secret",
-                },
                 testusername: {
                     required: true
                 },
@@ -467,76 +269,31 @@
                     required: true
                 }
             },
-            messages: {
-                testusername: {
-                    required:"Please Enter Test User Name"
+            messages:{
+                testusername:{
+                    required: "Pleasse enter username",
                 },
-                testpassword: {
-                    required:"Pleasse Test User Password"
+                testpassword:{
+                    required: "Pleasse enter password",
                 },
-                servername: {
-                    required:"Please include server name for instance"
-                },
-                serverip: {
-                    required:"Please enter a correct IP address"
-                },
-                authport: {
-                    required: "Please enter port number for Authentication"
-                },
-                confirmsecret:{
-                    required: "Pleasse confirm your Secret",
-                    equalTo: "Unmatch secret"
-                }
             }
         });
-        editformuserconvalidator = $("#radiusconfigeditform").validate({
+
+        passwordvalidationedit = $("#testedituserconform").validate({
             rules: {
-                servername: {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 25
-                },
-                serverip: {
-                    required: true,
-                    IP4Checker: true
-                },
-                authport: {
-                    required: true,
-                    number:true
-                },
-                sharedsecret: {
-                    required: false,
-                },
-                confirmsecret: {
-                    required: true,
-                    equalTo: "#edit-shared-secret",
-                },
-                testusername: {
+                testusernameedit: {
                     required: true
                 },
-                testpassword: {
+                testpasswordedit: {
                     required: true
                 }
             },
-            messages: {
-                testusername: {
-                    required:"Please Enter Test User Name"
+            messages:{
+                testusernameedit:{
+                    required: "Pleasse enter username",
                 },
-                testpassword: {
-                    required:"Pleasse Test User Password"
-                },
-                servername: {
-                    required:"Please include server name for instance"
-                },
-                serverip: {
-                    required:"Please enter a correct IP address"
-                },
-                authport: {
-                    required: "Please enter port number for Authentication"
-                },
-                confirmsecret:{
-                    required: "Pleasse confirm your Secret",
-                    equalTo: "Unmatch secret"
+                testpasswordedit:{
+                    required: "Pleasse enter password",
                 }
             }
         });
@@ -617,6 +374,238 @@
                     required: "Pleasse confirm your Secret",
                     equalTo: "Unmatch secret"
                 }
+            }
+        });
+
+        $("#add-radiusclient").on('click', function () {
+            $('#radiusconfiginputform').trigger('reset');
+            $('#testuserconform').trigger('reset');
+            addradiusclientvalidator.resetForm();
+            passwordvalidationinput.resetForm()
+            $("#radiuserver-modal").modal('show');
+        });
+
+        $("#btn-testconnection").on('click', function () {
+            if($('#radiusconfiginputform').valid() && $('#testuserconform').valid()){
+                var payload = {
+                    tenantid : parseInt(Cookies.get("tenantid")),
+                    username : Cookies.get("username"),
+                    servername : $('#input-server-name').val(),
+                    serverip: $('#input-serverip').val(),
+                    authport: $('#input-auth-port').val(),
+                    secret: $('#input-shared-secret').val(),
+                    testusername: $('#radius-test-username').val(),
+                    password: $('#radius-test-password').val()
+                };
+                connEst = false;
+                $("#rad-config-bodymodal").loadingOverlay({
+                    loadingText: 'Creating Radius Server'
+                });
+                $.post('/radius/user/connection',JSON.stringify(payload), function (result) {
+                    connEst = result;
+                    if (connEst){
+                        bootbox.alert("Healthy Connection", null);
+                    }else{
+                        bootbox.alert("Healthy Connection", null);
+                    }
+                    $("#rad-config-bodymodal").loadingOverlay('remove');
+                });
+            }
+        });
+
+        $("#btn-add-radiusclient").on('click', function () {
+            if ($('#radiusconfiginputform').valid()) {
+                var payload = {
+                    tenantid: parseInt(Cookies.get("tenantid")),
+                    username: Cookies.get("username"),
+                    servername: $('#input-server-name').val(),
+                    serverip: $('#input-serverip').val(),
+                    authport: $('#input-auth-port').val(),
+                    secret: $('#input-shared-secret').val(),
+                    testusername: $('#radius-test-username').val(),
+                    password: $('#radius-test-password').val()
+                };
+
+                $("#rad-config-bodymodal").loadingOverlay({
+                        loadingText: 'Creating Radius Server'
+                });
+                $.post('/radius/user/connection',JSON.stringify(payload), function (result) {
+                    connEst = result;
+                    console.log(connEst);
+                    if (connEst){
+                        $.post('/radius/createserver', JSON.stringify(payload), function (result) {
+                            $("#radiuserver-modal").modal('hide');
+                            $("#rad-config-bodymodal").loadingOverlay('remove');
+                            aaaTable.ajax.reload();
+                            bootbox.alert("Succesfully Saved!" + payload.servername +" AAA server configured ", null);
+                        });
+                    }else{
+                        $("#radiuserver-modal").modal('hide');
+                        $("#rad-config-bodymodal").loadingOverlay('remove');
+                        bootbox.dialog({
+                            message: "<div class='alert alert-warning'>Do you still want to save the AAA parameters</div>",
+                            title: "Connection Testing Failed !",
+                            buttons: {
+                                success: {
+                                    label: "Confirm!",
+                                    className: "btn-primary",
+                                    callback: function() {
+                                        $.post('/radius/createserver', JSON.stringify(payload), function (result) {
+                                            aaaTable.ajax.reload();
+                                        });
+                                    }
+                                },
+                                danger: {
+                                    label: "Cancel!",
+                                    className: "btn-default",
+                                    callback: function() {
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+
+            }
+        });
+
+        var currentUpdateRow;
+        var selectedRadiusInstance;
+
+        $('#delete-radius-server').on("click", function (event) {
+            $.ajax({
+                url: '/radius/' + Cookies.get('tenantid') + '/radiusdetails/' + selectedRadiusInstance.radiusinstid,
+                type: 'DELETE',
+                beforeSend:function(){
+                    $("#deleteradius-body").loadingOverlay({
+                        loadingText: 'Deleting Radius Server'
+                    });
+                },
+                success: function (result) {
+                    $("#deleteradius-body").loadingOverlay('remove');
+                    $('#confirm-deleteradius-modal').modal('hide');
+                    aaaTable.ajax.reload();
+                },
+                error: function (e) {
+                    console.log(e)
+                }
+            });
+            return false;
+        });
+
+        $('.dataTables-aaalist tbody').on('click', '#setting-delete-radiusinst', function () {
+            selectedRadiusInstance = aaaTable.row($(this).parents('tr')).data();
+            $('#confirm-deleteradius-modal').modal()
+        });
+
+
+        $('.dataTables-aaalist tbody').on('click', '#setting-edit-radiusserver', function () {
+            editradiusclientvalidator.resetForm();
+            passwordvalidationedit.resetForm();
+            currentUpdateRow = $(this).parents('tr');
+            selectedRadiusInstance = aaaTable.row($(this).parents('tr')).data();
+            $('#edit-server-name').val(selectedRadiusInstance.servername);
+            $('#edit-serverip').val(selectedRadiusInstance.serverip);
+            $('#edit-auth-port').val(selectedRadiusInstance.authport);
+            $('#edit-shared-secret').val(selectedRadiusInstance.secret);
+            $('#testuserconform').trigger('reset');
+            $('#edit-radiuserver-modal').modal('show');
+        });
+
+        $("#btn-edit-testconnection").on('click', function () {
+            if ($('#radiusconfigeditform').valid() && $('#testedituserconform').valid()){
+                var payload = {
+                    tenantid : parseInt(Cookies.get("tenantid")),
+                    username : Cookies.get("username"),
+                    servername : $('#edit-server-name').val(),
+                    serverip: $('#edit-serverip').val(),
+                    authport: $('#edit-auth-port').val(),
+                    secret: $('#edit-shared-secret').val(),
+                    testusername: $('#edit-radius-test-username').val(),
+                    password: $('#edit-radius-test-password').val()
+                };
+                connEst = false;
+                $.post('/radius/user/connection',JSON.stringify(payload), function (result) {
+                    connEst = result;
+                    if (connEst){
+                        bootbox.alert("Healthy Connection", null);
+                    }else{
+                        bootbox.alert("Radius Server Authentication Failed", null);
+                    }
+                });
+            }
+        });
+
+        $("#btn-edit-radiusclient").on("click", function (event) {
+            if ($('#radiusconfigeditform').valid()) {
+                var payload = {
+                    tenantid: parseInt(Cookies.get("tenantid")),
+                    username: Cookies.get("username"),
+                    servername: $('#edit-server-name').val(),
+                    serverip: $('#edit-serverip').val(),
+                    authport: $('#edit-auth-port').val(),
+                    secret: $('#edit-shared-secret').val(),
+                    testusername: $('#edit-radius-test-username').val(),
+                    password: $('#edit-radius-test-password').val()
+                };
+                $("#rad-editconfig-bodymodal").loadingOverlay({
+                    loadingText: 'Updating Radius Server'
+                });
+                console.log(payload)
+                $.post('/radius/user/connection',JSON.stringify(payload), function (result) {
+                    connEst = result;
+                    console.log(result);
+                    if (connEst){
+                        toastr.success("Healthy Connection");
+                        $.ajax({
+                            url: '/radius/' + Cookies.get('tenantid') + '/radiusdetails/' + selectedRadiusInstance.radiusinstid,
+                            type: 'PUT',
+                            data: JSON.stringify(payload),
+                            success: function () {
+                                $("#rad-editconfig-bodymodal").loadingOverlay('remove');
+                                $("#edit-radiuserver-modal").modal('hide');
+                                bootbox.alert("Succesfully Saved! " + payload.servername +" AAA server configured ", null);
+                                aaaTable.ajax.reload();
+                            },
+                            error: function (e) {
+                                console.log(e)
+                            }
+                        });
+                    }else{
+                        $("#rad-editconfig-bodymodal").loadingOverlay('remove');
+                        $("#edit-radiuserver-modal").modal('hide');
+                        bootbox.dialog({
+                            message: "<div class='alert alert-warning'>Do you still want to save the AAA parameters</div>",
+                            title: "Connection Testing Failed !",
+                            class:"alert-message-boot",
+                            buttons: {
+                                success: {
+                                    label: "Confirm!",
+                                    className: "btn-primary",
+                                    callback: function() {
+                                        $.ajax({
+                                            url: '/radius/' + Cookies.get('tenantid') + '/radiusdetails/' + selectedRadiusInstance.radiusinstid,
+                                            type: 'PUT',
+                                            data: JSON.stringify(payload),
+                                            success: function () {
+                                                aaaTable.ajax.reload();
+                                            },
+                                            error: function (e) {
+                                                console.log(e)
+                                            }
+                                        });
+                                    }
+                                },
+                                danger: {
+                                    label: "Cancel!",
+                                    className: "btn-default",
+                                    callback: function() {
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
             }
         });
     });
