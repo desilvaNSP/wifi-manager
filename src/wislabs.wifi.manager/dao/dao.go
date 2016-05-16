@@ -127,7 +127,9 @@ type Constrains struct {
 	TenantId   int               `json:"tenantid"`
 	From       string            `json:"from"`
 	To         string            `json:"to"`
-	ACL        string             `json:"acl"`
+	PreFrom	   string  	     `json:"prefrom"`
+	PreTo	   string  	     `json:"preto"`
+	ACL        string            `json:"acl"`
 	GroupNames []string          `json:"groupnames"`
 }
 
@@ -242,4 +244,11 @@ type RadiusConfigs struct  {
 	AuthPort  	    string   			`db:"authport"json:"authport"`
 	SharedSecret  	    string  			`db:"sharedsecret"json:"secret"`
 	Accounting          string			`db:"accounting"json:"accounting"`
+}
+
+type SummaryChangePercentage struct {
+	Value 	   int64 		`json:"value"`
+	PreValue   int64		`json:"prevalue"`
+	Percentage float64	        `json:"percentage"`
+	Status 	   string		`json:"status"`
 }

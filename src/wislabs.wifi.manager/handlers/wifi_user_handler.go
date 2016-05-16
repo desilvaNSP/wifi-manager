@@ -100,12 +100,14 @@ func GetUsersCountFromToHandler(w http.ResponseWriter, r *http.Request) {
 	var constrains dao.Constrains
 	err := decoder.Decode(&constrains)
 
-	count := wifi_controller.GetUsersCountFromTo(constrains)
+	count, countpre := wifi_controller.GetUsersCountFromTo(constrains)
+
+	changePercentage := getChangePrecentageSummaryDetails(countpre,count)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 
-	if err = json.NewEncoder(w).Encode(count); err != nil {
+	if err = json.NewEncoder(w).Encode(changePercentage); err != nil {
 		panic(err)
 	}
 }
@@ -120,12 +122,13 @@ func GetReturningUsersCountFromToHandler(w http.ResponseWriter, r *http.Request)
 	var constrains dao.Constrains
 	err := decoder.Decode(&constrains)
 
-	count := wifi_controller.GetReturningUsers(constrains)
+	count, countpre := wifi_controller.GetReturningUsers(constrains)
+	changePercentage := getChangePrecentageSummaryDetails(countpre,count)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 
-	if err = json.NewEncoder(w).Encode(count); err != nil {
+	if err = json.NewEncoder(w).Encode(changePercentage); err != nil {
 		panic(err)
 	}
 }
@@ -162,12 +165,15 @@ func GetUserCountOfDownloadsOverHandler(w http.ResponseWriter, r *http.Request) 
 	vars := mux.Vars(r)
 	threshold := vars["threshold"]
 	value, _ := strconv.Atoi(threshold)
-	count := wifi_controller.GetUserCountOfDownloadsOver(constrains, value)
+
+	count, countpre := wifi_controller.GetUserCountOfDownloadsOver(constrains, value)
+
+	changePercentage := getChangePrecentageSummaryDetails(countpre,count)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 
-	if err := json.NewEncoder(w).Encode(count); err != nil {
+	if err := json.NewEncoder(w).Encode(changePercentage); err != nil {
 		panic(err)
 	}
 }
