@@ -112,16 +112,23 @@
         }
 
         function renderMetrics() {
+            var userPermissions = JSON.parse(Cookies.get('userpermissions'));
+            var hasDashboardCSVDownloadPermission = false;
             $.get('components/dashboard-metrics.html', function (template) {
-//                $('#dashboard-metric-content').empty()
                 var rendered = Mustache.render(template, {});
                 $('#dashboard-metric-content').html(rendered);
-                if(Cookies.get("username")!="admin"){
-                    $("#exportCSV").hide();
-                }else{
+                $.each(userPermissions, function (key, value) {
+                    if (value.name == 'csv_download') {
+                        hasDashboardCSVDownloadPermission = true
+                    }
+                });
+                if (hasDashboardCSVDownloadPermission){
                     $("#exportCSV").show();
+                }else{
+                    $("#exportCSV").hide();
                 }
             })
+
         }
 
         function renderAPreport(){

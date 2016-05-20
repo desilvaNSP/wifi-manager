@@ -41,6 +41,21 @@ func AuthenticateUser(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func CheckExistIsUserHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	username := vars["username"]
+	tenantId, err := strconv.Atoi(r.Header.Get("tenantid"))
+	if (err != nil) {
+		log.Fatalln("Error while reading tenantid", err)
+	}
+	checkuser := dashboard.CheckExistIsUserInTenant(tenantId, username);
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(checkuser); err != nil {
+		panic(err)
+	}
+}
+
 func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var user dao.DashboardUser
@@ -163,10 +178,16 @@ func GetAllUserPermissionsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	permissions := dashboard.GetAllDashboardUserPermissions(tenantId)
 
+	userscopes := make(map[string][]dao.Permission)
+
+	for _, scope := range permissions {
+		userscopes[scope.Name] = append(userscopes[scope.Name], scope)
+	}
+
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 
-	if err := json.NewEncoder(w).Encode(permissions); err != nil {
+	if err := json.NewEncoder(w).Encode(userscopes); err != nil {
 		panic(err)
 	}
 }

@@ -69,7 +69,7 @@ type DashboardUser struct {
 	Email       string    `db:"email"json:"email"`
 	Status      string    `db:"status"json:"status"`
 	Roles       []string  `json:"roles"`
-	Permissions []string  `json:"permissions"`
+	Permissions []Permission   `json:"permissions"`
 	ApGroups    []string  `json:"apgroups"`
 }
 
