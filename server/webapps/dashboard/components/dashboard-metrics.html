@@ -471,47 +471,59 @@
                     var payload = {
                         from: from_,
                         to: to_,
+                        prefrom:_prefrom,
+                        preto:_preto,
                         groupnames: window.datagroups,
                         acl:window.aclvalue,
                         tenantid: parseInt(Cookies.get("tenantid"))
                     };
                     window.payload = payload
                     var totaldownloads = 0, totaluploads = 0, uniqueuserscount = 0
+                    var totaldownloadsPrevoius = 0, totaluploadsPrevious = 0, uniqueuserscountPrevious = 0
 
                     var renderTotalDownloads = $.post('/wifi/usage/downloads', JSON.stringify(payload), function (data, status) {
-                        totaldownloads = data;
-                        totalDownloadFormat = numeral(data).format('0.00b')
+                        totaldownloads = data.value;
+                        totaldownloadsPrevoius = data.prevalue;
+                        totalDownloadFormat = numeral(data.value).format('0.00b')
                         $.get('components/metric-base.html', function (template) {
                             var rendered = Mustache.render(template, {
                                 caption: 'Total Downloads',
-                                value: numeral(data).format('0.00b'),
-                                titlecolor: '#12A6A8'
+                                value: totalDownloadFormat,
+                                titlecolor: '#12A6A8',
+                                percentage: data.percentage.toFixed(2),
+                                status:data.status
                             });
                             $('#metric-downloads').html(rendered)
                         })
                     });
 
                     var renderTotalUploads = $.post('/wifi/usage/uploads', JSON.stringify(payload), function (data, status) {
-                        totaluploads = data;
-                        totalUploadFormat = numeral(data).format('0.00b');
+                        totaluploads = data.value;
+                        totaluploadsPrevious = data.prevalue;
+                        totalUploadFormat = numeral(data.value).format('0.00b');
                         $.get('components/metric-base.html', function (template) {
                             var rendered = Mustache.render(template, {
                                 caption: 'Total Uploads',
                                 value: totalUploadFormat,
-                                titlecolor: '#12A6A8'
+                                titlecolor: '#12A6A8',
+                                percentage: data.percentage.toFixed(2),
+                                status:data.status
                             });
                             $('#metric-uploads').html(rendered)
                         })
                     });
 
                     var renderTotalUserCount = $.post('/wifi/users/count', JSON.stringify(payload), function (data, status) {
-                        uniqueuserscount = (data === 0 ? 1 : data);
+                        uniqueuserscount = (data.value === 0 ? 1 : data.value);
+                        uniqueuserscountPrevious = (data.prevalue === 0 ? 1 : data.prevalue);
                         totalUserFormat = uniqueuserscount.toString();
                         $.get('components/metric-base.html', function (template) {
                             var rendered = Mustache.render(template, {
                                 caption: 'Total Users',
-                                value: data,
-                                titlecolor: '#12A6A8'
+                                value: uniqueuserscount,
+                                titlecolor: '#12A6A8',
+                                percentage: data.percentage.toFixed(2),
+                                status:data.status
                             });
                             $('#metric-totalusers').html(rendered)
                         })
@@ -519,11 +531,13 @@
 
                     $.post('/wifi/sessions/avg', JSON.stringify(payload), function (data, status) {
                         $.get('components/metric-base.html', function (template) {
-                            avgUserSessionTimeFormat=numeral(data).format('00:00:00');
+                            avgUserSessionTimeFormat=numeral(data.value).format('00:00:00');
                             var rendered = Mustache.render(template, {
                                 caption: 'Avg User session time',
                                 value: avgUserSessionTimeFormat,
-                                titlecolor: '#12A6A8'
+                                titlecolor: '#12A6A8',
+                                percentage: data.percentage.toFixed(2),
+                                status:data.status
                             });
                             $('#metric-avgsessiontime').html(rendered)
                         })
@@ -531,11 +545,13 @@
 
                     $.post('/wifi/sessions/count', JSON.stringify(payload), function (data, status) {
                         $.get('components/metric-base.html', function (template) {
-                            totalSessionFormat=data.toString();
+                            totalSessionFormat=data.value.toString();
                             var rendered = Mustache.render(template, {
                                 caption: 'Total Sessions',
-                                value: data,
-                                titlecolor: '#12A6A8'
+                                value: data.value,
+                                titlecolor: '#12A6A8',
+                                percentage: data.percentage.toFixed(2),
+                                status:data.status
                             });
                             $('#metric-totalsessioncount').html(rendered)
                         })
@@ -543,11 +559,13 @@
 
                     $.post('/wifi/users/countbydownlods/1000000', JSON.stringify(payload), function (data, status) {
                         $.get('components/metric-base.html', function (template) {
-                            noofUniqueUserFormat=data.toString();
+                            noofUniqueUserFormat=data.value.toString();
                             var rendered = Mustache.render(template, {
                                 caption: 'Unique Users (>1MB)',
-                                value: data,
-                                titlecolor: '#12A6A8'
+                                value: data.value,
+                                titlecolor: '#12A6A8',
+                                percentage: data.percentage.toFixed(2),
+                                status:data.status
                             });
                             $('#metric-usercountover1MB').html(rendered)
                         })
@@ -555,11 +573,26 @@
 
                     $.when(renderTotalDownloads, renderTotalUploads, renderTotalUserCount).done(function () {
                         $.get('components/metric-base.html', function (template) {
-                            avgDataUsagePerUserFormat= numeral((totaldownloads + totaluploads) / uniqueuserscount).format('0.00b');
+                            var  avgDataUsagePerUserValue  = (totaldownloads + totaluploads) / uniqueuserscount;
+                            var avgDataUsagePerUserPreValue = (totaldownloadsPrevoius + totaluploadsPrevious) / uniqueuserscountPrevious;
+                            var percentage =0 ,status = "";
+                            if(avgDataUsagePerUserPreValue != 0){
+                                percentage = Math.abs((avgDataUsagePerUserPreValue-avgDataUsagePerUserValue)/(avgDataUsagePerUserPreValue)*100)
+                            }else{
+                                percentage = 100;
+                            }
+                            if(avgDataUsagePerUserPreValue > avgDataUsagePerUserValue){
+                                status ="down"
+                            }else{
+                                status = "up"
+                            }
+                            avgDataUsagePerUserFormat= numeral(avgDataUsagePerUserValue).format('0.00b');
                             var rendered = Mustache.render(template, {
                                 caption: 'Avg Data Usage per User',
                                 value: avgDataUsagePerUserFormat,
-                                titlecolor: '#12A6A8'
+                                titlecolor: '#12A6A8',
+                                percentage: percentage.toFixed(2),
+                                status:status
                             });
                             $('#metric-avgdatausageperuser').html(rendered)
                         })
@@ -567,11 +600,13 @@
 
                     $.post('/wifi/users/returncount', JSON.stringify(payload), function (data, status) {
                         $.get('components/metric-base.html', function (template) {
-                            returningUserFormat=data.toString();
+                            returningUserFormat=data.value.toString();
                             var rendered = Mustache.render(template, {
                                 caption: 'Returning Users',
                                 value: returningUserFormat,
-                                titlecolor: '#12A6A8'
+                                titlecolor: '#12A6A8',
+                                percentage: data.percentage.toFixed(2),
+                                status:data.status
                             });
                             $('#metric-returningusers').html(rendered)
                         })

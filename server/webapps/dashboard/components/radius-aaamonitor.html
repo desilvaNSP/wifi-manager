@@ -431,7 +431,6 @@
                 });
                 $.post('/radius/user/connection',JSON.stringify(payload), function (result) {
                     connEst = result;
-                    console.log(connEst);
                     if (connEst){
                         $.post('/radius/createserver', JSON.stringify(payload), function (result) {
                             $("#radiuserver-modal").modal('hide');
@@ -551,10 +550,8 @@
                 $("#rad-editconfig-bodymodal").loadingOverlay({
                     loadingText: 'Updating Radius Server'
                 });
-                console.log(payload)
                 $.post('/radius/user/connection',JSON.stringify(payload), function (result) {
                     connEst = result;
-                    console.log(result);
                     if (connEst){
                         toastr.success("Healthy Connection");
                         $.ajax({
@@ -608,6 +605,7 @@
                 });
             }
         });
+
     });
 </script>
 

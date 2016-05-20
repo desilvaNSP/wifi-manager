@@ -1,0 +1,91 @@
+<div class="modal inmodal" id="update-user-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content animated fadeIn">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
+                        class="sr-only">Close</span></button>
+                <i class="fa fa-user-md modal-icon"></i>
+                <h4 class="modal-title">Edit User</h4>
+                <small class="font-bold">Edit system users and assign privileges</small>
+            </div>
+            <div class="modal-body" id="dbedituser-body">
+                <form role="form" id="edituser-form">
+                    <div class="form-group">
+                        <label for="inputEditTenantDomain">Tenant Domain</label>
+                        <input type="text" class="form-control" id="inputEditTenantDomain" name="tenantdomain"
+                               value="{{tenantDomain}}" required readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputEditUsername">Username</label>
+                        <input type="text" class="form-control" id="inputEditUsername" name="editusername"
+                               placeholder="Username" required readonly="readonly">
+                    </div>
+                    <div class="form-group">
+                        <label for="inputEditEmail">Email address</label>
+                        <input type="email" class="form-control" id="inputEditEmail" name="editemail"
+                               placeholder="Email" value="{{emailvalue}}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Allowed Data Scopes</label>
+                        <div class="checkbox">
+                            <div class="row">
+                                {{#groups}}
+                                <div class="col-sm-6">
+                                    <label>
+                                        <input type="checkbox" name="datascopeedit" data-value="{{.}}">{{.}}
+                                    </label>
+                                </div>
+                                {{/groups}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="panel panel-default">
+                            <div class="panel-heading" role="tab" id="userscopeseditpanel">
+                                <h4 class="panel-title">
+                                    <a class="collapsed" role="button" data-toggle="collapse" parent="#accordion" data- href="#collapse-userscopes-edit" aria-expanded="false" aria-controls="collapse-userscopes">
+                                        Allowed User Scopes
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="collapse-userscopes-edit" class="panel-collapse collapse" role="tabpanel" aria-labelledby="userscopeseditpanel">
+                                <div class="panel-body">
+                                    <div class="checkbox">
+                                        <div class="row">
+                                            {{#userscopes}}
+                                            <div class="col-sm-12">
+                                                <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <label>{{name}}</label>
+                                                    </div>
+                                                    {{#actions}}
+                                                    <div class="col-sm-2">
+                                                        <label>
+                                                            <input type="checkbox" name="userscopeedit" data-action="{{action}}" data-name="{{name}}"value="{{action}}">{{action}}
+                                                        </label>
+                                                    </div>
+                                                    {{/actions}}
+                                                </div>
+                                            </div>
+                                            {{/userscopes}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="checkbox">
+                        <hr/>
+                        <label>
+                            <input type="checkbox" id="chkEditIsActive"> Activate
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="btn-edit-user">Update User</button>
+            </div>
+        </div>
+    </div>
+</div>

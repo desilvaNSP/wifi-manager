@@ -50,7 +50,7 @@
 
 
 <script type="text/javascript">
-    from_ = 0, to_ = 0;
+    from_ = 0, to_ = 0 ,_prefrom = 0 , _preto = 0;
     $(document).ready(function () {
 
 
@@ -72,6 +72,9 @@
         var saveResult = function (data) {
             from_ = moment(data.from, "X").format('YYYY-MM-DD');
             to_ = moment(data.to, "X").format('YYYY-MM-DD');
+            var period = Math.floor(moment.duration(moment(to_,"YYYY-MM-DD").diff(moment(from_,"YYYY-MM-DD"))).asDays());
+            _prefrom = moment(moment(from_).subtract(period, "days")).format('YYYY-MM-DD');
+            _preto = moment(from_).subtract(1, "days").format("YYYY-MM-DD")
         };
 
         var slider = $("#range").ionRangeSlider({
@@ -109,16 +112,23 @@
         }
 
         function renderMetrics() {
+            var userPermissions = JSON.parse(Cookies.get('userpermissions'));
+            var hasDashboardCSVDownloadPermission = false;
             $.get('components/dashboard-metrics.html', function (template) {
-//                $('#dashboard-metric-content').empty()
                 var rendered = Mustache.render(template, {});
                 $('#dashboard-metric-content').html(rendered);
-                if(Cookies.get("username")!="admin"){
-                    $("#exportCSV").hide();
-                }else{
+                $.each(userPermissions, function (key, value) {
+                    if (value.name == 'csv_download') {
+                        hasDashboardCSVDownloadPermission = true
+                    }
+                });
+                if (hasDashboardCSVDownloadPermission){
                     $("#exportCSV").show();
+                }else{
+                    $("#exportCSV").hide();
                 }
             })
+
         }
 
         function renderAPreport(){

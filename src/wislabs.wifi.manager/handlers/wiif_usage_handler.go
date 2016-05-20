@@ -3,6 +3,7 @@ package handlers
 import (
 	"wislabs.wifi.manager/controllers/wifi"
 	"wislabs.wifi.manager/dao"
+	"wislabs.wifi.manager/authenticator"
 	"encoding/json"
 	"net/http"
 	_ "github.com/go-sql-driver/mysql"
@@ -12,6 +13,7 @@ import (
 	"encoding/csv"
 	"log"
 	"wislabs.wifi.manager/commons"
+	"math"
 )
 
 
@@ -73,6 +75,7 @@ func GetAgregatedUploadsFromToHandler(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var constrains dao.Constrains
 	decoder.Decode(&constrains)
+
 	count := wifi.GetAggregatedUploadsFromTo(constrains)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
@@ -92,12 +95,14 @@ func GetDownloadsFromToHandler(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var constrains dao.Constrains
 	decoder.Decode(&constrains)
-	count := wifi.GetDownloadsFromTo(constrains)
+
+	count, countpre := wifi.GetDownloadsFromTo(constrains)
+	changePercentage := getChangePrecentageSummaryDetails(countpre,count)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 
-	if err := json.NewEncoder(w).Encode(count); err != nil {
+	if err := json.NewEncoder(w).Encode(changePercentage); err != nil {
 		panic(err)
 	}
 }
@@ -112,12 +117,13 @@ func GetUploadsFromToHandler(w http.ResponseWriter, r *http.Request) {
 	var constrains dao.Constrains
 	decoder.Decode(&constrains)
 
-	count := wifi.GetUploadsFromTo(constrains)
+	count, countpre := wifi.GetUploadsFromTo(constrains)
+	changePercentage := getChangePrecentageSummaryDetails(countpre,count)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 
-	if err := json.NewEncoder(w).Encode(count); err != nil {
+	if err := json.NewEncoder(w).Encode(changePercentage); err != nil {
 		panic(err)
 	}
 }
@@ -132,12 +138,13 @@ func GetAvgSessoinTimeFromToHandler(w http.ResponseWriter, r *http.Request) {
 	var constrains dao.Constrains
 	decoder.Decode(&constrains)
 
-	count := wifi.GetAvgSessionsFromTo(constrains)
+	count, countpre := wifi.GetAvgSessionsFromTo(constrains)
+	changePercentage := getChangePrecentageSummaryDetails(int64(countpre),int64(count))
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 
-	if err := json.NewEncoder(w).Encode(count); err != nil {
+	if err := json.NewEncoder(w).Encode(changePercentage); err != nil {
 		panic(err)
 	}
 }
@@ -152,12 +159,13 @@ func GetTotalSessionCountTimeFromToHandler(w http.ResponseWriter, r *http.Reques
 	var constrains dao.Constrains
 	decoder.Decode(&constrains)
 
-	count := wifi.GetTotalSessionsCountFromTo(constrains)
+	count, countpre := wifi.GetTotalSessionsCountFromTo(constrains)
+	changePercentage := getChangePrecentageSummaryDetails(countpre,count)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 
-	if err := json.NewEncoder(w).Encode(count); err != nil {
+	if err := json.NewEncoder(w).Encode(changePercentage); err != nil {
 		panic(err)
 	}
 }
@@ -201,10 +209,14 @@ func GetAccessPointAgregatedDataFromToHandler(w http.ResponseWriter, r*http.Requ
 */
 
 func DownlaodCSVSummaryDetailsDashboard(w http.ResponseWriter,r *http.Request){
+	if(!authenticator.IsAuthorized("csv_download", authenticator.ACTION_READ,r)){
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
 	decoder := json.NewDecoder(r.Body)
 	var constrains dao.Constrains
 	decoder.Decode(&constrains)
-
 	//generate temp file
 	CSVcontent := wifi.SummaryDetailsFromTo(constrains)
 	serverHome := os.Getenv(commons.SERVER_HOME)
@@ -240,4 +252,23 @@ func DownlaodCSVSummaryDetailsDashboard(w http.ResponseWriter,r *http.Request){
 		panic(err)
 	}
 
+}
+
+
+func getChangePrecentageSummaryDetails(countpre int64, count int64) dao.SummaryChangePercentage{
+	var changePercentage dao.SummaryChangePercentage
+	changePercentage.Value = count
+	changePercentage.PreValue = countpre
+	if countpre == 0 {
+		changePercentage.Percentage = 100;
+	}else{
+		changePercentage.Percentage =  math.Abs(float64(countpre-count)/float64(countpre)*100)
+
+	}
+	if countpre < count {
+		changePercentage.Status = "up";
+	}else {
+		changePercentage.Status = "down"
+	}
+	return  changePercentage
 }

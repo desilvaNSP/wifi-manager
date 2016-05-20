@@ -88,7 +88,7 @@
             userPermissions = JSON.parse(Cookies.get('userpermissions'));
             hasDashboardUserReadPermission = false
             $.each(userPermissions, function (key, value) {
-                if (value == 'dashboard_users') {
+                if (value.name == 'dashboard_users') {
                     hasDashboardUserReadPermission = true
                 }
             });
@@ -306,7 +306,7 @@
         userPermissions = JSON.parse(Cookies.get('userpermissions'));
         hasDashboardUserReadPermission = false;
         $.each(userPermissions, function (key, value) {
-            if (value == 'dashboard_users') {
+            if (value.name == 'dashboard_users') {
                 hasDashboardUserReadPermission = true
             }
         });

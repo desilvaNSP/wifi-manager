@@ -94,6 +94,13 @@ var routes = Routes{
 		dashboard_handlers.UpdateUserPasswordHandler,
 	},
 	Route{
+		"Check Dashboard user Exists",
+		"GET",
+		"/dashboard/checkuser/{username}",
+		true,
+		dashboard_handlers.CheckExistIsUserHandler,
+	},
+	Route{
 		"Get Dashboard user Info",
 		"GET",
 		"/dashboard/{tenantid}/users/{username}",
@@ -316,13 +323,6 @@ var routes = Routes{
 		"/wifi/{tenantid}/locations/groups",
 		true,
 		dashboard_handlers.GetLocationGroups,
-	},
-	Route{
-		"GetLocationAccessPoints",
-		"GET",
-		"/wifi/{tenantid}/locations/{locationid}",
-		true,
-		dashboard_handlers.GetUsersHandler,
 	},
 	Route{
 		"DeleteLocationAccessPoints",
