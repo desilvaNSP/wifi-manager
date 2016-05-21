@@ -32,12 +32,12 @@ func IsUserAuthenticated(user dao.DashboardUser) bool {
 	return false
 }
 
-func CheckExistIsUserInTenant(tenantId int, username string) int {
+func IsUserExistInTenant(tenantId int, username string) int {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 
 	var checkuser []int
-	_, err := dbMap.Select(&checkuser, commons.CHECK_EXISTS_USER_NAME, username, tenantId)
+	_, err := dbMap.Select(&checkuser, commons.IS_EXISTS_USER_NAME, username, tenantId)
 	if err != nil {
 		checkErr(err,"Error occur while checking exists user");
 	}

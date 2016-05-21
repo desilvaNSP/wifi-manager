@@ -181,8 +181,8 @@
                         name: $('#input-dashboard-name').val(),
                         users: taggedUsers,
                         aggregate: aggregate,
-                        groups: getCheckedGroups('group'),
-                        metrics: getCheckedMetrices('metric'),
+                        groups: getCheckedGroups("input[name='group']"),
+                        metrics: getCheckedMetrices("input[name='metric']"),
                         acls: $('.acltypes-radio:checked').val()
                     };
                     $("#adddbmodal-body").loadingOverlay({
@@ -438,8 +438,8 @@
                     appid:selectedAppIdForSettings,
                     users: taggedUsers,
                     aggregate: aggregate,
-                    groups: getCheckedGroups('group'),
-                    metrics: getCheckedMetrices('metric'),
+                    groups: getCheckedGroups("input[name='group']"),
+                    metrics: getCheckedMetrices("input[name='metric']"),
                     acls: $('.update-acltypes-radio:checked').val()
                 };
 
@@ -477,7 +477,7 @@
     }
 
     function getCheckedMetrices(chkboxName) {
-        var checkboxes = document.getElementsByName(chkboxName);
+        var checkboxes =  $(chkboxName);
         var checkboxesChecked = [];
         for (var i = 0; i < checkboxes.length; i++) {
             if (checkboxes[i].checked) {
@@ -491,7 +491,7 @@
     }
 
     function getCheckedGroups(chkboxName) {
-        var checkboxes = document.getElementsByName(chkboxName);
+        var checkboxes =  $(chkboxName);
         var checkboxesChecked = [];
         for (var i = 0; i < checkboxes.length; i++) {
             if (checkboxes[i].checked) {
