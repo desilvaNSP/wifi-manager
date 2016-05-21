@@ -41,14 +41,14 @@ func AuthenticateUser(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func CheckExistIsUserHandler(w http.ResponseWriter, r *http.Request) {
+func UserExistInTenantHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	username := vars["username"]
 	tenantId, err := strconv.Atoi(r.Header.Get("tenantid"))
 	if (err != nil) {
 		log.Fatalln("Error while reading tenantid", err)
 	}
-	checkuser := dashboard.CheckExistIsUserInTenant(tenantId, username);
+	checkuser := dashboard.IsUserExistInTenant(tenantId, username);
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(checkuser); err != nil {
@@ -138,7 +138,7 @@ func GetUserProfile(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetDashboardUsersHandler(w http.ResponseWriter, r *http.Request) {
-	if (!authenticator.IsAuthorized("dashboard_users", authenticator.ACTION_READ, r)) {
+	if (!authenticator.IsAuthorized(authenticator.DASHBOARD_USERS, authenticator.ACTION_READ, r)) {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusForbidden)
 		return

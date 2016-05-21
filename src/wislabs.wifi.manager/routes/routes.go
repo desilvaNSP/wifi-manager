@@ -98,7 +98,7 @@ var routes = Routes{
 		"GET",
 		"/dashboard/checkuser/{username}",
 		true,
-		dashboard_handlers.CheckExistIsUserHandler,
+		dashboard_handlers.UserExistInTenantHandler,
 	},
 	Route{
 		"Get Dashboard user Info",

@@ -4,6 +4,12 @@ import (
 	"encoding/json"
 )
 
+/*Permission Constant*/
+const CSV_DOWNLOAD  = "csv_download"
+const WIFI_LOCATION = "wifi_location"
+const WIFI_USERS  =  "wifi_users"
+const DASHBOARD_USERS =  "dashboard_users"
+
 const ACTION_EXECUTE string = "execute"
 const ACTION_WRITE string = "write"
 const ACTION_READ string = "read"
