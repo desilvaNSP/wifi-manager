@@ -209,7 +209,7 @@ func GetAccessPointAgregatedDataFromToHandler(w http.ResponseWriter, r*http.Requ
 */
 
 func DownlaodCSVSummaryDetailsDashboard(w http.ResponseWriter,r *http.Request){
-	if(!authenticator.IsAuthorized("csv_download", authenticator.ACTION_READ,r)){
+	if(!authenticator.IsAuthorized(authenticator.CSV_DOWNLOAD, authenticator.ACTION_READ,r)){
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusForbidden)
 		return
