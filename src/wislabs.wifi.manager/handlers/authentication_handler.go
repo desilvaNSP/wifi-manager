@@ -27,9 +27,8 @@ func RefreshToken(w http.ResponseWriter, r *http.Request, next http.HandlerFunc)
 	w.Write(authenticator.RefreshToken(requestUser))
 }
 
-func Logout(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+func Logout(w http.ResponseWriter, r *http.Request) {
 	err := authenticator.Logout(r)
-	w.Header().Set("Content-Type", "application/json")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 	} else {
