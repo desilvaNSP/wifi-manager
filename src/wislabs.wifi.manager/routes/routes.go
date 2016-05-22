@@ -31,6 +31,13 @@ var routes = Routes{
 		dashboard_handlers.GetLoginPage,
 	},
 	Route{
+		"Logout",
+		"POST",
+		"/dashboard/logout",
+		true,
+		dashboard_handlers.Logout,
+	},
+	Route{
 		"GetRegistrations",
 		"GET",
 		"/dashboard/register",

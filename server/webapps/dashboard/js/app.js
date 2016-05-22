@@ -132,8 +132,16 @@ $(document).ready(function () {
     })
 
     $(".logout").on('click', function () {
-        Cookies.remove();
-        window.location.href = "/dashboard/login"
+        $.ajax({
+            url: '/dashboard/logout',
+            type: 'POST',
+            success: function () {
+                Cookies.remove('jwt', { secure: true });
+                window.location.href = "/dashboard/login"
+            },
+            error: function (e) {
+            }
+        });
     })
 });
 
