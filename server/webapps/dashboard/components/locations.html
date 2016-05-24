@@ -40,6 +40,7 @@
                         <th>Id</th>
                         <th>Location Group</th>
                         <th>MAC</th>
+                        <th>AP Name</th>
                         <th>SSID</th>
                         <th>BSSID</th>
                         <th>Longitude</th>
@@ -49,6 +50,7 @@
                     <tr>
                         <th></th>
                         <th>Location</th>
+                        <th></th>
                         <th></th>
                         <th>SSID</th>
                         <th></th>
@@ -141,10 +143,11 @@
                 {"data": "locationid", "width": "3%"},
                 {"data": "groupname", "width": "10%"},
                 {"data": "mac", "width": "10%"},
-                {"data": "ssid", "width": "10%"},
+                {"data": "apname", "width": "5%"},
+                {"data": "ssid", "width": "5%"},
                 {"data": "bssid", "width": "10%"},
-                {"data": "longitude", "width": "10%"},
-                {"data": "latitude", "width": "10%"},
+                {"data": "longitude", "width": "5%"},
+                {"data": "latitude", "width": "5%"},
                 {
                     "data": null,
                     "defaultContent": "<div class='btn-group'><button class='btn btn-white btn-xs dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fa fa-gear'></i></button><ul class='dropdown-menu'><li><a href='#' id='setting-edit-location'>Edit</a></li><li><a href='#' id='setting-delete-location'>Delete</a></li></ul></div>",
@@ -194,6 +197,7 @@
                 aoColumns: [
                     null,
                     {type: "select", values: locationGroups},
+                    null,
                     null,
                     {"bSortable": false},
                     null,
@@ -258,6 +262,7 @@
                         locations: locations,
                         groupname:selectedLocation.groupname,
                         mac:selectedLocation.mac,
+                        apname:selectedLocation.apname,
                         ssid:selectedLocation.ssid,
                         bssid:selectedLocation.bssid,
                         longitude:selectedLocation.longitude,
@@ -272,6 +277,11 @@
                                 required: true,
                                 minlength: 17,
                                 maxlength: 17
+                            },
+                            apname: {
+                                required: true,
+                                minlength: 5,
+                                maxlength: 25
                             },
                             ssid: {
                                 required: true,
@@ -305,6 +315,7 @@
                     tenantid: parseInt(Cookies.get('tenantid')),
                     locationid:selectedLocation.locationid,
                     mac: $('#edit-mac').val(),
+                    apname:$('#edit-apname').val(),
                     ssid: $('#edit-ssid').val(),
                     bssid: $('#edit-bssid').val(),
                     latitude: parseFloat($('#edit-latitude').val()),
@@ -374,6 +385,7 @@
                     var payload = {
                         tenantid: parseInt(Cookies.get('tenantid')),
                         mac: $('#input-mac').val(),
+                        apname: $('#input-apname').val(),
                         ssid: $('#input-ssid').val(),
                         bssid: $('#input-bssid').val(),
                         latitude: parseFloat($('#input-latitude').val()),

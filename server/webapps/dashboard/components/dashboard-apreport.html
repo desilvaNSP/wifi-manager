@@ -108,7 +108,7 @@
             },
             columns: [
                 {"data": "calledstationmac", "width": "10%"},
-                {"data": "calledstationname", "width": "10%"},
+                {"data": "apname", "width": "10%"},
                 {"data": "totalinputoctets", "width": "8%"},
                 {"data": "totaloutputoctets", "width": "8%"},
                 {"data": "totalsessions", "width": "5%"},
@@ -121,19 +121,19 @@
                     "render": function ( data ) {
                         return formatBytes(data);
                     },
-                    "targets": 2
-                },
-                {
-                    "render": function ( data ) {
-                        return formatBytes(data);
-                    },
                     "targets": 3
                 },
                 {
                     "render": function ( data ) {
                         return formatBytes(data);
                     },
-                    "targets": 6
+                    "targets": 4
+                },
+                {
+                    "render": function ( data ) {
+                        return formatBytes(data);
+                    },
+                    "targets": 7
                 }
             ],
             dom: "<'dt-toolbar'<'col-xs-12 col-sm-6'lf><'col-sm-6 col-xs-6 hidden-xs'CT>r>" +
