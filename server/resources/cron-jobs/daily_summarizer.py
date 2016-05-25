@@ -5,15 +5,21 @@ import time
 from datetime import date, timedelta
 
 dbuser = os.environ.get('SUMMARY_DB_USERNAME', 'root')
-dbpass = os.environ.get('SUMMARY_DB_PASSWORD', 'root')
+dbpass = os.environ.get('SUMMARY_DB_PASSWORD', '5876114027')
 dbhost = os.environ.get('SUMMARY_DB_HOST', 'localhost')
-wifiserverdir = os.environ.get('WIFI_SERVER_DIR', '/home/anuruddha/git/wifi-manager/server/')
+wifiserverdir = os.environ.get('WIFI_SERVER_DIR', '/Users/Sandun/Desktop/Wizlab/git-hub-repo/wifi-manager-forked/wifi-manager/server/')
 tenantid = 1
 
 logger = ""
 groups = {}
 groups2 = []
+
+aclsNormalUser = {}
+aclsWhiteListed = {}
+aclsBlackListed = {}
 updatequery = ""
+aclUpdatequery = ""
+
 browsers_ = {'chrome': 'chrome', 'firefox': 'firefox', 'ie': 'ie', 'iemobile': 'iemobile', 'kindle': 'kindle',
              'mobile safari': 'safarimobile',
              'webkit': 'webkit', 'opera': 'opera', 'android browser': 'chromemobile'}
@@ -43,6 +49,7 @@ def main():
 
     initLocationDictionary()
     initGroupsDictionary()
+    initAclsDictionary()
 
     logger.info("-----------------  Starting daily cron job  --------------------")
 
@@ -85,6 +92,10 @@ def main():
     conn.close()
 
     logger.info("Summarize procedure completed       [OK]")
+
+    logger.info("Starting ACLs update      [START]")
+    updateAcls(from_)
+    logger.info("ACLs group update completed     [OK]")
 
     logger.info("Starting location group update      [START]")
     updateLocationGroups(from_)
@@ -280,7 +291,6 @@ def summarizeDevicesStats(from_, to, tenantId):
     sumaryconn.close()
     return groups
 
-
 # TODO : replace key error with 'in' check
 def updateLocationGroups(date):
     global updatequery
@@ -299,14 +309,14 @@ def updateLocationGroups(date):
                 bssid = ((values[0])[:14]).upper()
                 try:
                     group = groups[bssid + ':' + values[1]]
-                    updatequery = "UPDATE dailyacct SET ssid='%s', calledstationmac='%s', groupname='%s' WHERE calledstationid='%s' AND date >= '%s'" % (
+                    updatequery = """UPDATE dailyacct SET ssid='%s', calledstationmac='%s', groupname='%s' WHERE calledstationid='%s' AND date >= '%s'""" % (
                         values[1], values[0], group, tmp, date)
                 except KeyError, e:
-                    updatequery = "UPDATE dailyacct SET ssid='%s', calledstationmac='%s' WHERE calledstationid='%s' AND date >= '%s'" % (
+                    updatequery = """UPDATE dailyacct SET ssid='%s', calledstationmac='%s' WHERE calledstationid='%s' AND date >= '%s'""" % (
                         values[1], values[0], tmp, date)
-            else:  # MKT case
-                updatequery = "UPDATE dailyacct SET groupname='%s' WHERE calledstationid='%s' AND date >= '%s'" % (
-                    group, tmp, date)
+            #else:  # MKT case
+                #updatequery = """UPDATE dailyacct SET groupname='%s' WHERE calledstationid='%s' AND date >= '%s'""" % (
+                    #group, tmp, date)
             radiuscursor.execute(updatequery)
     except Exception, e:
         radiusconn.rollback()
@@ -316,6 +326,37 @@ def updateLocationGroups(date):
     radiusconn.commit()
     radiuscursor.close()
     radiusconn.close()
+
+
+def updateAcls(date):
+    global aclUpdatequery
+    summaryconn = mysql.connector.connect(host=dbhost, user=dbuser, passwd=dbpass, db="summary")
+    summarycursor = summaryconn.cursor()
+
+    query = "SELECT DISTINCT username from dailyacct WHERE date >= '%s'" % (date)
+    try:
+        summarycursor.execute(query)
+        result = summarycursor.fetchall()
+        for row in result:
+            aclUpdatequery = ""
+            if aclsWhiteListed.has_key(row[0]):
+                aclUpdatequery = """UPDATE dailyacct SET acl='%s' WHERE username='%s' AND date >= '%s'""" % (
+                    aclsWhiteListed.get(row[0]), row[0], date)
+            elif aclsBlackListed.has_key(row[0]):
+                aclUpdatequery = """UPDATE dailyacct SET acl='%s' WHERE username='%s' AND date >= '%s'""" % (
+                    aclsBlackListed.get(row[0]), row[0], date)
+            else:
+                aclUpdatequery = """UPDATE dailyacct SET acl='%s' WHERE username='%s' AND date >= '%s'""" % (
+                    aclsNormalUser.get(row[0]), row[0], date)
+            summarycursor.execute(aclUpdatequery)
+    except Exception, e:
+        summaryconn.rollback()
+        logger.error("Error occurred while updating acl values : %s" % str(e))
+        logger.info("----------------- Daily cron job stopped [FAILED] ---------------------")
+        raise
+    summaryconn.commit()
+    summarycursor.close()
+    summaryconn.close()
 
 
 def initGroupsDictionary():
@@ -366,6 +407,39 @@ def initLocationDictionary():
     dashboardcursor.close()
     dashboardconn.close()
     return groups
+
+
+def initAclsDictionary():
+    portalconn = mysql.connector.connect(host=dbhost, user=dbuser, passwd=dbpass, db="portal")
+    portalcursor = portalconn.cursor()
+    query = "SELECT username,acl from accounting"
+
+    global aclsWhiteListed
+    global aclsBlackListed
+    global aclsNormalUser
+    try:
+        portalcursor.execute(query)
+        result = portalcursor.fetchall()
+        for row in result:
+            if row[1] == "whitelisted":
+                key = row[0]
+                aclsWhiteListed[key] = row[1]
+            elif row[1] == "blacklisted":
+                key = row[0]
+                aclsBlackListed[key] = row[1]
+            elif row[1] == "normal_user":
+                key = row[0]
+                aclsNormalUser[key] = row[1]
+
+    except Exception, e:
+        portalconn.rollback()
+        logger.error("Error occurred while initializing acl dictionary : %s" % str(e))
+        logger.info("----------------- Daily cron job stopped [FAILED] ---------------------")
+        raise
+
+    portalconn.commit()
+    portalcursor.close()
+    portalconn.close()
 
 
 if __name__ == "__main__": main()
