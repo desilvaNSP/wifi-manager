@@ -5,9 +5,9 @@ import time
 from datetime import date, timedelta
 
 dbuser = os.environ.get('SUMMARY_DB_USERNAME', 'root')
-dbpass = os.environ.get('SUMMARY_DB_PASSWORD', '5876114027')
+dbpass = os.environ.get('SUMMARY_DB_PASSWORD', 'root')
 dbhost = os.environ.get('SUMMARY_DB_HOST', 'localhost')
-wifiserverdir = os.environ.get('WIFI_SERVER_DIR', '/Users/Sandun/Desktop/Wizlab/git-hub-repo/wifi-manager-forked/wifi-manager/server/')
+wifiserverdir = os.environ.get('WIFI_SERVER_DIR', '/home/anuruddha/git/wifi-manager/server/')
 tenantid = 1
 
 logger = ""
@@ -333,10 +333,8 @@ def updateAcls(date):
     summarycursor = summaryconn.cursor()
     try:
         for whitekey in aclsWhiteListed:
-            print whitekey
             aclUpdatequery = "UPDATE dailyacct SET acl='%s' WHERE username='%s' AND date >= '%s' AND tenantid=%d " % (
                 aclsWhiteListed[whitekey], whitekey, date, tenantid )
-            print aclUpdatequery
             summarycursor.execute(aclUpdatequery)
         for blackkey in aclsBlackListed:
             aclUpdatequery = "UPDATE dailyacct SET acl='%s' WHERE username='%s' AND date >= '%s' AND tenantid=%d" % (
