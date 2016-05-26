@@ -7965,7 +7965,36 @@ img.thumbnail  { position: absolute; width: 178px;height: 178px ;z-index: 20}
     margin-top: -5px !important;
 }
 
+
 .bootbox-alert .modal-dialog{
     width: 30% !important;
     margin-top: 20% !important;
+}
+.ranges li.active {
+    background-color: #1ab394;
+    border: 1px solid #1ab394;
+    color: #fff;
+}
+
+.ranges li:hover{
+    background-color:#1ab394;
+    border:1px solid #1ab394;
+    color:#fff
+}
+
+.ranges li{
+    color:#1ab394;
+}
+
+.daterangepicker .input-mini.active {
+    border: 1px solid #1ab394;
+    border-radius: 4px;
+}
+#time-range-dashboard{
+    background: #fff;
+    cursor: pointer;
+    padding: 5px 10px;
+    border: 1px solid #1ab394;
+    width: 100%;
+    border-radius: 5px;
 }
