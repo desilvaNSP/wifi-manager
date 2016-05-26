@@ -187,12 +187,11 @@ func GetAccessPointAgregatedDataFromToHandler(w http.ResponseWriter, r*http.Requ
 	accessPointDataWithLocation := make([]dao.LocationAccessPoint, len(accesPoint))
 
 	for index, point := range accesPoint {
-		var longLatPoint[] dao.LongLatMac
+		var longLatPoint dao.LongLatMac
 		longLatPoint =  wifi.GetLongLatLocationByMacAddress(point.Calledstationmac.String)
-		if longLatPoint != nil {
-			accessPointDataWithLocation[index].AccessPointData = point;
-			accessPointDataWithLocation[index].LongLatMacData = longLatPoint[0]
-		}
+		point.APName = longLatPoint.APName
+		accessPointDataWithLocation[index].AccessPointData = point;
+		accessPointDataWithLocation[index].LongLatMacData = longLatPoint
 	}
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)

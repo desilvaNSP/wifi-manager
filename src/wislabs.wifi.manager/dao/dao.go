@@ -25,7 +25,6 @@ type SummaryDailyAcctAll struct {
 	Calledstationid      string            `db:"calledstationid"json:"calledstationid"`
 	Ssid                 utils.NullString            `db:"ssid"json:"ssid"`
 	Calledstationmac     utils.NullString            `db:"calledstationmac"json:"calledstationmac"`
-	Calledstationname    utils.NullString            `db:"calledstationname"json:"calledstationname"`
 	Groupname            utils.NullString            `db:"groupname"json:"groupname"`
 	Locationid           utils.NullString            `db:"locationid"json:"locationid"`
 	ACL                  utils.NullString                 `db:"acl"json:"acl"`
@@ -39,7 +38,7 @@ type AccessPoint struct {
 	Totalinputoctets      int64            `db:"totalinputoctets"json:"totalinputoctets"`
 	Totaloutputoctets     int64            `db:"totaloutputoctets"json:"totaloutputoctets"`
 	Calledstationmac      utils.NullString         `db:"calledstationmac"json:"calledstationmac"`
-	Calledstationname     utils.NullString         `db:"calledstationname"json:"calledstationname"`
+	APName    utils.NullString           `db:"apname"json:"apname"`
 }
 
 type LocationAccessPoint struct {
@@ -50,6 +49,7 @@ type LocationAccessPoint struct {
 
 type LongLatMac struct {
 	MAC       string                  `db:"mac"json:"mac"`
+	APName	  utils.NullString   		`db:"apname"json:"apname"`
 	Longitude utils.NullFloat64   `db:"longitude"json:"longitude"`
 	Latitude  utils.NullFloat64    `db:"latitude"json:"latitude"`
 }
@@ -137,6 +137,7 @@ type ApLocation struct {
 	TenantId   int                  `db:"tenantid"json:"tenantid"`
 	LocationId int64              `db:"locationid"json:"locationid"`
 	SSID       string                  `db:"ssid"json:"ssid"`
+	APName	   utils.NullString		   `db:"apname"json:"apname"`
 	BSSID      string                  `db:"bssid"json:"bssid"`
 	MAC        string                  `db:"mac"json:"mac"`
 	Longitude  utils.NullFloat64   `db:"longitude"json:"longitude"`

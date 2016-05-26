@@ -329,6 +329,7 @@
         var totalSessionFormat;
         var noofUniqueUserFormat;
         var returningUserFormat;
+        var fullscreenchartid;
 
         (function (H) {
             H.Chart.prototype.createCanvas = function (divId) {
@@ -356,111 +357,119 @@
         }(Highcharts));
 
         $('#exportpdf').click(function () {
-            var doc = new jsPDF();
+            var pdfOptions = {
+                orientation:"landscape", // One of "portrait" or "landscape" (or shortcuts "p" (Default), "l")
+                unit:"mm",              //Measurement unit to be used when coordinates are specified. One of "pt" (points), "mm" (Default), "cm", "in"
+                format:"a4"             //One of 'a3', 'a4' (Default),'a5' ,'letter' ,'legal'
+            }
+            var doc = new jsPDF(pdfOptions);
 
-            var chartHeight = 55;
+            doc.setFontSize(12);
+            doc.text(25, 20, "Area/Site/AP : " + payload.groupnames[0]);
+            doc.setFontSize(12);
+            doc.text(25, 30, "Statistics from "+payload.from+ " to "+payload.to);
 
-            doc.setFontSize(25);
-            doc.text(25, 20, "Home Dashboard Summary");
+
+            currentHight = 60;
+            // block 01
+            doc.rect(25, 50, 230, 80, "stroke")
+            doc.setFontSize(12);
+            doc.text(40, currentHight + 5 , "Total Downloads : ");
             doc.setFontSize(15);
-            doc.text(25, 30, "WiFi+ manager");
+            doc.setTextColor(7, 123, 102);
+            doc.text(100, currentHight + 5 , totalDownloadFormat);
+
+
+
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text(160, currentHight + 5 , "Total Uploads : ");
+            doc.setFontSize(15);
+            doc.setTextColor(7, 123, 102);
+            doc.text(220, currentHight + 5 , totalUploadFormat);
+
+            currentHight+=15;
+
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text(40, currentHight + 5 , "Total Users : ");
+            doc.setFontSize(15);
+            doc.setTextColor(7, 123, 102);
+            doc.text(100 , currentHight + 5 , totalUserFormat);
+
+
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text(160, currentHight + 5 , "Avg Data Usage per User : ");
+            doc.setFontSize(15);
+            doc.setTextColor(7, 123, 102);
+            doc.text(220, currentHight + 5 , avgDataUsagePerUserFormat);
+
+            currentHight+=15;
+
+
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text(40, currentHight + 5 , "Avg User session time : ");
+            doc.setFontSize(15);
+            doc.setTextColor(7, 123, 102);
+            doc.text(100, currentHight + 5 , avgUserSessionTimeFormat);
+
+
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text(160, currentHight + 5 , "Total Sessions : ");
+            doc.setFontSize(15);
+            doc.setTextColor(7, 123, 102);
+            doc.text(220, currentHight + 5 , totalSessionFormat);
+
+            currentHight+=15;
+
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text(40, currentHight + 5 , "Unique Users (>1MB)");
+            doc.setFontSize(15);
+            doc.setTextColor(7, 123, 102);
+            doc.text(100, currentHight + 5 , noofUniqueUserFormat);
+
+
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text(160, currentHight + 5 , "Returning Users");
+            doc.setFontSize(15);
+            doc.setTextColor(7, 123, 102);
+            doc.text(220, currentHight + 5 , returningUserFormat);
+
+            doc.setTextColor(0, 0, 0);
+            doc.setFontStyle('bold');
+            doc.setFontSize(12);
+
+            var chartHeight = 80;
+            var chartWidth = 250;
 
             var titleTop = 0;
             var chartTop = 0;
 
             $('.pdfChartLine').each(function (index) {
-
+                doc.addPage();
                 var imageData = $(this).highcharts().createCanvas();
-                doc.setFontSize(9);
-
                 titleTop = 20;
-                chartTop = 35;
-
-                doc.text(25,(index * chartHeight+24) + titleTop , $(this).data("title"));
-                doc.addImage(imageData, 'JPEG', 25, (index * chartHeight+10) + chartTop, 140, chartHeight);
-
+                chartTop = 45;
+                doc.text(25, titleTop , $(this).data("title"));
+                doc.addImage(imageData, 'JPEG', 25, chartTop, chartWidth, chartHeight);
             });
 
-            doc.addPage()
-
-            currentHight = 15
-
-            // block 01
-            doc.setFontSize(9);
-            doc.text(25, currentHight + 5 , "Total Downloads : ");
-            doc.setFontSize(11);
-            doc.text(75, currentHight + 5 , totalDownloadFormat);
-
-
-            doc.setFontSize(9);
-            doc.text(110, currentHight + 5 , "Total Uploads : ");
-            doc.setFontSize(11);
-            doc.text(160, currentHight + 5 , totalUploadFormat);
-
-            currentHight+=10;
-
-            doc.setFontSize(9);
-            doc.text(25, currentHight + 5 , "Total Users : ");
-            doc.setFontSize(11);
-            doc.text(75 , currentHight + 5 , totalUserFormat);
-
-
-            doc.setFontSize(9);
-            doc.text(110, currentHight + 5 , "Avg Data Usage per User : ");
-            doc.setFontSize(10);
-            doc.text(160, currentHight + 5 , avgDataUsagePerUserFormat);
-
-            currentHight+=10;
-
-
-            doc.setFontSize(9);
-            doc.text(25, currentHight + 5 , "Avg User session time : ");
-            doc.setFontSize(11);
-            doc.text(75, currentHight + 5 , avgUserSessionTimeFormat);
-
-
-            doc.setFontSize(9);
-            doc.text(110, currentHight + 5 , "Total Sessions : ");
-            doc.setFontSize(11);
-            doc.text(160, currentHight + 5 , totalSessionFormat);
-
-            currentHight+=10;
-
-            doc.setFontSize(9);
-            doc.text(25, currentHight + 5 , "Unique Users (>1MB)");
-            doc.setFontSize(11);
-            doc.text(75, currentHight + 5 , noofUniqueUserFormat);
-
-
-            doc.setFontSize(9);
-            doc.text(110, currentHight + 5 , "Returning Users");
-            doc.setFontSize(11);
-            doc.text(160, currentHight + 5 , returningUserFormat);
-
-            currentHight+=20;
-
-
-            var pieCharHeight = 50;
-            var pieCharWidth = 80;
-
-            var row = 0;
+            var pieCharHeight = 100;
+            var pieCharWidth = 150;
 
             $('.pdfChartPie').each(function (index) {
-
+                doc.addPage();
                 var imageData = $(this).highcharts().createCanvas();
                 doc.setFontSize(10);
-                var top = currentHight+20;
-                var leftMargin ;
-
-                if(index%2 != 0){
-                    top += (row  * pieCharHeight);
-                    leftMargin = 40 + pieCharWidth;
-                    row++;
-                }else{
-                    leftMargin = 25 ;
-                }doc.text(leftMargin,top-7 ,  $(this).data("title"));
-                doc.addImage(imageData, 'JPEG',leftMargin , top, pieCharWidth, pieCharHeight);
-
+                titleTop = 20;
+                chartTop = 45;
+                doc.text(40 ,titleTop,  $(this).data("title"));
+                doc.addImage(imageData, 'JPEG',80 , chartTop, pieCharWidth, pieCharHeight);
             });
             doc.save('home-dashboard.pdf');
         });
@@ -634,7 +643,6 @@
                 }
         );
 
-        var fullscreenchartid;
        $('#widget-grid').jarvisWidgets({
            toggleClass : 'fa fa-minus | fa fa-plus',
            deleteClass : 'fa fa-times',

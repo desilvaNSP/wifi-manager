@@ -356,9 +356,9 @@
                     loadingText: 'Creating Dashboard User'
                 });
                 $.post('/dashboard/users', JSON.stringify(payload), function (result) {
-                    $("#dbadduser-body").loadingOverlay('remove');
-                    $('#adduser-modal').modal('hide');
-                    userTable.ajax.reload();
+                            $("#dbadduser-body").loadingOverlay('remove');
+                            $('#adduser-modal').modal('hide');
+                            userTable.ajax.reload();
                 });
             }
             return false;

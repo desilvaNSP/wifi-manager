@@ -14,6 +14,11 @@
                                placeholder="MAC" value="{{mac}}" required readonly>
                     </div>
                     <div class="form-group">
+                        <label for="edit-apname">APName</label>
+                        <input type="text" class="form-control" id="edit-apname" name="apname"
+                              value="{{apname}}">
+                    </div>
+                    <div class="form-group">
                         <label for="edit-group-name">Location Group</label>
                         <select class="form-control" id="edit-group-name" required>
                             {{#locations}}
