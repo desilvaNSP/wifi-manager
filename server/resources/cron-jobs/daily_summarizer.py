@@ -13,7 +13,13 @@ tenantid = 1
 logger = ""
 groups = {}
 groups2 = []
+
+aclsNormalUser = {}
+aclsWhiteListed = {}
+aclsBlackListed = {}
 updatequery = ""
+aclUpdatequery = ""
+
 browsers_ = {'chrome': 'chrome', 'firefox': 'firefox', 'ie': 'ie', 'iemobile': 'iemobile', 'kindle': 'kindle',
              'mobile safari': 'safarimobile',
              'webkit': 'webkit', 'opera': 'opera', 'android browser': 'chromemobile'}
@@ -43,6 +49,7 @@ def main():
 
     initLocationDictionary()
     initGroupsDictionary()
+    initAclsDictionary()
 
     logger.info("-----------------  Starting daily cron job  --------------------")
 
@@ -86,13 +93,16 @@ def main():
 
     logger.info("Summarize procedure completed       [OK]")
 
+    logger.info("Starting ACLs update      [START]")
+    updateAcls(from_)
+    logger.info("ACLs group update completed     [OK]")
+
     logger.info("Starting location group update      [START]")
     updateLocationGroups(from_)
     logger.info("Location group update completed     [OK]")
 
     logger.info("Accounting summarizer completed    [OK]")
     logger.info("----------------- Daily cron job stopped [PASS] ---------------------")
-
 
 def dumpExistingData(database):
     filestamp = time.strftime('%Y-%m-%d-%I:%M')
@@ -280,7 +290,6 @@ def summarizeDevicesStats(from_, to, tenantId):
     sumaryconn.close()
     return groups
 
-
 # TODO : replace key error with 'in' check
 def updateLocationGroups(date):
     global updatequery
@@ -304,9 +313,9 @@ def updateLocationGroups(date):
                 except KeyError, e:
                     updatequery = "UPDATE dailyacct SET ssid='%s', calledstationmac='%s' WHERE calledstationid='%s' AND date >= '%s'" % (
                         values[1], values[0], tmp, date)
-            else:  # MKT case
-                updatequery = "UPDATE dailyacct SET groupname='%s' WHERE calledstationid='%s' AND date >= '%s'" % (
-                    group, tmp, date)
+            #else:  # MKT case
+                #updatequery = """UPDATE dailyacct SET groupname='%s' WHERE calledstationid='%s' AND date >= '%s'""" % (
+                    #group, tmp, date)
             radiuscursor.execute(updatequery)
     except Exception, e:
         radiusconn.rollback()
@@ -318,10 +327,41 @@ def updateLocationGroups(date):
     radiusconn.close()
 
 
+def updateAcls(date):
+    global aclUpdatequery
+    summaryconn = mysql.connector.connect(host=dbhost, user=dbuser, passwd=dbpass, db="summary")
+    summarycursor = summaryconn.cursor()
+
+    query = "SELECT username from dailyacct WHERE tenantid='%d' AND date >= '%s'" % (tenantid, date)
+    try:
+        summarycursor.execute(query)
+        result = summarycursor.fetchall()
+        for row in result:
+            aclUpdatequery = ""
+            if aclsWhiteListed.has_key(row[0]):
+                aclUpdatequery = """UPDATE dailyacct SET acl='%s' WHERE username='%s' AND date >= '%s'""" % (
+                    aclsWhiteListed.get(row[0]), row[0], date)
+            elif aclsBlackListed.has_key(row[0]):
+                aclUpdatequery = """UPDATE dailyacct SET acl='%s' WHERE username='%s' AND date >= '%s'""" % (
+                    aclsBlackListed.get(row[0]), row[0], date)
+            else:
+                aclUpdatequery = """UPDATE dailyacct SET acl='%s' WHERE username='%s' AND date >= '%s'""" % (
+                    aclsNormalUser.get(row[0]), row[0], date)
+            summarycursor.execute(aclUpdatequery)
+    except Exception, e:
+        summaryconn.rollback()
+        logger.error("Error occurred while updating acl values : %s" % str(e))
+        logger.info("----------------- Daily cron job stopped [FAILED] ---------------------")
+        raise
+    summaryconn.commit()
+    summarycursor.close()
+    summaryconn.close()
+
+
 def initGroupsDictionary():
     dashboardconn = mysql.connector.connect(host=dbhost, user=dbuser, passwd=dbpass, db="dashboard")
     dashboardcursor = dashboardconn.cursor()
-    query = "SELECT groupname from apgroups WHERE tenantid=%d GROUP BY groupname, tenantid" % (1)
+    query = "SELECT groupname from apgroups WHERE tenantid=%d GROUP BY groupname, tenantid" % (tenantid)
 
     global groups2
     try:
@@ -346,7 +386,7 @@ def initGroupsDictionary():
 def initLocationDictionary():
     dashboardconn = mysql.connector.connect(host=dbhost, user=dbuser, passwd=dbpass, db="dashboard")
     dashboardcursor = dashboardconn.cursor()
-    query = "SELECT mac, ssid, groupname from aplocations"
+    query = "SELECT mac, ssid, groupname FROM aplocations"
 
     global groups
     try:
@@ -366,6 +406,39 @@ def initLocationDictionary():
     dashboardcursor.close()
     dashboardconn.close()
     return groups
+
+
+def initAclsDictionary():
+    portalconn = mysql.connector.connect(host=dbhost, user=dbuser, passwd=dbpass, db="portal")
+    portalcursor = portalconn.cursor()
+    query = "SELECT username,acl FROM accounting WHERE tenantid= %d" % (
+        tenantid)
+
+    global aclsWhiteListed
+    global aclsBlackListed
+    global aclsNormalUser
+    try:
+        portalcursor.execute(query)
+        result = portalcursor.fetchall()
+        for row in result:
+            if row[1] == "whitelisted":
+                key = row[0]
+                aclsWhiteListed[key] = row[1]
+            elif row[1] == "blacklisted":
+                key = row[0]
+                aclsBlackListed[key] = row[1]
+            elif row[1] == "normal_user":
+                key = row[0]
+                aclsNormalUser[key] = row[1]
+    except Exception, e:
+        portalconn.rollback()
+        logger.error("Error occurred while initializing acl dictionary : %s" % str(e))
+        logger.info("----------------- Daily cron job stopped [FAILED] ---------------------")
+        raise
+
+    portalconn.commit()
+    portalcursor.close()
+    portalconn.close()
 
 
 if __name__ == "__main__": main()
