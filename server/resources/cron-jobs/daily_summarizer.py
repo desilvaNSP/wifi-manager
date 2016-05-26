@@ -331,23 +331,16 @@ def updateAcls(date):
     global aclUpdatequery
     summaryconn = mysql.connector.connect(host=dbhost, user=dbuser, passwd=dbpass, db="summary")
     summarycursor = summaryconn.cursor()
-
-    query = "SELECT username from dailyacct WHERE tenantid='%d' AND date >= '%s'" % (tenantid, date)
     try:
-        summarycursor.execute(query)
-        result = summarycursor.fetchall()
-        for row in result:
-            aclUpdatequery = ""
-            if aclsWhiteListed.has_key(row[0]):
-                aclUpdatequery = """UPDATE dailyacct SET acl='%s' WHERE username='%s' AND date >= '%s'""" % (
-                    aclsWhiteListed.get(row[0]), row[0], date)
-            elif aclsBlackListed.has_key(row[0]):
-                aclUpdatequery = """UPDATE dailyacct SET acl='%s' WHERE username='%s' AND date >= '%s'""" % (
-                    aclsBlackListed.get(row[0]), row[0], date)
-            else:
-                aclUpdatequery = """UPDATE dailyacct SET acl='%s' WHERE username='%s' AND date >= '%s'""" % (
-                    aclsNormalUser.get(row[0]), row[0], date)
+        for whitekey in aclsWhiteListed:
+            aclUpdatequery = "UPDATE dailyacct SET acl='%s' WHERE username='%s' AND date >= '%s' AND tenantid=%d " % (
+                aclsWhiteListed[whitekey], whitekey, date, tenantid )
             summarycursor.execute(aclUpdatequery)
+        for blackkey in aclsBlackListed:
+            aclUpdatequery = "UPDATE dailyacct SET acl='%s' WHERE username='%s' AND date >= '%s' AND tenantid=%d" % (
+                aclsBlackListed[blackkey], blackkey, date, tenantid)
+            summarycursor.execute(aclUpdatequery)
+
     except Exception, e:
         summaryconn.rollback()
         logger.error("Error occurred while updating acl values : %s" % str(e))
@@ -427,9 +420,6 @@ def initAclsDictionary():
             elif row[1] == "blacklisted":
                 key = row[0]
                 aclsBlackListed[key] = row[1]
-            elif row[1] == "normal_user":
-                key = row[0]
-                aclsNormalUser[key] = row[1]
     except Exception, e:
         portalconn.rollback()
         logger.error("Error occurred while initializing acl dictionary : %s" % str(e))
