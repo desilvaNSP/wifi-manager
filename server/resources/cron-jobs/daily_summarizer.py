@@ -5,9 +5,9 @@ import time
 from datetime import date, timedelta
 
 dbuser = os.environ.get('SUMMARY_DB_USERNAME', 'root')
-dbpass = os.environ.get('SUMMARY_DB_PASSWORD', '5876114027')
+dbpass = os.environ.get('SUMMARY_DB_PASSWORD', 'root')
 dbhost = os.environ.get('SUMMARY_DB_HOST', 'localhost')
-wifiserverdir = os.environ.get('WIFI_SERVER_DIR', '/Users/Sandun/Desktop/Wizlab/git-hub-repo/wifi-manager-forked/wifi-manager/server/')
+wifiserverdir = os.environ.get('WIFI_SERVER_DIR', '/home/anuruddha/git/wifi-manager/server/')
 tenantid = 1
 
 logger = ""
@@ -103,7 +103,6 @@ def main():
 
     logger.info("Accounting summarizer completed    [OK]")
     logger.info("----------------- Daily cron job stopped [PASS] ---------------------")
-
 
 def dumpExistingData(database):
     filestamp = time.strftime('%Y-%m-%d-%I:%M')
@@ -309,10 +308,10 @@ def updateLocationGroups(date):
                 bssid = ((values[0])[:14]).upper()
                 try:
                     group = groups[bssid + ':' + values[1]]
-                    updatequery = """UPDATE dailyacct SET ssid='%s', calledstationmac='%s', groupname='%s' WHERE calledstationid='%s' AND date >= '%s'""" % (
+                    updatequery = "UPDATE dailyacct SET ssid='%s', calledstationmac='%s', groupname='%s' WHERE calledstationid='%s' AND date >= '%s'" % (
                         values[1], values[0], group, tmp, date)
                 except KeyError, e:
-                    updatequery = """UPDATE dailyacct SET ssid='%s', calledstationmac='%s' WHERE calledstationid='%s' AND date >= '%s'""" % (
+                    updatequery = "UPDATE dailyacct SET ssid='%s', calledstationmac='%s' WHERE calledstationid='%s' AND date >= '%s'" % (
                         values[1], values[0], tmp, date)
             #else:  # MKT case
                 #updatequery = """UPDATE dailyacct SET groupname='%s' WHERE calledstationid='%s' AND date >= '%s'""" % (
@@ -333,7 +332,7 @@ def updateAcls(date):
     summaryconn = mysql.connector.connect(host=dbhost, user=dbuser, passwd=dbpass, db="summary")
     summarycursor = summaryconn.cursor()
 
-    query = "SELECT DISTINCT username from dailyacct WHERE date >= '%s'" % (date)
+    query = "SELECT username from dailyacct WHERE tenantid='%d' AND date >= '%s'" % (tenantid, date)
     try:
         summarycursor.execute(query)
         result = summarycursor.fetchall()
@@ -362,7 +361,7 @@ def updateAcls(date):
 def initGroupsDictionary():
     dashboardconn = mysql.connector.connect(host=dbhost, user=dbuser, passwd=dbpass, db="dashboard")
     dashboardcursor = dashboardconn.cursor()
-    query = "SELECT groupname from apgroups WHERE tenantid=%d GROUP BY groupname, tenantid" % (1)
+    query = "SELECT groupname from apgroups WHERE tenantid=%d GROUP BY groupname, tenantid" % (tenantid)
 
     global groups2
     try:
@@ -387,7 +386,7 @@ def initGroupsDictionary():
 def initLocationDictionary():
     dashboardconn = mysql.connector.connect(host=dbhost, user=dbuser, passwd=dbpass, db="dashboard")
     dashboardcursor = dashboardconn.cursor()
-    query = "SELECT mac, ssid, groupname from aplocations"
+    query = "SELECT mac, ssid, groupname FROM aplocations"
 
     global groups
     try:
@@ -412,7 +411,8 @@ def initLocationDictionary():
 def initAclsDictionary():
     portalconn = mysql.connector.connect(host=dbhost, user=dbuser, passwd=dbpass, db="portal")
     portalcursor = portalconn.cursor()
-    query = "SELECT username,acl from accounting"
+    query = "SELECT username,acl FROM accounting WHERE tenantid= %d" % (
+        tenantid)
 
     global aclsWhiteListed
     global aclsBlackListed
@@ -430,7 +430,6 @@ def initAclsDictionary():
             elif row[1] == "normal_user":
                 key = row[0]
                 aclsNormalUser[key] = row[1]
-
     except Exception, e:
         portalconn.rollback()
         logger.error("Error occurred while initializing acl dictionary : %s" % str(e))
