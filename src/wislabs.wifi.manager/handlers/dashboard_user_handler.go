@@ -148,11 +148,21 @@ func GetDashboardUsersHandler(w http.ResponseWriter, r *http.Request) {
 	if (err != nil) {
 		log.Fatalln("Error while reading tenantid", err)
 	}
+
 	users := dashboard.GetAllDashboardUsers(tenantid)
+	usersupdate := make([]dao.DashboardUser, len(users))
+
+	for index, user := range users {
+		usersupdate[index].Permissions = dashboard.GetDashboardUserPermissions(user.TenantId, user.Username)
+		usersupdate[index].Username = user.Username
+		usersupdate[index].Password = user.Password
+		usersupdate[index].Email = user.Email
+		usersupdate[index].Status = user.Status
+	}
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(users); err != nil {
+	if err := json.NewEncoder(w).Encode(usersupdate); err != nil {
 		panic(err)
 	}
 }
@@ -169,6 +179,7 @@ func GetTenantRolesHandler(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 }
+
 
 func GetAllUserPermissionsHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)

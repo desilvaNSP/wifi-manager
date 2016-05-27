@@ -182,7 +182,15 @@
                 {"data": "status", "width": "5%"},
                 {
                     "data": null,
-                    "defaultContent": "<div class='btn-group'><button class='btn btn-white btn-xs dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fa fa-gear'></i></button><ul class='dropdown-menu'><li><a href='#' id='setting-edit-user'>Edit</a></li><li><a href='#' id='setting-change-password'>Change Password</a></li><li><a href='#' id='setting-delete-user'>Delete</a></li></ul></div>",
+                    "render": function( data, type, full, meta ) {
+                        var admindeletepermission = checkAdminDeletePermission(full.permissions);
+                        var content = " <div class='btn-group'><button class='btn btn-white btn-xs dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fa fa-gear'></i></button><ul class='dropdown-menu'><li><a href='#' id='setting-edit-user'>Edit</a></li><li><a href='#' id='setting-change-password'>Change Password</a></li>";
+                        if(!admindeletepermission){
+                           content += "<li><a href='#' id='setting-delete-user'>Delete</a></li>"
+                        }
+                        content += "</ul></div>";
+                        return content;
+                    },
                     "width": "1%",
                     "className": 'center'
                 },
@@ -414,5 +422,16 @@
             }
         }
         return checkboxesChecked.length > 0 ? checkboxesChecked : null;
+    }
+
+
+    function checkAdminDeletePermission(permissions){
+        var adminDeletePermission = false;
+        $.each(permissions, function (key, value) {
+            if (value.name == 'admin') {
+                adminDeletePermission = true
+            }
+        });
+        return adminDeletePermission;
     }
 </script>
