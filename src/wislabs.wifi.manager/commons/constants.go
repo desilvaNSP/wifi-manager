@@ -38,13 +38,14 @@ const DELETE_DASHBOARD_USER string   			= "DELETE FROM users WHERE tenantid=? AN
 const DELETE_DASHBOARD_USER_PERMISSIONS string		= "DELETE FROM userpermissions WHERE userid=?"
 const DELETE_DASHBOARD_USER_APPGROUPS string 		= "DELETE FROM userapgroups WHERE userid=?"
 const IS_EXISTS_USER_NAME	string				= "SELECT EXISTS(SELECT username FROM users WHERE username = ? and tenantid = ?) as checkuser"
+
 /* WIFI users */
-const ADD_WIFI_USER_SQL string  = "INSERT INTO accounting (tenantid, username, acctactivationtime, acctstarttime, maxsessionduration, groupname, acl) VALUES( ?, ?, NOW(),NOW(), 3600, ?, ? )";
-const UPDATE_WIFI_USER string   = "UPDATE accounting SET acl=? WHERE username=? AND tenantid=?";
+const ADD_WIFI_USER_SQL string  = "INSERT INTO accounting (tenantid, username, acctactivationtime, acctstarttime, maxsessionduration, groupname, acl, accounting) VALUES( ?, ?, NOW(),NOW(), ?, ?, ?, ?)";
+const UPDATE_WIFI_USER string   = "UPDATE accounting SET maxsessionduration=?, acl=?, accounting=? WHERE username=? AND groupname=? AND tenantid=?";
 const GET_ALL_WIFI_USERS string = "SELECT tenantid, username, acctstarttime, acctlastupdatedtime, acctstoptime, groupname, visits, acl FROM accounting WHERE tenantid=? order by username LIMIT ?, ?";
 const SEARCH_WIFI_USERS string  = "SELECT tenantid, username, acctstarttime, acctlastupdatedtime, acctstoptime, groupname, visits, acl FROM accounting WHERE tenantid=? AND username LIKE ? LIMIT ?,?";
 
-const DELETE_WIFI_USER string     = "DELETE FROM accounting where username=? AND tenantid=?";
+const DELETE_WIFI_USER string     = "DELETE FROM accounting where username=? AND groupname=? AND tenantid=?";
 const DELETE_RADCHECk_USER string = "DELETE FROM radcheck WHERE username = ?";
 const DELETE_RADACCT_USER string  = "DELETE FROM radacct WHERE username = ?";
 
