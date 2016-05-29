@@ -20,7 +20,10 @@ import (
 func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var user dao.PortalUser
-	decoder.Decode(&user)
+	err := decoder.Decode(&user)
+	if(err != nil){
+		log.Fatalln("Error while decoding wifi user json")
+	}
 	wifi_controller.AddWiFiUser(&user)
 	w.WriteHeader(http.StatusOK)
 }
@@ -62,14 +65,16 @@ func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	username := vars["username"]
+	groupname := vars["groupname"]
 	tenantid, err := strconv.Atoi(vars["tenantid"])
 	if (err != nil) {
 		log.Fatalln("Error while reading tenantid", err)
 	}
-	err = wifi_controller.DeleteUserAccountingSession(username, tenantid)
-	err = wifi_controller.DeleteUserFromRadAcct(username, tenantid)
-	err = wifi_controller.DeleteUserFromRadCheck(username, tenantid)
-
+	err = wifi_controller.DeleteUserAccountingSession(username, groupname, tenantid)
+	if groupname == "Master" {
+		err = wifi_controller.DeleteUserFromRadAcct(username, tenantid)
+		err = wifi_controller.DeleteUserFromRadCheck(username, tenantid)
+	}
 	if err != nil {
 		log.Fatalln("Error while deleting user from accounting table" + username + " from DB ", err)
 		w.WriteHeader(http.StatusNotFound)
@@ -85,7 +90,10 @@ func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var user dao.PortalUser
-	decoder.Decode(&user)
+	err := decoder.Decode(&user)
+	if(err != nil){
+		log.Fatalln("Error while decoding wifi user json")
+	}
 	wifi_controller.UpdateWiFiUser(&user)
 	w.WriteHeader(http.StatusOK)
 }

@@ -96,6 +96,7 @@ type PortalUser struct {
 	GroupName          utils.NullString       `db:"groupname"json:"groupname"`
 	ACL                utils.NullString       `db:"acl"json:"acl"`
 	Visits             int64                  `db:"visits"json:"visits"`
+	Accounting	   string		  `db:"accounting"json:"accounting"`
 }
 
 type DataTablesResponce struct {

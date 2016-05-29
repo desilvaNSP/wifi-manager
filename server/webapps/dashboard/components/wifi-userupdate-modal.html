@@ -1,0 +1,58 @@
+<div class="modal inmodal" id="edit-wifiuser-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content animated fadeIn">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
+                        class="sr-only">Close</span></button>
+                <i class="fa fa-user-md modal-icon"></i>
+                <h4 class="modal-title">Edit WiFi User</h4>
+                <small class="font-bold">Edit wifi users' options</small>
+            </div>
+            <div class="modal-body" id="edit-wifiuser-body">
+                <form role="form" id="edit-wifiuser-form">
+                    <div class="form-group">
+                        <label for="edit-wifi-username">Username</label>
+                        <input type="text" class="form-control" id="edit-wifi-username" name="editwifiusername"
+                               placeholder="Username" required readonly="readonly" value={{username}}>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-lg-6">
+                            <label for="edit-group-name">Associated Group</label>
+                            <input type="text" class="form-control" id="edit-group-name" name="editgroupname"
+                                   required readonly="readonly" value={{groupname}}>
+                        </div>
+                        <div class="form-group col-lg-6">
+                            <label for="edit-maxsession-duration">Max. Session Duration</label>
+                            <input type="text" class="form-control" id="edit-maxsession-duration" name="editmaxsessionduration"
+                                   placeholder="Max. Session Duration" value={{maxsessionduration}} required >
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="radioEditIsBlackListed">Access Control</label>
+                    </div>
+                    <div class="checkbox">
+                        <label class="radio inline control-label"><input type="radio" id="radioEditIsWhiteListed"
+                                                                         class="radio" name="role-select"
+                                                                         value="whitelisted" {{checkwhitelisted}}>White Listed</label><br/>
+                        <label class="radio inline control-label"><input type="radio" id="radioEditIsBlackListed"
+                                                                         class="radio" name="role-select"
+                                                                         value="blacklisted" {{checkblacklisted}}>Black Listed</label><br/>
+                        <label class="radio inline control-label"><input type="radio" id="radioEditIsNormalUser"
+                                                                         class="radio" name="role-select"
+                                                                         value="normal_user" {{checknormaluser}}>Normal User</label><br/>
+                    </div>
+                    <div class="checkbox">
+                        <br/><hr/><br/>
+                        <label>
+                            <input type="checkbox" id="chkeditaccoutingison" {{checkedaccounting}}> Start Accounting
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="btn-edit-wifiuser">Update User</button>
+            </div>
+        </div>
+    </div>
+</div>

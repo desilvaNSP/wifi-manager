@@ -11,7 +11,7 @@
                     <i class="fa fa-wrench"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-user">
-                    <li><a href="#" id="add-user-opt">Add User</a></li>
+                    <li><a href="#" id="add-wifiuser-btn">Add User</a></li>
                     <li><a id="change-clo-visibility" role="button" data-toggle="collapse" href="#collapseExample"
                            aria-expanded="false" aria-controls="collapseExample">Change Column Visibility</a></li>
                 </ul>
@@ -29,9 +29,10 @@
                     <th>ACL</th>
                     <th>Group</th>
                     <th>Visit count</th>
-                    <th>Acct. Activation Time</th>
-                    <th>Acct. Last Started Time</th>
-                    <th>MaxSession Duration</th>
+                    <th>Acct. A</th>
+                    <th>Acct. L</th>
+                    <th>MaxSes</th>
+                    <th>Accounting</th>
                     <th>Settings</th>
                 </tr>
                 <tr>
@@ -43,83 +44,10 @@
                     <th></th>
                     <th></th>
                     <th></th>
+                    <th></th>
                 </tr>
                 </thead>
             </table>
-        </div>
-    </div>
-</div>
-
-<div class="modal inmodal" id="adduser-modal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content animated fadeIn">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
-                        class="sr-only">Close</span></button>
-                <i class="fa fa-user-md modal-icon"></i>
-                <h4 class="modal-title">Add WiFi User</h4>
-                <small class="font-bold">Add wifi users and configure Access Control</small>
-            </div>
-            <div class="modal-body" id="adduser-body">
-
-                <form role="form" id="adduser-form">
-                    <div class="form-group">
-                        <label for="inputEditUsername">Username</label>
-                        <input type="text" class="form-control" id="inputUsername" name="inputusername"
-                               placeholder="Username" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputEditPassword">Password</label>
-                        <input type="text" class="form-control" id="inputPassword" name="inputpassword"
-                               placeholder="Password" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputMaxSessionDuration">Max. Session Duration</label>
-                        <input type="text" class="form-control" id="inputMaxSessionDuration" name="inputMaxSessionDuration"
-                               placeholder="Max. Session Duration" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputLocationGroup">Associated Group</label>
-                        <div class="dropdown">
-                            <button class="btn btn-default dropdown-toggle" type="button" id="inputLocationGroup" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                Group
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                <li><a href="#">CSQ</a></li>
-                                <li><a href="#">Fairfield</a></li>
-                                <li><a href="#">Darebin</a></li>
-                                <li role="separator" class="divider"></li>
-                                <li><a href="#">Master</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="radioIsBlackListed">Access Control</label>
-                    </div>
-                    <div class="checkbox">
-                        <label class="radio inline control-label"><input type="radio" id="radioIsWhiteListed"
-                                                                         class="radio" name="role-select"
-                                                                         value="whitelisted">White Listed</label><br/>
-                        <label class="radio inline control-label"><input type="radio" id="radioIsBlackListed"
-                                                                         class="radio" name="role-select"
-                                                                         value="blacklisted">Black Listed</label><br/>
-                        <label class="radio inline control-label"><input type="radio" id="radioIsNormalUser"
-                                                                         class="radio" name="role-select"
-                                                                         value="normaluser">Normal User</label><br/>
-                    </div>
-                    <div class="checkbox">
-                        <br/><hr/><br/>
-                        <label>
-                            <input type="checkbox" id="chkEditIsActive"> Start Accounting
-                        </label>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="btn-add-user">Add User</button>
-            </div>
         </div>
     </div>
 </div>
@@ -137,57 +65,14 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-white" data-dismiss="modal">No</button>
-                <button type="button" class="btn btn-primary" id="delete-user">Yes</button>
+                <button type="button" class="btn btn-primary" id="delete-wifi-user">Yes</button>
             </div>
         </div>
     </div>
 </div>
 
-<div class="modal inmodal" id="edituser-modal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content animated fadeIn">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
-                        class="sr-only">Close</span></button>
-                <i class="fa fa-user-md modal-icon"></i>
-                <h4 class="modal-title">Edit WiFi User</h4>
-                <small class="font-bold">Edit wifi users' options</small>
-            </div>
-            <div class="modal-body" id="edituser-body">
-                <form role="form" id="edituser-form">
-                    <div class="form-group">
-                        <label for="inputEditUsername">Username</label>
-                        <input type="text" class="form-control" id="inputEditUsername" name="editusername"
-                               placeholder="Username" required readonly="readonly">
-                    </div>
-                    <div class="form-group">
-                        <label for="inputEditPassword">Password</label>
-                        <input type="text" class="form-control" id="inputEditPassword" name="editpassword"
-                               placeholder="Password" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="radioEditIsBlackListed">Access Control</label>
-                    </div>
-                    <div class="checkbox">
-                        <label class="radio inline control-label"><input type="radio" id="radioEditIsWhiteListed"
-                                                                         class="radio" name="role-select"
-                                                                         value="whitelisted">White Listed</label><br/>
-                        <label class="radio inline control-label"><input type="radio" id="radioEditIsBlackListed"
-                                                                         class="radio" name="role-select"
-                                                                         value="blacklisted">Black Listed</label><br/>
-                        <label class="radio inline control-label"><input type="radio" id="radioEditIsNormalUser"
-                                                                         class="radio" name="role-select"
-                                                                         value="normaluser">Normal User</label><br/>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="btn-edit-user">Update User</button>
-            </div>
-        </div>
-    </div>
-</div>
+<div id="wifiuser-modal-container"></div>
+
 <script>
     var userTable;
     $(document).ready(function () {
@@ -220,6 +105,7 @@
                 {"data": "acctactivationtime", "width": "10%"},
                 {"data": "acctstarttime", "width": "10%"},
                 {"data": "maxsessionduration", "width": "10%"},
+                {"data": "accounting", "width": "10%","visible":false},
                 {
                     "data": null,
                     "defaultContent": "<div class='btn-group'><button class='btn btn-white btn-xs dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fa fa-gear'></i></button><ul class='dropdown-menu'><li><a href='#' id='setting-edit-user'>Edit</a></li><li><a href='#' id='setting-change-password'>Change Password</a></li><li><a href='#' id='setting-delete-user'>Delete</a></li></ul></div>",
@@ -237,16 +123,17 @@
         });
 
         $.get('/wifi/' + Cookies.get('tenantid') + '/locations/groups', function (locationGroups) {
+            locationGroups.push('Master');
             userTable.columnFilter({
                 sPlaceHolder: "head:before",
                 aoColumns: [
-                    {"bSortable": false},
+                    {"bSortable": true},
                     {type: "select", values: ['Whitelisted', 'Blacklisted', 'normal_user']},
                     {type: "select", values: locationGroups},
                     null,
-                    {"bSortable": false},
-                    {"bSortable": false},
-                    {"bSortable": false},
+                    null,
+                    null,
+                    null,
                     null
                 ]
             });
@@ -262,14 +149,16 @@
             }
         });
 
-        var selectedUser, rowToDelete;
-        $('#delete-user').on("click", function (event) {
+        var selectedWifiUser
+        var rawTodelete;
+
+        $('#delete-wifi-user').on("click", function (event) {
             $.ajax({
-                url: '/wifi/' + Cookies.get('tenantid') + '/users/' + selectedUser.username,
+                url: '/wifi/' + Cookies.get('tenantid') + '/users/' + selectedWifiUser.username +'/'+ selectedWifiUser.groupname,
                 type: 'DELETE',
                 beforeSend:function(){
                     $("#userdelete-body").loadingOverlay({
-                        loadingText: 'Deleting  User'+selectedUser.username
+                        loadingText: 'Wait! Deleting  User'+selectedWifiUser.username
                     });
                 },
                 success: function (result) {
@@ -284,102 +173,173 @@
         });
 
         $('.dataTables-user tbody').on('click', '#setting-delete-user', function () {
-            selectedUser = userTable.api().row($(this).parents('tr')).data();
+            selectedWifiUser = userTable.api().row($(this).parents('tr')).data();
             rawTodelete = $(this).closest('tr');
             $('#confirm-delete-modal').modal()
-            $('#message').html('<i class="fa fa-warning fa-3x" style="vertical-align: middle;margin-right: 10%"></i>Are you sure you want to delete the user? <strong>' + selectedUser.username + '</strong>');
+            $('#message').html('<i class="fa fa-warning fa-3x" style="vertical-align: middle;margin-right: 10%"></i>Are you sure you want to delete the user? <strong>' + selectedWifiUser.username + '</strong>');
         });
 
-        $('.dataTables-user tbody').on('click', '#setting-edit-user', function () {
-            selectedUser = userTable.api().row($(this).parents('tr')).data();
-            //editUserFromValidator.resetForm();
-            $('#edituser-modal').modal();
-            $("#inputEditUsername").val(selectedUser.username);
-            $("#inputEditPassword").val(selectedUser.password);
-            if (selectedUser.acl == 'whitelisted') {
-                $("#radioEditIsWhiteListed").prop('checked', true);
-            } else if (selectedUser.acl == 'blacklisted') {
-                $("#radioEditIsBlackListed").prop('checked', true);
-            } else {
-                $("#radioEditIsNormalUser").prop('checked', true);
-            }
-        });
-
-        $('#btn-edit-user').on("click", function (event) {
-            if ($("#edituser-form").valid()) {
-                var newUserStatus = 'pending';
-                if ($('#chkEditIsActive').is(":checked")) {
-                    newUserStatus = 'active';
-                }
-                var payload = {
-                    username: selectedUser.username,
-                    password: selectedUser.password,
-                    acl: $('.radio:checked').val(),
-                    tenantid: parseInt(Cookies.get('tenantid')),
-                };
-
-                $.ajax({
-                    url: '/wifi/users',
-                    type: 'PUT',
-                    contentType: "application/json",
-                    data: JSON.stringify(payload),
-                    beforeSend:function(){
-                        $("#edituser-body").loadingOverlay({
-                            loadingText: 'Updating User'
-                        });
+        var addWifiUserFormValidation;
+        $("#add-wifiuser-btn").on('click', function () {
+            var locationsGroups;
+            var getLocationGroups = $.get('/wifi/' + Cookies.get('tenantid') + '/locations/groups', function (result) {
+                locationsGroups = result;
+            });
+            $.when(getLocationGroups).done(function () {
+                $.get('components/wifi-user.html', function (template) {
+                    var rendered = Mustache.render(template, {
+                        locations: locationsGroups
+                    });
+                    $('#wifiuser-modal-container').html(rendered);
+                    $('#add-wifiuser-modal').modal();
+                });
+                addWifiUserFormValidation = $("#add-wifiuser-form").validate({
+                    rules: {
+                        wifiusername: {
+                            required: true,
+                            minlength: 25,
+                        },
+                        wifiuserpassword: {
+                            required: true,
+                            minlength: 5
+                        },
+                        wifiusermaxsessionduration: {
+                            number:true
+                        }
                     },
-                    success: function (result) {
-                            $("#edituser-body").loadingOverlay('remove');
-                            $('#edituser-modal').modal('hide');
-                    },
-                    error: function (e) {
+                    messages: {
+
                     }
                 });
+            });
+        });
+        $("#wifiuser-modal-container").off('click').on("click", '#btn-add-wifiuser', function (event) {
+            var accounting = 'off';
+            if ($('#chkaccoutingison').is(":checked")) {
+                accounting = 'on';
             }
-            return false;
-        });
-
-        var adduserFromValidator = $("#adduser-form").validate({
-            rules: {
-                password: {
-                    required: true,
-                    minlength: 5
-                },
-                username: {
-                    required: true,
-                    minlength: 3
-                }
-            }
-        });
-
-        $('body').on('click', '#add-user-opt', function () {
-            $('#adduser-form').trigger('reset');
-            adduserFromValidator.resetForm();
-            $('#adduser-modal').modal()
-        });
-
-        $('#btn-add-user').on("click", function (event) {
-            if ($("#adduser-form").valid()) {
-                var newUserStatus = 'pending';
-                if ($('#chkIsActive').is(":checked")) {
-                    newUserStatus = 'active';
-                }
+            if ($("#add-wifiuser-form").valid()) {
                 var payload = {
                     tenantid: parseInt(Cookies.get('tenantid')),
                     username: $('#inputUsername').val(),
                     password: $('#inputPassword').val(),
-                    groupname: "master",
-                    acl: $('.radio:checked').val()
+                    maxsessionduration:parseInt($('#inputMaxSessionDuration').val()),
+                    groupname: $('#input-group-name').val(),
+                    acl: $('.radio:checked').val(),
+                    accounting:accounting
                 };
-                $("#adduser-body").loadingOverlay({
+                $("#add-wifiuser-body").loadingOverlay({
                     loadingText: 'Wait! Creating User'
                 });
                 $.post('/wifi/users', JSON.stringify(payload), function (result) {
-                    $("#adduser-body").loadingOverlay('remove');
-                    $('#adduser-modal').modal('hide');
+                    $("#add-wifiuser-body").loadingOverlay('remove');
+                    $('#add-wifiuser-modal').modal('hide');
+                    userTable.api().ajax.reload();
                 });
             }
             return false;
         });
+
+        var editWifiUserFormValidation;
+        $('.dataTables-user tbody').on('click', '#setting-edit-user', function () {
+            selectedWifiUser = userTable.api().row($(this).parents('tr')).data();
+            var locationsGroups;
+            var getLocationGroups = $.get('/wifi/' + Cookies.get('tenantid') + '/locations/groups', function (result) {
+                locationsGroups = result;
+            });
+
+            $.when(getLocationGroups).done(function () {
+                $.get('components/wifi-userupdate-modal.html', function (template) {
+                    var rendered = Mustache.render(template, {
+                        locations: locationsGroups,
+                        username:selectedWifiUser.username,
+                        groupname:selectedWifiUser.groupname,
+                        maxsessionduration:selectedWifiUser.maxsessionduration,
+                        checkwhitelisted : function() {
+                            if(selectedWifiUser.acl=="whitelisted"){
+                                return 'checked'
+                            }else{
+                                return 'unchecked'
+                            }
+                        },
+                        checkblacklisted : function() {
+                            if(selectedWifiUser.acl=="blacklisted"){
+                                return 'checked'
+                            }else{
+                                return 'unchecked'
+                            }
+                        },
+                        checknormaluser : function() {
+                            if(selectedWifiUser.acl=="normal_user"){
+                                return 'checked'
+                            }else{
+                                return 'unchecked'
+                            }
+                        },
+                        checkedaccounting :function(){
+                            if(selectedWifiUser.accounting=='on'){
+                                return 'checked';
+                            }
+                        }
+                    });
+                    $('#wifiuser-modal-container').html(rendered);
+                    $('#edit-wifiuser-modal').modal();
+                });
+                editWifiUserFormValidation = $("#edit-wifiuser-form").validate({
+                    rules: {
+                        editwifiusername: {
+                            required: true,
+                            minlength: 25,
+                        },
+                        editwifipassword: {
+                            required: true,
+                            minlength: 5
+                        },
+                        editmaxsessionduration: {
+                            number:true
+                        }
+                    },
+                    messages: {
+
+                    }
+                });
+            });
+            $("#wifiuser-modal-container").off('click').on("click", '#btn-edit-wifiuser', function (event) {
+                var accounting = 'off';
+                if ($('#chkeditaccoutingison').is(":checked")) {
+                    accounting = 'on';
+                }
+                if ($("#edit-wifiuser-form").valid()) {
+                    var payload = {
+                        tenantid: parseInt(Cookies.get('tenantid')),
+                        username: $('#edit-wifi-username').val(),
+                        maxsessionduration:parseInt($('#edit-maxsession-duration').val()),
+                        groupname: $('#edit-group-name').val(),
+                        acl: $('.radio:checked').val(),
+                        accounting:accounting
+                    };
+                    $.ajax({
+                        url: '/wifi/users',
+                        type: 'PUT',
+                        contentType: "application/json",
+                        data: JSON.stringify(payload),
+                        beforeSend:function(){
+                            $("#edit-wifiuser-body").loadingOverlay({
+                                loadingText: 'Wait! Updating User'
+                            });
+                        },
+                        success: function (result) {
+                            $("#edit-wifiuser-body").loadingOverlay('remove');
+                            $('#edit-wifiuser-modal').modal('hide');
+                            userTable.api().ajax.reload();
+                        },
+                        error: function (e) {
+                        }
+                    });
+                }
+                return false;
+            });
+        });
+
     });
 </script>

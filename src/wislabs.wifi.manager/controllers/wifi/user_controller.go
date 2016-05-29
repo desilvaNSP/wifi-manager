@@ -82,7 +82,7 @@ func AddWiFiUser(user *dao.PortalUser) {
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
-	_, err = stmtIns.Exec(user.TenantId, user.Username, user.GroupName.String, user.ACL.String)
+	_, err = stmtIns.Exec(user.TenantId, user.Username,user.MaxSessionDuration, user.GroupName.String, user.ACL.String, user.Accounting)
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
@@ -113,7 +113,7 @@ func UpdateWiFiUser(user *dao.PortalUser) {
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
-	_, err = stmtIns.Exec(user.ACL.String, user.Username, user.TenantId)
+	_, err = stmtIns.Exec(user.MaxSessionDuration, user.ACL.String, user.Accounting, user.Username, user.GroupName.String, user.TenantId)
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
@@ -123,7 +123,7 @@ func UpdateWiFiUser(user *dao.PortalUser) {
 func GetAllWiFiUsers(tenantId int, draw int, r *http.Request) dao.DataTablesResponce {
 	var users []dao.PortalUser
 	var response dao.DataTablesResponce
-	columns := []string{"username", "acl", "groupname", "visits", "acctstarttime", "acctactivationtime", "maxsessionduration"}
+	columns := []string{"username", "acl", "groupname", "visits", "acctstarttime", "acctactivationtime", "maxsessionduration", "accounting"}
 	totalRecordCountQuery := "SELECT COUNT(username) FROM accounting where tenantid=" + strconv.Itoa(tenantId)
 	var err error
 	response.RecordsFiltered, response.RecordsTotal, err = commons.Fetch(r, "portal", "accounting", totalRecordCountQuery, columns, &users)
@@ -135,11 +135,11 @@ func GetAllWiFiUsers(tenantId int, draw int, r *http.Request) dao.DataTablesResp
 	return response
 }
 
-func DeleteUserAccountingSession(username string, tenantid int) error {
+func DeleteUserAccountingSession(username string,groupname string, tenantid int) error {
 	dbMap := utils.GetDBConnection("portal");
 	defer dbMap.Db.Close()
 
-	_, err := dbMap.Exec(commons.DELETE_WIFI_USER, username, tenantid)
+	_, err := dbMap.Exec(commons.DELETE_WIFI_USER, username, groupname, tenantid)
 	return err
 }
 

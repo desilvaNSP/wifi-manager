@@ -229,7 +229,7 @@ var routes = Routes{
 	Route{
 		"DeleteWiFiUser",
 		"DELETE",
-		"/wifi/{tenantid}/users/{username}",
+		"/wifi/{tenantid}/users/{username}/{groupname}",
 		true,
 		dashboard_handlers.DeleteUserHandler,
 	},
