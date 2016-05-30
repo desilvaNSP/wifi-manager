@@ -43,6 +43,7 @@
     var userNames = [], taggedUsers = [];
     var $grid, $sizer;
     var deleteAppId;
+    var tagUserComponent;
 
 
 
@@ -79,29 +80,29 @@
             });
         });
 
-
         $("#add-dashboard-btn").on('click', function () {
             var users, locations, metrics,acltypes;
 
             taggedUsers = [];
 
+            var usersAjax;
             userPermissions = JSON.parse(Cookies.get('userpermissions'));
-            hasDashboardUserReadPermission = false
+            hasDashboardUserReadPermission = false;
             $.each(userPermissions, function (key, value) {
                 if (value.name == 'dashboard_users') {
                     hasDashboardUserReadPermission = true
                 }
             });
             if (hasDashboardUserReadPermission) {
-                var usersAjax = $.get('/dashboard/' + Cookies.get('tenantid') + '/users', function (result) {
-                    users = result;
-                    userNames = [];
-                    for (var i = users.length; i--;) {
-                        userNames.push(users[i].username)
-                    }
+                $("#add-dashboard-app-modal-content").off('click').on('change', 'input[name=input-group]', function(e) {
+                    var payload = {
+                        tenantid: parseInt(Cookies.get('tenantid')),
+                        groups: getCheckedGroups("input[name='input-group']"),
+                    };
+                    usersAjax = getUserLabelAjaxRequest(payload);
                 });
             } else {
-                usersAjax = true
+                usersAjax = true;
                 userNames.push(Cookies.get('username'))
             }
 
@@ -120,75 +121,76 @@
             var addDashboardFromValidator;
             $.when(usersAjax, locationsAjax, metricsAjax ,aclTypes).done(function () {
                 $.get('components/dashboard-app-modal.html', function (template) {
-                            var rendered = Mustache.render(template, {
-                                users: users,
-                                locations: locations,
-                                metrics: metrics,
-                                currentuser: Cookies.get("username"),
-                                acltypes:removeEmptyString(acltypes)
-                            });
-                            $('#add-dashboard-app-modal-content').html(rendered);
-                            $('#add-dashboard-modal').modal();
-                            $("#username-tags").tagit({
-                                availableTags: userNames,
-                                autocomplete: {delay: 0, minLength: 1},
-                                beforeTagAdded: function (event, ui) {
-                                    if (userNames.indexOf(ui.tagLabel) == -1) {
-                                        return false;
-                                    }
-                                    if (ui.tagLabel == "not found") {
-                                        return false;
-                                    }
-                                },
-                                beforeTagRemoved: function (event, ui) {
-                                    if (Cookies.get('username') == ui.tagLabel) {
-                                        return false;
-                                    }
-                                },
-                                afterTagAdded: function (event, ui) {
-                                    taggedUsers.push({
-                                        tenantid: parseInt(Cookies.get('tenantid')),
-                                        username: ui.tagLabel
-                                    });
-                                },
-                                afterTagRemoved: function (event, ui) {
-                                    taggedUsers = taggedUsers.filter(function (returnableObjects) {
-                                        return returnableObjects.username !== ui.tagLabel;
-                                    });
-                                }
-                            });
+                    var rendered = Mustache.render(template, {
+                        users: users,
+                        locations: locations,
+                        metrics: metrics,
+                        currentuser: Cookies.get("username"),
+                        acltypes:removeEmptyString(acltypes)
+                    });
+                    $('#add-dashboard-app-modal-content').html(rendered);
+                    $('#add-dashboard-modal').modal();
 
-                            addDashboardFromValidator = $("#add-dashboard-form").validate({
-                                rules: {
-                                    appName: {
-                                        required: true,
-                                        minlength: 1
-                                    }
-                                }
+                    tagUserComponent = $("#username-tags").tagit({
+                        availableTags: userNames.push(Cookies.get('username')),
+                        autocomplete: {delay: 0, minLength: 1},
+                        beforeTagAdded: function (event, ui) {
+                            if (userNames.indexOf(ui.tagLabel) == -1) {
+                                return false;
+                            }
+                            if (ui.tagLabel == "not found") {
+                                return false;
+                            }
+                        },
+                        beforeTagRemoved: function (event, ui) {
+                            if (Cookies.get('username') == ui.tagLabel) {
+                                return false;
+                            }
+                        },
+                        afterTagAdded: function (event, ui) {
+                            taggedUsers.push({
+                                tenantid: parseInt(Cookies.get('tenantid')),
+                                username: ui.tagLabel
+                            });
+                        },
+                        afterTagRemoved: function (event, ui) {
+                            taggedUsers = taggedUsers.filter(function (returnableObjects) {
+                                return returnableObjects.username !== ui.tagLabel;
                             });
                         }
-                );
+                    });
+                    addDashboardFromValidator = $("#add-dashboard-form").validate({
+                        ignore: "",
+                        rules: {
+                            appName: {
+                                required: true,
+                                minlength: 1,
+
+                            }
+                        }
+                    });
+                });
             });
 
             $("#add-dashboard-app-modal-content").off('click').on("click", '#btn-add-dashboard', function (event) {
-                if (addDashboardFromValidator.valid()) {
+                if ($("#add-dashboard-form").valid()) {
                     var aggregate = 'no';
                     if ($('#chkAggregate').is(":checked")) {
                         aggregate = 'yes';
                     }
-                    var payload = {
+                    var payloadadd = {
                         tenantid: parseInt(Cookies.get('tenantid')),
                         name: $('#input-dashboard-name').val(),
                         users: taggedUsers,
                         aggregate: aggregate,
-                        groups: getCheckedGroups("input[name='group']"),
+                        groups: getCheckedGroups("input[name='input-group']"),
                         metrics: getCheckedMetrices("input[name='metric']"),
                         acls: $('.acltypes-radio:checked').val()
                     };
                     $("#adddbmodal-body").loadingOverlay({
-                        loadingText: 'Creating '+payload.name+' Dashboard'
+                        loadingText: 'Creating '+payloadadd.name+' Dashboard'
                     });
-                    $.post('/dashboard/apps', JSON.stringify(payload), function (result) {
+                    $.post('/dashboard/apps', JSON.stringify(payloadadd), function (result) {
                         $("#adddbmodal-body").loadingOverlay('remove');
                         $('#add-dashboard-modal').modal('hide');
                         $grid.shuffle('destroy');
@@ -198,8 +200,6 @@
                 return false;
             });
         });
-
-
 
         function renderDashboardApps() {
             $.get('/dashboard/' + Cookies.get('tenantid') + '/apps/' + Cookies.get('username'), function (result) {
@@ -219,34 +219,33 @@
             var appName = $(this).attr('data-appname');
             var appId = $(this).attr('data-appid');
             var aggregate = $(this).attr('data-aggregation');
-            window.aggregate = aggregate
+            window.aggregate = aggregate;
             datagroups = [];
             $.get('components/dashboard.html', function (template) {
-                        $.get('/dashboard/apps/' + appId + '/groups', function (result) {
-                            datagroups = []
-                            $.each(result, function (index, element) {
-                                datagroups.push(element.groupname)
-                            });
-                            window.appId = appId
-                            window.appName = appName
-                            window.datagroups = datagroups
-                            window.originaldatagroups = datagroups
-                            var rendered
-                            if (aggregate == 'yes') {
-                                rendered = Mustache.render(template, {appId: appId, datagroups: appName});
-                            }else{
-                                window.appName = datagroups[0]
-                                rendered = Mustache.render(template, {appId: appId, datagroups: datagroups});
-                            }
-                            $grid.shuffle('destroy')
-                            $('.container-dashboard').remove('#app-grid')
-                            $('.container-dashboard').html(rendered);
-                        });
-                        $.get('/dashboard/apps/' + appId + '/acl', function (result) {
-                            window.aclvalue = result;
-                        });
+                $.get('/dashboard/apps/' + appId + '/groups', function (result) {
+                    datagroups = [];
+                    $.each(result, function (index, element) {
+                        datagroups.push(element.groupname)
+                    });
+                    window.appId = appId;
+                    window.appName = appName;
+                    window.datagroups = datagroups;
+                    window.originaldatagroups = datagroups;
+                    var rendered;
+                    if (aggregate == 'yes') {
+                        rendered = Mustache.render(template, {appId: appId, datagroups: appName});
+                    }else{
+                        window.appName = datagroups[0];
+                        rendered = Mustache.render(template, {appId: appId, datagroups: datagroups});
                     }
-            );
+                    $grid.shuffle('destroy');
+                    $('.container-dashboard').remove('#app-grid');
+                    $('.container-dashboard').html(rendered);
+                });
+                $.get('/dashboard/apps/' + appId + '/acl', function (result) {
+                    window.aclvalue = result;
+                });
+            });
         });
 
         $('#delete-app').on("click", function (event) {
@@ -275,13 +274,18 @@
         $('#confirm-delete-modal').modal();
     }
 
+
+    // App settings updates
     function dashboardSettings(event){
-        var users, locations, metrics,acltypes;
+        var payload, users, locations, metrics,acltypes;
         var groupsofAppID,usersOfAppID,metricsOfAppID,aclofAppID,aggregateValue;
 
         var selectedAppIdForSettings = $(event).data('appid');
         var appName = $(event).data('appname');
 
+        var usersAjax;
+
+        userNames = [];
         // get app details by id
         var allAppSettings  = $.get('/dashboard/apps/' + selectedAppIdForSettings + '/appsettings', function (result) {
             groupsofAppID= result.groups;
@@ -311,35 +315,36 @@
             }
         });
         if (hasDashboardUserReadPermission) {
-            var usersAjax = $.get('/dashboard/' + Cookies.get('tenantid') + '/users', function (result) {
-                users = result;
-                userNames = [];
-                for (var i = users.length; i--;) {
-                    userNames.push(users[i].username)
-                }
+            $("#add-dashboard-app-modal-content").off('click').on('change', 'input[name=edit-group]', function(e) {
+                payload = {
+                    tenantid: parseInt(Cookies.get('tenantid')),
+                    groups: getCheckedGroups("input[name='edit-group']"),
+                };
+                usersAjax = getUserLabelAjaxRequest(payload);
             });
         } else {
             usersAjax = true;
             userNames.push(Cookies.get('username'))
         }
 
+        taggedUsers = [];
+
         var updateDashboardFromValidator;
         $.when(usersAjax, locationsAjax, metricsAjax ,aclTypes,allAppSettings).done(function () {
             $.get('components/dashboard-settings-modal.html', function (template) {
-                        var rendered = Mustache.render(template, {
-                            appname:appName,
-                            users: users,
-                            locations: locations,
-                            metrics: metrics,
-                            currentuser: function(){
-                                var registeredUsers = [];
-                                for(var index in usersOfAppID) {
-                                    registeredUsers.push(usersOfAppID[index].username)
-                                }
-                                return registeredUsers;
-                            },
-                            acltypes:removeEmptyString(acltypes),
-                            checkedGroups : function() {
+                for(var index in usersOfAppID) {
+                    if (userNames.indexOf(usersOfAppID[index].username) == -1){
+                        userNames.push(usersOfAppID[index].username)
+                    }
+                }
+                var rendered = Mustache.render(template, {
+                    appname:appName,
+                    users: users,
+                    locations: locations,
+                    metrics: metrics,
+                    currentusers:userNames,
+                    acltypes:removeEmptyString(acltypes),
+                    checkedGroups : function() {
                                 var checkibilty;
                                 for(var index in groupsofAppID){
                                     var groupname = groupsofAppID[index].groupname;
@@ -352,7 +357,7 @@
                                 }
                                 return checkibilty;
                             },
-                            checkedACL : function() {
+                    checkedACL : function() {
                                 var checkibilty;
                                 var acl = aclofAppID;
                                 if(this.toString()==acl){
@@ -360,7 +365,7 @@
                                     return checkibilty;
                                 }
                             },
-                            checkedMetrics : function() {
+                    checkedMetrics : function() {
                                 var checkibilty;
                                 for(var index in metricsOfAppID){
                                     var metricid = metricsOfAppID[index].metricid;
@@ -373,7 +378,7 @@
                                 }
                                 return checkibilty;
                             },
-                            checkAggreateLoc :function(){
+                    checkAggreateLoc :function(){
                                 var checkibilty;
                                 if(aggregateValue=="yes"){
                                     checkibilty = 'checked';
@@ -382,49 +387,54 @@
                                 }
                                 return checkibilty;
                             }
-                        });
+                });
 
-                        $('#add-dashboard-app-modal-content').html(rendered);
-                        $('#settings-dashboard-modal').modal();
-                        $("#username-tags").tagit({
-                            availableTags: userNames,
-                            autocomplete: {delay: 0, minLength: 1},
-                            beforeTagAdded: function (event, ui) {
-                                if (userNames.indexOf(ui.tagLabel) == -1) {
-                                    return false;
-                                }
-                                if (ui.tagLabel == "not found") {
-                                    return false;
-                                }
-                            },
-                            beforeTagRemoved: function (event, ui) {
-                                if (Cookies.get('username') == ui.tagLabel) {
-                                    return false;
-                                }
-                            },
-                            afterTagAdded: function (event, ui) {
-                                taggedUsers.push({
-                                    tenantid: parseInt(Cookies.get('tenantid')),
-                                    username: ui.tagLabel
-                                });
-                            },
-                            afterTagRemoved: function (event, ui) {
-                                taggedUsers = taggedUsers.filter(function (returnableObjects) {
-                                    return returnableObjects.username !== ui.tagLabel;
-                                });
-                            },
+                $('#add-dashboard-app-modal-content').html(rendered);
+                $('#settings-dashboard-modal').modal();
 
+                payload = {
+                    tenantid: parseInt(Cookies.get('tenantid')),
+                    groups: getCheckedGroups("input[name='edit-group']"),
+                };
+                getUserLabelAjaxRequest(payload);
+                $("#username-tags").tagit({
+                    autocomplete: {delay: 0, minLength: 1},
+                    availableTags: userNames,
+                    beforeTagAdded: function (event, ui) {
+                        if (userNames.indexOf(ui.tagLabel) == -1) {
+                            return false;
+                        }
+                        if (ui.tagLabel == "not found") {
+                            return false;
+                        }
+                    },
+                    beforeTagRemoved: function (event, ui) {
+                        if (Cookies.get('username') == ui.tagLabel) {
+                            return false;
+                        }
+                    },
+                    afterTagAdded: function (event, ui) {
+                        taggedUsers.push({
+                            tenantid: parseInt(Cookies.get('tenantid')),
+                            username: ui.tagLabel
                         });
-                        updateDashboardFromValidator = $("#add-dashboard-form").validate({
-                            rules: {
-                                appName: {
-                                    required: true,
-                                    minlength: 1
-                                }
-                            }
+                    },
+                    afterTagRemoved: function (event, ui) {
+                        taggedUsers = taggedUsers.filter(function (returnableObjects) {
+                            return returnableObjects.username !== ui.tagLabel;
                         });
+                    },
+
+                });
+                updateDashboardFromValidator = $("#add-dashboard-form").validate({
+                    rules: {
+                        appName: {
+                            required: true,
+                            minlength: 1
+                        }
                     }
-            );
+                });
+            });
         });
 
         $("#add-dashboard-app-modal-content").off('click').on("click", '#update-sett-dashboard', function (event) {
@@ -433,24 +443,23 @@
                 if ($('#update-chkAggregate').is(":checked")) {
                     aggregate = 'yes';
                 }
-                var payload = {
+                var payloadupdate = {
                     tenantid: parseInt(Cookies.get('tenantid')),
                     appid:selectedAppIdForSettings,
                     users: taggedUsers,
                     aggregate: aggregate,
-                    groups: getCheckedGroups("input[name='group']"),
+                    groups: getCheckedGroups("input[name='edit-group']"),
                     metrics: getCheckedMetrices("input[name='metric']"),
                     acls: $('.update-acltypes-radio:checked').val()
                 };
-
                 $.ajax({
                     url: '/dashboard/apps',
                     type: 'PUT',
                     contentType: "application/json",
-                    data: JSON.stringify(payload),
+                    data: JSON.stringify(payloadupdate),
                     beforeSend:function(){
                         $("#settingsdbmodal-body").loadingOverlay({
-                            loadingText: 'Updating App Settings'
+                            loadingText: 'Updating App Settings '
                         });
                     },
                     success: function (result) {
@@ -498,6 +507,45 @@
             }
         }
         return checkboxesChecked.length > 0 ? checkboxesChecked : null;
+    }
+
+    function getUserLabelAjaxRequest (payload){
+        return $.ajax({
+            url: '/dashboard/usersingroups',
+            type: 'POST',
+            contentType: "application/json",
+            data: JSON.stringify(payload),
+            beforeSend: function () {
+            },
+            success: function (groups) {
+                var checkGroups = [];
+                checkGroups.push(userNames);
+                var validUsers = interceptBetweenTwoUsergroups(groups);
+                checkGroups.push(validUsers);
+                var newtagedValiedUsers = interceptBetweenTwoUsergroups(checkGroups);
+                var assignedTags = $("#username-tags").tagit("assignedTags");
+                assignedTags.forEach(function (data) {
+                    if (data != Cookies.get('username') && newtagedValiedUsers.indexOf(data) == -1) {
+                        $("#username-tags").tagit("removeTagByLabel", data);
+                    }
+                });
+                userNames = validUsers;
+                $("#username-tags").tagit({
+                    availableTags: userNames
+                });
+            },
+            error: function (e) {
+            }
+        });
+    }
+
+    function interceptBetweenTwoUsergroups(groups){
+        var validUsers = groups.shift().filter(function (v) {
+            return groups.every(function (a) {
+                return a.indexOf(v) !== -1;
+            });
+        });
+        return validUsers
     }
 
 </script>

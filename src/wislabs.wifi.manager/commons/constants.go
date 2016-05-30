@@ -65,6 +65,7 @@ const GET_DASHBOARD_APP_GROUPS string      = "SELECT appid, groupname FROM appgr
 const GET_DASHBOARD_APP_ACLS string        = "SELECT appid, acl FROM appacls WHERE appid=?"
 const GET_DASHBOARD_APP_AGGREGATE string   = "SELECT aggregate FROM apps WHERE appid=?"
 const GET_DASHBOARD_APP_METRICS string     = "SELECT metricid, name FROM metrics WHERE metricid IN (SELECT metricid FROM appmetrics WHERE appid=?)"
+const GET_DASHBOARD_USERS_IN_GROUP string  = "SELECT username FROM users WHERE tenantid =? and userid in (SELECT userid FROM userapgroups WHERE groupid=?);"
 const GET_DASHBOARD_APP_USERS string       = "SELECT tenantid, appid, username FROM appusers WHERE appid=?"
 const GET_DASHBOARD_USER_APPS string       = "SELECT tenantid, appid, name, aggregate FROM apps WHERE appid IN (SELECT appid FROM appusers WHERE username=? AND tenantid=?)"
 const ADD_DASHBOARD_APP string 		   = "INSERT INTO apps (tenantid, name, aggregate) VALUES( ?, ?, ?)"
