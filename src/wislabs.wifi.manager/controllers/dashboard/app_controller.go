@@ -37,6 +37,26 @@ func GetAllDashboardAppsOfUser(username string, tenantId int) []dao.DashboardApp
 	return apps
 }
 
+func GetDashboardUsersInGroups(tenantid int,appGroups []dao.DashboardAppGroup) [][]string{
+	dbMap := utils.GetDBConnection("dashboard");
+	defer dbMap.Db.Close()
+	usersInGroups := make([][]string,len(appGroups))
+	for i := 0; i < len(appGroups); i++ {
+
+		var users []dao.DashboardAppUser
+		_, err := dbMap.Select(&users, commons.GET_DASHBOARD_USERS_IN_GROUP, tenantid,GetApGroupId(tenantid,appGroups[i].GroupName))
+		if err != nil {
+			checkErr(err,"Error happening while get dashboard users in group") // proper error handling instead of panic in your app
+		}
+		usersInGroup := make([]string,len(users))
+		for j := 0; j < len(users); j++ {
+			usersInGroup[j] = (users[j].UserName)
+		}
+		usersInGroups[i]= usersInGroup
+	}
+	return  usersInGroups
+}
+
 func GetDashboardUsersOfApp(appId int) []dao.DashboardAppUser {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()

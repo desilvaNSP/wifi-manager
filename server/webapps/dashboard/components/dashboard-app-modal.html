@@ -13,7 +13,7 @@
                     <div class="form-group">
                         <label for="input-dashboard-name">Name</label>
                         <input type="text" class="form-control" id="input-dashboard-name" name="appName"
-                               placeholder="Name" required>
+                               placeholder="Name">
                     </div>
                     <div class="form-group">
                         <label for="exampleInputFile">Icon</label>
@@ -27,7 +27,7 @@
                             {{#locations}}
                             <div class="col-sm-6">
                                 <label>
-                                    <input type="checkbox" name="group" value="{{.}}">{{.}}
+                                    <input type="checkbox" name="input-group" value="{{.}}">{{.}}
                                 </label>
                             </div>
                             {{/locations}}
@@ -48,20 +48,30 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>
-                            <input type="checkbox" id="aclaccept" value="">
-                        </label>
-                        <label>Access Control</label>
-                    </div>
-                    <div class="checkbox" id="acloptionarea" style="display: none">
-                        <div class="row">
-                            {{#acltypes}}
-                            <div class="col-sm-6">
-                                <label class="radio inline control-label">
-                                    <input type="radio" class="acltypes-radio" name="acl" value="{{.}}">{{.}}
-                                </label>
+                        <div class="panel panel-default">
+                            <div class="panel-heading" role="tab" id="aclsinputpanel">
+                                <h4 class="panel-title">
+                                    <a class="collapsed" role="button" data-toggle="collapse" parent="#accordion" data- href="#collapse-acls" aria-expanded="false" aria-controls="collapse-acls">
+                                        <label>
+                                            <input type="checkbox" id="aclaccept" value="">
+                                        </label>
+                                        <label>Access Control</label>
+                                    </a>
+                                </h4>
                             </div>
-                            {{/acltypes}}
+                            <div id="collapse-acls" class="panel-collapse collapse-acl collapse" role="tabpanel" aria-labelledby="aclsinputpanel">
+                                <div class="panel-body">
+                                    <div class="radio">
+                                        {{#acltypes}}
+                                        <div class="col-sm-6">
+                                            <label class="radio inline control-label">
+                                                <input type="radio" class="acltypes-radio" name="acl" value="{{.}}">{{.}}
+                                            </label>
+                                        </div>
+                                        {{/acltypes}}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="form-group">
@@ -97,11 +107,21 @@
 </div>
 
 <script>
+    $('.collapse-acls').collapse('hide');
+    $('#aclaccept').on('click', function(e){
+        e.stopPropagation();
+    })
+    $('#collapse-acls').on('show.bs.collapse', function(e){
+        if( ! $('#aclaccept').is(':checked') )
+        {
+            return false;
+        }
+    });
     $('#aclaccept').change(function() {
         if(this.checked) {
-            $("#acloptionarea").show();
+            $('.collapse-acl.collapse').collapse('show');
         }else{
-            $("#acloptionarea").hide();
+            $('.collapse-acl.collapse').collapse('hide');
             $(".acltypes-radio").attr("checked",false);
         }
     });
