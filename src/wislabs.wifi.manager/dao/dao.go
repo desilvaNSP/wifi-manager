@@ -73,6 +73,15 @@ type DashboardUser struct {
 	ApGroups    []string  `json:"apgroups"`
 }
 
+type UserInfo struct {
+	TenantId    int       `db:"tenantid"json:"tenantid"`
+	Username    string    `db:"username"json:"username"`
+	Email       string    `db:"email"json:"email"`
+	Status      string    `db:"status"json:"status"`
+	Permissions []Permission   `json:"permissions"`
+	ApGroups    []string  `json:"apgroups"`
+}
+
 type DashboardUserDetails struct {
 	TenantId  int       `json:"tenantid"`
 	Username  string    `json:"username"`
