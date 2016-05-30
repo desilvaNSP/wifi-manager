@@ -22,7 +22,7 @@
                             {{#locations}}
                             <div class="col-sm-6">
                                 <label>
-                                    <input type="checkbox" name="group" value="{{.}}" class="location-inputs" {{checkedGroups}}>{{.}}
+                                    <input type="checkbox" name="edit-group" value="{{.}}" class="location-inputs" {{checkedGroups}}>{{.}}
                                 </label>
                             </div>
                             {{/locations}}
@@ -43,20 +43,30 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>
-                            <input type="checkbox" id="aclacceptupdate" value="">
-                        </label>
-                        <label>Access Control</label>
-                    </div>
-                    <div class="checkbox" id="acloptionupdatearea" style="display: none">
-                        <div class="row">
-                            {{#acltypes}}
-                            <div class="col-sm-6">
-                                <label class="radio inline control-label">
-                                    <input type="radio" class="update-acltypes-radio" name="aclupdate" value="{{.}}" {{checkedACL}}>{{.}}
-                                </label>
+                        <div class="panel panel-default">
+                            <div class="panel-heading" role="tab" id="aclseditpanel">
+                                <h4 class="panel-title">
+                                    <a class="collapsed" role="button" data-toggle="collapse" parent="#accordion" data- href="#collapse-acls-edit" aria-expanded="false" aria-controls="collapse-acls-edit">
+                                        <label>
+                                            <input type="checkbox" id="aclacceptupdate" value="">
+                                        </label>
+                                        <label>Access Control</label>
+                                    </a>
+                                </h4>
                             </div>
-                            {{/acltypes}}
+                            <div id="collapse-acls-edit" class="panel-collapse collapse-acl-edit collapse" role="tabpanel" aria-labelledby="aclseditpanel">
+                                <div class="panel-body">
+                                    <div class="radio" id="acloptionupdatearea">
+                                        {{#acltypes}}
+                                        <div class="col-sm-6">
+                                            <label class="radio inline control-label">
+                                                <input type="radio" class="update-acltypes-radio" name="aclupdate" value="{{.}}" {{checkedACL}}>{{.}}
+                                            </label>
+                                        </div>
+                                        {{/acltypes}}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="form-group">
@@ -64,9 +74,9 @@
                     </div>
                     <div class="checkbox">
                         <ul id="username-tags">
-                            {{#currentuser}}
+                            {{#currentusers}}
                             <li>{{.}}</li>
-                            {{/currentuser}}
+                            {{/currentusers}}
                         </ul>
                     </div>
                     <div class="form-group">
@@ -74,7 +84,7 @@
                     </div>
                     <div class="checkbox">
                         <div class="row">
-                            <div class="col- sm-6">
+                            <div class="col-sm-6">
                                 <label>
                                     <input type="checkbox" id="update-chkAggregate" value="" {{checkAggreateLoc}}>Aggregate Location data
                                 </label>
@@ -93,18 +103,27 @@
 
 <script>
     $(document).ready(function(){
+        $('#aclacceptupdate').on('click', function(e){
+            e.stopPropagation();
+        })
         if ($("input[name='aclupdate']").is(':checked')) {
             $('#aclacceptupdate').attr("checked",true);
-            $("#acloptionupdatearea").show();
+            $('#collapse-acls-edit').collapse('show');
         }else{
             $('#aclacceptupdate').attr("checked",false);
-            $("#acloptionupdatearea").hide();
+            $('.collapse-acls-edit').collapse('hide');
         }
+        $('#collapse-acls-edit').on('show.bs.collapse', function(e){
+            if( ! $('#aclacceptupdate').is(':checked') )
+            {
+                return false;
+            }
+        });
         $('#aclacceptupdate').change(function() {
             if(this.checked) {
-                $("#acloptionupdatearea").show();
+                $('.collapse-acl-edit.collapse').collapse('show');
             }else{
-                $("#acloptionupdatearea").hide();
+                $('.collapse-acl-edit.collapse').collapse('hide');
                 $(".update-acltypes-radio").attr("checked",false);
             }
         });

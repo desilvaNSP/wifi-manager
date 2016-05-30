@@ -63,6 +63,22 @@ func GetAppsOfUser(w http.ResponseWriter, r *http.Request){
 	}
 }
 
+func GetUsersOfGroups(w http.ResponseWriter, r *http.Request){
+	decoder := json.NewDecoder(r.Body)
+	var dashboardGroups dao.DashboardAppInfo
+	err := decoder.Decode(&dashboardGroups)
+	if(err != nil){
+		log.Fatalln("Error while decoding json")
+	}
+	usersInGroups := dashboard.GetDashboardUsersInGroups(1,dashboardGroups.Groups)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(usersInGroups); err != nil {
+		panic(err)
+	}
+}
+
 /**
 * GET
 * @path dashboard/apps/{appid}/users

@@ -169,6 +169,11 @@ type DashboardAppInfo struct {
 	Acls      string                `db:"acl"json:"acls"`
 }
 
+type DashboardGroups struct {
+	TenantId  int                  `db:"tenantid"json:"tenantid"`
+	Groups    []DashboardAppGroup      `db:"groups"json:"groups"`
+}
+
 type DashboardApp struct {
 	AppId     int                      `db:"appid"json:"appid"`
 	TenantId  int                  `db:"tenantid"json:"tenantid"`

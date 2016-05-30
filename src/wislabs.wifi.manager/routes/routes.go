@@ -143,6 +143,13 @@ var routes = Routes{
 		dashboard_handlers.GetAclTypes,
 	},
 	Route{
+		"Get Users in App groups",
+		"POST",
+		"/dashboard/usersingroups",
+		true,
+		dashboard_handlers.GetUsersOfGroups,
+	},
+	Route{
 		"Get Dashboard App Users ",
 		"GET",
 		"/dashboard/apps/{appid}/users",
