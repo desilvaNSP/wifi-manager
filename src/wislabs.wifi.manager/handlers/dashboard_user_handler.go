@@ -150,19 +150,19 @@ func GetDashboardUsersHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	users := dashboard.GetAllDashboardUsers(tenantid)
-	usersupdate := make([]dao.DashboardUser, len(users))
+	userInfo := make([]dao.UserInfo, len(users))
 
 	for index, user := range users {
-		usersupdate[index].Permissions = dashboard.GetDashboardUserPermissions(user.TenantId, user.Username)
-		usersupdate[index].Username = user.Username
-		usersupdate[index].Password = user.Password
-		usersupdate[index].Email = user.Email
-		usersupdate[index].Status = user.Status
+		userInfo[index].TenantId = user.TenantId
+		userInfo[index].Username = user.Username
+		userInfo[index].Email = user.Email
+		userInfo[index].Status = user.Status
+		userInfo[index].Permissions = dashboard.GetDashboardUserPermissions(user.TenantId, user.Username)
+		userInfo[index].ApGroups = dashboard.GetDashboardUserApGroups(user.TenantId,user.Username)
 	}
-
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(usersupdate); err != nil {
+	if err := json.NewEncoder(w).Encode(userInfo); err != nil {
 		panic(err)
 	}
 }
