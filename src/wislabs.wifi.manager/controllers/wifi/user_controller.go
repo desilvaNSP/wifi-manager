@@ -74,19 +74,23 @@ func GetUserCountOfDownloadsOver(constrains dao.Constrains, threshold int) (int6
 	}
 }
 
-func AddWiFiUser(user *dao.PortalUser) {
+func AddWiFiUser(user *dao.PortalUser) error {
 	dbMap := utils.GetDBConnection("portal");
 	defer dbMap.Db.Close()
 	stmtIns, err := dbMap.Db.Prepare(commons.ADD_WIFI_USER_SQL)
+	defer stmtIns.Close()
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
 	_, err = stmtIns.Exec(user.TenantId, user.Username,user.MaxSessionDuration, user.GroupName.String, user.ACL.String, user.Accounting)
 	if err != nil {
-		panic(err.Error()) // proper error handling instead of panic in your app
+		return err
+	} else {
+		if user.GroupName.String =="Master" {
+			AddRadiusUser(user)
+		}
 	}
-	AddRadiusUser(user)
-	defer stmtIns.Close()
+	return err
 }
 
 func AddRadiusUser(user *dao.PortalUser) {
@@ -158,6 +162,17 @@ func DeleteUserFromRadAcct(username string, tenantid int) error {
 	_, err := dbMap.Exec(commons.DELETE_RADACCT_USER, username)
 
 	return err
+}
+
+func IsWifiUserExistInGroup(tenantId int, username string, groupname string) (int, error){
+	dbMap := utils.GetDBConnection(commons.PORTAL_DB_NAME);
+	defer dbMap.Db.Close()
+	var checkUser int
+	err := dbMap.SelectOne(&checkUser, commons.IS_EXISTS_USER_NAME_IN_GROUP, username, groupname, tenantId)
+	if err != nil {
+		return checkUser, err
+	}
+	return checkUser, nil
 }
 
 func  GetUsersCountFromTo(constrains dao.Constrains) (int64,int64) {

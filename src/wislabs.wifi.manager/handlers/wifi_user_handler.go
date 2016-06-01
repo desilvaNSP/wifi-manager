@@ -24,7 +24,10 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 	if(err != nil){
 		log.Fatalln("Error while decoding wifi user json")
 	}
-	wifi_controller.AddWiFiUser(&user)
+	erradduser := wifi_controller.AddWiFiUser(&user)
+	if (erradduser != nil) {
+		log.Fatalln("Error while adding wifi user", err)
+	}
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -80,6 +83,27 @@ func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 	}else {
 		w.WriteHeader(http.StatusOK)
+	}
+}
+
+func WifiUserExistInGroupNameHanlder(w http.ResponseWriter, r *http.Request){
+	vars := mux.Vars(r)
+	username := vars["username"]
+	groupname := vars["groupname"]
+	tenantId, err := strconv.Atoi(r.Header.Get("tenantid"))
+	if (err != nil) {
+		log.Fatalln("Error while reading tenantid", err)
+	}
+	var existUser int
+	existUser, err = wifi_controller.IsWifiUserExistInGroup(tenantId, username, groupname);
+	if err != nil {
+		checkErr(err,"Error happening while Wifi user exist in group")
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(existUser); err != nil {
+		checkErr(err, "Error happening while JSON encoding.")
 	}
 }
 

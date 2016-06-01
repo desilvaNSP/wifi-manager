@@ -27,22 +27,40 @@
                                                                 placeholder="Max. Session Duration" value={{maxsessionduration}} required >
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="radioEditIsBlackListed">Access Control</label>
+                    <div class="row" >
+                        <div class="form-group col-lg-12">
+                            <label for="radioEditIsBlackListed">Access Control</label>
+                        </div>
+                        <div class="form-group col-lg-12">
+                            <div class="radio inline col-lg-4">
+                                <label class="control-label"><input type="radio" id="radioEditIsWhiteListed"
+                                                                                 class="radio" name="role-select"
+                                                                                 value="whitelisted" {{checkwhitelisted}}>White Listed</label><br/>
+                            </div>
+                            <div class="radio inline col-lg-4 radio-inside">
+                                <label class="control-label"><input type="radio" id="radioEditIsBlackListed"
+                                                                                 class="radio" name="role-select" value="blacklisted" {{checkblacklisted}}>Black Listed</label><br/>
+                            </div>
+                            <div class="radio col-lg-4 radio-inside">
+                                <label class="control-label"><input type="radio" id="radioEditIsNormalUser"
+                                                                                 class="radio" name="role-select"
+                                                                                 value="normal_user" {{checknormaluser}}>Normal User</label><br/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-lg-12">
+                            <label for="radioEditIsBlackListed">User Session Summary</label>
+                            <div class="alert alert-{{statususeracct}} useracctstatusalert fade in">
+                                    {{statususeracctmsg}}
+                            </div>
+                            <div class="alert alert-{{statusradius}} fade in">
+                                    {{statusradiusmsg}}
+                            </div>
+                        </div>
                     </div>
                     <div class="checkbox">
-                        <label class="radio inline control-label"><input type="radio" id="radioEditIsWhiteListed"
-                                                                         class="radio" name="role-select"
-                                                                         value="whitelisted" {{checkwhitelisted}}>White Listed</label><br/>
-                        <label class="radio inline control-label"><input type="radio" id="radioEditIsBlackListed"
-                                                                         class="radio" name="role-select"
-                                                                         value="blacklisted" {{checkblacklisted}}>Black Listed</label><br/>
-                        <label class="radio inline control-label"><input type="radio" id="radioEditIsNormalUser"
-                                                                         class="radio" name="role-select"
-                                                                         value="normal_user" {{checknormaluser}}>Normal User</label><br/>
-                    </div>
-                    <div class="checkbox">
-                        <br/><hr/><br/>
+                        <hr/><br/>
                         <label>
                             <input type="checkbox" id="chkeditaccoutingison" {{checkedaccounting}}> Start Accounting
                         </label>

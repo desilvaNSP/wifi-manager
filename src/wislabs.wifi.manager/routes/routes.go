@@ -241,6 +241,13 @@ var routes = Routes{
 		dashboard_handlers.DeleteUserHandler,
 	},
 	Route{
+		"Check Wifi user Exists In Group",
+		"GET",
+		"/wifi/users/{groupname}/{username}",
+		true,
+		dashboard_handlers.WifiUserExistInGroupNameHanlder,
+	},
+	Route{
 		"GetUsersCountFromToLocation",
 		"POST",
 		"/wifi/users/count",
@@ -407,6 +414,13 @@ var routes = Routes{
 		"/wifi/summary/accespoint",
 		true,
 		dashboard_handlers.GetAccessPointAgregatedDataFromToHandler,
+	},
+	Route{
+		"Check Wifi user Valid In Radius",
+		"GET",
+		"/radius/users/{username}",
+		true,
+		dashboard_handlers.WifiUserValidInRadiusHanlder,
 	},
 	Route{
 		"Radius Server Authentication Testing",
