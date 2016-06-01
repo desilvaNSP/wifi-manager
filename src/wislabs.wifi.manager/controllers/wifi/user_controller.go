@@ -77,8 +77,6 @@ func GetUserCountOfDownloadsOver(constrains dao.Constrains, threshold int) (int6
 func AddWiFiUser(user *dao.PortalUser) {
 	dbMap := utils.GetDBConnection("portal");
 	defer dbMap.Db.Close()
-
-	println("test");
 	stmtIns, err := dbMap.Db.Prepare(commons.ADD_WIFI_USER_SQL)
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
@@ -114,7 +112,6 @@ func UpdateWiFiUser(user *dao.PortalUser) {
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
-	println(user.ACL.String)
 	_, err = stmtIns.Exec(user.MaxSessionDuration, user.ACL.String, user.Accounting, user.Username, user.GroupName.String, user.TenantId)
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app

@@ -43,6 +43,7 @@
                     <th></th>
                     <th></th>
                     <th></th>
+                    <th></th>
                 </tr>
                 </thead>
             </table>
@@ -199,7 +200,7 @@
             return false;
         });
 
-        $('.dataTables-user tbody').on('click', '#setting-delete-user', function () {
+        $('.dataTables-user tbody').on('click', '#setting-delete-user', function (event) {
             selectedWifiUser = userTable.api().row($(this).parents('tr')).data();
             rawTodelete = $(this).closest('tr');
             $('#confirm-delete-modal').modal()
@@ -207,7 +208,7 @@
         });
 
         var addWifiUserFormValidation;
-        $("#add-wifiuser-btn").on('click', function (ev) {
+        $("#add-wifiuser-btn").on('click', function () {
             var locationsGroups;
             var getLocationGroups = $.get('/wifi/' + Cookies.get('tenantid') + '/locations/groups', function (result) {
                 locationsGroups = result;
@@ -229,7 +230,7 @@
                             required: true,
                             minlength: 5
                         },
-                        wifiusermaxsessionduration:{
+                        wifiusermaxsessionduration: {
                             number:true
                         }
                     },
