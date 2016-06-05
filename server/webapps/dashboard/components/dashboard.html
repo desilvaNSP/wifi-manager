@@ -1,20 +1,32 @@
  <div class="row">
-     <div class="col-lg-offset-6 col-lg-6">
-             <div class="form-group col-lg-offset-1 col-lg-4">
-                 <p align="center"> Site </p>
-                 <select class="form-control" id="select-wifilocation">
-                     {{#datagroups}}
-                     <option>{{.}}</option>
-                     {{/datagroups}}
-                 </select>
+     <div class="col-lg-offset-5 col-lg-7">
+         <div class="form-group col-lg-4">
+             <p align="center"> Site </p>
+             <select class="form-control" id="select-wifilocation">
+                 {{#datagroups}}
+                 <option>{{.}}</option>
+                 {{/datagroups}}
+             </select>
+         </div>
+         <div class="form-group col-lg-6">
+             <p align="center"> Time Range </p>
+             <div id="time-range-dashboard"  class="pull-right">
+                 <i class="glyphicon glyphic on-calendar fa fa-calendar"></i>&nbsp;
+                 <span></span> <b class="caret"></b>
              </div>
-             <div class="form-group col-lg-7">
-                 <p align="center"> Time Range </p>
-                 <div id="time-range-dashboard"  class="pull-right">
-                     <i class="glyphicon glyphic on-calendar fa fa-calendar"></i>&nbsp;
-                     <span></span> <b class="caret"></b>
-                 </div>
+         </div>
+         <div class="form-group col-lg-1 download-metrics-buttons">
+             <div class="btn-group">
+                 <a data-toggle="dropdown" class="btn btn-white btn-bitbucket dropdown-toggle">
+                     <i class="fa fa-bars"></i>
+                     <span class="caret"></span>
+                 </a>
+                 <ul class="dropdown-menu pull-right">
+                     <li><a id="exportpdf" href="#">PDF Download</a></li>
+                     <li><a id="exportCSV" href="#">CSV Download</a></li>
+                 </ul>
              </div>
+         </div>
      </div>
 </div>
 
