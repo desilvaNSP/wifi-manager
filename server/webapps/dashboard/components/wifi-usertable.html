@@ -1,4 +1,4 @@
-<div class="col-lg-12">
+<div class="container-fluid">
     <div class="ibox float-e-margins">
         <div class="ibox-title">
             <h5>Wi-Fi user table</h5>
@@ -21,7 +21,6 @@
             </div>
         </div>
         <div class="ibox-content">
-
             <table class="table table-striped table-bordered table-hover dataTables-user">
                 <thead>
                 <tr>
@@ -32,12 +31,14 @@
                     <th>Acct. Activation Time</th>
                     <th>Acct. Last Started Time</th>
                     <th>MaxSession Duration</th>
+                    <th>Status</th>
                     <th>Settings</th>
                 </tr>
                 <tr>
                     <th></th>
                     <th>ACL</th>
                     <th>Location</th>
+                    <th></th>
                     <th></th>
                     <th></th>
                     <th></th>
@@ -104,37 +105,90 @@
                 {"data": "acctstarttime", "width": "10%"},
                 {"data": "maxsessionduration", "width": "10%"},
                 {
+                    "data":null,
+                    "render": function( data, type, full, meta ) {
+                        var content = "<div class='indicator-content'>";
+                        var radiusValid;
+                        if(full.username != "" || full.username != null){
+                            $.ajax({
+                                type:"GET",
+                                async: false,
+                                url: serverOriginUrl + "/radius/users/"+ full.username,
+                                success: function(checkvalid) {
+                                    radiusValid = (checkvalid == 1) ? true : false;
+                                }
+                            });
+                        }
+
+                        var lastacctupdatedtime = moment(moment(full.acctstarttime).add(full.maxsessionduration, 'seconds')).format('YYYY-MM-DD HH:mm:ss');
+                        var now = moment().format('YYYY-MM-DD HH:mm:ss')
+                        if(((!moment(lastacctupdatedtime).isBefore(now, 'second')) && radiusValid && !(full.acl == 'blacklisted')) || full.acl == 'whitelisted' ){
+                            content += "<a type='button' class='btn  btn-info btn-circle status-indicator' data-toggle='tooltip' data-placement='top' title='User session valid'></a>";
+                        }
+                        else{
+                            content += "<a type='button' class='btn btn-danger btn-circle status-indicator' data-toggle='tooltip' data-placement='top' title='User session invalid'></a>";
+                        }
+                        content += "</div>";
+                        return content;
+                    },
+                    "width": "5%",
+                    "className": 'center',
+                    "sortable": false
+                },
+                {
                     "data": null,
                     "defaultContent": "<div class='btn-group'><button class='btn btn-white btn-xs dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fa fa-gear'></i></button><ul class='dropdown-menu'><li><a href='#' id='setting-edit-user'>Edit</a></li><li><a href='#' id='setting-change-password'>Change Password</a></li><li><a href='#' id='setting-delete-user'>Delete</a></li></ul></div>",
                     "width": "1%",
                     "className": 'center',
                     "sortable": false
+                },
+                {"data": "accounting","width": "10%", "visible":false},
+            ],
+            "columnDefs": [
+                {
+                    "render": function ( data ) {
+                        return data + " sec";
+                    },
+                    "targets": 6
                 }
             ],
-            dom: "<'dt-toolbar'<'col-xs-12 col-sm-6'l><'col-sm-6 col-xs-6 hidden-xs'CT>r>" +
+            dom: "<'dt-toolbar'<'col-xs-1 col-sm-1'l><'col-sm-9 col-xs-9 hidden-xs'CT>r>" +
             "t" +
             "<'dt-toolbar-footer'<'col-sm-6 col-xs-12 hidden-xs'i><'col-sm-6 col-xs-12'p>>",
             tableTools: {
                 "sSwfPath": "js/plugins/dataTables/swf/copy_csv_xls_pdf.swf"
             }
         });
+        var indicatorHtml = '' +
+                        '<div class="col-lg-2">' +
+                            '<button class="ColVis_Button ColVis_MasterButton" id="refreshTable">Refresh</button>' +
+                        '</div>';
 
+
+        $().appendTo('div.dt-toolbar');
+        $(indicatorHtml).appendTo('div.dt-toolbar');
+        $('#refreshTable').on('click',function(){
+            userTable.api().ajax.reload();
+        });
         $.get('/wifi/' + Cookies.get('tenantid') + '/locations/groups', function (locationGroups) {
             locationGroups.push('Master');
             userTable.columnFilter({
                 sPlaceHolder: "head:before",
                 aoColumns: [
-                    {"bSortable": true},
-                    {type: "select", values: ['Whitelisted', 'Blacklisted', 'normal_user']},
-                    {type: "select", values: locationGroups},
+                    {"sWidth": "5%" , "bSortable": true },
+                    {"sWidth": "5%",type: "select", values: ['Whitelisted', 'Blacklisted', 'normal_user']},
+                    {"sWidth": "5%",type: "select", values: locationGroups},
                     null,
                     null,
                     null,
                     null,
-                    null
+                    null,
+                    null,
+                    null,
                 ]
             });
         });
+
 
         $('.dataTables-user tbody').on('click', 'tr', function () {
             if ($(this).hasClass('selected')) {
@@ -145,6 +199,24 @@
                 $(this).addClass('selected');
             }
         });
+
+        // serverside validation for adding wifi user. username and groupname cannot be duplicate
+        $.validator.addMethod("checkUserGroupName",
+                function(value, element, params) {
+                    var result = false;
+                    var username = $('input[name="' + params[0] + '"]').val();
+                    $.ajax({
+                        type:"GET",
+                        async: false,
+                        url: serverOriginUrl + "/wifi/users/"+value+"/"+username,
+                        success: function(checkavalibility) {
+                            result = (checkavalibility == 1) ? false : true;
+                        }
+                    });
+                    return result;
+                },
+                "Group Name Already Exists on Username."
+        );
 
         var selectedWifiUser
         var rawTodelete;
@@ -169,7 +241,7 @@
             return false;
         });
 
-        $('.dataTables-user tbody').on('click', '#setting-delete-user', function () {
+        $('.dataTables-user tbody').on('click', '#setting-delete-user', function (event) {
             selectedWifiUser = userTable.api().row($(this).parents('tr')).data();
             rawTodelete = $(this).closest('tr');
             $('#confirm-delete-modal').modal()
@@ -189,28 +261,33 @@
                     });
                     $('#wifiuser-modal-container').html(rendered);
                     $('#add-wifiuser-modal').modal();
-                });
-                addWifiUserFormValidation = $("#add-wifiuser-form").validate({
-                    rules: {
-                        wifiusername: {
-                            required: true,
-                            minlength: 25,
-                        },
-                        wifiuserpassword: {
-                            required: true,
-                            minlength: 5
-                        },
-                        wifiusermaxsessionduration: {
-                            number:true
-                        }
-                    },
-                    messages: {
 
-                    }
+                    addWifiUserFormValidation = $("#add-wifiuser-form").validate({
+                        rules: {
+                            wifiusername: {
+                                required: true,
+                                minlength:3
+                            },
+                            wifiuserpassword: {
+                                required: true,
+                                minlength: 5
+                            },
+                            wifiusergroupname: {
+                                checkUserGroupName: ['wifiusername']
+                            },
+                            wifiusermaxsessionduration: {
+                                required: true,
+                                digits: true
+                            }
+                        },
+                        messages: {
+                        }
+                    });
                 });
+
             });
         });
-        $("#wifiuser-modal-container").off('click').on("click", '#btn-add-wifiuser', function (event) {
+        $("#wifiuser-modal-container").off('click').on("click", '#btn-add-wifiuser', function (e) {
             var accounting = 'off';
             if ($('#chkaccoutingison').is(":checked")) {
                 accounting = 'on';
@@ -228,6 +305,7 @@
                 $("#add-wifiuser-body").loadingOverlay({
                     loadingText: 'Wait! Creating User'
                 });
+                e.preventDefault();
                 $.post('/wifi/users', JSON.stringify(payload), function (result) {
                     $("#add-wifiuser-body").loadingOverlay('remove');
                     $('#add-wifiuser-modal').modal('hide');
@@ -244,14 +322,41 @@
             var getLocationGroups = $.get('/wifi/' + Cookies.get('tenantid') + '/locations/groups', function (result) {
                 locationsGroups = result;
             });
+            var radiusValid, radiusStatusBtnStyle, radiusStatusMessage;
+            var checkRadiusUserValid = $.get(serverOriginUrl + "/radius/users/"+ selectedWifiUser.username, function (checkvalid) {
+                radiusValid = (checkvalid == 1) ? true : false;
+                if(radiusValid){
+                    radiusStatusBtnStyle = 'info';
+                    radiusStatusMessage = 'User is valid radius user'
+                }else{
+                    radiusStatusBtnStyle = 'danger';
+                    radiusStatusMessage = 'User is invalid radius user'
+                }
+            });
 
-            $.when(getLocationGroups).done(function () {
+            $.when(checkRadiusUserValid, getLocationGroups).done(function () {
+                var useracctStatusBtnStyle, useracctStatusMessage ;
+                if(selectedWifiUser.acl == 'normal_user'){
+                    var lastacctupdatedtime = moment(moment(selectedWifiUser.acctstarttime).add(selectedWifiUser.maxsessionduration, 'seconds')).format('YYYY-MM-DD HH:mm:ss');
+                    var now = moment().format('YYYY-MM-DD HH:mm:ss');
+                    if((!moment(lastacctupdatedtime).isBefore(now, 'second'))){
+                        useracctStatusBtnStyle = 'info';
+                        useracctStatusMessage = 'User Accounting Session is Active'
+                    }else{
+                        useracctStatusBtnStyle = 'danger';
+                        useracctStatusMessage = 'User Accounting Session is Expired'
+                    }
+                }
                 $.get('components/wifi-userupdate-modal.html', function (template) {
                     var rendered = Mustache.render(template, {
                         locations: locationsGroups,
                         username:selectedWifiUser.username,
                         groupname:selectedWifiUser.groupname,
                         maxsessionduration:selectedWifiUser.maxsessionduration,
+                        statusradius:radiusStatusBtnStyle,
+                        statususeracct:useracctStatusBtnStyle,
+                        statusradiusmsg:radiusStatusMessage,
+                        statususeracctmsg:useracctStatusMessage,
                         checkwhitelisted : function() {
                             if(selectedWifiUser.acl=="whitelisted"){
                                 return 'checked'
@@ -280,20 +385,16 @@
                         }
                     });
                     $('#wifiuser-modal-container').html(rendered);
+                    if(!(selectedWifiUser.acl == 'normal_user')){
+                        $('.useracctstatusalert').hide();
+                    }
                     $('#edit-wifiuser-modal').modal();
                 });
                 editWifiUserFormValidation = $("#edit-wifiuser-form").validate({
                     rules: {
-                        editwifiusername: {
-                            required: true,
-                            minlength: 25,
-                        },
-                        editwifipassword: {
-                            required: true,
-                            minlength: 5
-                        },
                         editmaxsessionduration: {
-                            number:true
+                            digits:true,
+                            required: true
                         }
                     },
                     messages: {

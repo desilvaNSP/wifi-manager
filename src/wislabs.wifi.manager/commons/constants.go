@@ -49,6 +49,9 @@ const DELETE_WIFI_USER string     = "DELETE FROM accounting where username=? AND
 const DELETE_RADCHECk_USER string = "DELETE FROM radcheck WHERE username = ?";
 const DELETE_RADACCT_USER string  = "DELETE FROM radacct WHERE username = ?";
 
+const IS_EXISTS_USER_NAME_IN_GROUP string  = "SELECT EXISTS(SELECT username FROM accounting WHERE username=? and groupname=? and tenantid=?) as checkuser";
+const IS_VALID_USER_IN_RADIUS string  = "SELECT EXISTS(SELECT username FROM radcheck WHERE username=? and value=?) as checkuser";
+
 /* AP locations */
 const ADD_AP_LOCATION string 	          = "INSERT INTO aplocations (tenantid, ssid, mac, apname, bssid, longitude, latitude, groupid,  groupname) VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ? )"
 const UPDATE_AP_LOCATION string           ="UPDATE aplocations SET ssid=?, apname=?, bssid=?, longitude=?, latitude=?, groupid=?, groupname=? WHERE locationid=? and tenantid=? "

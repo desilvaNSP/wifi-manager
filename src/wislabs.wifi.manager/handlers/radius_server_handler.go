@@ -93,3 +93,22 @@ func UpdateRadiusInstanceHandler(w http.ResponseWriter, r*http.Request)  {
 		panic(err)
 	}
 }
+
+func WifiUserValidInRadiusHanlder(w http.ResponseWriter, r *http.Request){
+	vars := mux.Vars(r)
+	username := vars["username"]
+	tenantId, err := strconv.Atoi(r.Header.Get("tenantid"))
+	if (err != nil) {
+		log.Fatalln("Error while reading tenantid", err)
+	}
+	var isValid int
+	isValid, err = radius.IsWifiUserValidInRadius(tenantId, username);
+	if err != nil {
+		checkErr(err,"Error happening while Wifi user is valid in Radius")
+	}
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(isValid); err != nil {
+		checkErr(err, "Error happening while JSON encoding.")
+	}
+}

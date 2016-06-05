@@ -67,6 +67,18 @@ func UpdateRadiusInstance(config dao.RadiusConfigs,tenantid int,username string)
 	}
 }
 
+func IsWifiUserValidInRadius(tenantId int, username string) (int, error) {
+	dbMap := utils.GetDBConnection(commons.RADIUS_DB_NAME);
+	defer dbMap.Db.Close()
+
+	var checkUser int
+	err := dbMap.SelectOne(&checkUser, commons.IS_VALID_USER_IN_RADIUS, username, username)
+	if err != nil {
+		return checkUser, err
+	}
+	return checkUser, nil
+}
+
 func checkErr(err error, msg string) {
 	if err != nil {
 		log.Error(msg, err)
