@@ -361,7 +361,8 @@
             }
         }(Highcharts));
 
-        $('#exportpdf').click(function () {
+        $('#exportpdf').click(function (event) {
+            event.stopImmediatePropagation();
             var pdfOptions = {
                 orientation:"landscape", // One of "portrait" or "landscape" (or shortcuts "p" (Default), "l")
                 unit:"mm",              //Measurement unit to be used when coordinates are specified. One of "pt" (points), "mm" (Default), "cm", "in"
@@ -633,12 +634,12 @@
                     var fileName = "dashboard.csv";
 
                     $('#exportCSV').click(function () {
+
                         var $modal = $('.js-loading-bar'), $bar = $modal.find('.progress-bar');
                         $bar.css('width', '0%').attr('aria-valuenow', 0);
                         $modal.modal('show');
                         var valeur = 0;
                         var progresbarInterval = setInterval(function(){
-                            console.log(valeur)
                             $bar.css('width', valeur+'%').attr('aria-valuenow', valeur);
                             if (valeur == 100) {
                                 valeur=0;
@@ -682,8 +683,6 @@
                 }
             }
         });
-
-
     });
 
 </script>
