@@ -131,7 +131,8 @@ $(document).ready(function () {
         height: '100%'
     })
 
-    $(".logout").on('click', function () {
+    $(".logout").on('click', function (event) {
+        event.stopImmediatePropagation();
         $.ajax({
             url: '/dashboard/logout',
             type: 'POST',
