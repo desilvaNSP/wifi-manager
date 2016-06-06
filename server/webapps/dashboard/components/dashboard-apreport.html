@@ -85,6 +85,9 @@
         function formatBytes(bytes) {
             return  numeral(bytes).format('0.00b')
         }
+        function formatIntoMinitue(time) {
+            return  Math.floor(time / 60) + " Min";
+        }
 
         var accespointTable = $('.dataTables-accesspoint').DataTable({
             responsive: true,
@@ -121,17 +124,23 @@
                     "render": function ( data ) {
                         return formatBytes(data);
                     },
+                    "targets": 2
+                },
+                {
+                    "render": function ( data ) {
+                        return formatBytes(data);
+                    },
                     "targets": 3
                 },
                 {
                     "render": function ( data ) {
                         return formatBytes(data);
                     },
-                    "targets": 4
+                    "targets": 6
                 },
                 {
                     "render": function ( data ) {
-                        return formatBytes(data);
+                        return formatIntoMinitue(data);
                     },
                     "targets": 7
                 }

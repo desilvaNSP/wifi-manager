@@ -7998,13 +7998,11 @@ img.thumbnail  { position: absolute; width: 178px;height: 178px ;z-index: 20}
     width: 100%;
     border-radius: 5px;
 }
-
 .status-indicator{
     width: 14px !important;
     height: 12px !important;
     margin-right: 4px !important;
 }
-
 .radio-inside{
     margin-top: 10px !important;
 }
@@ -8017,4 +8015,12 @@ img.thumbnail  { position: absolute; width: 178px;height: 178px ;z-index: 20}
     border-radius: 0;
     -webkit-border-radius: 0;
     -moz-border-radius: 0;
+}
+.download-metrics-buttons div{
+    margin-top: 29px;
+    border: 1px solid #1ab394;
+    border-radius: 5px;
+}
+.download-metrics-buttons div a.btn{
+    font-size: 12px;
 }

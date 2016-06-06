@@ -313,9 +313,14 @@
     </div>
 </div>
 
-<div class="row">
-    <a id="exportpdf" class="btn btn-primary" >PDF Download</a>
-    <a id="exportCSV" class="btn btn-primary" >CSV Download</a>
+
+<div class="modal js-loading-bar">
+    <div class="modal-dialog" center>
+            <div class="progress progress-striped active" style="margin-top: 50%">
+                <div class="progress-bar progress-bar-default" role="progressbar"></div>
+            </div>
+            <label style="float: right; margin-right: 5px; color: white">Downloading... </label>
+    </div>
 </div>
 
 <script type="text/javascript">
@@ -356,7 +361,8 @@
             }
         }(Highcharts));
 
-        $('#exportpdf').click(function () {
+        $('#exportpdf').click(function (event) {
+            event.stopImmediatePropagation();
             var pdfOptions = {
                 orientation:"landscape", // One of "portrait" or "landscape" (or shortcuts "p" (Default), "l")
                 unit:"mm",              //Measurement unit to be used when coordinates are specified. One of "pt" (points), "mm" (Default), "cm", "in"
@@ -628,14 +634,31 @@
                     var fileName = "dashboard.csv";
 
                     $('#exportCSV').click(function () {
+
+                        var $modal = $('.js-loading-bar'), $bar = $modal.find('.progress-bar');
+                        $bar.css('width', '0%').attr('aria-valuenow', 0);
+                        $modal.modal('show');
+                        var valeur = 0;
+                        var progresbarInterval = setInterval(function(){
+                            $bar.css('width', valeur+'%').attr('aria-valuenow', valeur);
+                            if (valeur == 100) {
+                                valeur=0;
+                            }
+                            valeur = valeur + 20
+                        }, 200);
                         $.post('/wifi/summary/downloadrawdata', JSON.stringify(payload), function (data, status) {
-                            var csvfile = new Blob([data], {type: "text/csv"}),
-                                    url = window.URL.createObjectURL(csvfile);
-                            a.href = url;
-                            a.download = fileName;
-                            a.click();
-                            document.body.removeChild(a);
-                            window.URL.revokeObjectURL(url);
+                            clearInterval(progresbarInterval);
+                            $bar.css('width', '100%').attr('aria-valuenow', 100);
+                            setTimeout(function(){
+                                $modal.modal('hide');
+                                var csvfile = new Blob([data], {type: "text/csv"}),
+                                        url = window.URL.createObjectURL(csvfile);
+                                a.href = url;
+                                a.download = fileName;
+                                a.click();
+                                document.body.removeChild(a);
+                                window.URL.revokeObjectURL(url);
+                            },1000);
                         });
                     });
 
