@@ -123,10 +123,10 @@
                         var lastacctupdatedtime = moment(moment(full.acctstarttime).add(full.maxsessionduration, 'seconds')).format('YYYY-MM-DD HH:mm:ss');
                         var now = moment().format('YYYY-MM-DD HH:mm:ss')
                         if(((!moment(lastacctupdatedtime).isBefore(now, 'second')) && radiusValid && !(full.acl == 'blacklisted')) || full.acl == 'whitelisted' ){
-                            content += "<a type='button' class='btn  btn-info btn-circle status-indicator' data-toggle='tooltip' data-placement='top' title='User session valid'></a>";
+                            content += "<a type='button' class='btn  btn-info btn-circle status-indicator' data-toggle='tooltip' data-placement='top' title='Session is valid'></a>";
                         }
                         else{
-                            content += "<a type='button' class='btn btn-danger btn-circle status-indicator' data-toggle='tooltip' data-placement='top' title='User session invalid'></a>";
+                            content += "<a type='button' class='btn btn-danger btn-circle status-indicator' data-toggle='tooltip' data-placement='top' title='session expired'></a>";
                         }
                         content += "</div>";
                         return content;
@@ -327,10 +327,10 @@
                 radiusValid = (checkvalid == 1) ? true : false;
                 if(radiusValid){
                     radiusStatusBtnStyle = 'info';
-                    radiusStatusMessage = 'User is valid radius user'
+                    radiusStatusMessage = 'A valid user exist in AAA'
                 }else{
                     radiusStatusBtnStyle = 'danger';
-                    radiusStatusMessage = 'User is invalid radius user'
+                    radiusStatusMessage = 'A valid user doesn\'t exist in AAA'
                 }
             });
 
@@ -341,10 +341,10 @@
                     var now = moment().format('YYYY-MM-DD HH:mm:ss');
                     if((!moment(lastacctupdatedtime).isBefore(now, 'second'))){
                         useracctStatusBtnStyle = 'info';
-                        useracctStatusMessage = 'User Accounting Session is Active'
+                        useracctStatusMessage = 'User got a valid session'
                     }else{
                         useracctStatusBtnStyle = 'danger';
-                        useracctStatusMessage = 'User Accounting Session is Expired'
+                        useracctStatusMessage = 'User got an expired session'
                     }
                 }
                 $.get('components/wifi-userupdate-modal.html', function (template) {
