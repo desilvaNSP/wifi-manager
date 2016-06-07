@@ -8,6 +8,7 @@ SERVER_HOME=`cd ..;pwd`
 export SERVER_HOME
 export JWT_PRIVATE_KEY_PATH=../resources/security/private.key
 export JWT_PUBLIC_KEY_PATH=../resources/security/public.key
+# token expiration time in hours
 export JWT_EXPIRATION_DELTA=72
 
 function default_(){
