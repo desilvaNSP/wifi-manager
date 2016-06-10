@@ -51,13 +51,12 @@ func CreateRadiusServerHandler(w http.ResponseWriter, r*http.Request){
 
 /**
 * GET
-* @path /radius/{tenantid}/radiusdetails
+* @path /radius/radiusdetails
 *
 */
 func GetRadiusServerDetailsHandler(w http.ResponseWriter, r*http.Request){
-	vars := mux.Vars(r)
-	tenantId, err := strconv.Atoi(vars["tenantid"])
-	if(err!= nil){
+	tenantId, err := strconv.Atoi(r.Header.Get("tenantid"))
+	if (err != nil) {
 		log.Error("Error while reading tenantid", err)
 	}
 	allRadiusDetails, err := radius.GetAllRadiusDetails(tenantId)
@@ -73,7 +72,7 @@ func GetRadiusServerDetailsHandler(w http.ResponseWriter, r*http.Request){
 * @path /radius/server/clients/{instanceid}
 *
 */
-func GetRadiusClientsInServerHanlder(w http.ResponseWriter, r*http.Request){
+func GetRadiusServerClientsHanlder(w http.ResponseWriter, r*http.Request){
 	vars := mux.Vars(r)
 	instanceId, err := strconv.Atoi(vars["instanceid"])
 	if(err!= nil){
@@ -89,7 +88,7 @@ func GetRadiusClientsInServerHanlder(w http.ResponseWriter, r*http.Request){
 	if err != nil {
 		checkErr(err,"Error while get server instance configs by ID")
 	}
-	nasClients, err := radius.GetRadiusClientsInServer(radiusConfig)
+	nasClients, err := radius.GetRadiusServerClients(radiusConfig)
 	if err != nil {
 		checkErr(err, "Error occured while getting Nas Clients in Server ")
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
@@ -113,7 +112,7 @@ func GetRadiusClientsInServerHanlder(w http.ResponseWriter, r*http.Request){
 */
 func DeleteRadiusInstanceHandler(w http.ResponseWriter, r*http.Request){
 	vars := mux.Vars(r)
-	radiusInstId := vars["serverinstid"]
+	radiusInstId := vars["instanceid"]
 	tenantId, err := strconv.Atoi(r.Header.Get("tenantid"))
 	if (err != nil) {
 		log.Error("Error while reading tenantid", err)
@@ -196,19 +195,19 @@ func WifiUserValidInRadiusHanlder(w http.ResponseWriter, r *http.Request){
 
 /**
 * GET
-* @path /radius/server/{instanceid}/validnas/{ipstring}/{rangesize}
+* @path /radius/{instanceid}/validnas
 *
 */
 func NASIpExistInRadiusHandler(w http.ResponseWriter, r *http.Request){
 	var isValid bool
 	vars := mux.Vars(r)
-	ipAddress := vars["ipstring"]
-	lengthRange := vars["rangesize"]
+	ipAddress := r.URL.Query().Get("ipstring");
+	lengthRange := r.URL.Query().Get("rangesize");
+
 	instanceId, err := strconv.Atoi(vars["instanceid"])
 	if(err!= nil){
 		log.Error("Error while reading instanceid ", err)
 	}
-
 	tenantId, err := strconv.Atoi(r.Header.Get("tenantid"))
 	if (err != nil) {
 		log.Error("Error while reading tenantid", err)

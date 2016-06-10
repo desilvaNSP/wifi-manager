@@ -32,7 +32,6 @@ func IsUserAuthenticated(user dao.DashboardUser) bool {
 	return false
 }
 
-
 func IsUserExistInTenant(tenantId int, username string) int {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
