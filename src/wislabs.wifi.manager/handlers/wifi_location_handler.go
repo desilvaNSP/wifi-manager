@@ -10,16 +10,17 @@ import (
 	"log"
 	"wislabs.wifi.manager/controllers/location"
 	"strconv"
+	"strings"
 )
 
-func GetLocations(w http.ResponseWriter, r *http.Request){
-	if(!authenticator.IsAuthorized(authenticator.WIFI_LOCATION, authenticator.ACTION_READ,r)){
+func GetLocations(w http.ResponseWriter, r *http.Request) {
+	if (!authenticator.IsAuthorized(authenticator.WIFI_LOCATION, authenticator.ACTION_READ, r)) {
 		w.WriteHeader(http.StatusForbidden)
 		return
 	}
 	vars := mux.Vars(r)
 	tenantid, err := strconv.Atoi(vars["tenantid"])
-	if(err!= nil){
+	if (err != nil) {
 		log.Fatalln("Error while reading tenantid", err)
 	}
 	locations := location.GetAllLocations(tenantid)
@@ -31,7 +32,7 @@ func GetLocations(w http.ResponseWriter, r *http.Request){
 	}
 }
 
-func GetLocationGroups(w http.ResponseWriter, r *http.Request){
+func GetLocationGroups(w http.ResponseWriter, r *http.Request) {
 	if (!authenticator.IsAuthorized(authenticator.WIFI_LOCATION, authenticator.ACTION_READ, r)) {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusForbidden)
@@ -39,7 +40,7 @@ func GetLocationGroups(w http.ResponseWriter, r *http.Request){
 	}
 	vars := mux.Vars(r)
 	tenantid, err := strconv.Atoi(vars["tenantid"])
-	if(err!= nil){
+	if (err != nil) {
 		log.Fatalln("Error while reading tenantid", err)
 	}
 	locationGroups := location.GetAllLocationGroups(tenantid)
@@ -51,16 +52,30 @@ func GetLocationGroups(w http.ResponseWriter, r *http.Request){
 	}
 }
 
+func GetSSIDsOfAPGroups(w http.ResponseWriter, r *http.Request) {
+	tenantId, err := strconv.Atoi(r.Header.Get("tenantid"))
+	if (err != nil) {
+		log.Fatalln("Error while reading tenantid", err)
+	}
+	groupnames := strings.Split(r.FormValue("groupnames"), ",")
+	ssids := location.GetSSIDsOfLocationGroups(groupnames, tenantId)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(ssids); err != nil {
+		panic(err)
+	}
+}
+
 /**
 * POST
 * @path /wifi/locations
 * return
 */
-func AddWiFiLocationHandler(w http.ResponseWriter, r *http.Request){
+func AddWiFiLocationHandler(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var apLocation dao.ApLocation
 	err := decoder.Decode(&apLocation)
-	if(err != nil){
+	if (err != nil) {
 		log.Fatalln("Error while decoding location json")
 	}
 	location.AddWiFiLocation(&apLocation)
@@ -72,11 +87,11 @@ func AddWiFiLocationHandler(w http.ResponseWriter, r *http.Request){
 * @path /wifi/locationsupdate
 * return
 */
-func UpdateWiFiLocationHandler(w http.ResponseWriter,r *http.Request)  {
+func UpdateWiFiLocationHandler(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var apLocation dao.ApLocation
 	err := decoder.Decode(&apLocation)
-	if(err != nil){
+	if (err != nil) {
 		log.Fatalln("Error while decoding location json")
 	}
 	location.UpdateWifiLocation(&apLocation)
@@ -88,11 +103,11 @@ func UpdateWiFiLocationHandler(w http.ResponseWriter,r *http.Request)  {
 * @path /{tenantid}/locations
 * return
 */
-func AddWiFiGroupHandler(w http.ResponseWriter, r *http.Request){
+func AddWiFiGroupHandler(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var apGroup dao.ApGroup
 	err := decoder.Decode(&apGroup)
-	if(err != nil){
+	if (err != nil) {
 		log.Fatalln("Error while decoding location json")
 	}
 	location.AddWiFiGroup(&apGroup)
@@ -105,21 +120,21 @@ func AddWiFiGroupHandler(w http.ResponseWriter, r *http.Request){
 * @path /{tenantid}/locations/{mac}/{ssid}/{groupname}
 * return
 */
-func DeleteLocation(w http.ResponseWriter, r *http.Request){
+func DeleteLocation(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	tenantid, err := strconv.Atoi(vars["tenantid"])
-	if(err!= nil){
+	if (err != nil) {
 		log.Fatalln("Error while reading tenantid", err)
 	}
 	ssid := vars["ssid"]
 	mac := vars["mac"]
 	groupname := vars["groupname"]
-	err =location.DeleteApLocation(tenantid, ssid, mac, groupname)
+	err = location.DeleteApLocation(tenantid, ssid, mac, groupname)
 
 	if err != nil {
-		log.Fatalln("Error while deleting location " + ssid +" from DB ", err)
+		log.Fatalln("Error while deleting location " + ssid + " from DB ", err)
 		w.WriteHeader(http.StatusNotFound)
-	}else{
+	} else {
 		w.WriteHeader(http.StatusOK)
 	}
 }
@@ -129,19 +144,19 @@ func DeleteLocation(w http.ResponseWriter, r *http.Request){
 * @path /{tenantid}/locations/{groupname}
 * return
 */
-func DeleteLocationGroup(w http.ResponseWriter, r *http.Request){
+func DeleteLocationGroup(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	tenantid, err := strconv.Atoi(vars["tenantid"])
-	if(err!= nil){
+	if (err != nil) {
 		log.Fatalln("Error while reading tenantid", err)
 	}
 	groupname := vars["groupname"]
-	err =location.DeleteApGroup(groupname, tenantid)
+	err = location.DeleteApGroup(groupname, tenantid)
 
 	if err != nil {
-		log.Fatalln("Error while deleting location " + groupname +" from DB ", err)
+		log.Fatalln("Error while deleting location " + groupname + " from DB ", err)
 		w.WriteHeader(http.StatusNotFound)
-	}else{
+	} else {
 		w.WriteHeader(http.StatusOK)
 	}
 }
@@ -151,20 +166,20 @@ func DeleteLocationGroup(w http.ResponseWriter, r *http.Request){
 * @path /{tenantid}/locations/{mac}
 * return
 */
-func DeleteAccessPoint(w http.ResponseWriter, r *http.Request){
+func DeleteAccessPoint(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	tenantid, err := strconv.Atoi(vars["tenantid"])
-	if(err!= nil){
+	if (err != nil) {
 		log.Fatalln("Error while reading tenantid", err)
 	}
 	mac := vars["mac"]
 
 	err = location.DeleteAccessPoint(mac, tenantid)
 	if err != nil {
-		log.Fatalln("Error while deleting accesspoint : " + mac +" from DB ", err)
+		log.Fatalln("Error while deleting accesspoint : " + mac + " from DB ", err)
 		w.WriteHeader(http.StatusNotFound)
-	}else{
+	} else {
 		w.WriteHeader(http.StatusOK)
 	}
 }

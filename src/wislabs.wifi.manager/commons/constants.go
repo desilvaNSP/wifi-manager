@@ -3,10 +3,16 @@ package commons
 const SERVER_HOME string = "SERVER_HOME"
 
 
-const RADIUS_DB_NAME string    = "radius"
-const DASHBOARD_DB_NAME string = "dashboard"
-const PORTAL_DB_NAME string    = "portal"
-const SUMMARY_DB_NAME string   = "summary"
+const RADIUS_DB string    = "radius"
+const DASHBOARD_DB string = "dashboard"
+const PORTAL_DB string    = "portal"
+const SUMMARY_DB string   = "summary"
+
+const(
+	CRITERIA_SSIDS = "ssid"
+	CRITERIA_GROUPNAMES = "groupname"
+	CRITERIA_APMACS = "calledstationmac"
+)
 
 /* common queries */
 const GET_RECORDS_COUNT = "SELECT COUNT(*) from accounting WHERE tenantid=?"
@@ -32,7 +38,7 @@ const ADD_DASHBOARD_USER_PERMISSIONS string   		= "INSERT INTO userpermissions (
 const GET_DASHBOARD_USER_PERMISSIONS string     	= "SELECT name, action  FROM permissions WHERE permissionid IN (SELECT permissionid FROM userpermissions WHERE  userid IN (SELECT  userid from users WHERE username=? AND tenantid=?)) GROUP BY name, action"
 const GET_DASHBOARD_USER_AP_GROUPS string     		= "SELECT groupname  FROM apgroups WHERE groupid IN (SELECT groupid FROM userapgroups WHERE  userid IN (SELECT  userid from users WHERE username=? AND tenantid=?)) GROUP BY groupname"
 const UPDATE_DASHBOARD_USER string      		= "UPDATE users SET email=?, status=? WHERE username=? and tenantid=?"
-const UPDATE_DASHBORD_USER_PROFILE string               = "UPDATE users SET email=? WHERE username=? and tenantid=?"
+const UPDATE_DASHBOARD_USER_PROFILE string               = "UPDATE users SET email=? WHERE username=? and tenantid=?"
 const UPDATE_DASHBOARD_USER_PASSWORD string  		= "UPDATE users SET password=? WHERE username=? and tenantid=?"
 const DELETE_DASHBOARD_USER string   			= "DELETE FROM users WHERE tenantid=? AND username=?"
 const DELETE_DASHBOARD_USER_PERMISSIONS string		= "DELETE FROM userpermissions WHERE userid=?"
@@ -58,6 +64,7 @@ const UPDATE_AP_LOCATION string           ="UPDATE aplocations SET ssid=?, apnam
 const ADD_AP_GROUP string 	 	  = "INSERT INTO apgroups (tenantid, groupname, groupsymbol) VALUES( ?, ?, ?)"
 const GET_ALL_AP_LOCATIONS string         = "SELECT tenantid, locationid, ssid, mac, apname, bssid, longitude, latitude, groupname FROM aplocations WHERE tenantid=?"
 const GET_ALL_AP_GROUPS string	          = "SELECT distinct(groupname) FROM apgroups WHERE tenantid=?"
+const GET_AP_GROUP_SSIDS string	          = "SELECT distinct(ssid) FROM aplocations WHERE tenantid=? AND groupname IN"
 const DELETE_AP_LOCATION string           = "DELETE FROM aplocations WHERE ssid=? AND mac=? AND groupname=? AND tenantid=?"
 const DELETE_AP_GROUP string 	          = "DELETE FROM aplocations WHERE groupname=? AND tenantid=?"
 const DELETE_AP string 			  = "DELETE FROM aplocations WHERE mac=? AND tenantid=?"
@@ -67,13 +74,16 @@ const GET_DASHBOARD_APP string 		   = "SELECT appid, tenantid, name, aggregate F
 const GET_DASHBOARD_APP_GROUPS string      = "SELECT appid, groupname FROM appgroups WHERE appid=?"
 const GET_DASHBOARD_APP_ACLS string        = "SELECT appid, acl FROM appacls WHERE appid=?"
 const GET_DASHBOARD_APP_AGGREGATE string   = "SELECT aggregate FROM apps WHERE appid=?"
+const GET_DASHBOARD_APP_CRITERIA string    = "SELECT criteria FROM appcriterias WHERE appid=?"
+const GET_DASHBOARD_APP_FILTER_PARAMS string   = "SELECT parameter FROM appfilterparams WHERE appid=?"
 const GET_DASHBOARD_APP_METRICS string     = "SELECT metricid, name FROM metrics WHERE metricid IN (SELECT metricid FROM appmetrics WHERE appid=?)"
 const GET_DASHBOARD_USERS_IN_GROUP string  = "SELECT username FROM users WHERE tenantid =? and userid in (SELECT userid FROM userapgroups WHERE groupid=?);"
 const GET_DASHBOARD_APP_USERS string       = "SELECT tenantid, appid, username FROM appusers WHERE appid=?"
-const GET_DASHBOARD_USER_APPS string       = "SELECT tenantid, appid, name, aggregate FROM apps WHERE appid IN (SELECT appid FROM appusers WHERE username=? AND tenantid=?)"
-const ADD_DASHBOARD_APP string 		   = "INSERT INTO apps (tenantid, name, aggregate) VALUES( ?, ?, ?)"
+const GET_DASHBOARD_USER_APPS string       = "SELECT tenantid, appid, name, aggregate, filtercriteria FROM apps WHERE appid IN (SELECT appid FROM appusers WHERE username=? AND tenantid=?)"
+const ADD_DASHBOARD_APP string 		       = "INSERT INTO apps (tenantid, name, aggregate, filtercriteria) VALUES( ?, ?, ?, ?)"
 const ADD_DASHBOARD_APP_USER string        = "INSERT INTO appusers (tenantid, appid, username) VALUES(?, ?, ? )"
 const ADD_DASHBOARD_APP_METRIC string      = "INSERT INTO appmetrics (appid, metricid) VALUES( ?, ? )"
+const ADD_DASHBOARD_APP_FILTER_PARAMS string  = "INSERT INTO appfilterparams (appid, parameter) VALUES( ?, ? )"
 const ADD_DASHBOARD_APP_GROUP string       = "INSERT INTO appgroups (appid, groupname) VALUES( ?, ? )"
 const ADD_DASHBOARD_ACLS string            = "INSERT INTO appacls (appid,acl) VALUES( ?, ?)"
 const DELETE_DASHBOARD_APP string          = "DELETE FROM apps WHERE appid=? AND tenantid=?"
@@ -87,6 +97,7 @@ const GET_EXIST_DASHBOARD_APP_METRICS string    = "SELECT metricid FROM appmetri
 const DELETE_OLD_DB_APP_METRICS string          = "DELETE FROM appmetrics WHERE appid=? and metricid=?"
 const ADD_NEW_DB_APP_METRICS string             = "INSERT INTO appmetrics (appid,metricid) VALUES( ?, ?)"
 const UPDATE_DB_APP_AGGREGATE_VALUE  string     = "UPDATE apps SET aggregate=? WHERE appid=?"
+const UPDATE_DB_APP_FILTER_CRITERIA  string     = "UPDATE apps SET filtercriteria=? WHERE appid=?"
 const DELETE_OLD_DB_APP_USERS  string		= "DELETE FROM appusers WHERE appid=? and username=?"
 const ADD_NEW_DB_APP_USERS string 		= "INSERT INTO appusers (tenantid, appid, username) VALUES( ?, ?, ?)"
 

@@ -6,6 +6,7 @@ import (
 	"wislabs.wifi.manager/dao"
 	"wislabs.wifi.manager/commons"
 	"wislabs.wifi.manager/controllers/dashboard"
+	"strings"
 )
 
 func GetAllLocations(tenantid int) []dao.ApLocation {
@@ -25,6 +26,26 @@ func GetAllLocationGroups(tenantid int) []string {
 	checkErr(err, "Error occured while getting AP location groups")
 	return apLocationGroups
 }
+
+func GetSSIDsOfLocationGroups(groupnames []string, tenantId int) []string {
+	dbMap := utils.GetDBConnection("dashboard");
+	defer dbMap.Db.Close()
+	var ssids []string
+	query := commons.GET_AP_GROUP_SSIDS + "("
+
+	for index, value := range groupnames {
+		aa := strings.Replace(value, "\"", "", -1)
+
+		query += "'" + strings.Trim(aa," ") + "'"
+		if index < len(groupnames)-1{
+			query += ","
+		}
+	}
+	_, err := dbMap.Select(&ssids, query + ")", tenantId)
+	checkErr(err, "Error occured while getting AP location groups")
+	return ssids
+}
+
 
 func AddWiFiLocation(location *dao.ApLocation) {
 	dbMap := utils.GetDBConnection("dashboard");

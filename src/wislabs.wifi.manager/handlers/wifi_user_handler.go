@@ -154,7 +154,7 @@ func GetReturningUsersCountFromToHandler(w http.ResponseWriter, r *http.Request)
 	var constrains dao.Constrains
 	err := decoder.Decode(&constrains)
 
-	count, countpre := wifi_controller.GetReturningUsers(constrains)
+	count, countpre := wifi_controller.GetReturningUsersCount(constrains)
 	changePercentage := getChangePrecentageSummaryDetails(countpre,count)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")

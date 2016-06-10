@@ -182,14 +182,21 @@ var routes = Routes{
 		"GET",
 		"/dashboard/apps/{appid}/aggregate",
 		true,
-		dashboard_handlers.GetAggreagateValueOfApp,
+		dashboard_handlers.GetAggregateValueOfApp,
+	},
+	Route{
+		"Get Dashboard App Filter parameters",
+		"GET",
+		"/dashboard/apps/{appid}/filterparameters",
+		true,
+		dashboard_handlers.GetAppFilterParameters,
 	},
 	Route{
 		"Get All Dashboard app settings",
 		"GET",
 		"/dashboard/apps/{appid}/appsettings",
 		true,
-		dashboard_handlers.GetAllAppSettings,
+		dashboard_handlers.GetDashboardAppSettings,
 	},
 	Route{
 		"Delete Dashboard User App",
@@ -210,7 +217,7 @@ var routes = Routes{
 		"PUT",
 		"/dashboard/apps",
 		true,
-		dashboard_handlers.UpdateDashBoardSettingsHander,
+		dashboard_handlers.UpdateDashBoardSettingsHandler,
 	},
 	Route{
 		"Create WIFI user",
@@ -381,6 +388,13 @@ var routes = Routes{
 		dashboard_handlers.AddWiFiGroupHandler,
 	},
 	Route{
+		"GET ssids associated with the locations",
+		"GET",
+		"/wifi/locations/ssids",
+		true,
+		dashboard_handlers.GetSSIDsOfAPGroups,
+	},
+	Route{
 		"Get OS Stats ",
 		"POST",
 		"/wifi/devices/osstats",
@@ -413,7 +427,7 @@ var routes = Routes{
 		"POST",
 		"/wifi/summary/accespoint",
 		true,
-		dashboard_handlers.GetAccessPointAgregatedDataFromToHandler,
+		dashboard_handlers.GetAccessPointAggregatedDataFromToHandler,
 	},
 	Route{
 		"Check Wifi user Valid In Radius",

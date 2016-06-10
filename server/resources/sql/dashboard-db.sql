@@ -14,7 +14,7 @@ USE `dashboard`;
 --
 CREATE TABLE IF NOT EXISTS `tenants` (
   `tenantid`  INT NOT NULL AUTO_INCREMENT,
-  `domain`    VARCHAR(255) DEFAULT NULL UNIQUE ,
+  `domain`    VARCHAR(255) DEFAULT NULL UNIQUE,
   `status`    VARCHAR(255) DEFAULT NULL,
   `createdon` TIMESTAMP,
   PRIMARY KEY (`tenantid`)
@@ -118,6 +118,7 @@ CREATE TABLE IF NOT EXISTS `apps` (
   `tenantid`  INT,
   `name`      VARCHAR(255) DEFAULT NULL,
   `aggregate` VARCHAR(255) DEFAULT NULL,
+  `filtercriteria` VARCHAR(255) DEFAULT NULL,
   `createdon` TIMESTAMP,
   PRIMARY KEY (`appid`),
   FOREIGN KEY (tenantid) REFERENCES tenants (tenantid)
@@ -152,9 +153,17 @@ CREATE TABLE IF NOT EXISTS `appmetrics` (
 )
   ENGINE = InnoDB;
 
+CREATE TABLE IF NOT EXISTS `appfilterparams` (
+  `appid`       INT,
+  `parameter` VARCHAR(255) DEFAULT NULL,
+  FOREIGN KEY (appid) REFERENCES apps (appid)
+    ON DELETE CASCADE
+)
+  ENGINE = InnoDB;
+
 CREATE TABLE IF NOT EXISTS appacls (
   appid INT,
-  acl VARCHAR(255) DEFAULT NULL,
+  acl   VARCHAR(255) DEFAULT NULL,
   FOREIGN KEY (appid) REFERENCES apps (appid)
     ON DELETE CASCADE
 )

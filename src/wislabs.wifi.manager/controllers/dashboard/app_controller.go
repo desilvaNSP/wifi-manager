@@ -4,24 +4,32 @@ import (
 	"wislabs.wifi.manager/utils"
 	"wislabs.wifi.manager/dao"
 	"wislabs.wifi.manager/commons"
+	"database/sql"
+	log "github.com/Sirupsen/logrus"
 )
 
 func CreateNewDashboardApp(dashboardAppInfo dao.DashboardAppInfo) {
 	appId, err := AddDashboardApp(&dashboardAppInfo)
 	if (err == nil) {
+		switch (dashboardAppInfo.FilterCriteria){
+		case "groupname" :
+			AddDashboardAppGroups(&dashboardAppInfo.Groups, appId)
+		case "ssid" :
+			AddDashboardAppFilterParams(appId, dashboardAppInfo.Parameters)
+		}
 		AddDashboardAppUsers(&dashboardAppInfo.Users, appId)
-		AddDashboardAppGroups(&dashboardAppInfo.Groups, appId)
 		AddDashboardAppMetrics(&dashboardAppInfo.Metrics, appId)
 		AddDashboardAppAcls(dashboardAppInfo.Acls,appId)
 	}
 }
 
-func UpdateDashBoardSettings(dashboardAppInfo dao.DashboardAppInfo) {
-	UpadateDashboardAppUsers(&dashboardAppInfo);
-	UpadateDashboardAppGroups(&dashboardAppInfo);
-	UpadateDashboardAppMetrics(&dashboardAppInfo);
-	UpadateDashboardAppAcls(&dashboardAppInfo);
-	UpadateDashboardAppAggregateValue(&dashboardAppInfo);
+func UpdateDashBoardAppSettings(dashboardAppInfo dao.DashboardAppInfo) {
+	UpdateDashboardAppFilterCriteria(&dashboardAppInfo)
+	UpdateDashboardAppUsers(&dashboardAppInfo);
+	UpdateDashboardAppGroups(&dashboardAppInfo);
+	UpdateDashboardAppMetrics(&dashboardAppInfo);
+	UpdateDashboardAppAcls(&dashboardAppInfo);
+	UpdateDashboardAppAggregateValue(&dashboardAppInfo);
 }
 
 func GetAllDashboardAppsOfUser(username string, tenantId int) []dao.DashboardApp {
@@ -31,8 +39,7 @@ func GetAllDashboardAppsOfUser(username string, tenantId int) []dao.DashboardApp
 	var apps []dao.DashboardApp
 	_, err := dbMap.Select(&apps, commons.GET_DASHBOARD_USER_APPS, username, tenantId)
 	if err != nil {
-		//panic(err.Error()) // proper error handling instead of panic in your app
-		return apps
+		panic(err.Error()) // proper error handling instead of panic in your app
 	}
 	return apps
 }
@@ -95,6 +102,7 @@ func GetDashboardGroupsOfApp(appId int) []dao.DashboardAppGroup {
 	}
 	return groups
 }
+
 func GetDashboardAclsOfApp(appId int) string {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
@@ -120,6 +128,33 @@ func GetDashboardAggregateOfApp(appId int) string{
 	return strAggregate[0]
 }
 
+func GetFilterParamsOfApp(appId int) []string{
+	dbMap := utils.GetDBConnection(commons.DASHBOARD_DB);
+	defer dbMap.Db.Close()
+
+	var filterParams []string
+	_, err := dbMap.Select(&filterParams, commons.GET_DASHBOARD_APP_FILTER_PARAMS, appId)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	return filterParams
+}
+
+func GetFilterCriteriaOfApp(appId int) string{
+	dbMap := utils.GetDBConnection(commons.DASHBOARD_DB);
+	defer dbMap.Db.Close()
+
+	var filterCriteria sql.NullString
+	err := dbMap.SelectOne(&filterCriteria, commons.GET_DASHBOARD_APP_CRITERIA, appId)
+	if err != nil {
+		log.Error(err.Error())
+	}
+	if filterCriteria.Valid{
+		return filterCriteria.String
+	}
+	return "none"
+}
+
 func GetAllDashboardMetrics(tenantId int) []dao.DashboardMetric {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
@@ -132,7 +167,6 @@ func GetAllDashboardMetrics(tenantId int) []dao.DashboardMetric {
 	}
 	return metrics
 }
-
 
 func GetAllDashboardAclTypes( ) []string {
 	dbMap := utils.GetDBConnection("portal");
@@ -147,7 +181,7 @@ func GetAllDashboardAclTypes( ) []string {
 }
 
 func AddDashboardApp(app *dao.DashboardAppInfo) (int64, error) {
-	dbMap := utils.GetDBConnection("dashboard");
+	dbMap := utils.GetDBConnection(commons.DASHBOARD_DB);
 	defer dbMap.Db.Close()
 
 	stmtIns, err := dbMap.Db.Prepare(commons.ADD_DASHBOARD_APP)
@@ -156,13 +190,29 @@ func AddDashboardApp(app *dao.DashboardAppInfo) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-	result, err := stmtIns.Exec(app.TenantId, app.Name, app.Aggregate)
+	result, err := stmtIns.Exec(app.TenantId, app.Name, app.Aggregate, app.FilterCriteria)
 	if err != nil {
 		return 0, err
 	} else {
 		id, err := result.LastInsertId()
 		return id, err
 	}
+}
+
+func AddDashboardAppFilterParams(appId int64, filterParams []string) error {
+	dbMap := utils.GetDBConnection(commons.DASHBOARD_DB);
+	defer dbMap.Db.Close()
+
+	stmtIns, err := dbMap.Db.Prepare(commons.ADD_DASHBOARD_APP_FILTER_PARAMS)
+	defer stmtIns.Close()
+
+	if err != nil {
+		return err
+	}
+	for i := 0; i < len(filterParams); i++ {
+		_, err = stmtIns.Exec(appId, filterParams[i])
+	}
+	return err
 }
 
 func AddDashboardAppMetrics(appMetrics *[]dao.DashboardAppMetric, appId int64) error {
@@ -247,8 +297,7 @@ func DeleteDashboardApp(appId int, tenantId int) error {
 	return err
 }
 
-
-func UpadateDashboardAppAggregateValue(dashboardAppInfo  *dao.DashboardAppInfo){
+func UpdateDashboardAppAggregateValue(dashboardAppInfo  *dao.DashboardAppInfo){
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 
@@ -264,8 +313,22 @@ func UpadateDashboardAppAggregateValue(dashboardAppInfo  *dao.DashboardAppInfo){
 
 }
 
+func UpdateDashboardAppFilterCriteria(dashboardAppInfo  *dao.DashboardAppInfo){
+	dbMap := utils.GetDBConnection(commons.DASHBOARD_DB);
+	defer dbMap.Db.Close()
 
-func UpadateDashboardAppGroups(dashboardAppInfo  *dao.DashboardAppInfo){
+	stmtIns, err := dbMap.Db.Prepare(commons.UPDATE_DB_APP_FILTER_CRITERIA)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	_, err = stmtIns.Exec(dashboardAppInfo.FilterCriteria, dashboardAppInfo.AppId)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	defer stmtIns.Close()
+}
+
+func UpdateDashboardAppGroups(dashboardAppInfo  *dao.DashboardAppInfo){
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 
@@ -306,7 +369,7 @@ func UpadateDashboardAppGroups(dashboardAppInfo  *dao.DashboardAppInfo){
 	}
 }
 
-func UpadateDashboardAppMetrics(dashboardAppInfo  *dao.DashboardAppInfo){
+func UpdateDashboardAppMetrics(dashboardAppInfo  *dao.DashboardAppInfo){
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 
@@ -346,8 +409,7 @@ func UpadateDashboardAppMetrics(dashboardAppInfo  *dao.DashboardAppInfo){
 	}
 }
 
-
-func UpadateDashboardAppUsers(dashboardAppInfo  *dao.DashboardAppInfo){
+func UpdateDashboardAppUsers(dashboardAppInfo  *dao.DashboardAppInfo){
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 
@@ -388,7 +450,7 @@ func UpadateDashboardAppUsers(dashboardAppInfo  *dao.DashboardAppInfo){
 	}
 }
 
-func UpadateDashboardAppAcls(dashboardAppInfo  *dao.DashboardAppInfo){
+func UpdateDashboardAppAcls(dashboardAppInfo  *dao.DashboardAppInfo){
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 

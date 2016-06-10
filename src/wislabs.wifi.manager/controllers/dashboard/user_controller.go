@@ -135,7 +135,7 @@ func UpdateDashboardUserDetails(user dao.DashboardUserDetails) error{
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 
-	stmtIns, err := dbMap.Db.Prepare(commons.UPDATE_DASHBORD_USER_PROFILE)
+	stmtIns, err := dbMap.Db.Prepare(commons.UPDATE_DASHBOARD_USER_PROFILE)
 	defer stmtIns.Close()
 
 	if err != nil {

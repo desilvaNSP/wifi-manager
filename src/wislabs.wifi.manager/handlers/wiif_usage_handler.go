@@ -176,13 +176,13 @@ func GetTotalSessionCountTimeFromToHandler(w http.ResponseWriter, r *http.Reques
 *
 */
 
-func GetAccessPointAgregatedDataFromToHandler(w http.ResponseWriter, r*http.Request){
+func GetAccessPointAggregatedDataFromToHandler(w http.ResponseWriter, r*http.Request){
 	decoder := json.NewDecoder(r.Body)
 	var constrains dao.Constrains
 	decoder.Decode(&constrains)
 
 	var accesPoint[] dao.AccessPoint
-	accesPoint = wifi.GetAccessPointAgregatedDataFromTo(constrains)
+	accesPoint = wifi.GetAccessPointAggregatedDataFromTo(constrains)
 
 	accessPointDataWithLocation := make([]dao.LocationAccessPoint, len(accesPoint))
 
