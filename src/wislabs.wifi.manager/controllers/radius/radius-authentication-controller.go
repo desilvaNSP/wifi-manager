@@ -2,7 +2,7 @@ package radius
 
 import (
 	"wislabs.wifi.manager/dao"
-	"github.com/apremalal/goradius"
+	"github.com/kirves/goradius"
 	"wislabs.wifi.manager/utils"
 	"wislabs.wifi.manager/commons"
 	log "github.com/Sirupsen/logrus"
@@ -77,7 +77,7 @@ func CreateNASClientOnServer(radiusServerConfigs dao.RadiusServer, nasClientInfo
 }
 
 
-func GetRadiusClientsInServer(radiusServerConfig dao.RadiusServer) ([]dao.NasClient, error){
+func GetRadiusServerClients(radiusServerConfig dao.RadiusServer) ([]dao.NasClient, error){
 	dbMap, errDb := GetRadiusServerDBConnection(radiusServerConfig);
 	defer dbMap.Db.Close()
 	var nasClients []dao.NasClient
@@ -150,8 +150,7 @@ func IsNASIpExistsInRadius(radiusServerConfigs dao.RadiusServer, ipAddress strin
 	return false, nil
 }
 
-/*	Supported Methods	*/
-
+// Get Database connection for each radius server.That database connection for get NAS clients of each radius server
 func GetRadiusServerDBConnection(radiusServerConfig dao.RadiusServer) (*gorp.DbMap, error){
 	var connectionUrl string
 	connectionUrl = radiusServerConfig.DBUserName + ":" + radiusServerConfig.DBPassword + "@tcp(" + radiusServerConfig.DBHostIp + ":" + strconv.Itoa(radiusServerConfig.DBHostPort)  + ")/" + radiusServerConfig.DBSchemaName
@@ -193,10 +192,10 @@ func checkIpBetweenIPRange(ip string,rangeSize int, iprange string) (bool, error
 				ip3 = net.ParseIP(ip)
 				ip4 = net.ParseIP(endLessUserEnterIp)
 			)
-			if bytes.Compare(ip3, ip1) >= 0 && bytes.Compare(ip4, ip2) <= 0 {
-				return true, nil
+			if ( bytes.Compare(ip1, ip4) > 0)  || (bytes.Compare(ip2, ip3) < 0 ){
+				return false, nil
 			}
-			return false, nil
+			return true, nil
 		}else{
 			if bytes.Compare(trial, ip1) >= 0 && bytes.Compare(trial, ip2) <= 0 {
 				return true, nil
@@ -209,8 +208,22 @@ func checkIpBetweenIPRange(ip string,rangeSize int, iprange string) (bool, error
 		if trial.To4() == nil {
 			return false, nil
 		}
-		if bytes.Compare(trial, ip1) == 0 {
-			return true, nil
+		if rangeSize > 0{
+			var endLessUserEnterIp string
+			endLessUserEnterIp, err = getEndPointOfIpRange(ip,rangeSize);
+			if err != nil{
+				return false, err
+			}
+			var (
+				ip3 = net.ParseIP(ip)
+				ip4 = net.ParseIP(endLessUserEnterIp)
+			)
+			if ( bytes.Compare(ip1, ip3) >= 0)  && (bytes.Compare(ip4, ip1) >= 0 ){
+				return true, nil
+			}
+			return false, nil
+		}else if bytes.Compare(trial, ip1) == 0 {
+				return true, nil
 		}
 		return false, nil
 	}

@@ -227,7 +227,7 @@
                 <form role="form" id="add-nasclient-form">
                     <div class="row">
                         <div class="form-group col-lg-12">
-                            <label for="nas-client-nasip">NAS Name</label>
+                            <label for="nas-client-nasip">NAS IP Address</label>
                             <input type="text" class="form-control" id="nas-client-nasip"
                                    name="inputnasip">
                         </div>
@@ -274,7 +274,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="form-group col-lg-6">
+                        <div class="form-group col-lg-12">
                             <label for="nas-client-description">Description</label>
                                     <textarea class="form-control" id="nas-client-description"
                                               name="inputdescription"></textarea>
@@ -391,9 +391,9 @@
 
         $.validator.addMethod("checkIpRangerExists",
                 function (value, element) {
-                    var result = false;
+                    var valid = false;
                     var ipSlices = value.split("/");
-                    var ipString = ipSlices[0];
+                    var IpRangeStartPoint = ipSlices[0];
                     var rangeSize;
                     if (ipSlices.length > 1) {
                         rangeSize = ipSlices[1]
@@ -403,12 +403,12 @@
                     $.ajax({
                         type: "GET",
                         async: false,
-                        url: serverOriginUrl + '/radius/server/' + currentServerObject.InsId + '/validnas/' + ipString + '/' + rangeSize,
+                        url: serverOriginUrl + '/radius/' + currentServerObject.InsId + '/validnas?ipstring='+IpRangeStartPoint+'&rangesize='+rangeSize,
                         success: function (checkavalibility) {
-                            result = (checkavalibility == true) ? false : true;
+                            valid = (checkavalibility == true) ? false : true;
                         }
                     });
-                    return result;
+                    return valid;
                 },
                 "There is NAS Client [ NAS IP or IP range] already exists in DB Server"
         );
@@ -416,7 +416,7 @@
         var aaaListData;
         aaaTable = $('.dataTables-aaalist').DataTable({
             ajax: {
-                "url": serverOriginUrl + '/radius/' + Cookies.get('tenantid') + '/radiusdetails',
+                "url": serverOriginUrl + '/radius/radiusdetails',
                 "type": "GET",
                 "error": function (e) {
                 },
@@ -719,7 +719,7 @@
         });
 
         function renderNASClientTable(instanceid) {
-            $.get('/radius/server/clients/' + instanceid, function (data) {
+            $.get('/radius/'+ instanceid +'/clients' , function (data) {
                 if (data != null) {
                     selectedServerNasClients = data;
                     nasClientsTable.clear();
@@ -795,7 +795,7 @@
 
         $('#delete-radius-server').on("click", function (event) {
             $.ajax({
-                url: '/radius/server/' + selectedRadiusInstance.InsId,
+                url: '/radius/' + selectedRadiusInstance.InsId,
                 type: 'DELETE',
                 beforeSend: function () {
                     $("#deleteradius-body").loadingOverlay({
