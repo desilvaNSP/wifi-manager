@@ -432,32 +432,50 @@ var routes = Routes{
 	Route{
 		"Create Radius Server",
 		"POST",
-		"/radius/createserver",
+		"/radius/server",
 		true,
 		dashboard_handlers.CreateRadiusServerHandler,
 	},
 	Route{
+		"Updating Radius Server",
+		"PUT",
+		"/radius/server",
+		true,
+		dashboard_handlers.UpdateRadiusServerHandler,
+	},
+	Route{
 		"Get Radius Details of User",
 		"GET",
-		"/radius/{tenantid}/radiusdetails/{username}",
+		"/radius/{tenantid}/radiusdetails",
 		true,
 		dashboard_handlers.GetRadiusServerDetailsHandler,
 	},
 	Route{
+		"Check Is Server is valid Radius",
+		"GET",
+		"/radius/server/{instanceid}/validnas/{ipstring}/{rangesize}",
+		true,
+		dashboard_handlers.NASIpExistInRadiusHandler,
+	},
+	Route{
 		"Delete Radius Instance",
 		"DELETE",
-		"/radius/{tenantid}/radiusdetails/{radiusinstid}",
+		"/radius/server/{serverinstid}",
 		true,
 		dashboard_handlers.DeleteRadiusInstanceHandler,
 	},
 	Route{
-		"Update Radius Instance",
-		"PUT",
-		"/radius/{tenantid}/radiusdetails/{radiusinstid}",
+		"Get Clients in radius server",
+		"GET",
+		"/radius/server/clients/{instanceid}",
 		true,
-		dashboard_handlers.UpdateRadiusInstanceHandler,
+		dashboard_handlers.GetRadiusClientsInServerHanlder,
 	},
-
-
-
+	Route{
+		"Get Clients in radius server",
+		"POST",
+		"/radius/server/client",
+		true,
+		dashboard_handlers.CreateNASClientOnServerHandler,
+	},
 }

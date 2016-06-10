@@ -46,10 +46,9 @@ type LocationAccessPoint struct {
 	LongLatMacData  LongLatMac
 }
 
-
 type LongLatMac struct {
 	MAC       string                  `db:"mac"json:"mac"`
-	APName	  utils.NullString   		`db:"apname"json:"apname"`
+	APName    utils.NullString        `db:"apname"json:"apname"`
 	Longitude utils.NullFloat64   `db:"longitude"json:"longitude"`
 	Latitude  utils.NullFloat64    `db:"latitude"json:"latitude"`
 }
@@ -238,28 +237,42 @@ type FileHeader struct {
 	// contains filtered or unexported fields
 }
 
-type RadiusConfigsInfo struct  {
-	RadiusInstId        int				`db:"instid"json:"radiusinstid"`
-	TenantId            int                         `db:"tenantid"json:"tenantid"`
-	Username            string                      `db:"username"json:"username"`
-	ServerName	    string			`db:"servername"json:"servername"`
-	ServerIP    	    string   			`db:"serverip"json:"serverip"`
-	AuthPort  	    string   			`db:"authport"json:"authport"`
-	SharedSecret  	    string  			`db:"sharedsecret"json:"secret"`
-	Accounting          string			`db:"accounting"json:"accounting"`
-	TestUsername 	    string 			`json:"testusername"`
-	Password	    string  			`json:"password"`
+type RadiusServer struct {
+	InstanceId   int                `db:"InsId"json:"InsId"`
+	TenantId     int             `db:"tenantid"json:"tenantid"`
+	DBHostName   string            `db:"dbhostname"json:"dbhostname"`
+	DBHostIp     string        `db:"dbhostip"json:"dbhostip"`
+	DBSchemaName string            `db:"dbschemaname"json:"dbschemaname"`
+	DBHostPort   int            `db:"dbport"json:"dbhostport"`
+	DBUserName   string        `db:"dbusername"json:"dbusername"`
+	DBPassword   string        `db:"dbpassword"json:"dbpassword"`
+	Status       string            `db:"status"json:"status"`
 }
 
-type RadiusConfigs struct  {
-	RadiusInstId        int				`db:"instid"json:"radiusinstid"`
-	TenantId            int                         `db:"tenantid"json:"tenantid"`
-	Username            string                      `db:"username"json:"username"`
-	ServerName	    string			`db:"servername"json:"servername"`
-	ServerIP    	    string   			`db:"serverip"json:"serverip"`
-	AuthPort  	    string   			`db:"authport"json:"authport"`
-	SharedSecret  	    string  			`db:"sharedsecret"json:"secret"`
-	Accounting          string			`db:"accounting"json:"accounting"`
+type NasClient struct {
+	NasClientID int                    `db:"id"json:"nasid"`
+	NasName     string                `db:"nasname"json:"nasname"`
+	ShortName   string                `db:"shortname"json:"shortname"`
+	NasType     string                `db:"type"json:"nastype"`
+	NasPorts    utils.NullInt64                `db:"ports"json:"nasport"`
+	Secret      utils.NullString                `db:"secret"json:"secret"`
+	NasServer   utils.NullString                `db:"server"json:"server"`
+	Community   utils.NullString                    `db:"community"json:"community"`
+	Description utils.NullString                    `db:"description"json:"description"`
+}
+
+type  NasClientTestInfo struct {
+	ServerIp      string  `json:"dbhostip"`
+	NASClientName string    `json:"nasname"`
+	Secret        string  `json:"secret"`
+	AuthPort      string  `json:"authport"`
+	UserName      string    `json:"username"`
+	Password      string    `json:"password"`
+}
+
+type NASClientDBServer  struct {
+	RadiusServerInfo RadiusServer  `json:"dbServer"`
+	NASClientInfo    NasClient        `json:"nasClient"`
 }
 
 type SummaryChangePercentage struct {
@@ -268,3 +281,4 @@ type SummaryChangePercentage struct {
 	Percentage float64	        `json:"percentage"`
 	Status 	   string		`json:"status"`
 }
+
