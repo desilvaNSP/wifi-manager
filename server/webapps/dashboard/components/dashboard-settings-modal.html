@@ -14,20 +14,70 @@
                         <input type="text" class="form-control" id="update-input-dashboard-name" name="appName"
                                placeholder="Name" required value="{{appname}}" disabled>
                     </div>
+
+                    <!-- Start data scopes -->
                     <div class="form-group">
-                        <label>Wifi Groups</label>
+                        <label>Data Scopes</label>
                     </div>
-                    <div class="checkbox">
-                        <div class="row">
-                            {{#locations}}
-                            <div class="col-sm-6">
-                                <label>
-                                    <input type="checkbox" name="edit-group" value="{{.}}" class="location-inputs" {{checkedGroups}}>{{.}}
-                                </label>
+                    <div class="form-group">
+                        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                            <div class="panel panel-default">
+                                <div class="panel-heading" role="tab" id="ssidscopeinputpanel">
+                                    <h4 class="panel-title">
+                                        <a role="button" data-toggle="collapse" parent="#accordion"
+                                           href="#collapse-ssids" aria-expanded="true"
+                                           aria-controls="collapse-ssids">
+                                            <input type="radio" id="radio-ssid" value="ssid" name="scope-select" class="criteria-radio">
+                                            <label>SSID Based</label>
+                                        </a>
+                                    </h4>
+                                </div>
+
+                                <div id="collapse-ssids" class="panel-collapse collapse" role="tabpanel"
+                                     aria-labelledby="ssidscopeinputpanel">
+                                    <div class="panel-body">
+                                        <div class="checkbox">
+                                            {{#ssids}}
+                                            <div class="col-sm-6">
+                                                <label class="radio inline control-label">
+                                                    <input type="checkbox" name="input-ssid" value="{{.}}">{{.}}
+                                                </label>
+                                            </div>
+                                            {{/ssids}}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            {{/locations}}
+                            <div class="panel panel-default">
+                                <div class="panel-heading" role="tab" id="groupnamescopeinputpanel">
+                                    <h4 class="panel-title">
+                                        <a class="collapsed" role="button" data-toggle="collapse" parent="#accordion"
+                                           href="#collapse-groupnames" aria-expanded="false"
+                                           aria-controls="collapse-groupnames">
+                                            <input type="radio" id="radio-groupname" value="groupname"
+                                                   name="scope-select" class="criteria-radio">
+                                            <label>Location Based</label>
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div id="collapse-groupnames" class="panel-collapse collapse"
+                                     role="tabpanel" aria-labelledby="groupnamescopeinputpanel">
+                                    <div class="panel-body">
+                                        <div class="checkbox">
+                                            {{#locations}}
+                                            <div class="col-sm-6">
+                                                <label class="checkbox inline control-label">
+                                                    <input type="checkbox" name="edit-group" value="{{.}}" class="location-inputs" {{checkedGroups}}>{{.}}
+                                                </label>
+                                            </div>
+                                            {{/locations}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                    <!-- End data scopes -->
                     <div class="form-group">
                         <label>Metrics</label>
                     </div>

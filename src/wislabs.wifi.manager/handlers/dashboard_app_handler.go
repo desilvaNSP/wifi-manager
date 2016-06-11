@@ -114,7 +114,7 @@ func GetDashboardAppSettings(w http.ResponseWriter, r *http.Request) {
 	appSettings.FilterCriteria = dashboard.GetFilterCriteriaOfApp(appId)
 	switch appSettings.FilterCriteria {
 	case "groupname" :
-		appSettings.Groups = dashboard.GetDashboardGroupsOfApp(appId)
+		appSettings.Parameters = dashboard.GetDashboardGroupsOfApp(appId)
 	case "ssid" :
 		appSettings.Parameters = dashboard.GetFilterParamsOfApp(appId)
 	}

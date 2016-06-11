@@ -4,7 +4,6 @@ import (
 	"wislabs.wifi.manager/utils"
 	"wislabs.wifi.manager/dao"
 	"wislabs.wifi.manager/commons"
-	"database/sql"
 	log "github.com/Sirupsen/logrus"
 )
 
@@ -90,11 +89,11 @@ func GetDashboardMetricsOfApp(appId int) []dao.DashboardAppMetric {
 	return metrics
 }
 
-func GetDashboardGroupsOfApp(appId int) []dao.DashboardAppGroup {
+func GetDashboardGroupsOfApp(appId int) []string {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 
-	var groups []dao.DashboardAppGroup
+	var groups []string
 	_, err := dbMap.Select(&groups, commons.GET_DASHBOARD_APP_GROUPS, appId)
 	if err != nil {
 		//panic(err.Error()) // proper error handling instead of panic in your app
@@ -144,15 +143,13 @@ func GetFilterCriteriaOfApp(appId int) string{
 	dbMap := utils.GetDBConnection(commons.DASHBOARD_DB);
 	defer dbMap.Db.Close()
 
-	var filterCriteria sql.NullString
+	var filterCriteria string
 	err := dbMap.SelectOne(&filterCriteria, commons.GET_DASHBOARD_APP_CRITERIA, appId)
 	if err != nil {
 		log.Error(err.Error())
+		return "none"
 	}
-	if filterCriteria.Valid{
-		return filterCriteria.String
-	}
-	return "none"
+	return filterCriteria
 }
 
 func GetAllDashboardMetrics(tenantId int) []dao.DashboardMetric {

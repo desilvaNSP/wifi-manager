@@ -4,6 +4,7 @@ import (
 	"wislabs.wifi.manager/utils"
 	"wislabs.wifi.manager/dao"
 	"strconv"
+	"wislabs.wifi.manager/commons"
 )
 
 func SummaryDetailsFromTo(constrains dao.Constrains) [][]string {
@@ -68,8 +69,7 @@ func SummaryDetailsFromTo(constrains dao.Constrains) [][]string {
 }
 
 func GetAccessPointAggregatedDataFromTo(constrains dao.Constrains) [] dao.AccessPoint {
-
-	dbMap := utils.GetDBConnection("summary");
+	dbMap := utils.GetDBConnection(commons.SUMMARY_DB);
 	defer dbMap.Db.Close()
 	var accessPointData[] dao.AccessPoint
 
@@ -88,13 +88,12 @@ func GetAccessPointAggregatedDataFromTo(constrains dao.Constrains) [] dao.Access
 	}
 	args := getArgs(&constrains)
 	filterQuery := buildQueryComponent(&constrains)
-	query = query + filterQuery + ") GROUP BY calledstationmac"
-
+	query = query + filterQuery + " GROUP BY calledstationmac"
+	print(query)
 	_, err := dbMap.Select(&accessPointData, query, args...)
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic
 	}
-
 	return accessPointData
 }
 

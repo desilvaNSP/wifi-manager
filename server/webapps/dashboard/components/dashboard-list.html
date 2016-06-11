@@ -236,22 +236,17 @@
                 switch (window.filtercriteria){
                     case "groupname" :
                         $.get('/dashboard/apps/' + appId + '/groups', function (result) {
-                            datagroups = [];
-                            $.each(result, function (index, element) {
-                                datagroups.push(element.groupname)
-                            });
+
                             window.appId = appId;
                             window.appName = appName;
-                            window.datagroups = datagroups;
-                            window.originaldatagroups = datagroups;
-                            console.log(datagroups)
-                            console.log("BBBBBBBBB")
+                            window.datagroups = result;
+                            window.originaldatagroups = result;
                             var rendered;
                             if (aggregate == 'yes') {
                                 rendered = Mustache.render(template, {appId: appId, datagroups: appName});
                             }else{
                                 window.appName = datagroups[0];
-                                rendered = Mustache.render(template, {appId: appId, datagroups: datagroups});
+                                rendered = Mustache.render(template, {appId: appId, datagroups: result});
                             }
                             $grid.shuffle('destroy');
                             $('.container-dashboard').remove('#app-grid');
@@ -311,7 +306,7 @@
     // App settings updates
     function dashboardSettings(event){
         var payload, users, locations, metrics,acltypes;
-        var groupsofAppID,usersOfAppID,metricsOfAppID,aclofAppID,aggregateValue;
+        var parametersofAppID,usersOfAppID,metricsOfAppID,aclofAppID,aggregateValue, filterCriteria;
 
         var selectedAppIdForSettings = $(event).data('appid');
         var appName = $(event).data('appname');
@@ -321,7 +316,8 @@
         userNames = [];
         // get app details by id
         var allAppSettings  = $.get('/dashboard/apps/' + selectedAppIdForSettings + '/appsettings', function (result) {
-            groupsofAppID= result.groups;
+            filterCriteria = result.filtercriteria;
+            parametersofAppID= result.parameters;
             metricsOfAppID= result.metrics;
             aclofAppID = result.acls;
             aggregateValue= result.aggregate;
@@ -379,9 +375,8 @@
                     acltypes:removeEmptyString(acltypes),
                     checkedGroups : function() {
                                 var checkibilty;
-                                for(var index in groupsofAppID){
-                                    var groupname = groupsofAppID[index].groupname;
-                                    if(this.toString()==groupname){
+                                for(var i in parametersofAppID){
+                                    if(this.toString()==parametersofAppID[i]){
                                         checkibilty = 'checked';
                                         break;
                                     }else{

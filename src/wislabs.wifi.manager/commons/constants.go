@@ -71,10 +71,10 @@ const DELETE_AP string 			  = "DELETE FROM aplocations WHERE mac=? AND tenantid=
 
 /* Dashboard Apps */
 const GET_DASHBOARD_APP string 		   = "SELECT appid, tenantid, name, aggregate FROM apps WHERE tenantid=? AND name=?"
-const GET_DASHBOARD_APP_GROUPS string      = "SELECT appid, groupname FROM appgroups WHERE appid=?"
+const GET_DASHBOARD_APP_GROUPS string      = "SELECT groupname FROM appgroups WHERE appid=?"
 const GET_DASHBOARD_APP_ACLS string        = "SELECT appid, acl FROM appacls WHERE appid=?"
 const GET_DASHBOARD_APP_AGGREGATE string   = "SELECT aggregate FROM apps WHERE appid=?"
-const GET_DASHBOARD_APP_CRITERIA string    = "SELECT criteria FROM appcriterias WHERE appid=?"
+const GET_DASHBOARD_APP_CRITERIA string    = "SELECT filtercriteria FROM apps WHERE appid=?"
 const GET_DASHBOARD_APP_FILTER_PARAMS string   = "SELECT parameter FROM appfilterparams WHERE appid=?"
 const GET_DASHBOARD_APP_METRICS string     = "SELECT metricid, name FROM metrics WHERE metricid IN (SELECT metricid FROM appmetrics WHERE appid=?)"
 const GET_DASHBOARD_USERS_IN_GROUP string  = "SELECT username FROM users WHERE tenantid =? and userid in (SELECT userid FROM userapgroups WHERE groupid=?);"
