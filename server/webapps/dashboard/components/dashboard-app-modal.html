@@ -1,5 +1,5 @@
 <div class="modal inmodal" id="add-dashboard-modal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content animated fadeIn">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
@@ -10,141 +10,158 @@
             </div>
             <div class="modal-body" id="adddbmodal-body">
                 <form role="form" id="add-dashboard-form">
-                    <div class="form-group">
-                        <label for="input-dashboard-name">Name</label>
-                        <input type="text" class="form-control" id="input-dashboard-name" name="appName"
-                               placeholder="Name">
-                    </div>
-                    <div class="form-group">
-                        <label for="exampleInputFile">Icon</label>
-                        <input type="file" id="exampleInputFile">
-                    </div>
-
-                    <!-- Start data scopes -->
-                    <div class="form-group">
-                        <label>Data Scopes</label>
-                    </div>
-                    <div class="form-group">
-                        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-                            <div class="panel panel-default">
-                                <div class="panel-heading" role="tab" id="ssidscopeinputpanel">
-                                    <h4 class="panel-title">
-                                        <a role="button" data-toggle="collapse" parent="#accordion"
-                                             href="#collapse-ssids" aria-expanded="true"
-                                             aria-controls="collapse-ssids">
-                                            <input type="radio" id="radio-ssid" value="ssid" name="scope-select" class="criteria-radio">
-                                            <label>SSID Based</label>
-                                        </a>
-                                    </h4>
-                                </div>
-
-                                <div id="collapse-ssids" class="panel-collapse collapse" role="tabpanel"
-                                     aria-labelledby="ssidscopeinputpanel">
-                                    <div class="panel-body">
-                                        <div class="checkbox">
-                                            {{#ssids}}
-                                            <div class="col-sm-6">
-                                                <label class="radio inline control-label">
-                                                    <input type="checkbox" name="input-ssid" value="{{.}}">{{.}}
-                                                </label>
-                                            </div>
-                                            {{/ssids}}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="panel panel-default">
-                                <div class="panel-heading" role="tab" id="groupnamescopeinputpanel">
-                                    <h4 class="panel-title">
-                                        <a class="collapsed" role="button" data-toggle="collapse" parent="#accordion"
-                                             href="#collapse-groupnames" aria-expanded="false"
-                                             aria-controls="collapse-groupnames">
-                                            <input type="radio" id="radio-groupname" value="groupname"
-                                                   name="scope-select" class="criteria-radio">
-                                            <label>Location Based</label>
-                                        </a>
-                                    </h4>
-                                </div>
-                                <div id="collapse-groupnames" class="panel-collapse collapse"
-                                     role="tabpanel" aria-labelledby="groupnamescopeinputpanel">
-                                    <div class="panel-body">
-                                        <div class="checkbox">
-                                            {{#locations}}
-                                            <div class="col-sm-6">
-                                                <label class="checkbox inline control-label">
-                                                    <input type="checkbox" name="input-groups"
-                                                           value="{{.}}">{{.}}
-                                                </label>
-                                            </div>
-                                            {{/locations}}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- End data scopes -->
-                    <div class="form-group">
-                        <label>Metrics</label>
-                    </div>
-                    <div class="checkbox">
+                    <div class="container-fluid">
                         <div class="row">
-                            {{#metrics}}
-                            <div class="col-sm-6">
-                                <label>
-                                    <input type="checkbox" name="metric" value="{{metricid}}">{{name}}
-                                </label>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label for="input-dashboard-name">Name</label>
+                                    <input type="text" class="form-control" id="input-dashboard-name" name="appName"
+                                           placeholder="Name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputFile">Icon</label>
+                                    <input type="file" id="exampleInputFile">
+                                </div>
+
+                                <!-- Start data scopes -->
+                                <div class="form-group">
+                                    <label>Data Scopes</label>
+                                </div>
+                                <div class="form-group">
+                                    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading" role="tab" id="ssidscopeinputpanel">
+                                                <h4 class="panel-title">
+                                                    <a role="button" data-toggle="collapse" parent="#accordion"
+                                                       href="#collapse-ssids" aria-expanded="true"
+                                                       aria-controls="collapse-ssids">
+                                                        <input type="radio" id="radio-ssid" value="ssid"
+                                                               name="scope-select"
+                                                               class="criteria-radio">
+                                                        <label>SSID Based</label>
+                                                    </a>
+                                                </h4>
+                                            </div>
+
+                                            <div id="collapse-ssids" class="panel-collapse collapse" role="tabpanel"
+                                                 aria-labelledby="ssidscopeinputpanel">
+                                                <div class="panel-body">
+                                                    <div class="checkbox">
+                                                        {{#ssids}}
+                                                        <div class="col-sm-6">
+                                                            <label class="radio inline control-label">
+                                                                <input type="checkbox" name="input-ssid" value="{{.}}">{{.}}
+                                                            </label>
+                                                        </div>
+                                                        {{/ssids}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading" role="tab" id="groupnamescopeinputpanel">
+                                                <h4 class="panel-title">
+                                                    <a class="collapsed" role="button" data-toggle="collapse"
+                                                       parent="#accordion"
+                                                       href="#collapse-groupnames" aria-expanded="false"
+                                                       aria-controls="collapse-groupnames">
+                                                        <input type="radio" id="radio-groupname" value="groupname"
+                                                               name="scope-select" class="criteria-radio">
+                                                        <label>Location Based</label>
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="collapse-groupnames" class="panel-collapse collapse"
+                                                 role="tabpanel" aria-labelledby="groupnamescopeinputpanel">
+                                                <div class="panel-body">
+                                                    <div class="checkbox">
+                                                        {{#locations}}
+                                                        <div class="col-sm-6">
+                                                            <label class="checkbox inline control-label">
+                                                                <input type="checkbox" name="input-groups"
+                                                                       value="{{.}}">{{.}}
+                                                            </label>
+                                                        </div>
+                                                        {{/locations}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- End data scopes -->
+                                <div class="form-group">
+                                    <label>Users</label>
+                                </div>
+                                <div class="checkbox">
+                                    <ul id="username-tags">
+                                        {{#currentuser}}
+                                        <li>{{.}}</li>
+                                        {{/currentuser}}
+                                    </ul>
+                                </div>
                             </div>
-                            {{/metrics}}
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="aclsinputpanel">
-                                <h4 class="panel-title">
-                                    <a class="collapsed" role="button" data-toggle="collapse" parent="#accordion" href="#collapse-acls" aria-expanded="false" aria-controls="collapse-acls">
-                                        <label>
-                                            <input type="checkbox" id="aclaccept" value="">
-                                        </label>
-                                        <label>Access Control</label>
-                                    </a>
-                                </h4>
-                            </div>
-                            <div id="collapse-acls" class="panel-collapse collapse-acl collapse" role="tabpanel"
-                                 aria-labelledby="aclsinputpanel">
-                                <div class="panel-body">
-                                    <div class="radio">
-                                        {{#acltypes}}
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label>Metrics</label>
+                                </div>
+                                <div class="checkbox">
+                                    <div class="row">
+                                        {{#metrics}}
                                         <div class="col-sm-6">
-                                            <label class="radio inline control-label">
-                                                <input type="radio" class="acltypes-radio" name="acl" value="{{.}}">{{.}}
+                                            <label>
+                                                <input type="checkbox" name="metric" value="{{metricid}}">{{name}}
                                             </label>
                                         </div>
-                                        {{/acltypes}}
+                                        {{/metrics}}
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Users</label>
-                    </div>
-                    <div class="checkbox">
-                        <ul id="username-tags">
-                            {{#currentuser}}
-                            <li>{{.}}</li>
-                            {{/currentuser}}
-                        </ul>
-                    </div>
-                    <div class="form-group">
-                        <label>Options</label>
-                    </div>
-                    <div class="checkbox">
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <label>
-                                    <input type="checkbox" id="chkAggregate" value="">Aggregate Location data
-                                </label>
+                                <div class="form-group">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading" role="tab" id="aclsinputpanel">
+                                            <h4 class="panel-title">
+                                                <a class="collapsed" role="button" data-toggle="collapse"
+                                                   parent="#accordion"
+                                                   href="#collapse-acls" aria-expanded="false"
+                                                   aria-controls="collapse-acls">
+                                                    <label>
+                                                        <input type="checkbox" id="aclaccept" value="">
+                                                    </label>
+                                                    <label>Access Control</label>
+                                                </a>
+                                            </h4>
+                                        </div>
+                                        <div id="collapse-acls" class="panel-collapse collapse-acl collapse"
+                                             role="tabpanel"
+                                             aria-labelledby="aclsinputpanel">
+                                            <div class="panel-body">
+                                                <div class="radio">
+                                                    {{#acltypes}}
+                                                    <div class="col-sm-6">
+                                                        <label class="radio inline control-label">
+                                                            <input type="radio" class="acltypes-radio" name="acl"
+                                                                   value="{{.}}">{{.}}
+                                                        </label>
+                                                    </div>
+                                                    {{/acltypes}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Options</label>
+                                </div>
+                                <div class="checkbox">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <label>
+                                                <input type="checkbox" id="chkAggregate" value="">Aggregate Location
+                                                data
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -25,7 +25,13 @@ func CreateNewDashboardApp(dashboardAppInfo dao.DashboardAppInfo) {
 func UpdateDashBoardAppSettings(dashboardAppInfo dao.DashboardAppInfo) {
 	UpdateDashboardAppFilterCriteria(&dashboardAppInfo)
 	UpdateDashboardAppUsers(&dashboardAppInfo);
-	UpdateDashboardAppGroups(&dashboardAppInfo);
+	switch (dashboardAppInfo.FilterCriteria){
+	case "groupname" :
+		UpdateDashboardAppGroups(&dashboardAppInfo);
+	case "ssid" :
+		UpdateAppFilterParams(&dashboardAppInfo);
+	}
+
 	UpdateDashboardAppMetrics(&dashboardAppInfo);
 	UpdateDashboardAppAcls(&dashboardAppInfo);
 	UpdateDashboardAppAggregateValue(&dashboardAppInfo);
@@ -460,6 +466,22 @@ func UpdateDashboardAppAcls(dashboardAppInfo  *dao.DashboardAppInfo){
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
 	defer stmtIns.Close()
+}
+
+func UpdateAppFilterParams(dashboardAppInfo  *dao.DashboardAppInfo)  {
+	dbMap := utils.GetDBConnection(commons.DASHBOARD_DB);
+	defer dbMap.Db.Close()
+
+	stmtIns, err := dbMap.Db.Prepare(commons.DELETE_DASHBOARD_APP_FILTER_PARAMS)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	_, err = stmtIns.Exec(dashboardAppInfo.AppId)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	defer stmtIns.Close()
+	AddDashboardAppFilterParams(dashboardAppInfo.AppId,  dashboardAppInfo.Parameters)
 }
 
 func checkContainsGroups(group string, groups []dao.DashboardAppGroup) bool {

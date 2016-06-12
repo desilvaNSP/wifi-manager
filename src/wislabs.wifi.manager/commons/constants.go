@@ -87,6 +87,7 @@ const ADD_DASHBOARD_APP_FILTER_PARAMS string  = "INSERT INTO appfilterparams (ap
 const ADD_DASHBOARD_APP_GROUP string       = "INSERT INTO appgroups (appid, groupname) VALUES( ?, ? )"
 const ADD_DASHBOARD_ACLS string            = "INSERT INTO appacls (appid,acl) VALUES( ?, ?)"
 const DELETE_DASHBOARD_APP string          = "DELETE FROM apps WHERE appid=? AND tenantid=?"
+const DELETE_DASHBOARD_APP_FILTER_PARAMS string  = "DELETE FROM appfilterparams WHERE appid=?"
 const DELETE_DASHBOARD_APP_USER string     = "DELETE FROM appusers WHERE appid=? AND username=?"
 
  /* App Settings */
