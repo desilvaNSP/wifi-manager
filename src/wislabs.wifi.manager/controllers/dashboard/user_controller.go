@@ -7,6 +7,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"database/sql"
 	"wislabs.wifi.manager/commons"
+	"strings"
 )
 
 func IsUserAuthenticated(user dao.DashboardUser) bool {
@@ -344,6 +345,24 @@ func GetUserSSIDS(userId int64) []string {
 	_, err := dbMap.Select(&ssids, commons.GET_DASHBOARD_USER_SSIDS, userId)
 	checkErr(err, "Error occured while getting user ssids")
 	return ssids
+}
+
+func GetUsernamesOfSSIDS(ssids []string) []string {
+	dbMap := utils.GetDBConnection(commons.DASHBOARD_DB);
+	defer dbMap.Db.Close()
+	var usernames []string
+	query := commons.GET_DASHBOARD_USERS_OF_SSIDS + " ( "
+	for index, value := range ssids {
+		aa := strings.Replace(value, "\"", "", -1)
+
+		query += "'" + strings.Trim(aa, " ") + "'"
+		if index < len(ssids) - 1 {
+			query += ","
+		}
+	}
+	_, err := dbMap.Select(&usernames, query)
+	checkErr(err, "Error occured while getting users of ssids")
+	return usernames
 }
 
 func AddUserSSIDS(userId int64, ssids []string) error {

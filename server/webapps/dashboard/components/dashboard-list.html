@@ -317,7 +317,6 @@
                     isSSIDFiltering = "checked";
                     break;
             }
-            console.log(isGroupiltering)
             parametersofAppID = result.parameters;
             metricsOfAppID = result.metrics;
             aclofAppID = result.acls;
@@ -619,6 +618,36 @@
             });
         });
         return validUsers
+    }
+
+    function getUsersInSSIDs(payload) {
+        return $.ajax({
+            url: '/dashboard/usersingroups',
+            type: 'POST',
+            contentType: "application/json",
+            data: JSON.stringify(payload),
+            beforeSend: function () {
+            },
+            success: function (groups) {
+                var checkGroups = [];
+                checkGroups.push(userNames);
+                var validUsers = interceptBetweenTwoUsergroups(groups);
+                checkGroups.push(validUsers);
+                var newtagedValiedUsers = interceptBetweenTwoUsergroups(checkGroups);
+                var assignedTags = $("#username-tags").tagit("assignedTags");
+                assignedTags.forEach(function (data) {
+                    if (data != Cookies.get('username') && newtagedValiedUsers.indexOf(data) == -1) {
+                        $("#username-tags").tagit("removeTagByLabel", data);
+                    }
+                });
+                userNames = validUsers;
+                $("#username-tags").tagit({
+                    availableTags: userNames
+                });
+            },
+            error: function (e) {
+            }
+        });
     }
 
 </script>

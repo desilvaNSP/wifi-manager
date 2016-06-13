@@ -12,6 +12,7 @@ import (
 	"wislabs.wifi.manager/authenticator"
 	"wislabs.wifi.manager/utils"
 	"wislabs.wifi.manager/controllers/location"
+	"strings"
 )
 
 func AuthenticateUser(w http.ResponseWriter, r *http.Request) {
@@ -211,6 +212,16 @@ func GetLoginPage(w http.ResponseWriter, r *http.Request) {
 func GetRegistrationPage(w http.ResponseWriter, r *http.Request) {
 	r.URL.Path = commons.ServerHome + "/webapps/dashboard/register.html"
 	http.ServeFile(w, r, r.URL.Path)
+}
+
+func GetUsersOfSSIDs(w http.ResponseWriter, r *http.Request) {
+	ssids := strings.Split(r.FormValue("ssids"), ",")
+	usernames := dashboard.GetUsernamesOfSSIDS(ssids)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(usernames); err != nil {
+		panic(err)
+	}
 }
 
 func AddSSIDsOfUser(w http.ResponseWriter, r *http.Request) {

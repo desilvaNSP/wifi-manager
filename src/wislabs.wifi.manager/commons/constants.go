@@ -33,6 +33,7 @@ const GET_USER_ID string	 			= "SELECT userid FROM users WHERE username= ? AND t
 const GET_AP_GROUP_ID string	 			= "SELECT groupid FROM apgroups WHERE groupname= ? AND tenantid=?"
 const GET_DASHBOARD_USER string      			= "SELECT userid, username, email, status FROM users WHERE username=? AND tenantid=?"
 const GET_DASHBOARD_USER_SSIDS string    		= "SELECT ssid from userssids where userid=?"
+const GET_DASHBOARD_USERS_OF_SSIDS string       = "SELECT username from users WHERE userid IN (SELECT userid FROM userssids where ssid IN "
 const CREATE_DASHBOARD_USER string      		= "INSERT INTO users (tenantid, username, password, email, status) VALUES( ?, ?, ?, ?, ?)"
 const ADD_DASHBOARD_USER_AP_GROUP string    		= "INSERT IGNORE INTO userapgroups (groupid, userid) VALUES( ?, ?)"
 const ADD_DASHBOARD_USER_SSID string    		= "INSERT IGNORE INTO userssids (userid, ssid) VALUES( ?, ?)"

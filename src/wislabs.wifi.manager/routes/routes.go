@@ -171,6 +171,13 @@ var routes = Routes{
 		dashboard_handlers.UpdateSSIDsOfUser,
 	},
 	Route{
+		"GET usernames allowed for the ssid list",
+		"GET",
+		"/dashboard/users/ssids",
+		true,
+		dashboard_handlers.GetUsersOfSSIDs,
+	},
+	Route{
 		"Get Dashboard App Users ",
 		"GET",
 		"/dashboard/apps/{appid}/users",
