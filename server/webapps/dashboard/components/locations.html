@@ -3,8 +3,10 @@
     <div class="col-lg-12">
         <div class="ibox-content float-e-margins">
             <h2>Access Point Map</h2>
-
-            <div id="world-map" style="height: 300px;"></div>
+            <div id="world-map" class="world-map">
+                <div id="popup"></div>
+            </div>
+            <div id="info">&nbsp;</div>
         </div>
     </div>
 </div>
@@ -90,39 +92,29 @@
 <script>
     $(document).ready(function () {
         var serverOriginUrl = window.location.origin;
-        var mapData = {
-            "US": 498,
-            "SA": 200,
-            "CA": 1300,
-            "DE": 220,
-            "FR": 540,
-            "CN": 120,
-            "AU": 760,
-            "BR": 550,
-            "IN": 200,
-            "GB": 120,
-            "RU": 2000
-        };
 
-        $('#world-map').vectorMap({
-            map: 'world_mill_en',
-            backgroundColor: "transparent",
-            regionStyle: {
-                initial: {
-                    fill: '#e4e4e4',
-                    "fill-opacity": 1,
-                    stroke: 'none',
-                    "stroke-width": 0,
-                    "stroke-opacity": 0
-                }
-            },
-            series: {
-                regions: [{
-                    values: mapData,
-                    scale: ["#1ab394", "#22d6b1"],
-                    normalizeFunction: 'polynomial'
-                }]
-            }
+        var map = new ol.Map({
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                })
+            ],
+            renderer: 'canvas',
+            target: 'world-map',
+            view: new ol.View({
+                center: [0, 0],
+                zoom: 2
+            })
+        });
+
+        var iconStyle = new ol.style.Style({
+            image: new ol.style.Icon(({
+                anchor: [0.5, 46],
+                anchorXUnits: 'fraction',
+                anchorYUnits: 'pixels',
+                opacity: 0.75,
+                src: 'map-data/icon.png'
+            }))
         });
 
         var locationTable = $('.dataTables-location').DataTable({
@@ -136,6 +128,7 @@
                 "error": function (e) {
                 },
                 "dataSrc": function (d) {
+                    updateMarkers(d, map, iconStyle)
                     return d
                 }
             },
