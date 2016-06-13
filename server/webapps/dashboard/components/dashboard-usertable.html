@@ -330,7 +330,7 @@
                     email: $('#inputEditEmail').val(),
                     status: newUserStatus,
                     apgroups: getCheckedDataScopes("input[name='datascopeedit']"),
-                    ssids: $('#ssid-tags').tagit('assignedTags'),
+                    ssids: $('#edit-ssid-tags').tagit('assignedTags'),
                     permissions: getCheckedUserPermissions("input[name='userscopeedit']")
                 };
                 $.ajax({

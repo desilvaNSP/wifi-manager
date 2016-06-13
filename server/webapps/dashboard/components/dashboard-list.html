@@ -39,7 +39,7 @@
 </div>
 
 <script>
-    var userNames = [], taggedUsers = [];
+    var sharedUsers = [], taggedUsers = [];
     var $grid, $sizer;
     var deleteAppId;
     var tagUserComponent;
@@ -87,15 +87,17 @@
             });
             if (hasDashboardUserReadPermission) {
                 $("#add-dashboard-app-modal-content").off('click').on('change', 'input[name=input-groups]', function (e) {
-                    var payload = {
-                        tenantid: parseInt(Cookies.get('tenantid')),
-                        groups: getCheckedGroups("input[name='input-groups']"),
-                    };
+                    var payload = getCheckedElementList("input[name='input-groups']");
                     usersAjax = getUserLabelAjaxRequest(payload);
+                });
+
+                $("#add-dashboard-app-modal-content").off('click').on('change', 'input[name=input-ssid]', function (e) {
+                    var payload = getCheckedElementList("input[name='input-ssid']");
+                    usersAjax = getUsersInSSIDs(payload);
                 });
             } else {
                 usersAjax = true;
-                userNames.push(Cookies.get('username'))
+                sharedUsers.push(Cookies.get('username'))
             }
 
             var locationsAjax = $.get('/dashboard/' + Cookies.get('tenantid') + '/users/' + Cookies.get('username'), function (result) {
@@ -131,10 +133,10 @@
                     $('#add-dashboard-modal').modal();
 
                     tagUserComponent = $("#username-tags").tagit({
-                        availableTags: userNames.push(Cookies.get('username')),
+                        availableTags: sharedUsers.push(Cookies.get('username')),
                         autocomplete: {delay: 0, minLength: 1},
                         beforeTagAdded: function (event, ui) {
-                            if (userNames.indexOf(ui.tagLabel) == -1) {
+                            if (sharedUsers.indexOf(ui.tagLabel) == -1) {
                                 return false;
                             }
                             if (ui.tagLabel == "not found") {
@@ -329,7 +331,7 @@
         });
 
         $.when(locationsAjax).done(function () {
-            ssidsAjax = $.get('/wifi/locations/ssids', {groupnames: locations.toString()}, function (result) {
+            ssidsAjax = $.get('/dashboard/users/'+ Cookies.get('username')+'/ssids', function (result) {
                 ssids = result
             });
         });
@@ -353,15 +355,12 @@
 
         if (hasDashboardUserReadPermission) {
             $("#add-dashboard-app-modal-content").off('click').on('change', 'input[name=edit-group]', function (e) {
-                payload = {
-                    tenantid: parseInt(Cookies.get('tenantid')),
-                    groups: getCheckedGroups("input[name='edit-group']"),
-                };
+                payload = getCheckedElementList("input[name='edit-group']")
                 usersAjax = getUserLabelAjaxRequest(payload);
             });
         } else {
             usersAjax = true;
-            userNames.push(Cookies.get('username'))
+            sharedUsers.push(Cookies.get('username'))
         }
 
         taggedUsers = [];
@@ -370,8 +369,8 @@
         $.when(usersAjax, locationsAjax, metricsAjax, aclTypes, allAppSettings).done(function () {
             $.get('components/dashboard-settings-modal.html', function (template) {
                 for (var index in usersOfAppID) {
-                    if (userNames.indexOf(usersOfAppID[index].username) == -1) {
-                        userNames.push(usersOfAppID[index].username)
+                    if (sharedUsers.indexOf(usersOfAppID[index].username) == -1) {
+                        sharedUsers.push(usersOfAppID[index].username)
                     }
                 }
                 var rendered = Mustache.render(template, {
@@ -380,10 +379,10 @@
                     locations: locations,
                     ssids: ssids,
                     metrics: metrics,
-                    currentusers: userNames,
+                    currentusers: sharedUsers,
                     acltypes: removeEmptyString(acltypes),
-                    isSSIDSelected : isSSIDFiltering,
-                    isGroupsSelected : isGroupiltering,
+                    isSSIDSelected: isSSIDFiltering,
+                    isGroupsSelected: isGroupiltering,
                     checkedSSIDs: function () {
                         var checkibilty;
                         for (var i in parametersofAppID) {
@@ -443,16 +442,11 @@
                 $('#add-dashboard-app-modal-content').html(rendered);
                 $('#settings-dashboard-modal').modal();
 
-                payload = {
-                    tenantid: parseInt(Cookies.get('tenantid')),
-                    groups: getCheckedGroups("input[name='edit-group']"),
-                };
-                getUserLabelAjaxRequest(payload);
                 $("#username-tags").tagit({
                     autocomplete: {delay: 0, minLength: 1},
-                    availableTags: userNames,
+                    availableTags: sharedUsers,
                     beforeTagAdded: function (event, ui) {
-                        if (userNames.indexOf(ui.tagLabel) == -1) {
+                        if (sharedUsers.indexOf(ui.tagLabel) == -1) {
                             return false;
                         }
                         if (ui.tagLabel == "not found") {
@@ -474,7 +468,7 @@
                         taggedUsers = taggedUsers.filter(function (returnableObjects) {
                             return returnableObjects.username !== ui.tagLabel;
                         });
-                    },
+                    }
 
                 });
                 updateDashboardFromValidator = $("#add-dashboard-form").validate({
@@ -539,9 +533,9 @@
     function getAppParameterList(criteria) {
         switch (criteria) {
             case "groupname" :
-                return getCheckedGroups("input[name='input-groups']");
+                return getCheckedElementList("input[name='input-groups']");
             case "ssid" :
-                return getCheckedSSIDs("input[name='input-ssid']");
+                return getCheckedElementList("input[name='input-ssid']");
         }
     }
 
@@ -559,18 +553,7 @@
         return checkboxesChecked.length > 0 ? checkboxesChecked : null;
     }
 
-    function getCheckedGroups(chkboxName) {
-        var checkboxes = $(chkboxName);
-        var checkboxesChecked = [];
-        for (var i = 0; i < checkboxes.length; i++) {
-            if (checkboxes[i].checked) {
-                checkboxesChecked.push({groupname: checkboxes[i].value});
-            }
-        }
-        return checkboxesChecked.length > 0 ? checkboxesChecked : null;
-    }
-
-    function getCheckedSSIDs(chkboxName) {
+    function getCheckedElementList(chkboxName) {
         var checkboxes = $(chkboxName);
         var checkboxesChecked = [];
         for (var i = 0; i < checkboxes.length; i++) {
@@ -578,7 +561,7 @@
                 checkboxesChecked.push(checkboxes[i].value);
             }
         }
-        return checkboxesChecked.length > 0 ? checkboxesChecked : null;
+        return checkboxesChecked.length > 0 ? checkboxesChecked : [];
     }
 
     function getUserLabelAjaxRequest(payload) {
@@ -589,35 +572,21 @@
             data: JSON.stringify(payload),
             beforeSend: function () {
             },
-            success: function (groups) {
-                var checkGroups = [];
-                checkGroups.push(userNames);
-                var validUsers = interceptBetweenTwoUsergroups(groups);
-                checkGroups.push(validUsers);
-                var newtagedValiedUsers = interceptBetweenTwoUsergroups(checkGroups);
+            success: function (usersInCheckedGroups) {
                 var assignedTags = $("#username-tags").tagit("assignedTags");
                 assignedTags.forEach(function (data) {
-                    if (data != Cookies.get('username') && newtagedValiedUsers.indexOf(data) == -1) {
+                    if (data != Cookies.get('username') || usersInCheckedGroups.indexOf(data) == -1) {
                         $("#username-tags").tagit("removeTagByLabel", data);
                     }
                 });
-                userNames = validUsers;
+                sharedUsers = usersInCheckedGroups;
                 $("#username-tags").tagit({
-                    availableTags: userNames
+                    availableTags: usersInCheckedGroups
                 });
             },
             error: function (e) {
             }
         });
-    }
-
-    function interceptBetweenTwoUsergroups(groups) {
-        var validUsers = groups.shift().filter(function (v) {
-            return groups.every(function (a) {
-                return a.indexOf(v) !== -1;
-            });
-        });
-        return validUsers
     }
 
     function getUsersInSSIDs(payload) {
@@ -628,21 +597,16 @@
             data: JSON.stringify(payload),
             beforeSend: function () {
             },
-            success: function (groups) {
-                var checkGroups = [];
-                checkGroups.push(userNames);
-                var validUsers = interceptBetweenTwoUsergroups(groups);
-                checkGroups.push(validUsers);
-                var newtagedValiedUsers = interceptBetweenTwoUsergroups(checkGroups);
+            success: function (usersInCheckedGroups) {
                 var assignedTags = $("#username-tags").tagit("assignedTags");
                 assignedTags.forEach(function (data) {
-                    if (data != Cookies.get('username') && newtagedValiedUsers.indexOf(data) == -1) {
+                    if (data != Cookies.get('username') || usersInCheckedGroups.indexOf(data) == -1) {
                         $("#username-tags").tagit("removeTagByLabel", data);
                     }
                 });
-                userNames = validUsers;
+                sharedUsers = usersInCheckedGroups;
                 $("#username-tags").tagit({
-                    availableTags: userNames
+                    availableTags: usersInCheckedGroups
                 });
             },
             error: function (e) {

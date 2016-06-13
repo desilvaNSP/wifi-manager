@@ -5,6 +5,8 @@ import (
 	"wislabs.wifi.manager/dao"
 	"wislabs.wifi.manager/commons"
 	log "github.com/Sirupsen/logrus"
+	"strings"
+	"strconv"
 )
 
 func CreateNewDashboardApp(dashboardAppInfo dao.DashboardAppInfo) {
@@ -49,23 +51,26 @@ func GetAllDashboardAppsOfUser(username string, tenantId int) []dao.DashboardApp
 	return apps
 }
 
-func GetDashboardUsersInGroups(tenantid int,appGroups []dao.DashboardAppGroup) [][]string{
-	dbMap := utils.GetDBConnection("dashboard");
-	defer dbMap.Db.Close()
-	usersInGroups := make([][]string,len(appGroups))
-	for i := 0; i < len(appGroups); i++ {
-		var users []dao.DashboardAppUser
-		_, err := dbMap.Select(&users, commons.GET_DASHBOARD_USERS_IN_GROUP, tenantid,GetApGroupId(tenantid,appGroups[i].GroupName))
-		if err != nil {
-			checkErr(err,"Error happening while get dashboard users in group") // proper error handling instead of panic in your app
-		}
-		usersInGroup := make([]string,len(users))
-		for j := 0; j < len(users); j++ {
-			usersInGroup[j] = (users[j].UserName)
-		}
-		usersInGroups[i]= usersInGroup
+func GetDashboardUsersInGroups(tenantId int, appGroups []string) []string{
+	var usernames []string
+	if(len(appGroups)==0){
+		return usernames
 	}
-	return  usersInGroups
+
+	dbMap := utils.GetDBConnection(commons.DASHBOARD_DB);
+	defer dbMap.Db.Close()
+	query := commons.GET_DASHBOARD_USERS_IN_GROUP + " ( "
+	for index, value := range appGroups {
+		aa := strings.Replace(value, "\"", "", -1)
+
+		query += "'" + strings.Trim(aa, " ") + "'"
+		if index < len(appGroups) - 1 {
+			query += ","
+		}
+	}
+	_, err := dbMap.Select(&usernames, query + " ))GROUP BY userid HAVING COUNT(DISTINCT groupid) =" + strconv.Itoa(len(appGroups)) +")", tenantId)
+	checkErr(err, "Error occured while getting users of group")
+	return usernames
 }
 
 func GetDashboardUsersOfApp(appId int) []dao.DashboardAppUser {

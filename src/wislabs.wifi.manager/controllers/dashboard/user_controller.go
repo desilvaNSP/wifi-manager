@@ -348,9 +348,12 @@ func GetUserSSIDS(userId int64) []string {
 }
 
 func GetUsernamesOfSSIDS(ssids []string) []string {
+	var usernames []string
+	if(len(ssids)==0){
+		return usernames
+	}
 	dbMap := utils.GetDBConnection(commons.DASHBOARD_DB);
 	defer dbMap.Db.Close()
-	var usernames []string
 	query := commons.GET_DASHBOARD_USERS_OF_SSIDS + " ( "
 	for index, value := range ssids {
 		aa := strings.Replace(value, "\"", "", -1)
@@ -360,7 +363,7 @@ func GetUsernamesOfSSIDS(ssids []string) []string {
 			query += ","
 		}
 	}
-	_, err := dbMap.Select(&usernames, query + ")")
+	_, err := dbMap.Select(&usernames, query + "))")
 	checkErr(err, "Error occured while getting users of ssids")
 	return usernames
 }
@@ -389,8 +392,6 @@ func UpdateUserSSIDS(userId int64, ssids []string) error {
 	_, err := dbMap.Exec(commons.DELETE_DASHBOARD_USER_SSIDS, userId)
 	if (err != nil) {
 		return err
-	} else {
-		return nil
 	}
 	return AddUserSSIDS(userId, ssids)
 }
