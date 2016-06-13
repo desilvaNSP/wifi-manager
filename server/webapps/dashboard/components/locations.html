@@ -1,17 +1,7 @@
 <div class="wrapper wrapper-content">
     <div class="row">
-        <div class="col-lg-3">
-            <div class="widget navy-bg">
-                <div class="row">
-                    <div class="col-xs-4">
-                        <i class="fa fa-cloud fa-5x"></i>
-                    </div>
-                    <div class="col-xs-8 text-right">
-                        <span> Today degrees </span>
-                        <h2 class="font-bold">26'C</h2>
-                    </div>
-                </div>
-            </div>
+        <div id="widget-active-accespoint"  class="configuration-container col-lg-3">
+
         </div>
         <div class="col-lg-3">
             <div class="widget red-bg">
@@ -134,6 +124,43 @@
 
 <script>
     $(document).ready(function () {
+
+
+
+        $.get('/wifi/locations/apcounts', function (data) {
+            var activeUsercount = data;
+            $.get('components/widgets/statistic-configuration.html', function (template) {
+                var rendered = Mustache.render(template, {
+                    caption: 'Active Access Points',
+                    value: activeUsercount,
+                    widgetbg: 'lazur-bg',
+                });
+                var optionsHTML =   '<div class="form-group row">'+
+                                        '<small class="text-navy col-sm-5">No Of Dates : </small>'+
+                                        '<div class="col-sm-3"><input class="input-s-sm">'+
+                                        '</div>'+
+                                    '</div>'+
+                                    '<div class="text-right row">'+
+                                        '<a class="btn btn-xs btn-info options-done"><i class="fa fa-check" ></i>Done</a>'+
+                                    '</div>';
+
+                $('#widget-active-accespoint').html(rendered);
+                $('#widget-active-accespoint .option-card').html(optionsHTML)
+                $('#configuration_card .widget span').on('click',function(){
+                    $('#configuration_card').addClass('swivel-effect');
+                    setTimeout(function(){
+                        $('#configuration_card').removeClass('swivel-effect');
+                    },2000);
+                });
+                $('#configuration_card .option-card .options-done').on('click',function(){
+                    $('#configuration_card').addClass('swivel-effect');
+                    setTimeout(function(){
+                        $('#configuration_card').removeClass('swivel-effect');
+                    },1000);
+                });
+            })
+        });
+
         var serverOriginUrl = window.location.origin;
 
         var map = new ol.Map({

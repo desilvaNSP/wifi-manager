@@ -353,6 +353,13 @@ var routes = Routes{
 		dashboard_handlers.DeleteLocation,
 	},
 	Route{
+		"GetCountActiveInactiveAccessPoints",
+		"GET",
+		"/wifi/locations/apcounts",
+		true,
+		dashboard_handlers.GetActiveInactiveAPHandler,
+	},
+	Route{
 		"DeleteLocationAccessPoints",
 		"DELETE",
 		"/wifi/{tenantid}/locations/{mac}",
