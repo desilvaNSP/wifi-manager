@@ -114,7 +114,6 @@ func AddWiFiGroupHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-
 /**
 * DELETE
 * @path /{tenantid}/locations/{mac}/{ssid}/{groupname}

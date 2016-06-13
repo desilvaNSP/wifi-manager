@@ -36,8 +36,8 @@ func GetSSIDsOfLocationGroups(groupnames []string, tenantId int) []string {
 	for index, value := range groupnames {
 		aa := strings.Replace(value, "\"", "", -1)
 
-		query += "'" + strings.Trim(aa," ") + "'"
-		if index < len(groupnames)-1{
+		query += "'" + strings.Trim(aa, " ") + "'"
+		if index < len(groupnames) - 1 {
 			query += ","
 		}
 	}
@@ -45,7 +45,6 @@ func GetSSIDsOfLocationGroups(groupnames []string, tenantId int) []string {
 	checkErr(err, "Error occured while getting AP location groups")
 	return ssids
 }
-
 
 func AddWiFiLocation(location *dao.ApLocation) {
 	dbMap := utils.GetDBConnection("dashboard");
@@ -57,11 +56,11 @@ func AddWiFiLocation(location *dao.ApLocation) {
 	defer stmtIns.Close()
 }
 
-func UpdateWifiLocation(location *dao.ApLocation){
+func UpdateWifiLocation(location *dao.ApLocation) {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 	stmtIns, err := dbMap.Db.Prepare(commons.UPDATE_AP_LOCATION)
-	_, err = stmtIns.Exec(location.SSID, location.APName, location.BSSID, location.Longitude, location.Latitude, dashboard.GetApGroupId(location.TenantId, location.GroupName), location.GroupName, location.LocationId,location.TenantId)
+	_, err = stmtIns.Exec(location.SSID, location.APName, location.BSSID, location.Longitude, location.Latitude, dashboard.GetApGroupId(location.TenantId, location.GroupName), location.GroupName, location.LocationId, location.TenantId)
 	checkErr(err, "Error occured while updating AP location")
 	defer stmtIns.Close()
 }
@@ -82,7 +81,7 @@ func DeleteApLocation(tenantid int, ssid string, mac string, groupName string) e
 	_, err := dbMap.Exec(commons.DELETE_AP_LOCATION, ssid, mac, groupName, tenantid)
 	if (err != nil) {
 		return err
-	}else {
+	} else {
 		return nil
 	}
 }
@@ -93,7 +92,7 @@ func DeleteApGroup(groupName string, tenantid int) error {
 	_, err := dbMap.Exec(commons.DELETE_AP_GROUP, groupName, tenantid)
 	if (err != nil) {
 		return err
-	}else {
+	} else {
 		return nil
 	}
 }
@@ -104,7 +103,7 @@ func DeleteAccessPoint(mac string, tenantid int) error {
 	_, err := dbMap.Exec(commons.DELETE_AP, mac, tenantid)
 	if (err != nil) {
 		return err
-	}else {
+	} else {
 		return nil
 	}
 }

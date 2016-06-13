@@ -54,7 +54,6 @@ func GetDashboardUsersInGroups(tenantid int,appGroups []dao.DashboardAppGroup) [
 	defer dbMap.Db.Close()
 	usersInGroups := make([][]string,len(appGroups))
 	for i := 0; i < len(appGroups); i++ {
-
 		var users []dao.DashboardAppUser
 		_, err := dbMap.Select(&users, commons.GET_DASHBOARD_USERS_IN_GROUP, tenantid,GetApGroupId(tenantid,appGroups[i].GroupName))
 		if err != nil {

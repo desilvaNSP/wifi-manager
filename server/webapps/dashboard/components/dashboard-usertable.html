@@ -145,8 +145,16 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="form-group">
+                        <label>Allowed SSIDS</label>
+                    </div>
                     <div class="checkbox">
-                        <hr/>
+                        <ul id="ssid-tags">
+                        </ul>
+                    </div>
+                    <br/>
+                    <div class="checkbox">
                         <label>
                             <input type="checkbox" id="chkIsActive"> Activate
                         </label>
@@ -164,6 +172,7 @@
 <div id="userupdate-modal-content"></div>
 
 <script src="js/plugins/validate/jquery.validate.min.js"></script>
+
 <script>
     $(document).ready(function () {
         var serverOriginUrl = window.location.origin;
@@ -298,6 +307,13 @@
                 }
                 checkinEnableUserPermissions("input[name='userscopeedit']",dashboardUserInfo.permissions);
                 checkinEnableAppGroups("input[name='datascopeedit']",dashboardUserInfo.apgroups);
+                $("#edit-ssid-tags").tagit({
+                    autocomplete: {delay: 0, minLength: 1, allowSpaces : true}
+                });
+                $("#edit-ssid-tags").tagit("removeAll");
+                dashboardUserInfo.ssids.forEach(function (ssid) {
+                    $("#edit-ssid-tags").tagit("createTag", ssid);
+                });
                 $('#update-user-modal').modal();
             })
         });
@@ -314,6 +330,7 @@
                     email: $('#inputEditEmail').val(),
                     status: newUserStatus,
                     apgroups: getCheckedDataScopes("input[name='datascopeedit']"),
+                    ssids: $('#ssid-tags').tagit('assignedTags'),
                     permissions: getCheckedUserPermissions("input[name='userscopeedit']")
                 };
                 $.ajax({
@@ -357,6 +374,7 @@
                     email: $('#inputEmail').val(),
                     status: newUserStatus,
                     apgroups: getCheckedDataScopes("input[name='datascope']"),
+                    ssids: $('#ssid-tags').tagit('assignedTags'),
                     permissions: getCheckedUserPermissions("input[name='userscope']"),
                     roles: getCheckedDataScopes('role')
                 };
@@ -370,6 +388,10 @@
                 });
             }
             return false;
+        });
+
+        $("#ssid-tags").tagit({
+            autocomplete: {delay: 0, minLength: 1, allowSpaces: true}
         });
 
     });
@@ -410,7 +432,7 @@
                 checkboxesChecked.push(permissionObj);
             }
         }
-        return checkboxesChecked.length > 0 ? checkboxesChecked : null;
+        return checkboxesChecked.length > 0 ? checkboxesChecked : [];
     }
 
     function getCheckedDataScopes(chkboxName) {
@@ -421,9 +443,8 @@
                 checkboxesChecked.push($(checkboxes[i]).data('value'));
             }
         }
-        return checkboxesChecked.length > 0 ? checkboxesChecked : null;
+        return checkboxesChecked.length > 0 ? checkboxesChecked : [];
     }
-
 
     function checkAdminDeletePermission(permissions){
         var adminDeletePermission = false;

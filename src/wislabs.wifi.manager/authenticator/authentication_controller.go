@@ -70,6 +70,7 @@ func RequireTokenAuthentication(inner http.Handler) http.Handler {
 		}else {
 			sClaims, _ := json.Marshal(token.Claims["scopes"])
 			r.Header.Set("scopes", string(sClaims))
+			r.Header.Set("username", token.Claims["sub"].(string))
 			r.Header.Set("tenantid", strconv.FormatFloat((token.Claims["tenantid"]).(float64),'f',0,64))
 		}
 		inner.ServeHTTP(w, r)

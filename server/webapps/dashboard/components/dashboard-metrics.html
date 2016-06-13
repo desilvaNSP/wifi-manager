@@ -375,7 +375,7 @@
             var doc = new jsPDF(pdfOptions);
 
             doc.setFontSize(12);
-            doc.text(25, 20, "Area/Site/AP : " + payload.groupnames[0]);
+            doc.text(25, 20, "Area/Site/AP : " + payload.parameters[0]);
             doc.setFontSize(12);
             doc.text(25, 30, "Statistics from " + payload.from + " to " + payload.to);
 

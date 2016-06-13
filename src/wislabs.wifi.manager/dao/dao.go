@@ -71,6 +71,7 @@ type DashboardUser struct {
     Roles       []string  `json:"roles"`
     Permissions []Permission   `json:"permissions"`
     ApGroups    []string  `json:"apgroups"`
+    SSIDs       []string   `json:"ssids"`
 }
 
 type UserInfo struct {

@@ -43,12 +43,15 @@
                         <div class="panel panel-default">
                             <div class="panel-heading" role="tab" id="userscopeseditpanel">
                                 <h4 class="panel-title">
-                                    <a class="collapsed" role="button" data-toggle="collapse" parent="#accordion" data- href="#collapse-userscopes-edit" aria-expanded="false" aria-controls="collapse-userscopes">
+                                    <a class="collapsed" role="button" data-toggle="collapse" parent="#accordion" data-
+                                       href="#collapse-userscopes-edit" aria-expanded="false"
+                                       aria-controls="collapse-userscopes">
                                         Allowed User Scopes
                                     </a>
                                 </h4>
                             </div>
-                            <div id="collapse-userscopes-edit" class="panel-collapse collapse" role="tabpanel" aria-labelledby="userscopeseditpanel">
+                            <div id="collapse-userscopes-edit" class="panel-collapse collapse" role="tabpanel"
+                                 aria-labelledby="userscopeseditpanel">
                                 <div class="panel-body">
                                     <div class="checkbox">
                                         <div class="row">
@@ -61,7 +64,9 @@
                                                     {{#actions}}
                                                     <div class="col-sm-2">
                                                         <label>
-                                                            <input type="checkbox" name="userscopeedit" data-action="{{action}}" data-name="{{name}}"value="{{action}}">{{action}}
+                                                            <input type="checkbox" name="userscopeedit"
+                                                                   data-action="{{action}}" data-name="{{name}}"
+                                                                   value="{{action}}">{{action}}
                                                         </label>
                                                     </div>
                                                     {{/actions}}
@@ -74,8 +79,18 @@
                             </div>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label>Allowed SSIDS</label>
+                    </div>
                     <div class="checkbox">
-                        <hr/>
+                        <ul id="edit-ssid-tags">
+                            {{#ssids}}
+                            <li>{{.}}</li>
+                            {{/ssids}}
+                        </ul>
+                    </div>
+                    <br/>
+                    <div class="checkbox">
                         <label>
                             <input type="checkbox" id="chkEditIsActive"> Activate
                         </label>

@@ -32,8 +32,10 @@ const GET_PERMISSION_ID string	 			= "SELECT permissionid FROM permissions WHERE
 const GET_USER_ID string	 			= "SELECT userid FROM users WHERE username= ? AND tenantid=?"
 const GET_AP_GROUP_ID string	 			= "SELECT groupid FROM apgroups WHERE groupname= ? AND tenantid=?"
 const GET_DASHBOARD_USER string      			= "SELECT userid, username, email, status FROM users WHERE username=? AND tenantid=?"
+const GET_DASHBOARD_USER_SSIDS string    		= "SELECT ssid from userssids where userid=?"
 const CREATE_DASHBOARD_USER string      		= "INSERT INTO users (tenantid, username, password, email, status) VALUES( ?, ?, ?, ?, ?)"
 const ADD_DASHBOARD_USER_AP_GROUP string    		= "INSERT IGNORE INTO userapgroups (groupid, userid) VALUES( ?, ?)"
+const ADD_DASHBOARD_USER_SSID string    		= "INSERT IGNORE INTO userssids (userid, ssid) VALUES( ?, ?)"
 const ADD_DASHBOARD_USER_PERMISSIONS string   		= "INSERT INTO userpermissions (permissionid, userid) VALUES( ?, ?)"
 const GET_DASHBOARD_USER_PERMISSIONS string     	= "SELECT name, action  FROM permissions WHERE permissionid IN (SELECT permissionid FROM userpermissions WHERE  userid IN (SELECT  userid from users WHERE username=? AND tenantid=?)) GROUP BY name, action"
 const GET_DASHBOARD_USER_AP_GROUPS string     		= "SELECT groupname  FROM apgroups WHERE groupid IN (SELECT groupid FROM userapgroups WHERE  userid IN (SELECT  userid from users WHERE username=? AND tenantid=?)) GROUP BY groupname"
@@ -43,6 +45,7 @@ const UPDATE_DASHBOARD_USER_PASSWORD string  		= "UPDATE users SET password=? WH
 const DELETE_DASHBOARD_USER string   			= "DELETE FROM users WHERE tenantid=? AND username=?"
 const DELETE_DASHBOARD_USER_PERMISSIONS string		= "DELETE FROM userpermissions WHERE userid=?"
 const DELETE_DASHBOARD_USER_APPGROUPS string 		= "DELETE FROM userapgroups WHERE userid=?"
+const DELETE_DASHBOARD_USER_SSIDS string 		= "DELETE FROM userssids WHERE userid=?"
 const IS_EXISTS_USER_NAME	string				= "SELECT EXISTS(SELECT username FROM users WHERE username = ? and tenantid = ?) as checkuser"
 
 /* WIFI users */

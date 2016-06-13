@@ -150,6 +150,27 @@ var routes = Routes{
 		dashboard_handlers.GetUsersOfGroups,
 	},
 	Route{
+		"Get Users SSIDS",
+		"GET",
+		"/dashboard/users/{username}/ssids",
+		true,
+		dashboard_handlers.GetSSIDsOfUser,
+	},
+	Route{
+		"Add user SSIDS",
+		"POST",
+		"/dashboard/users/{username}/ssids",
+		true,
+		dashboard_handlers.AddSSIDsOfUser,
+	},
+	Route{
+		"Update user SSIDS",
+		"PUT",
+		"/dashboard/users/{username}/ssids",
+		true,
+		dashboard_handlers.UpdateSSIDsOfUser,
+	},
+	Route{
 		"Get Dashboard App Users ",
 		"GET",
 		"/dashboard/apps/{appid}/users",
@@ -471,7 +492,4 @@ var routes = Routes{
 		true,
 		dashboard_handlers.UpdateRadiusInstanceHandler,
 	},
-
-
-
 }

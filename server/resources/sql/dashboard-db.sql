@@ -97,6 +97,14 @@ CREATE TABLE IF NOT EXISTS `userapgroups` (
 )
   ENGINE = InnoDB;
 
+CREATE TABLE IF NOT EXISTS `userssids` (
+  `userid`  BIGINT,
+  `ssid` VARCHAR(255) DEFAULT NULL,
+  PRIMARY KEY (`userid`, `ssid`),
+  FOREIGN KEY (userid) REFERENCES users (userid)
+    ON DELETE CASCADE
+)
+  ENGINE = InnoDB;
 --
 -- Metrics
 --
