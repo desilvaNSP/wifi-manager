@@ -113,7 +113,7 @@
             });
 
             $.when(locationsAjax).done(function () {
-                ssidsAjax = $.get('/wifi/locations/ssids', {groupnames: locations.toString()}, function (result) {
+                ssidsAjax = $.get('/dashboard/users/'+ Cookies.get('username')+'/ssids', function (result) {
                     ssids = result
                 });
             });

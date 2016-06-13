@@ -138,13 +138,11 @@ func (backend *JWTAuthenticationBackend) getTokenRemainingValidity(timestamp int
 }
 
 func (backend *JWTAuthenticationBackend) Logout(tokenString string, token *jwt.Token) error {
-    redisConn := redis.Connect()
-    return redisConn.SetValue(tokenString, tokenString, backend.getTokenRemainingValidity(token.Claims["exp"]))
+    return redis.SetValue(tokenString, tokenString, backend.getTokenRemainingValidity(token.Claims["exp"]))
 }
 
 func (backend *JWTAuthenticationBackend) IsInBlacklist(token string) bool {
-    redisConn := redis.Connect()
-    redisToken, err := redisConn.GetValue(token)
+    redisToken, err := redis.GetValue(token)
     if err != nil {
 	log.Error("Error occourred while checking for black listed jwt :" + token + " stack :" + err.Error())
     }
