@@ -360,7 +360,7 @@ func GetUsernamesOfSSIDS(ssids []string) []string {
 			query += ","
 		}
 	}
-	_, err := dbMap.Select(&usernames, query)
+	_, err := dbMap.Select(&usernames, query + ")")
 	checkErr(err, "Error occured while getting users of ssids")
 	return usernames
 }
