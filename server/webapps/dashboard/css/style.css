@@ -8028,3 +8028,20 @@ img.thumbnail  { position: absolute; width: 178px;height: 178px ;z-index: 20}
 table.dataTable tbody tr.selected {
     background-color: #cdf4ec !important;
 }
+
+.world-map {
+    height: 400px;
+    width: 100%;
+}
+.ol-dragbox {
+    background-color: rgba(255,255,255,0.4);
+    border-color: rgba(100,150,0,1);
+}
+
+.location-mapinfobox-container{
+    width: 250px;
+}
+
+.ol-attribution {
+    display: none;
+}
