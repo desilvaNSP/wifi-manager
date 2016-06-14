@@ -110,7 +110,7 @@ func DeleteAccessPoint(mac string, tenantid int) error {
 }
 
 func GetActiveInactiveAccessPoint(tenantId int,activePeriodFrom string, activePeriodTo string, treshold int) (int, error){
-	dbMap := utils.GetDBConnection(commons.SUMMARY_DB_NAME);
+	dbMap := utils.GetDBConnection(commons.SUMMARY_DB);
 	defer dbMap.Db.Close()
 	var activeCalledStations []string
 
