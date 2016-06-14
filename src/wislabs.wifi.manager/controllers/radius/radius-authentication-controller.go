@@ -116,7 +116,7 @@ func UpdateRadiusServerInstance(config dao.RadiusServer, tenantId int) error{
 }
 
 func IsWifiUserValidInRadius(tenantId int, username string) (int, error) {
-	dbMap := utils.GetDBConnection(commons.RADIUS_DB_NAME);
+	dbMap := utils.GetDBConnection(commons.RADIUS_DB);
 	defer dbMap.Db.Close()
 
 	var checkUser int

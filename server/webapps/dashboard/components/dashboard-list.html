@@ -14,7 +14,6 @@
             <button class="btn btn-default" type="button" id="add-dashboard-btn">Add New</button>
         </div>
     </div>
-
     <div class="row row-centered app-listing" id="app-grid"></div>
 </div>
 
@@ -40,15 +39,11 @@
 </div>
 
 <script>
-    var userNames = [], taggedUsers = [];
+    var sharedUsers = [], taggedUsers = [];
     var $grid, $sizer;
     var deleteAppId;
     var tagUserComponent;
-
-
-
     $(document).ready(function () {
-
         locationsAjax = $.get('/dashboard/' + Cookies.get('tenantid') + '/users/' + Cookies.get('username'), function (result) {
             locations = result.apgroups
         });
@@ -56,7 +51,6 @@
         metricsAjax = $.get('/dashboard/' + Cookies.get('tenantid') + '/metrics', function (result) {
             metrics = result
         });
-
 
         aclTypes = $.get('/dashboard/acltypes', function (result) {
             acltypes = result
@@ -81,10 +75,8 @@
         });
 
         $("#add-dashboard-btn").on('click', function () {
-            var users, locations, metrics,acltypes;
-
+            var users, locations, metrics, acltypes, ssids, ssidsAjax;
             taggedUsers = [];
-
             var usersAjax;
             userPermissions = JSON.parse(Cookies.get('userpermissions'));
             hasDashboardUserReadPermission = false;
@@ -94,16 +86,18 @@
                 }
             });
             if (hasDashboardUserReadPermission) {
-                $("#add-dashboard-app-modal-content").off('click').on('change', 'input[name=input-group]', function(e) {
-                    var payload = {
-                        tenantid: parseInt(Cookies.get('tenantid')),
-                        groups: getCheckedGroups("input[name='input-group']"),
-                    };
+                $("#add-dashboard-app-modal-content").off('click').on('change', 'input[name=input-group]', function (e) {
+                    var payload = getCheckedElementList("input[name='input-group']");
                     usersAjax = getUserLabelAjaxRequest(payload);
+                });
+
+                $("#add-dashboard-app-modal-content").off('click').on('change', 'input[name=input-ssid]', function (e) {
+                    var payload = getCheckedElementList("input[name='input-ssid']");
+                    usersAjax = getUsersInSSIDs(payload);
                 });
             } else {
                 usersAjax = true;
-                userNames.push(Cookies.get('username'))
+                sharedUsers.push(Cookies.get('username'))
             }
 
             var locationsAjax = $.get('/dashboard/' + Cookies.get('tenantid') + '/users/' + Cookies.get('username'), function (result) {
@@ -118,24 +112,31 @@
                 acltypes = result
             });
 
+            $.when(locationsAjax).done(function () {
+                ssidsAjax = $.get('/dashboard/users/'+ Cookies.get('username')+'/ssids', function (result) {
+                    ssids = result
+                });
+            });
+
             var addDashboardFromValidator;
-            $.when(usersAjax, locationsAjax, metricsAjax ,aclTypes).done(function () {
+            $.when(ssidsAjax, usersAjax, locationsAjax, metricsAjax, aclTypes).done(function () {
                 $.get('components/dashboard-app-modal.html', function (template) {
                     var rendered = Mustache.render(template, {
                         users: users,
                         locations: locations,
+                        ssids: ssids,
                         metrics: metrics,
                         currentuser: Cookies.get("username"),
-                        acltypes:removeEmptyString(acltypes)
+                        acltypes: removeEmptyString(acltypes)
                     });
                     $('#add-dashboard-app-modal-content').html(rendered);
                     $('#add-dashboard-modal').modal();
 
                     tagUserComponent = $("#username-tags").tagit({
-                        availableTags: userNames.push(Cookies.get('username')),
+                        availableTags: sharedUsers.push(Cookies.get('username')),
                         autocomplete: {delay: 0, minLength: 1},
                         beforeTagAdded: function (event, ui) {
-                            if (userNames.indexOf(ui.tagLabel) == -1) {
+                            if (sharedUsers.indexOf(ui.tagLabel) == -1) {
                                 return false;
                             }
                             if (ui.tagLabel == "not found") {
@@ -183,12 +184,13 @@
                         name: $('#input-dashboard-name').val(),
                         users: taggedUsers,
                         aggregate: aggregate,
-                        groups: getCheckedGroups("input[name='input-group']"),
+                        filtercriteria: $('.criteria-radio:checked').val(),
+                        parameters: getAppParameterList($('.criteria-radio:checked').val(), "input"),
                         metrics: getCheckedMetrices("input[name='metric']"),
                         acls: $('.acltypes-radio:checked').val()
                     };
                     $("#adddbmodal-body").loadingOverlay({
-                        loadingText: 'Creating '+payloadadd.name+' Dashboard'
+                        loadingText: 'Creating ' + payloadadd.name + ' Dashboard'
                     });
                     $.post('/dashboard/apps', JSON.stringify(payloadadd), function (result) {
                         $("#adddbmodal-body").loadingOverlay('remove');
@@ -219,29 +221,49 @@
             var appName = $(this).attr('data-appname');
             var appId = $(this).attr('data-appid');
             var aggregate = $(this).attr('data-aggregation');
+            var filtercriteria = $(this).attr('data-filtercriteria');
             window.aggregate = aggregate;
-            datagroups = [];
+            window.filtercriteria = filtercriteria;
+
             $.get('components/dashboard.html', function (template) {
-                $.get('/dashboard/apps/' + appId + '/groups', function (result) {
-                    datagroups = [];
-                    $.each(result, function (index, element) {
-                        datagroups.push(element.groupname)
-                    });
-                    window.appId = appId;
-                    window.appName = appName;
-                    window.datagroups = datagroups;
-                    window.originaldatagroups = datagroups;
-                    var rendered;
-                    if (aggregate == 'yes') {
-                        rendered = Mustache.render(template, {appId: appId, datagroups: appName});
-                    }else{
-                        window.appName = datagroups[0];
-                        rendered = Mustache.render(template, {appId: appId, datagroups: datagroups});
-                    }
-                    $grid.shuffle('destroy');
-                    $('.container-dashboard').remove('#app-grid');
-                    $('.container-dashboard').html(rendered);
-                });
+                switch (window.filtercriteria) {
+                    case "groupname" :
+                        $.get('/dashboard/apps/' + appId + '/groups', function (result) {
+
+                            window.appId = appId;
+                            window.appName = appName;
+                            window.datagroups = result;
+                            window.originaldatagroups = result;
+                            var rendered;
+                            if (aggregate == 'yes') {
+                                rendered = Mustache.render(template, {appId: appId, datagroups: appName});
+                            } else {
+                                window.appName = datagroups[0];
+                                rendered = Mustache.render(template, {appId: appId, datagroups: result});
+                            }
+                            $grid.shuffle('destroy');
+                            $('.container-dashboard').remove('#app-grid');
+                            $('.container-dashboard').html(rendered);
+                        });
+                        break;
+                    case "ssid" :
+                        $.get('/dashboard/apps/' + appId + '/filterparameters', function (result) {
+                            window.appId = appId;
+                            window.appName = appName;
+                            window.datagroups = result;
+                            window.originaldatagroups = result;
+                            var rendered;
+                            if (aggregate == 'yes') {
+                                rendered = Mustache.render(template, {appId: appId, datagroups: appName});
+                            } else {
+                                window.appName = result[0];
+                                rendered = Mustache.render(template, {appId: appId, datagroups: result});
+                            }
+                            $grid.shuffle('destroy');
+                            $('.container-dashboard').remove('#app-grid');
+                            $('.container-dashboard').html(rendered);
+                        });
+                }
                 $.get('/dashboard/apps/' + appId + '/acl', function (result) {
                     window.aclvalue = result;
                 });
@@ -252,7 +274,7 @@
             $.ajax({
                 url: '/dashboard/' + Cookies.get('tenantid') + '/apps/' + deleteAppId,
                 type: 'DELETE',
-                beforeSend:function(){
+                beforeSend: function () {
                     $("#appdelete-body").loadingOverlay({
                         loadingText: 'Deleting Dashboad Appgi'
                     });
@@ -274,31 +296,45 @@
         $('#confirm-delete-modal').modal();
     }
 
-
     // App settings updates
-    function dashboardSettings(event){
-        var payload, users, locations, metrics,acltypes;
-        var groupsofAppID,usersOfAppID,metricsOfAppID,aclofAppID,aggregateValue;
+    function dashboardSettings(event) {
+        var payload, users, locations, metrics, acltypes;
+        var parametersofAppID, usersOfAppID, metricsOfAppID, aclofAppID, aggregateValue, filterCriteria, isSSIDFiltering, isGroupFiltering;
 
         var selectedAppIdForSettings = $(event).data('appid');
         var appName = $(event).data('appname');
 
-        var usersAjax;
+        var usersAjax, ssidsAjax;
 
-        userNames = [];
         // get app details by id
-        var allAppSettings  = $.get('/dashboard/apps/' + selectedAppIdForSettings + '/appsettings', function (result) {
-            groupsofAppID= result.groups;
-            metricsOfAppID= result.metrics;
+        var allAppSettings = $.get('/dashboard/apps/' + selectedAppIdForSettings + '/appsettings', function (result) {
+            filterCriteria = result.filtercriteria;
+            switch (filterCriteria) {
+                case "groupname" :
+                    isGroupFiltering = "checked";
+                    isSSIDFiltering = "";
+                    break;
+                case "ssid" :
+                    isGroupFiltering = "";
+                    isSSIDFiltering = "checked";
+                    break;
+            }
+            parametersofAppID = result.parameters;
+            metricsOfAppID = result.metrics;
             aclofAppID = result.acls;
-            aggregateValue= result.aggregate;
-            usersOfAppID=result.users;
+            aggregateValue = result.aggregate;
+            usersOfAppID = result.users;
         });
 
         var locationsAjax = $.get('/dashboard/' + Cookies.get('tenantid') + '/users/' + Cookies.get('username'), function (result) {
             locations = result.apgroups
         });
 
+        $.when(locationsAjax).done(function () {
+            ssidsAjax = $.get('/dashboard/users/'+ Cookies.get('username')+'/ssids', function (result) {
+                ssids = result
+            });
+        });
         var metricsAjax = $.get('/dashboard/' + Cookies.get('tenantid') + '/metrics', function (result) {
             metrics = result
         });
@@ -308,100 +344,114 @@
         });
 
         userPermissions = JSON.parse(Cookies.get('userpermissions'));
+
         hasDashboardUserReadPermission = false;
+
         $.each(userPermissions, function (key, value) {
             if (value.name == 'dashboard_users') {
                 hasDashboardUserReadPermission = true
             }
         });
+
         if (hasDashboardUserReadPermission) {
-            $("#add-dashboard-app-modal-content").off('click').on('change', 'input[name=edit-group]', function(e) {
-                payload = {
-                    tenantid: parseInt(Cookies.get('tenantid')),
-                    groups: getCheckedGroups("input[name='edit-group']"),
-                };
+            $("#add-dashboard-app-modal-content").off('click').on('change', 'input[name=edit-group]', function (e) {
+                payload = getCheckedElementList("input[name='edit-group']")
+                usersAjax = getUserLabelAjaxRequest(payload);
+            });
+
+            $("#add-dashboard-app-modal-content").off('click').on('change', 'input[name=edit-ssid]', function (e) {
+                payload = getCheckedElementList("input[name='edit-ssid']")
                 usersAjax = getUserLabelAjaxRequest(payload);
             });
         } else {
             usersAjax = true;
-            userNames.push(Cookies.get('username'))
+            sharedUsers.push(Cookies.get('username'))
         }
 
         taggedUsers = [];
 
         var updateDashboardFromValidator;
-        $.when(usersAjax, locationsAjax, metricsAjax ,aclTypes,allAppSettings).done(function () {
+        $.when(usersAjax, locationsAjax, metricsAjax, aclTypes, allAppSettings).done(function () {
             $.get('components/dashboard-settings-modal.html', function (template) {
-                for(var index in usersOfAppID) {
-                    if (userNames.indexOf(usersOfAppID[index].username) == -1){
-                        userNames.push(usersOfAppID[index].username)
+                for (var index in usersOfAppID) {
+                    if (sharedUsers.indexOf(usersOfAppID[index].username) == -1) {
+                        sharedUsers.push(usersOfAppID[index].username)
                     }
                 }
                 var rendered = Mustache.render(template, {
-                    appname:appName,
-                    users: users,
+                    appname: appName,
+                    users: usersOfAppID,
                     locations: locations,
+                    ssids: ssids,
                     metrics: metrics,
-                    currentusers:userNames,
-                    acltypes:removeEmptyString(acltypes),
-                    checkedGroups : function() {
-                                var checkibilty;
-                                for(var index in groupsofAppID){
-                                    var groupname = groupsofAppID[index].groupname;
-                                    if(this.toString()==groupname){
-                                        checkibilty = 'checked';
-                                        break;
-                                    }else{
-                                        checkibilty = 'unchecked';
-                                    }
-                                }
-                                return checkibilty;
-                            },
-                    checkedACL : function() {
-                                var checkibilty;
-                                var acl = aclofAppID;
-                                if(this.toString()==acl){
-                                    checkibilty = 'checked';
-                                    return checkibilty;
-                                }
-                            },
-                    checkedMetrics : function() {
-                                var checkibilty;
-                                for(var index in metricsOfAppID){
-                                    var metricid = metricsOfAppID[index].metricid;
-                                    if(this.metricid == metricid){
-                                        checkibilty = 'checked';
-                                        break;
-                                    }else{
-                                        checkibilty = 'unchecked';
-                                    }
-                                }
-                                return checkibilty;
-                            },
-                    checkAggreateLoc :function(){
-                                var checkibilty;
-                                if(aggregateValue=="yes"){
-                                    checkibilty = 'checked';
-                                }else{
-                                    checkibilty = 'unchecked';
-                                }
-                                return checkibilty;
+                    currentusers: sharedUsers,
+                    acltypes: removeEmptyString(acltypes),
+                    isSSIDSelected: isSSIDFiltering,
+                    isGroupsSelected: isGroupFiltering,
+                    checkedSSIDs: function () {
+                        var checkibilty;
+                        for (var i in parametersofAppID) {
+                            if (this.toString() == parametersofAppID[i]) {
+                                checkibilty = 'checked';
+                                break;
+                            } else {
+                                checkibilty = 'unchecked';
                             }
+                        }
+                        return checkibilty;
+                    },
+                    checkedGroups: function () {
+                        var checkibilty;
+                        for (var i in parametersofAppID) {
+                            if (this.toString() == parametersofAppID[i]) {
+                                checkibilty = 'checked';
+                                break;
+                            } else {
+                                checkibilty = 'unchecked';
+                            }
+                        }
+                        return checkibilty;
+                    },
+                    checkedACL: function () {
+                        var checkibilty;
+                        var acl = aclofAppID;
+                        if (this.toString() == acl) {
+                            checkibilty = 'checked';
+                            return checkibilty;
+                        }
+                    },
+                    checkedMetrics: function () {
+                        var checkibilty;
+                        for (var index in metricsOfAppID) {
+                            var metricid = metricsOfAppID[index].metricid;
+                            if (this.metricid == metricid) {
+                                checkibilty = 'checked';
+                                break;
+                            } else {
+                                checkibilty = 'unchecked';
+                            }
+                        }
+                        return checkibilty;
+                    },
+                    checkAggreateLoc: function () {
+                        var checkibilty;
+                        if (aggregateValue == "yes") {
+                            checkibilty = 'checked';
+                        } else {
+                            checkibilty = 'unchecked';
+                        }
+                        return checkibilty;
+                    }
                 });
 
                 $('#add-dashboard-app-modal-content').html(rendered);
                 $('#settings-dashboard-modal').modal();
 
-                payload = {
-                    tenantid: parseInt(Cookies.get('tenantid')),
-                    groups: getCheckedGroups("input[name='edit-group']"),
-                };
-                getUserLabelAjaxRequest(payload);
                 $("#username-tags").tagit({
                     autocomplete: {delay: 0, minLength: 1},
-                    availableTags: userNames,
+                    availableTags: sharedUsers,
                     beforeTagAdded: function (event, ui) {
-                        if (userNames.indexOf(ui.tagLabel) == -1) {
+                        if (sharedUsers.indexOf(ui.tagLabel) == -1) {
                             return false;
                         }
                         if (ui.tagLabel == "not found") {
@@ -423,7 +473,7 @@
                         taggedUsers = taggedUsers.filter(function (returnableObjects) {
                             return returnableObjects.username !== ui.tagLabel;
                         });
-                    },
+                    }
 
                 });
                 updateDashboardFromValidator = $("#add-dashboard-form").validate({
@@ -445,10 +495,11 @@
                 }
                 var payloadupdate = {
                     tenantid: parseInt(Cookies.get('tenantid')),
-                    appid:selectedAppIdForSettings,
+                    appid: selectedAppIdForSettings,
                     users: taggedUsers,
                     aggregate: aggregate,
-                    groups: getCheckedGroups("input[name='edit-group']"),
+                    filtercriteria: $('.criteria-radio:checked').val(),
+                    parameters: getAppParameterList($('.criteria-radio:checked').val(), "edit"),
                     metrics: getCheckedMetrices("input[name='metric']"),
                     acls: $('.update-acltypes-radio:checked').val()
                 };
@@ -457,7 +508,7 @@
                     type: 'PUT',
                     contentType: "application/json",
                     data: JSON.stringify(payloadupdate),
-                    beforeSend:function(){
+                    beforeSend: function () {
                         $("#settingsdbmodal-body").loadingOverlay({
                             loadingText: 'Updating App Settings '
                         });
@@ -474,18 +525,27 @@
         });
     }
 
-    function removeEmptyString(arrayContainer){
+    function removeEmptyString(arrayContainer) {
         var returnContainer = [];
-        arrayContainer.forEach(function(data){
-            if(data != "" && data != null){
+        arrayContainer.forEach(function (data) {
+            if (data != "" && data != null) {
                 returnContainer.push(data);
             }
         });
         return returnContainer;
     }
 
+    function getAppParameterList(criteria, type) {
+        switch (criteria) {
+            case "groupname" :
+                return getCheckedElementList("input[name='"+ type +"-group']");
+            case "ssid" :
+                return getCheckedElementList("input[name='"+ type +"-ssid']");
+        }
+    }
+
     function getCheckedMetrices(chkboxName) {
-        var checkboxes =  $(chkboxName);
+        var checkboxes = $(chkboxName);
         var checkboxesChecked = [];
         for (var i = 0; i < checkboxes.length; i++) {
             if (checkboxes[i].checked) {
@@ -498,18 +558,18 @@
         return checkboxesChecked.length > 0 ? checkboxesChecked : null;
     }
 
-    function getCheckedGroups(chkboxName) {
-        var checkboxes =  $(chkboxName);
+    function getCheckedElementList(chkboxName) {
+        var checkboxes = $(chkboxName);
         var checkboxesChecked = [];
         for (var i = 0; i < checkboxes.length; i++) {
             if (checkboxes[i].checked) {
-                checkboxesChecked.push({groupname: checkboxes[i].value});
+                checkboxesChecked.push(checkboxes[i].value);
             }
         }
-        return checkboxesChecked.length > 0 ? checkboxesChecked : null;
+        return checkboxesChecked.length > 0 ? checkboxesChecked : [];
     }
 
-    function getUserLabelAjaxRequest (payload){
+    function getUserLabelAjaxRequest(payload) {
         return $.ajax({
             url: '/dashboard/usersingroups',
             type: 'POST',
@@ -517,21 +577,16 @@
             data: JSON.stringify(payload),
             beforeSend: function () {
             },
-            success: function (groups) {
-                var checkGroups = [];
-                checkGroups.push(userNames);
-                var validUsers = interceptBetweenTwoUsergroups(groups);
-                checkGroups.push(validUsers);
-                var newtagedValiedUsers = interceptBetweenTwoUsergroups(checkGroups);
+            success: function (usersInCheckedGroups) {
                 var assignedTags = $("#username-tags").tagit("assignedTags");
                 assignedTags.forEach(function (data) {
-                    if (data != Cookies.get('username') && newtagedValiedUsers.indexOf(data) == -1) {
+                    if (data != Cookies.get('username') || usersInCheckedGroups.indexOf(data) == -1) {
                         $("#username-tags").tagit("removeTagByLabel", data);
                     }
                 });
-                userNames = validUsers;
+                sharedUsers = usersInCheckedGroups;
                 $("#username-tags").tagit({
-                    availableTags: userNames
+                    availableTags: usersInCheckedGroups
                 });
             },
             error: function (e) {
@@ -539,13 +594,29 @@
         });
     }
 
-    function interceptBetweenTwoUsergroups(groups){
-        var validUsers = groups.shift().filter(function (v) {
-            return groups.every(function (a) {
-                return a.indexOf(v) !== -1;
-            });
+    function getUsersInSSIDs(payload) {
+        return $.ajax({
+            url: '/dashboard/usersingroups',
+            type: 'POST',
+            contentType: "application/json",
+            data: JSON.stringify(payload),
+            beforeSend: function () {
+            },
+            success: function (usersInCheckedGroups) {
+                var assignedTags = $("#username-tags").tagit("assignedTags");
+                assignedTags.forEach(function (data) {
+                    if (data != Cookies.get('username') || usersInCheckedGroups.indexOf(data) == -1) {
+                        $("#username-tags").tagit("removeTagByLabel", data);
+                    }
+                });
+                sharedUsers = usersInCheckedGroups;
+                $("#username-tags").tagit({
+                    availableTags: usersInCheckedGroups
+                });
+            },
+            error: function (e) {
+            }
         });
-        return validUsers
     }
 
 </script>

@@ -14,7 +14,7 @@ USE `dashboard`;
 --
 CREATE TABLE IF NOT EXISTS `tenants` (
   `tenantid`  INT NOT NULL AUTO_INCREMENT,
-  `domain`    VARCHAR(255) DEFAULT NULL UNIQUE ,
+  `domain`    VARCHAR(255) DEFAULT NULL UNIQUE,
   `status`    VARCHAR(255) DEFAULT NULL,
   `createdon` TIMESTAMP,
   PRIMARY KEY (`tenantid`)
@@ -97,6 +97,14 @@ CREATE TABLE IF NOT EXISTS `userapgroups` (
 )
   ENGINE = InnoDB;
 
+CREATE TABLE IF NOT EXISTS `userssids` (
+  `userid` BIGINT,
+  `ssid`   VARCHAR(255) DEFAULT NULL,
+  PRIMARY KEY (`userid`, `ssid`),
+  FOREIGN KEY (userid) REFERENCES users (userid)
+    ON DELETE CASCADE
+)
+  ENGINE = InnoDB;
 --
 -- Metrics
 --
@@ -111,14 +119,32 @@ CREATE TABLE IF NOT EXISTS `metrics` (
   ENGINE = InnoDB;
 
 --
+-- Radius NAS
+--
+CREATE TABLE IF NOT EXISTS radiusservers (
+  InsId        INT(11) NOT NULL AUTO_INCREMENT,
+  tenantid     INT(11)          DEFAULT NULL,
+  dbhostname   VARCHAR(45)      DEFAULT NULL,
+  dbhostip     VARCHAR(45)      DEFAULT NULL,
+  dbschemaname VARCHAR(45)      DEFAULT NULL,
+  dbport       INT(11)          DEFAULT NULL,
+  dbusername   VARCHAR(45)      DEFAULT NULL,
+  dbpassword   VARCHAR(45)      DEFAULT NULL,
+  status       VARCHAR(45)      DEFAULT NULL,
+  PRIMARY KEY (InsId)
+)
+  ENGINE = InnoDB
+  AUTO_INCREMENT = 0;
+--
 -- applications
 --
 CREATE TABLE IF NOT EXISTS `apps` (
-  `appid`     INT NOT NULL AUTO_INCREMENT,
-  `tenantid`  INT,
-  `name`      VARCHAR(255) DEFAULT NULL,
-  `aggregate` VARCHAR(255) DEFAULT NULL,
-  `createdon` TIMESTAMP,
+  `appid`          INT NOT NULL AUTO_INCREMENT,
+  `tenantid`       INT,
+  `name`           VARCHAR(255) DEFAULT NULL,
+  `aggregate`      VARCHAR(255) DEFAULT NULL,
+  `filtercriteria` VARCHAR(255) DEFAULT NULL,
+  `createdon`      TIMESTAMP,
   PRIMARY KEY (`appid`),
   FOREIGN KEY (tenantid) REFERENCES tenants (tenantid)
     ON DELETE CASCADE
@@ -152,9 +178,17 @@ CREATE TABLE IF NOT EXISTS `appmetrics` (
 )
   ENGINE = InnoDB;
 
+CREATE TABLE IF NOT EXISTS `appfilterparams` (
+  `appid`     INT,
+  `parameter` VARCHAR(255) DEFAULT NULL,
+  FOREIGN KEY (appid) REFERENCES apps (appid)
+    ON DELETE CASCADE
+)
+  ENGINE = InnoDB;
+
 CREATE TABLE IF NOT EXISTS appacls (
   appid INT,
-  acl VARCHAR(255) DEFAULT NULL,
+  acl   VARCHAR(255) DEFAULT NULL,
   FOREIGN KEY (appid) REFERENCES apps (appid)
     ON DELETE CASCADE
 )

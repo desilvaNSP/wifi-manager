@@ -1,5 +1,5 @@
 <div class="modal inmodal" id="settings-dashboard-modal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content animated fadeIn">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
@@ -9,85 +9,143 @@
             </div>
             <div class="modal-body" id="settingsdbmodal-body">
                 <form role="form" id="add-dashboard-form">
-                    <div class="form-group">
-                        <label for="update-input-dashboard-name">Name</label>
-                        <input type="text" class="form-control" id="update-input-dashboard-name" name="appName"
-                               placeholder="Name" required value="{{appname}}" disabled>
-                    </div>
-                    <div class="form-group">
-                        <label>Wifi Groups</label>
-                    </div>
-                    <div class="checkbox">
+                    <div class="container-fluid">
                         <div class="row">
-                            {{#locations}}
-                            <div class="col-sm-6">
-                                <label>
-                                    <input type="checkbox" name="edit-group" value="{{.}}" class="location-inputs" {{checkedGroups}}>{{.}}
-                                </label>
-                            </div>
-                            {{/locations}}
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Metrics</label>
-                    </div>
-                    <div class="checkbox">
-                        <div class="row">
-                            {{#metrics}}
-                            <div class="col-sm-6">
-                                <label>
-                                    <input type="checkbox" name="metric" value="{{metricid}}" {{checkedMetrics}}>{{name}}
-                                </label>
-                            </div>
-                            {{/metrics}}
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="aclseditpanel">
-                                <h4 class="panel-title">
-                                    <a class="collapsed" role="button" data-toggle="collapse" parent="#accordion" data- href="#collapse-acls-edit" aria-expanded="false" aria-controls="collapse-acls-edit">
-                                        <label>
-                                            <input type="checkbox" id="aclacceptupdate" value="">
-                                        </label>
-                                        <label>Access Control</label>
-                                    </a>
-                                </h4>
-                            </div>
-                            <div id="collapse-acls-edit" class="panel-collapse collapse-acl-edit collapse" role="tabpanel" aria-labelledby="aclseditpanel">
-                                <div class="panel-body">
-                                    <div class="radio" id="acloptionupdatearea">
-                                        {{#acltypes}}
-                                        <div class="col-sm-6">
-                                            <label class="radio inline control-label">
-                                                <input type="radio" class="update-acltypes-radio" name="aclupdate" value="{{.}}" {{checkedACL}}>{{.}}
-                                            </label>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label for="update-input-dashboard-name">Name</label>
+                                    <input type="text" class="form-control" id="update-input-dashboard-name" name="appName"
+                                           placeholder="Name" required value="{{appname}}" disabled>
+                                </div>
+                                <!-- Start data scopes -->
+                                <div class="form-group">
+                                    <label>Data Scopes</label>
+                                </div>
+                                <div class="form-group">
+                                    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading" role="tab" id="ssidscopeinputpanel">
+                                                <h4 class="panel-title">
+                                                    <a role="button" data-toggle="collapse" parent="#accordion"
+                                                       href="#collapse-ssids" aria-expanded="true"
+                                                       aria-controls="collapse-ssids">
+                                                        <input type="radio" id="radio-ssid" value="ssid" name="scope-select" class="criteria-radio" {{isSSIDSelected}}>
+                                                        <label>SSID Based</label>
+                                                    </a>
+                                                </h4>
+                                            </div>
+
+                                            <div id="collapse-ssids" class="panel-collapse collapse" role="tabpanel"
+                                                 aria-labelledby="ssidscopeinputpanel">
+                                                <div class="panel-body">
+                                                    <div class="checkbox">
+                                                        {{#ssids}}
+                                                        <div class="col-sm-6">
+                                                            <label class="radio inline control-label">
+                                                                <input type="checkbox" name="edit-ssid" value="{{.}}" {{checkedSSIDs}}>{{.}}
+                                                            </label>
+                                                        </div>
+                                                        {{/ssids}}
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        {{/acltypes}}
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading" role="tab" id="groupnamescopeinputpanel">
+                                                <h4 class="panel-title">
+                                                    <a class="collapsed" role="button" data-toggle="collapse" parent="#accordion"
+                                                       href="#collapse-groupnames" aria-expanded="false"
+                                                       aria-controls="collapse-groupnames">
+                                                        <input type="radio" id="radio-groupname" value="groupname"
+                                                               name="scope-select" class="criteria-radio" {{isGroupsSelected}}>
+                                                        <label>Location Based</label>
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="collapse-groupnames" class="panel-collapse collapse"
+                                                 role="tabpanel" aria-labelledby="groupnamescopeinputpanel">
+                                                <div class="panel-body">
+                                                    <div class="checkbox">
+                                                        {{#locations}}
+                                                        <div class="col-sm-6">
+                                                            <label class="checkbox inline control-label">
+                                                                <input type="checkbox" name="edit-group" value="{{.}}" class="location-inputs" {{checkedGroups}}>{{.}}
+                                                            </label>
+                                                        </div>
+                                                        {{/locations}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+                                <!-- End data scopes -->
+
+                                <div class="form-group">
+                                    <label>Shared with</label>
+                                </div>
+                                <div class="checkbox">
+                                    <ul id="username-tags">
+                                        {{#users}}
+                                        <li>{{username}}</li>
+                                        {{/users}}
+                                    </ul>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Users</label>
-                    </div>
-                    <div class="checkbox">
-                        <ul id="username-tags">
-                            {{#currentusers}}
-                            <li>{{.}}</li>
-                            {{/currentusers}}
-                        </ul>
-                    </div>
-                    <div class="form-group">
-                        <label>Options</label>
-                    </div>
-                    <div class="checkbox">
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <label>
-                                    <input type="checkbox" id="update-chkAggregate" value="" {{checkAggreateLoc}}>Aggregate Location data
-                                </label>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label>Metrics</label>
+                                </div>
+                                <div class="checkbox">
+                                    <div class="row">
+                                        {{#metrics}}
+                                        <div class="col-sm-6">
+                                            <label>
+                                                <input type="checkbox" name="metric" value="{{metricid}}" {{checkedMetrics}}>{{name}}
+                                            </label>
+                                        </div>
+                                        {{/metrics}}
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading" role="tab" id="aclseditpanel">
+                                            <h4 class="panel-title">
+                                                <a class="collapsed" role="button" data-toggle="collapse" parent="#accordion" data- href="#collapse-acls-edit" aria-expanded="false" aria-controls="collapse-acls-edit">
+                                                    <label>
+                                                        <input type="checkbox" id="aclacceptupdate" value="">
+                                                    </label>
+                                                    <label>Access Control</label>
+                                                </a>
+                                            </h4>
+                                        </div>
+                                        <div id="collapse-acls-edit" class="panel-collapse collapse-acl-edit collapse" role="tabpanel" aria-labelledby="aclseditpanel">
+                                            <div class="panel-body">
+                                                <div class="radio" id="acloptionupdatearea">
+                                                    {{#acltypes}}
+                                                    <div class="col-sm-6">
+                                                        <label class="radio inline control-label">
+                                                            <input type="radio" class="update-acltypes-radio" name="aclupdate" value="{{.}}" {{checkedACL}}>{{.}}
+                                                        </label>
+                                                    </div>
+                                                    {{/acltypes}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Options</label>
+                                </div>
+                                <div class="checkbox">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <label>
+                                                <input type="checkbox" id="update-chkAggregate" value="" {{checkAggreateLoc}}>Aggregate Location data
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -126,6 +184,16 @@
                 $('.collapse-acl-edit.collapse').collapse('hide');
                 $(".update-acltypes-radio").attr("checked",false);
             }
+        });
+
+        $('#collapse-ssids').on('shown.bs.collapse', function () {
+            $('#radio-ssid').prop('checked', true);
+            $('#collapse-groupnames').collapse('hide')
+        });
+
+        $('#collapse-groupnames').on('shown.bs.collapse', function () {
+            $('#radio-groupname').prop('checked', true);
+            $('#collapse-ssids').collapse('hide')
         });
     });
 </script>

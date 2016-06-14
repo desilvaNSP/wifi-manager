@@ -3,8 +3,8 @@ package wifi
 import (
 	"wislabs.wifi.manager/utils"
 	"wislabs.wifi.manager/dao"
-	"database/sql"
 	"strconv"
+	"wislabs.wifi.manager/commons"
 )
 
 func SummaryDetailsFromTo(constrains dao.Constrains) [][]string {
@@ -17,18 +17,13 @@ func SummaryDetailsFromTo(constrains dao.Constrains) [][]string {
 		query = query + " AND acl=? "
 	}
 
-	if len(constrains.GroupNames) > 0 {
-		args := getArgs(&constrains)
-		query = query + " AND ( groupname=? "
-		for i := 1; i< len(constrains.GroupNames); i++ {
-			query = query + " OR groupname=? "
-		}
-		query = query + ")"
+	args := getArgs(&constrains)
+	filterQuery := buildQueryComponent(&constrains)
+	query = query + filterQuery
 
-		_, err := dbMap.Select(&dailyAccData, query, args...)
-		if err != nil {
-			panic(err.Error()) // proper error handling instead of panic
-		}
+	_, err := dbMap.Select(&dailyAccData, query, args...)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic
 	}
 
 	CSVcontent := make([][]string, len(dailyAccData) + 1)
@@ -51,7 +46,7 @@ func SummaryDetailsFromTo(constrains dao.Constrains) [][]string {
 	CSVcontent[0][14] = "CalledStatoinMAC"
 	CSVcontent[0][15] = "GroupName"
 
-	for i :=1 ; i < len(CSVcontent)-1; i++ {
+	for i := 1; i < len(CSVcontent) - 1; i++ {
 		CSVcontent[i] = make([]string, 17)
 		CSVcontent[i][0] = strconv.Itoa(dailyAccData[i].Tenantid)
 		CSVcontent[i][1] = dailyAccData[i].Username
@@ -61,8 +56,8 @@ func SummaryDetailsFromTo(constrains dao.Constrains) [][]string {
 		CSVcontent[i][5] = strconv.Itoa(dailyAccData[i].Sessionmaxduration)
 		CSVcontent[i][6] = strconv.Itoa(dailyAccData[i].Sessionminduration)
 		CSVcontent[i][7] = strconv.Itoa(dailyAccData[i].Sessionavgduration)
-		CSVcontent[i][8] = strconv.FormatInt(dailyAccData[i].Inputoctets,10)
-		CSVcontent[i][9] = strconv.FormatInt(dailyAccData[i].Outputoctets,10)
+		CSVcontent[i][8] = strconv.FormatInt(dailyAccData[i].Inputoctets, 10)
+		CSVcontent[i][9] = strconv.FormatInt(dailyAccData[i].Outputoctets, 10)
 		CSVcontent[i][10] = dailyAccData[i].Nasipaddress
 		CSVcontent[i][11] = dailyAccData[i].Framedipaddress
 		CSVcontent[i][12] = dailyAccData[i].Calledstationid
@@ -70,46 +65,39 @@ func SummaryDetailsFromTo(constrains dao.Constrains) [][]string {
 		CSVcontent[i][14] = dailyAccData[i].Calledstationmac.String
 		CSVcontent[i][15] = dailyAccData[i].Groupname.String
 	}
-	return  CSVcontent
+	return CSVcontent
 }
 
-func GetAccessPointAgregatedDataFromTo(constrains dao.Constrains) [] dao.AccessPoint{
-
-	dbMap := utils.GetDBConnection("summary");
+func GetAccessPointAggregatedDataFromTo(constrains dao.Constrains) [] dao.AccessPoint {
+	dbMap := utils.GetDBConnection(commons.SUMMARY_DB);
 	defer dbMap.Db.Close()
-	var accespointdata[] dao.AccessPoint
+	var accessPointData[] dao.AccessPoint
 
-	query := "SELECT calledstationmac as calledstationmac,"+
-		"SUM(outputoctets) as totaloutputoctets,"+
-		"SUM(inputoctets) as totalinputoctets,"+
-		"SUM(noofsessions) as totalsessions ,"+
-		"COUNT(DISTINCT username) as totalusers,"+
-		"SUM(inputoctets)/COUNT(DISTINCT username) as avgdataperuser,"+
-		"SUM(totalsessionduration)/SUM(noofsessions) as avgdatapersessiontime "+
-		"FROM dailyacct "+
-		"WHERE date >= ? AND date <= ? AND tenantid=? "
+	query := "SELECT calledstationmac as calledstationmac," +
+	"SUM(outputoctets) as totaloutputoctets," +
+	"SUM(inputoctets) as totalinputoctets," +
+	"SUM(noofsessions) as totalsessions ," +
+	"COUNT(DISTINCT username) as totalusers," +
+	"SUM(inputoctets)/COUNT(DISTINCT username) as avgdataperuser," +
+	"SUM(totalsessionduration)/SUM(noofsessions) as avgdatapersessiontime " +
+	"FROM dailyacct " +
+	"WHERE date >= ? AND date <= ? AND tenantid=? "
 
 	if len(constrains.ACL) > 0 {
 		query = query + " AND acl=? "
 	}
-
-	if len(constrains.GroupNames) > 0 {
-		args := getArgs(&constrains)
-		query = query + " AND ( groupname=? "
-		for i := 1; i< len(constrains.GroupNames); i++ {
-			query = query + " OR groupname=? "
-		}
-		query = query + ") Group By calledstationmac"
-
-		_, err := dbMap.Select(&accespointdata, query, args...)
-		if err != nil {
-			panic(err.Error()) // proper error handling instead of panic
-		}
+	args := getArgs(&constrains)
+	filterQuery := buildQueryComponent(&constrains)
+	query = query + filterQuery + " GROUP BY calledstationmac"
+	print(query)
+	_, err := dbMap.Select(&accessPointData, query, args...)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic
 	}
-	return accespointdata
+	return accessPointData
 }
 
-func GetLongLatLocationByMacAddress(mac string) dao.LongLatMac{
+func GetLongLatLocationByMacAddress(mac string) dao.LongLatMac {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 	var longlatbymac dao.LongLatMac
@@ -126,23 +114,17 @@ func GetAggregatedDownloadsFromTo(constrains dao.Constrains) [] dao.NameValue {
 	dbMap := utils.GetDBConnection("summary");
 	defer dbMap.Db.Close()
 	var totalDailyDownloads[] dao.NameValue
-	query := "SELECT SUM(inputoctets) as value ,date as name FROM dailyacct where date >= ? AND date <= ? AND tenantid=?"
+	query := "SELECT SUM(inputoctets) as value, date as name FROM dailyacct where date >= ? AND date <= ? AND tenantid=? "
 	if len(constrains.ACL) > 0 {
 		query = query + " AND acl=? "
 	}
+	args := getArgs(&constrains)
+	filterQuery := buildQueryComponent(&constrains)
+	query = query + filterQuery + " GROUP BY date"
 
-	if len(constrains.GroupNames) > 0 {
-		query = query + " AND ( groupname=? "
-		for i := 1; i< len(constrains.GroupNames); i++ {
-   			query = query + " OR groupname=? "
-		}
-		query = query + ") group by date"
-
-		args := getArgs(&constrains)
-		_, err := dbMap.Select(&totalDailyDownloads, query, args...)
-		if err != nil {
-			panic(err.Error())
-		}
+	_, err := dbMap.Select(&totalDailyDownloads, query, args...)
+	if err != nil {
+		panic(err.Error())
 	}
 	return totalDailyDownloads
 }
@@ -156,17 +138,13 @@ func GetAggregatedUploadsFromTo(constrains dao.Constrains) [] dao.NameValue {
 		query = query + " AND acl=? "
 	}
 
-	if len(constrains.GroupNames) > 0 {
-		args := getArgs(&constrains)
-		query = query + " AND (groupname=? "
-		for i := 1; i< len(constrains.GroupNames); i++ {
-			query = query + " OR groupname=? "
-		}
-		query = query + ") group by date"
-		_, err := dbMap.Select(&totalDailyDownloads, query, args...)
-		if err != nil {
-			panic(err.Error()) // proper error handling instead of panic
-		}
+	args := getArgs(&constrains)
+	filterQuery := buildQueryComponent(&constrains)
+	query = query + filterQuery + " GROUP BY date"
+
+	_, err := dbMap.Select(&totalDailyDownloads, query, args...)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic
 	}
 	return totalDailyDownloads
 }
@@ -180,62 +158,41 @@ func GetAvgDailyDownloadsPerUserFromTo(constrains dao.Constrains) [] dao.NameVal
 		query = query + " AND acl=? "
 	}
 
-	if len(constrains.GroupNames) > 0 {
-		args := getArgs(&constrains)
-		query = query + " AND( groupname=? "
-		for i := 1; i< len(constrains.GroupNames); i++ {
-			query = query + " OR groupname=? "
-		}
-		query = query + ") group by date"
-		_, err := dbMap.Select(&totalDailyDownloads, query, args...)
-		if err != nil {
-			panic(err.Error()) // proper error handling instead of panic
-		}
+	args := getArgs(&constrains)
+	filterQuery := buildQueryComponent(&constrains)
+	query = query + filterQuery + " GROUP BY date"
+	_, err := dbMap.Select(&totalDailyDownloads, query, args...)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic
 	}
-
 	return totalDailyDownloads
 }
 
-func GetDownloadsFromTo(constrains dao.Constrains) (int64 , int64) {
+func GetDownloadsFromTo(constrains dao.Constrains) (int64, int64) {
 	dbMap := utils.GetDBConnection("summary");
 	defer dbMap.Db.Close()
 	var err error
-	var count sql.NullInt64
-	var countPre sql.NullInt64
 	query := "SELECT SUM(inputoctets) FROM dailyacct where date >= ? AND date <= ? AND tenantid = ? "
 	if len(constrains.ACL) > 0 {
 		query = query + " AND acl=? "
 	}
+	args := getArgs(&constrains)
+	filterQuery := buildQueryComponent(&constrains)
+	query = query + filterQuery
 
-	if len(constrains.GroupNames) > 0 {
-		query = query + " AND( groupname=? "
-		for i := 1; i< len(constrains.GroupNames); i++ {
-			query = query + " OR groupname=? "
-		}
-		smtOut, err := dbMap.Db.Prepare(query+ ")")
-		defer smtOut.Close()
+	count, err := dbMap.SelectNullInt(query, args...)
+	argsPast := getArgsPast(&constrains)
 
-		args := getArgs(&constrains)
-		err = smtOut.QueryRow(args...).Scan(&count) // WHERE number = 13
-		if err != nil {
-			panic(err.Error()) // proper error handling instead of panic in your app
-		}
-		argsPast := getArgsPast(&constrains)
-		err = smtOut.QueryRow(argsPast...).Scan(&countPre)
-		if err != nil {
-			panic(err.Error())
-		}
-	}
-
+	countPre, err := dbMap.SelectNullInt(query, argsPast...)
 	checkErr(err, "Select failed on Get downloads")
 
 	if count.Valid {
-		return count.Int64 , countPre.Int64
-	}else {
+		return count.Int64, countPre.Int64
+	} else {
 		if countPre.Valid {
-			return 0 , countPre.Int64
-		}else{
-			return 0,0
+			return 0, countPre.Int64
+		} else {
+			return 0, 0
 		}
 	}
 }
@@ -244,126 +201,85 @@ func GetUploadsFromTo(constrains dao.Constrains) (int64, int64) {
 	dbMap := utils.GetDBConnection("summary");
 	defer dbMap.Db.Close()
 	var err error
-	var count sql.NullInt64
-	var countPre sql.NullInt64
 	query := "SELECT SUM(outputoctets) FROM dailyacct where date >= ? AND date <= ? AND tenantid = ? "
 	if len(constrains.ACL) > 0 {
 		query = query + " AND acl=? "
 	}
+	args := getArgs(&constrains)
+	filterQuery := buildQueryComponent(&constrains)
+	query = query + filterQuery
 
-	if len(constrains.GroupNames) > 0 {
-		query = query + " AND ( groupname=? "
-		for i := 1; i< len(constrains.GroupNames); i++ {
-			query = query + " OR groupname=? "
-		}
-		smtOut, err := dbMap.Db.Prepare(query + ")")
-		defer smtOut.Close()
+	count, err := dbMap.SelectNullInt(query, args...)
+	argsPast := getArgsPast(&constrains)
 
-		args := getArgs(&constrains)
-		err = smtOut.QueryRow(args...).Scan(&count) // WHERE number = 13
-		if err != nil {
-			panic(err.Error()) // proper error handling instead of panic in your app
-		}
+	countPre, err := dbMap.SelectNullInt(query, argsPast...)
 
-		argsPast := getArgsPast(&constrains)
-		err = smtOut.QueryRow(argsPast...).Scan(&countPre)
-		if err != nil {
-			panic(err.Error())
-		}
-	}
-
-	checkErr(err, "Select failed on Get downloads")
+	checkErr(err, "Select failed on Get uploads")
 	if count.Valid {
-		return count.Int64 , countPre.Int64
-	}else {
+		return count.Int64, countPre.Int64
+	} else {
 		if countPre.Valid {
-			return 0 , countPre.Int64
-		}else{
-			return 0,0
+			return 0, countPre.Int64
+		} else {
+			return 0, 0
 		}
 	}
 }
 
-func GetTotalSessionsCountFromTo(constrains dao.Constrains) (int64,int64) {
+func GetTotalSessionsCountFromTo(constrains dao.Constrains) (int64, int64) {
 	dbMap := utils.GetDBConnection("summary");
 	defer dbMap.Db.Close()
 	var err error
-	var count sql.NullInt64
-	var countPre sql.NullInt64
 	query := "SELECT SUM(noofsessions) FROM dailyacct where date >= ? AND date <= ? AND tenantid = ? "
 	if len(constrains.ACL) > 0 {
 		query = query + " AND acl=? "
 	}
+	args := getArgs(&constrains)
+	filterQuery := buildQueryComponent(&constrains)
+	query = query + filterQuery
 
-	if len(constrains.GroupNames) > 0 {
-		query = query + " AND (groupname=? "
-		for i := 1; i< len(constrains.GroupNames); i++ {
-			query = query + " OR groupname=? "
-		}
-		smtOut, err := dbMap.Db.Prepare(query + ")")
-		defer smtOut.Close()
-		args := getArgs(&constrains)
-		err = smtOut.QueryRow(args...).Scan(&count) // WHERE number = 13
-		if err != nil {
-			panic(err.Error()) // proper error handling instead of panic in your app
-		}
-		argsPast := getArgsPast(&constrains)
-		err = smtOut.QueryRow(argsPast...).Scan(&countPre)
-		if err != nil {
-			panic(err.Error())
-		}
-	}
+	count, err := dbMap.SelectNullInt(query, args...)
+	argsPast := getArgsPast(&constrains)
 
-	checkErr(err, "Select failed on Get downloads")
+	countPre, err := dbMap.SelectNullInt(query, argsPast...)
+
+	checkErr(err, "Select failed on getting total session count")
 	if count.Valid {
-		return count.Int64 , countPre.Int64
-	}else {
+		return count.Int64, countPre.Int64
+	} else {
 		if countPre.Valid {
-			return 0 , countPre.Int64
-		}else{
-			return 0,0
+			return 0, countPre.Int64
+		} else {
+			return 0, 0
 		}
 	}
 }
 
-func GetAvgSessionsFromTo(constrains dao.Constrains) (float64,float64) {
+func GetAvgSessionsFromTo(constrains dao.Constrains) (float64, float64) {
 	dbMap := utils.GetDBConnection("summary");
 	defer dbMap.Db.Close()
 	var err error
-	var count sql.NullFloat64
-	var countPre sql.NullFloat64
 	query := "SELECT SUM(totalsessionduration)/SUM(noofsessions) FROM dailyacct where date >= ? AND date <= ? AND tenantid = ? "
 	if len(constrains.ACL) > 0 {
 		query = query + " AND acl=? "
 	}
+	args := getArgs(&constrains)
+	filterQuery := buildQueryComponent(&constrains)
+	query = query + filterQuery
 
-	if len(constrains.GroupNames) > 0 {
-		args := getArgs(&constrains)
-		query = query + " AND ( groupname=? "
-		for i := 1; i< len(constrains.GroupNames); i++ {
-			query = query + " OR groupname=? "
-		}
-		smtOut, err := dbMap.Db.Prepare(query + ")")
-		defer smtOut.Close()
-		err = smtOut.QueryRow(args...).Scan(&count) // WHERE number = 13
-		if err != nil {
-			panic(err.Error()) // proper error handling instead of panic in your app
-		}
-		argsPast := getArgsPast(&constrains)
-		err = smtOut.QueryRow(argsPast...).Scan(&countPre)
-		if err != nil {
-			panic(err.Error())
-		}
-	}
+	count, err := dbMap.SelectNullFloat(query, args...)
+	argsPast := getArgsPast(&constrains)
 
-	checkErr(err, "Select failed on Get downloads")
+	countPre, err := dbMap.SelectNullFloat(query, argsPast...)
+
+	checkErr(err, "Select failed on getting avg session count")
 	if count.Valid {
-		return count.Float64 , countPre.Float64
-	}else {
+		return count.Float64, countPre.Float64
+	} else {
 		if countPre.Valid {
-			return 0 , countPre.Float64
-		}else{
-			return 0,0
+			return 0, countPre.Float64
+		} else {
+			return 0, 0
 		}
 	}
 }
@@ -376,84 +292,115 @@ func GetAvgDailySessionTimePerUserFromTo(constrains dao.Constrains) [] dao.NameV
 	if len(constrains.ACL) > 0 {
 		query = query + " AND acl=? "
 	}
+	args := getArgs(&constrains)
+	filterQuery := buildQueryComponent(&constrains)
+	query = query + filterQuery + " GROUP BY date"
 
-	if len(constrains.GroupNames) > 0 {
-		args := getArgs(&constrains)
-		query = query + " AND (groupname=? "
-		for i := 1; i< len(constrains.GroupNames); i++ {
-			query = query + " OR groupname=? "
-		}
-		query = query + ") group by date"
-		_, err := dbMap.Select(&totalDailyDownloads, query, args...)
-		if err != nil {
-			panic(err.Error()) // proper error handling instead of panic
-		}
+	_, err := dbMap.Select(&totalDailyDownloads, query, args...)
+	if err != nil {
+		panic(err.Error())
 	}
 	return totalDailyDownloads
 }
 
-func getArgs(constrains *dao.Constrains) []interface{}{
-	var startSize = 3 ;
-	var startIndex  = 3
-	if len(constrains.ACL)>0 {
+func buildQueryComponent(constrains *dao.Constrains) (string) {
+	query := " "
+	if len(constrains.Parameters) > 0 {
+		query = " AND ( " + constrains.Criteria + "=? "
+		for i := 1; i < len(constrains.Parameters); i++ {
+			query = query + " OR " + constrains.Criteria + "=? "
+		}
+		query = query + ") "
+	}
+	return query
+}
+
+func getArgs(constrains *dao.Constrains) []interface{} {
+	var startSize = 3;
+	var startIndex = 3
+	if len(constrains.ACL) > 0 {
 		startSize = 4
 	}
-	args := make([]interface{}, len(constrains.GroupNames)+ startSize)
+	args := make([]interface{}, len(constrains.Parameters) + startSize)
 	args[0] = constrains.From
 	args[1] = constrains.To
 	args[2] = constrains.TenantId
-	if len(constrains.ACL)>0 {
+	if len(constrains.ACL) > 0 {
 		args[3] = constrains.ACL
 		startIndex++;
 	}
-	for index, value := range constrains.GroupNames { args[index+startIndex] = value }
+	for index, value := range constrains.Parameters {
+		args[index + startIndex] = value
+	}
 	return args
 }
 
-func getArgsPast(constrains *dao.Constrains) []interface{}{
-	var startSize = 3 ;
-	var startIndex  = 3
-	if len(constrains.ACL)>0 {
+func getArgsPast(constrains *dao.Constrains) []interface{} {
+	var startSize = 3;
+	var startIndex = 3
+	if len(constrains.ACL) > 0 {
 		startSize = 4
 	}
-	args := make([]interface{}, len(constrains.GroupNames)+ startSize)
+	args := make([]interface{}, len(constrains.Parameters) + startSize)
 	args[0] = constrains.PreFrom
 	args[1] = constrains.PreTo
 	args[2] = constrains.TenantId
-	if len(constrains.ACL)>0 {
+	if len(constrains.ACL) > 0 {
 		args[3] = constrains.ACL
 		startIndex++;
 	}
-	for index, value := range constrains.GroupNames { args[index+startIndex] = value }
+	for index, value := range constrains.Parameters {
+		args[index + startIndex] = value
+	}
 	return args
 }
 
-func getArgs2(constrains *dao.Constrains, threshold int) []interface{}{
-	args := make([]interface{}, len(constrains.GroupNames)+4)
+func getArgs2(constrains *dao.Constrains, threshold int) []interface{} {
+	var arraySize = 4;
+	if len(constrains.ACL) > 0 {
+		arraySize++
+	}
+	args := make([]interface{}, len(constrains.Parameters) + arraySize)
 	args[0] = constrains.From
 	args[1] = constrains.To
 	args[2] = constrains.TenantId
 	args[3] = threshold
-	for index, value := range constrains.GroupNames { args[index+4] = value }
+	if len(constrains.ACL) > 0 {
+		args[4] = constrains.ACL
+	}
+	for index, value := range constrains.Parameters {
+		args[index + arraySize] = value
+	}
 	return args
 }
 
-func getArgs2Past(constrains *dao.Constrains, threshold int) []interface{}{
-	args := make([]interface{}, len(constrains.GroupNames)+4)
+func getArgs2Past(constrains *dao.Constrains, threshold int) []interface{} {
+	var arraySize = 4;
+	if len(constrains.ACL) > 0 {
+		arraySize++
+	}
+	args := make([]interface{}, len(constrains.Parameters) + arraySize)
 	args[0] = constrains.PreFrom
 	args[1] = constrains.PreTo
 	args[2] = constrains.TenantId
 	args[3] = threshold
-	for index, value := range constrains.GroupNames { args[index+4] = value }
+	if len(constrains.ACL) > 0 {
+		args[4] = constrains.ACL
+	}
+	for index, value := range constrains.Parameters {
+		args[index + arraySize] = value
+	}
 	return args
 }
 
-func getArgs3(constrains *dao.Constrains) []interface{}{
-	args := make([]interface{}, len(constrains.GroupNames)+3)
+func getArgs3(constrains *dao.Constrains) []interface{} {
+	args := make([]interface{}, len(constrains.Parameters) + 3)
 	args[0] = constrains.From
 	args[1] = constrains.To
 	args[2] = constrains.TenantId
-	for index, value := range constrains.GroupNames { args[index+3] = value }
+	for index, value := range constrains.Parameters {
+		args[index + 3] = value
+	}
 	return args
 }
 

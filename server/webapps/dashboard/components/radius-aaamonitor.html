@@ -12,9 +12,6 @@
                 <div class="ibox">
                     <div class="ibox-title">
                         <h5>Radius DB Servers | Nas Clients List</h5>
-                        <div class="ibox-tools btn-tools">
-                            <a href="#" id="add-radiusclient" class="btn btn-primary btn-sm">Add Radius Server</a>
-                        </div>
                     </div>
                     <div class="ibox-content">
                         <div class="row aaa-list-container">
@@ -48,12 +45,6 @@
                             <div id="collapse-nasclients" class="panel-collapse collapse" role="tabpanel"
                                  aria-labelledby="nasclientspanel">
                                 <div class="panel-body">
-                                    <div class="heading">
-                                        <input type="button" id="btn-show-nasclientmodal"
-                                               class="btn btn-primary col-lg-offset-10 col-lg-1" value="Add NAS">
-                                    </div>
-                                    </br>
-                                    </br>
                                     <table class="table table-striped table-bordered table-hover dataTables-nasclientlist">
                                         <thead>
                                         <tr>
@@ -87,7 +78,7 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
                         class="sr-only">Close</span></button>
-                <h4 class="modal-title radius-modal-title">Update Radius Server</h4>
+                <h4 class="modal-title radius-modal-title">Update Radius DB Server</h4>
                 <small>A RADIUS server is a network server implementing RADIUS and RADIUS-based authentication
                     protocols
                 </small>
@@ -154,7 +145,7 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
                         class="sr-only">Close</span></button>
-                <h4 class="modal-title radius-modal-title">Create Radius Server</h4>
+                <h4 class="modal-title radius-modal-title">Create Radius DB Server</h4>
                 <small>A RADIUS server is a network server implementing RADIUS and RADIUS-based authentication
                     protocols
                 </small>
@@ -440,7 +431,23 @@
                     "className": 'center',
                     "sortable": false
                 }
-            ]
+            ],
+            dom: "<'dt-toolbar'<'col-xs-12 col-sm-6'lf><'col-sm-6 col-xs-6 hidden-xs'CT>r>" +
+            "t" +
+            "<'dt-toolbar-footer'<'col-sm-6 col-xs-12 hidden-xs'i><'col-sm-6 col-xs-12'p>>",
+            tableTools: {
+                "aButtons": [
+                    {
+                        "sExtends": "text",
+                        "sButtonText": "Add Radius Server",
+                        "fnClick": function ( nButton, oConfig, oFlash ) {
+                            $('#aaa-ins-inputform').trigger('reset');
+                            addradiusclientvalidator.resetForm();
+                            $("#radiuserver-modal").modal('show');
+                        }
+                    }
+                ]
+            }
         });
 
         nasClientsTable = $('.dataTables-nasclientlist').DataTable({
@@ -469,7 +476,24 @@
                  "className": 'center',
                  "sortable": false
                  }*/
-            ]
+            ],
+            dom: "<'dt-toolbar'<'col-xs-12 col-sm-6'lf><'col-sm-6 col-xs-6 hidden-xs'CT>r>" +
+            "t" +
+            "<'dt-toolbar-footer'<'col-sm-6 col-xs-12 hidden-xs'i><'col-sm-6 col-xs-12'p>>",
+            tableTools: {
+                "aButtons": [
+                    {
+                        "sExtends": "text",
+                        "sButtonText": "Add NAS Client",
+                        "fnClick": function ( nButton, oConfig, oFlash ) {
+                            $('#add-nasclient-form').trigger('reset');
+                            addNasClientValidator.resetForm();
+                            $("#add-nasclient-modal").modal('show');
+                        }
+                    }
+                ]
+            }
+
         });
 
 
@@ -631,11 +655,6 @@
             }
         });
 
-        $("#add-radiusclient").on('click', function () {
-            $('#aaa-ins-inputform').trigger('reset');
-            addradiusclientvalidator.resetForm();
-            $("#radiuserver-modal").modal('show');
-        });
         $("a#alert-close").on('click', function () {
             $('.msg-getnasclients-error').hide();
         });
@@ -682,13 +701,6 @@
             currentServerObject.InsId = instance.InsId
 
             renderNASClientTable(instance.InsId)
-        });
-
-
-        $('#btn-show-nasclientmodal').click(function () {
-            $('#add-nasclient-form').trigger('reset');
-            addNasClientValidator.resetForm();
-            $("#add-nasclient-modal").modal('show');
         });
 
         $("#btn-create-nasclient").on('click', function () {

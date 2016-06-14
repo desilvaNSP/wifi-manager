@@ -5,7 +5,6 @@ import (
 	"wislabs.wifi.manager/dao"
 	"wislabs.wifi.manager/commons"
 	log "github.com/Sirupsen/logrus"
-	"database/sql"
 	"net/http"
 	"strconv"
 )
@@ -19,50 +18,96 @@ func GetDailyUserCountSeriesFromTo(constrains dao.Constrains) [] dao.NameValue {
 		query = query + " AND acl=? "
 	}
 
-	if len(constrains.GroupNames) > 0 {
-		args := getArgs(&constrains)
-		query = query + " AND (groupname=? "
-		for i := 1; i < len(constrains.GroupNames); i++ {
-			query = query + " OR groupname=? "
-		}
-		query = query + " )group by date"
-		_, err := dbMap.Select(&totalDailyDownloads, query, args...)
-		if err != nil {
-			panic(err.Error()) // proper error handling instead of panic
-		}
+	args := getArgs(&constrains)
+	filterQuery := buildQueryComponent(&constrains)
+	query = query + filterQuery + " GROUP BY date"
+
+	_, err := dbMap.Select(&totalDailyDownloads, query, args...)
+	if err != nil {
+		panic(err.Error())
 	}
 	return totalDailyDownloads
 }
 
 func GetUserCountOfDownloadsOver(constrains dao.Constrains, threshold int) (int64,int64) {
-	dbMap := utils.GetDBConnection("summary");
+	dbMap := utils.GetDBConnection(commons.SUMMARY_DB);
 	defer dbMap.Db.Close()
 	var err error
-	var count sql.NullInt64
-	var countPre sql.NullInt64
 	query := "SELECT count(DISTINCT username) FROM dailyacct where date >= ? AND date <= ? AND tenantid= ? AND inputoctets >= ?"
 
-	if len(constrains.GroupNames) > 0 {
-		query = query + " AND (groupname=? "
-		for i := 1; i < len(constrains.GroupNames); i++ {
-			query = query + " OR groupname=? "
-		}
-		smtOut, err := dbMap.Db.Prepare(query + ")")
-		defer smtOut.Close()
+	if len(constrains.ACL) > 0 {
+		query = query + " AND acl=? "
+	}
 
-		args := getArgs2(&constrains, threshold)
-		err = smtOut.QueryRow(args...).Scan(&count) // WHERE number = 13
-		if err != nil {
-			panic(err.Error()) // proper error handling instead of panic in your app
-		}
+	args := getArgs2(&constrains, threshold)
+	filterQuery := buildQueryComponent(&constrains)
+	query = query + filterQuery
 
-		argsPast := getArgs2Past(&constrains,threshold)
-		err = smtOut.QueryRow(argsPast...).Scan(&countPre)
-		if err != nil {
-			panic(err.Error())
+	count, err := dbMap.SelectNullInt(query, args...)
+	argsPast := getArgs2Past(&constrains, threshold)
+
+	countPre, err := dbMap.SelectNullInt(query, argsPast...)
+	checkErr(err, "Select failed while getting user count of downloads of over")
+	if count.Valid {
+		return count.Int64 , countPre.Int64
+	}else {
+		if countPre.Valid {
+			return 0 , countPre.Int64
+		}else{
+			return 0,0
 		}
 	}
-	checkErr(err, "Select failed on Get downloads")
+}
+
+func  GetUsersCountFromTo(constrains dao.Constrains) (int64,int64) {
+	dbMap := utils.GetDBConnection(commons.SUMMARY_DB);
+	defer dbMap.Db.Close()
+	query := "SELECT COUNT(DISTINCT username) FROM dailyacct where date >= ? AND date <= ? AND tenantid=? "
+	if len(constrains.ACL) > 0 {
+		query = query + " AND acl=? "
+	}
+
+	args := getArgs(&constrains)
+	filterQuery := buildQueryComponent(&constrains)
+	query = query + filterQuery
+
+	count, err := dbMap.SelectNullInt(query, args...)
+	argsPast := getArgsPast(&constrains)
+
+	countPre, err := dbMap.SelectNullInt(query, argsPast...)
+	checkErr(err, "Select failed on while getting user count from to")
+	if count.Valid {
+		return count.Int64 , countPre.Int64
+	}else {
+		if countPre.Valid {
+			return 0 , countPre.Int64
+		}else{
+			return 0,0
+		}
+	}
+}
+
+/*
+* Users who visits more than once
+*/
+func GetReturningUsersCount(constrains dao.Constrains) (int64,int64) {
+	dbMap := utils.GetDBConnection(commons.PORTAL_DB);
+	defer dbMap.Db.Close()
+	query := "SELECT COUNT(DISTINCT username) FROM accounting where acctstarttime >= ? AND acctstarttime < ? AND tenantid=? AND visits > 0"
+
+	if len(constrains.ACL) > 0 {
+		query = query + " AND acl=? "
+	}
+	args := getArgs(&constrains)
+	filterQuery := buildQueryComponent(&constrains)
+	query = query + filterQuery
+
+	count, err := dbMap.SelectNullInt(query, args...)
+	argsPast := getArgsPast(&constrains)
+
+	countPre, err := dbMap.SelectNullInt(query, argsPast...)
+
+	checkErr(err, "Select failed while getting returning user count")
 	if count.Valid {
 		return count.Int64 , countPre.Int64
 	}else {
@@ -94,7 +139,7 @@ func AddWiFiUser(user *dao.PortalUser) error {
 }
 
 func AddRadiusUser(user *dao.PortalUser) {
-	dbMap := utils.GetDBConnection(commons.RADIUS_DB_NAME);
+	dbMap := utils.GetDBConnection(commons.RADIUS_DB);
 	defer dbMap.Db.Close()
 
 	stmtIns, err := dbMap.Db.Prepare(commons.ADD_RADIUS_USER)
@@ -123,9 +168,9 @@ func UpdateWiFiUser(user *dao.PortalUser) {
 	defer stmtIns.Close()
 }
 
-func GetAllWiFiUsers(tenantId int, draw int, r *http.Request) dao.DataTablesResponce {
+func GetAllWiFiUsers(tenantId int, draw int, r *http.Request) dao.DataTablesResponse {
 	var users []dao.PortalUser
-	var response dao.DataTablesResponce
+	var response dao.DataTablesResponse
 	columns := []string{"username", "acl", "groupname", "visits", "acctstarttime", "acctactivationtime", "maxsessionduration", "accounting"}
 	totalRecordCountQuery := "SELECT COUNT(username) FROM accounting where tenantid=" + strconv.Itoa(tenantId)
 	var err error
@@ -165,7 +210,7 @@ func DeleteUserFromRadAcct(username string, tenantid int) error {
 }
 
 func IsWifiUserExistInGroup(tenantId int, username string, groupname string) (int, error){
-	dbMap := utils.GetDBConnection(commons.PORTAL_DB_NAME);
+	dbMap := utils.GetDBConnection(commons.PORTAL_DB);
 	defer dbMap.Db.Close()
 	var checkUser int
 	err := dbMap.SelectOne(&checkUser, commons.IS_EXISTS_USER_NAME_IN_GROUP, username, groupname, tenantId)
@@ -173,91 +218,6 @@ func IsWifiUserExistInGroup(tenantId int, username string, groupname string) (in
 		return checkUser, err
 	}
 	return checkUser, nil
-}
-
-func  GetUsersCountFromTo(constrains dao.Constrains) (int64,int64) {
-	dbMap := utils.GetDBConnection("summary");
-	defer dbMap.Db.Close()
-	var err error
-	var count sql.NullInt64
-	var countPre sql.NullInt64
-	query := "SELECT COUNT(DISTINCT username) FROM dailyacct where date >= ? AND date <= ? AND tenantid=? "
-	if len(constrains.ACL) > 0 {
-		query = query + " AND acl=? "
-	}
-
-	if len(constrains.GroupNames) > 0 {
-		query = query + " AND (groupname=? "
-		for i := 1; i < len(constrains.GroupNames); i++ {
-			query = query + " OR groupname=? "
-		}
-		smtOut, err := dbMap.Db.Prepare(query + ")")
-		defer smtOut.Close()
-
-		args := getArgs(&constrains)
-		err = smtOut.QueryRow(args...).Scan(&count) // WHERE number = 13
-		if err != nil {
-			panic(err.Error()) // proper error handling instead of panic in your app
-		}
-
-		argsPast := getArgsPast(&constrains)
-		err = smtOut.QueryRow(argsPast...).Scan(&countPre)
-		if err != nil {
-			panic(err.Error())
-		}
-	}
-	checkErr(err, "Select failed on Get downloads")
-	if count.Valid {
-		return count.Int64 , countPre.Int64
-	}else {
-		if countPre.Valid {
-			return 0 , countPre.Int64
-		}else{
-			return 0,0
-		}
-	}
-}
-
-/*
-* Users who visits more than once
-*/
-func GetReturningUsers(constrains dao.Constrains) (int64,int64) {
-	dbMap := utils.GetDBConnection("portal");
-	defer dbMap.Db.Close()
-	var err error
-	var count sql.NullInt64
-	var countPre sql.NullInt64
-	query := "SELECT COUNT(DISTINCT username) FROM accounting where acctstarttime >= ? AND acctstarttime < ? AND tenantid=? AND visits > 0"
-
-	if len(constrains.GroupNames) > 0 {
-		args := getArgs3(&constrains)
-		query = query + " AND ( groupname=? "
-		for i := 1; i < len(constrains.GroupNames); i++ {
-			query = query + " OR groupname=? "
-		}
-		smtOut, err := dbMap.Db.Prepare(query + ")")
-		defer smtOut.Close()
-		err = smtOut.QueryRow(args...).Scan(&count) // WHERE number = 13
-		if err != nil {
-			panic(err.Error()) // proper error handling instead of panic in your app
-		}
-
-		argsPast := getArgs3(&constrains)
-		err = smtOut.QueryRow(argsPast...).Scan(&countPre)
-		if err != nil {
-			panic(err.Error())
-		}
-	}
-	checkErr(err, "Select failed on Get downloads")
-	if count.Valid {
-		return count.Int64 , countPre.Int64
-	}else {
-		if countPre.Valid {
-			return 0 , countPre.Int64
-		}else{
-			return 0,0
-		}
-	}
 }
 
 func checkErr(err error, msg string) {

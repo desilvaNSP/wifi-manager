@@ -56,6 +56,7 @@ CREATE TABLE IF NOT EXISTS monthlyacct (
 CREATE TABLE IF NOT EXISTS browserstats (
   `tenantid`     INT(10)      DEFAULT NULL,
   `groupname`    VARCHAR(255) DEFAULT NULL,
+  `ssid`         VARCHAR(255) DEFAULT NULL,
   `date`         DATETIME     DEFAULT NULL,
   `chrome`       INT(11)      DEFAULT 0,
   `firefox`      INT(11)      DEFAULT 0,
@@ -75,6 +76,7 @@ CREATE TABLE IF NOT EXISTS browserstats (
 CREATE TABLE IF NOT EXISTS osstats (
   `tenantid`      INT(10)      DEFAULT NULL,
   `groupname`     VARCHAR(255) DEFAULT NULL,
+  `ssid`         VARCHAR(255) DEFAULT NULL,
   `date`          DATETIME     DEFAULT NULL,
   `android`       INT(11)      DEFAULT 0,
   `ios`           INT(11)      DEFAULT 0,
@@ -90,6 +92,7 @@ CREATE TABLE IF NOT EXISTS osstats (
 CREATE TABLE IF NOT EXISTS devicestats (
   `tenantid`  INT(10)      DEFAULT NULL,
   `groupname` VARCHAR(255) DEFAULT NULL,
+  `ssid`         VARCHAR(255) DEFAULT NULL,
   `date`      DATETIME     DEFAULT NULL,
   `mobile`    INT(11)      DEFAULT 0,
   `tablet`    INT(11)      DEFAULT 0,

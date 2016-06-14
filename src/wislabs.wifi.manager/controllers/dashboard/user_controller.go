@@ -7,6 +7,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"database/sql"
 	"wislabs.wifi.manager/commons"
+	"strings"
 )
 
 func IsUserAuthenticated(user dao.DashboardUser) bool {
@@ -25,7 +26,7 @@ func IsUserAuthenticated(user dao.DashboardUser) bool {
 				return true
 			}
 		}
-	}else {
+	} else {
 		log.Debug("User authentication failed " + user.Username)
 		return false
 	}
@@ -39,13 +40,13 @@ func IsUserExistInTenant(tenantId int, username string) int {
 	var checkuser []int
 	_, err := dbMap.Select(&checkuser, commons.IS_EXISTS_USER_NAME, username, tenantId)
 	if err != nil {
-		checkErr(err,"Error occur while checking exists user");
+		checkErr(err, "Error occur while checking exists user");
 	}
 	return checkuser[0]
 }
 
 func RegisterDashboardUser(user dao.DashboardUser) error {
-	dbMap := utils.GetDBConnection("dashboard");
+	dbMap := utils.GetDBConnection(commons.DASHBOARD_DB);
 	defer dbMap.Db.Close()
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
@@ -64,12 +65,13 @@ func RegisterDashboardUser(user dao.DashboardUser) error {
 		userId, _ := result.LastInsertId()
 		AddDashboardUserPermissions(userId, user)
 		AddDashboardUserApGroups(userId, user)
+		AddUserSSIDS(userId, user.SSIDs)
 	}
 	return err
 }
 
 func UpdateDashboardUser(user dao.DashboardUser) error {
-	dbMap := utils.GetDBConnection("dashboard");
+	dbMap := utils.GetDBConnection(commons.DASHBOARD_DB);
 	defer dbMap.Db.Close()
 
 	stmtIns, err := dbMap.Db.Prepare(commons.UPDATE_DASHBOARD_USER)
@@ -82,12 +84,14 @@ func UpdateDashboardUser(user dao.DashboardUser) error {
 	if err != nil {
 		return err
 	}
-	UpdateDashboardUserAppGroups(GetUserId(user.TenantId, user.Username), user)
-	UpdateDashboardUserPermissions(GetUserId(user.TenantId, user.Username),user)
+	userId := GetUserId(user.TenantId, user.Username)
+	UpdateDashboardUserAppGroups(userId, user)
+	UpdateDashboardUserPermissions(userId, user)
+	UpdateUserSSIDS(userId, user.SSIDs)
 	return err
 }
 
-func UpdateDashboardUserAppGroups(userId int64, user dao.DashboardUser) error{
+func UpdateDashboardUserAppGroups(userId int64, user dao.DashboardUser) error {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 
@@ -100,8 +104,8 @@ func UpdateDashboardUserAppGroups(userId int64, user dao.DashboardUser) error{
 	_, err = stmtIns.Exec(userId)
 	if err != nil {
 		return err
-	}else{
-		err := AddDashboardUserApGroups(userId,user)
+	} else {
+		err := AddDashboardUserApGroups(userId, user)
 		if err != nil {
 			return err
 		}
@@ -109,7 +113,7 @@ func UpdateDashboardUserAppGroups(userId int64, user dao.DashboardUser) error{
 	return err
 }
 
-func UpdateDashboardUserPermissions(userId int64, user dao.DashboardUser) error{
+func UpdateDashboardUserPermissions(userId int64, user dao.DashboardUser) error {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 
@@ -122,8 +126,8 @@ func UpdateDashboardUserPermissions(userId int64, user dao.DashboardUser) error{
 	_, err = stmtIns.Exec(userId)
 	if err != nil {
 		return err
-	}else{
-		err := AddDashboardUserPermissions(userId,user)
+	} else {
+		err := AddDashboardUserPermissions(userId, user)
 		if err != nil {
 			return err
 		}
@@ -131,17 +135,17 @@ func UpdateDashboardUserPermissions(userId int64, user dao.DashboardUser) error{
 	return err
 }
 
-func UpdateDashboardUserDetails(user dao.DashboardUserDetails) error{
+func UpdateDashboardUserDetails(user dao.DashboardUserDetails) error {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 
-	stmtIns, err := dbMap.Db.Prepare(commons.UPDATE_DASHBORD_USER_PROFILE)
+	stmtIns, err := dbMap.Db.Prepare(commons.UPDATE_DASHBOARD_USER_PROFILE)
 	defer stmtIns.Close()
 
 	if err != nil {
 		return err
 	}
-	_, err = stmtIns.Exec(user.Email, user.Username,user.TenantId)
+	_, err = stmtIns.Exec(user.Email, user.Username, user.TenantId)
 	if err != nil {
 		return err
 	}
@@ -149,7 +153,7 @@ func UpdateDashboardUserDetails(user dao.DashboardUserDetails) error{
 
 }
 
-func UpdateDashboardUserPassword(tenantId int, username string, oldPassword string, newPassword string)error {
+func UpdateDashboardUserPassword(tenantId int, username string, oldPassword string, newPassword string) error {
 	var user dao.DashboardUser
 	user.Username = username
 	user.Password = oldPassword
@@ -193,7 +197,7 @@ func DeleteDashboardUser(tenantId int, username string) {
 }
 
 func GetDashboardUser(tenantId int, username string) dao.DashboardUser {
-	dbMap := utils.GetDBConnection("dashboard");
+	dbMap := utils.GetDBConnection(commons.DASHBOARD_DB);
 	defer dbMap.Db.Close()
 
 	var user dao.DashboardUser
@@ -203,8 +207,10 @@ func GetDashboardUser(tenantId int, username string) dao.DashboardUser {
 		return user
 	}
 	user.TenantId = tenantId
+	userId := GetUserId(user.TenantId, user.Username)
 	user.Permissions = GetDashboardUserPermissions(tenantId, username)
 	user.ApGroups = GetDashboardUserApGroups(tenantId, username)
+	user.SSIDs = GetUserSSIDS(userId)
 	return user
 }
 
@@ -302,7 +308,7 @@ func AddDashboardUserPermissions(userId int64, user dao.DashboardUser) error {
 		return err
 	}
 	for _, permission := range user.Permissions {
-		_, err := stmtIns.Exec(GetPermissionId(user.TenantId,permission.Name,permission.Action), userId)
+		_, err := stmtIns.Exec(GetPermissionId(user.TenantId, permission.Name, permission.Action), userId)
 		if err != nil {
 			return err
 		}
@@ -330,6 +336,64 @@ func GetDashboardUserApGroups(tenantId int, username string) []string {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
 	return groups
+}
+
+func GetUserSSIDS(userId int64) []string {
+	dbMap := utils.GetDBConnection(commons.DASHBOARD_DB);
+	defer dbMap.Db.Close()
+	var ssids []string
+	_, err := dbMap.Select(&ssids, commons.GET_DASHBOARD_USER_SSIDS, userId)
+	checkErr(err, "Error occured while getting user ssids")
+	return ssids
+}
+
+func GetUsernamesOfSSIDS(ssids []string) []string {
+	var usernames []string
+	if(len(ssids)==0){
+		return usernames
+	}
+	dbMap := utils.GetDBConnection(commons.DASHBOARD_DB);
+	defer dbMap.Db.Close()
+	query := commons.GET_DASHBOARD_USERS_OF_SSIDS + " ( "
+	for index, value := range ssids {
+		aa := strings.Replace(value, "\"", "", -1)
+
+		query += "'" + strings.Trim(aa, " ") + "'"
+		if index < len(ssids) - 1 {
+			query += ","
+		}
+	}
+	_, err := dbMap.Select(&usernames, query + "))")
+	checkErr(err, "Error occured while getting users of ssids")
+	return usernames
+}
+
+func AddUserSSIDS(userId int64, ssids []string) error {
+	dbMap := utils.GetDBConnection(commons.DASHBOARD_DB);
+	defer dbMap.Db.Close()
+	stmtIns, err := dbMap.Db.Prepare(commons.ADD_DASHBOARD_USER_SSID)
+	defer stmtIns.Close()
+
+	if err != nil {
+		return err
+	}
+	for _, ssid := range ssids {
+		_, err := stmtIns.Exec(userId, ssid)
+		if err != nil {
+			return err
+		}
+	}
+	return err
+}
+
+func UpdateUserSSIDS(userId int64, ssids []string) error {
+	dbMap := utils.GetDBConnection(commons.DASHBOARD_DB);
+	defer dbMap.Db.Close()
+	_, err := dbMap.Exec(commons.DELETE_DASHBOARD_USER_SSIDS, userId)
+	if (err != nil) {
+		return err
+	}
+	return AddUserSSIDS(userId, ssids)
 }
 
 func checkErr(err error, msg string) {
