@@ -212,6 +212,6 @@ func GetUserCountOfDownloadsOverHandler(w http.ResponseWriter, r *http.Request) 
 
 func checkErr(err error, msg string) {
 	if err != nil {
-		log.Fatalln(msg, err)
+		log.Error(msg, err)
 	}
 }

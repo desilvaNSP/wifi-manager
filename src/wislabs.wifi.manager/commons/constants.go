@@ -111,10 +111,13 @@ const GET_ALL_DASHBOARD_METRICS string 		= "SELECT tenantid, metricid, name FROM
 const GET_ALL_DASHBOARD_ACLS string    		= "SELECT DISTINCT acl FROM accounting"
 
 /* ADD_RADIUS_SERVER */
-const  ADD_RADIUS_SERVER string  		= "INSERT INTO radiusservers (tenantid,username,servername,serverip,authport,accounting,sharedsecret) VALUES( ?, ?, ?, ?, ?, ?, ?)"
-const  GET_ALL_RADIUS_CONFIGS string	 	= "SELECT instid, servername, serverip, authport, accounting, sharedsecret FROM radiusservers WHERE tenantid=? and username=? "
-const  DELETE_RADIUS_SERVER_INST string 	= "DELETE FROM radiusservers WHERE tenantid=? AND instid=?"
-const  UPDATE_RADIUS_SERVER_INST string 	= "UPDATE radiusservers SET servername =?, serverip =?, authport= ?, accounting=?, sharedsecret=? WHERE tenantid=? and instid=?"
-
+const  ADD_RADIUS_SERVER string  = "INSERT INTO radiusservers (tenantid, dbhostname, dbhostip, dbschemaname, dbport, dbusername, dbpassword, status) VALUES( ?, ?, ?, ?, ?, ?, ?,'off')"
+const  ADD_NAS_CLIENT string  	 = "INSERT INTO nas (nasname, shortname, type, ports, secret, server, community, description) VALUES( ?, ?, ?, ?, ?, ?, ?, ?)"
+const  GET_NAS_CLIENTS_INSERVER  string  = "SELECT id, nasname, shortname, type, ports, secret, server, community, description FROM nas"
+const  GET_ALL_RADIUS_CONFIGS string	 = "SELECT InsId, tenantid, dbhostname, dbhostip, dbschemaname, dbport, dbusername, dbpassword, status FROM radiusservers WHERE tenantid=?"
+const  DELETE_RADIUS_SERVER_INST string  = "DELETE FROM radiusservers WHERE tenantid=? AND InsId=?"
+const  UPDATE_RADIUS_SERVER_INST string  = "UPDATE radiusservers SET dbhostname =?, dbport= ?, dbschemaname =?, dbusername=?, dbpassword=? WHERE tenantid=? and InsId=?"
+const  GET_SERVERCONFIGS_BY_INSTANCEID string 	= "SELECT dbhostname, dbhostip, dbschemaname, dbport, dbusername, dbpassword, status FROM radiusservers WHERE InsId=? and tenantid=?"
+const  GET_ALL_NASNAMES 	= "SELECT nasname from nas"
 /* RADIUS */
-const ADD_RADIUS_USER string 	 	   	= "INSERT INTO radcheck (username,attribute,op,value) VALUES( ?, ?, ?, ?)"
+const ADD_RADIUS_USER string = "INSERT INTO radcheck (username,attribute,op,value) VALUES( ?, ?, ?, ?)"

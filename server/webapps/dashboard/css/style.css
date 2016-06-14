@@ -8024,3 +8024,7 @@ img.thumbnail  { position: absolute; width: 178px;height: 178px ;z-index: 20}
 .download-metrics-buttons div a.btn{
     font-size: 12px;
 }
+
+table.dataTable tbody tr.selected {
+    background-color: #cdf4ec !important;
+}
