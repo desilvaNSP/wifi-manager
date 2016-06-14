@@ -6,6 +6,7 @@ import (
 	"wislabs.wifi.manager/dao"
 	"wislabs.wifi.manager/commons"
 	"wislabs.wifi.manager/controllers/dashboard"
+	"errors"
 	"strings"
 )
 
@@ -106,6 +107,18 @@ func DeleteAccessPoint(mac string, tenantid int) error {
 	} else {
 		return nil
 	}
+}
+
+func GetActiveInactiveAccessPoint(tenantId int,activePeriodFrom string, activePeriodTo string, treshold int) (int, error){
+	dbMap := utils.GetDBConnection(commons.SUMMARY_DB);
+	defer dbMap.Db.Close()
+	var activeCalledStations []string
+
+	_, err := dbMap.Select(&activeCalledStations, commons.GET_ACTIVE_APS_COUNT,"2016-01-10 00:00:00", "2016-01-25 00:00:00", tenantId,  treshold)
+	if err != nil {
+		return len(activeCalledStations), errors.New(err.Error())
+	}
+	return len(activeCalledStations), nil
 }
 
 func checkErr(err error, msg string) {

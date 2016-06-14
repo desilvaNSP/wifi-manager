@@ -1,10 +1,35 @@
+<div class="wrapper wrapper-content">
+    <div class="row">
+        <div id="widget-active-accespoint" class="configuration-container col-lg-3">
+
+        </div>
+        <div id="widget-inactive-accespoint" class="configuration-container col-lg-3">
+
+        </div>
+        <div class="col-lg-3">
+            <div class="widget style1 lazur-bg">
+                <div class="row">
+                    <div class="col-xs-4 text-center">
+                        <i class="fa fa-cloud-download fa-5x"></i>
+                    </div>
+                    <div class="col-xs-8 text-right">
+                        <span> Total Access Points </span>
+                        <h2 class="font-bold">326</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Access point Map -->
 <div class="row">
     <div class="col-lg-12">
         <div class="ibox-content float-e-margins">
             <h2>Access Point Map</h2>
-
-            <div id="world-map" style="height: 300px;"></div>
+            <div id="world-map" class="world-map">
+                <div id="popup"></div>
+            </div>
+            <div id="info">&nbsp;</div>
         </div>
     </div>
 </div>
@@ -89,40 +114,131 @@
 
 <script>
     $(document).ready(function () {
-        var serverOriginUrl = window.location.origin;
-        var mapData = {
-            "US": 498,
-            "SA": 200,
-            "CA": 1300,
-            "DE": 220,
-            "FR": 540,
-            "CN": 120,
-            "AU": 760,
-            "BR": 550,
-            "IN": 200,
-            "GB": 120,
-            "RU": 2000
-        };
+        var activePeriodFrom, activePeriodTo;
 
-        $('#world-map').vectorMap({
-            map: 'world_mill_en',
-            backgroundColor: "transparent",
-            regionStyle: {
-                initial: {
-                    fill: '#e4e4e4',
-                    "fill-opacity": 1,
-                    stroke: 'none',
-                    "stroke-width": 0,
-                    "stroke-opacity": 0
+        activePeriodTo = moment().format('YYYY-MM-DD')
+        activePeriodFrom = moment().subtract(500, 'days').format('YYYY-MM-DD');
+        var treshold = 2;
+
+
+        console.log(activePeriodFrom)
+        console.log(activePeriodTo)
+        $.get('/wifi/locations/apcounts?from=' + activePeriodFrom + '&to=' + activePeriodTo + '&treshold=' + treshold, function (data) {
+            var activeUsercount = 589;
+            $.get('components/widgets/statistic-configuration.html', function (template) {
+                var rendered = Mustache.render(template, {
+                    caption: 'Active Access Points',
+                    value: activeUsercount,
+                    cardname: 'activeap',
+                    widgetbg: 'lazur-bg',
+                });
+                var optionsHTML = '<div class="form-group row">' +
+                        '<div class="col-sm-12"><input class="input-s-sm" placeholder="Treshold Days">' +
+                        '</div>' +
+                        '</div>' +
+                        '<div class="text-right row">' +
+                        '<a class="btn btn-xs btn-info options-done"><i class="fa fa-check" ></i>Done</a>' +
+                        '</div>';
+
+                var iconHTML1 = '<div class="row row-centered app-listing">' +
+                        '<div class="app-listing-loader">' +
+                        '<div class="loading-logo">' +
+                        '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="5em" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 14 14" enable-background="new 0 0 14 14" xml:space="preserve">' +
+                        '<path class="circle" stroke-width="1.4" stroke-miterlimit="10" d="M6.534,' +
+                        '0.748C7.546,0.683,8.578,0.836,9.508,1.25 c1.903,0.807,3.339,2.615,3.685,4.654c0.244,' +
+                        '1.363,0.028,2.807-0.624,4.031c-0.851,1.635-2.458,2.852-4.266,3.222 c-1.189,0.25-2.45,' +
+                        '0.152-3.583-0.289c-1.095-0.423-2.066-1.16-2.765-2.101C1.213,9.78,0.774,8.568,0.718,' +
+                        '7.335 C0.634,5.866,1.094,4.372,1.993,3.207C3.064,1.788,4.76,0.867,6.534,0.748z"/>' +
+                        '<path class="pulse-line" stroke-width="0.55" stroke-miterlimit="10" d="M12.602,' +
+                        '7.006c-0.582-0.001-1.368-0.001-1.95,0 c-0.491,0.883-0.782,1.4-1.278,2.28C8.572,' +
+                        '7.347,7.755,5.337,6.951,3.399c-0.586,1.29-1.338,3.017-1.923,' +
+                        '4.307 c-1.235,0-2.38-0.002-3.615,0"/>' +
+                        '</svg>' +
+                        '<div class="signal"></div>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>'
+
+                $('#widget-active-accespoint').html(rendered);
+                $('#widget-active-accespoint .option-card').html(optionsHTML)
+                $('#widget-active-accespoint .icon-content-card').html(iconHTML1)
+
+                var card = $('#activeap');
+                $('.configuration_card#activeap span').on('click', function () {
+                    card.addClass('swivel-effect-180');
+                    if (card.hasClass('swivel-effect-0')) {
+                        card.removeClass('swivel-effect-0');
+                    }
+                });
+                $('div#activeap .options-done').on('click', function () {
+                    $.get('/wifi/locations/apcounts?from=' + activePeriodFrom + '&to=' + activePeriodTo, function (data) {
+                        $('div#activeap h2#value').html("323");
+                        card.addClass('swivel-effect-0');
+                    });
+                });
+
+            });
+        });
+
+        $.get('components/widgets/statistic-configuration.html', function (template) {
+            var rendered = Mustache.render(template, {
+                caption: 'Inactive Access Points',
+                value: 273,
+                cardname: 'inactiveap',
+                widgetbg: 'red-bg',
+            });
+            var optionsHTML = '<div class="form-group row">' +
+                    '<div class="col-sm-12"><input class="input-s-sm" placeholder="Treshold Days">' +
+                    '</div>' +
+                    '</div>' +
+                    '<div class="text-right row">' +
+                    '<a class="btn btn-xs btn-info options-done"><i class="fa fa-check" ></i>Done</a>' +
+                    '</div>';
+
+            var iconHTML2 = '<i class="fa fa-chain-broken -o fa-5x"></i>'
+
+            $('#widget-inactive-accespoint').html(rendered);
+            $('#widget-inactive-accespoint .option-card').html(optionsHTML)
+            $('#widget-inactive-accespoint .icon-content-card').html(iconHTML2)
+
+            var card = $('#inactiveap');
+            $('.configuration_card#inactiveap span').on('click', function () {
+                card.addClass('swivel-effect-180');
+                if (card.hasClass('swivel-effect-0')) {
+                    card.removeClass('swivel-effect-0');
                 }
-            },
-            series: {
-                regions: [{
-                    values: mapData,
-                    scale: ["#1ab394", "#22d6b1"],
-                    normalizeFunction: 'polynomial'
-                }]
-            }
+            });
+            $('div#inactiveap .options-done').on('click', function () {
+                $('div#inactiveap h2#value').html("122");
+                card.addClass('swivel-effect-0');
+            });
+
+        });
+
+        var serverOriginUrl = window.location.origin;
+
+        var map = new ol.Map({
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                })
+            ],
+            renderer: 'canvas',
+            target: 'world-map',
+            view: new ol.View({
+                center: [0, 0],
+                zoom: 2
+            })
+        });
+
+        var iconStyle = new ol.style.Style({
+            image: new ol.style.Icon(({
+                anchor: [0.5, 46],
+                anchorXUnits: 'fraction',
+                anchorYUnits: 'pixels',
+                opacity: 0.75,
+                src: 'map-data/icon.png'
+            }))
         });
 
         var locationTable = $('.dataTables-location').DataTable({
@@ -136,6 +252,7 @@
                 "error": function (e) {
                 },
                 "dataSrc": function (d) {
+                    updateMarkers(d, map, iconStyle)
                     return d
                 }
             },
@@ -224,7 +341,7 @@
             $.ajax({
                 url: '/wifi/' + Cookies.get('tenantid') + '/locations/' + selectedLocation.mac + '/' + selectedLocation.ssid + '/' + selectedLocation.groupname,
                 type: 'DELETE',
-                beforeSend:function(){
+                beforeSend: function () {
                     $("#deletelocation-body").loadingOverlay({
                         loadingText: 'Updating location'
                     });
@@ -256,17 +373,17 @@
                 }
             });
             var updateWifiLocationFromValidator;
-            $.when(locationsAjax).done(function(){
+            $.when(locationsAjax).done(function () {
                 $.get('components/wifi-locationupdate-modal.html', function (template) {
                     var rendered = Mustache.render(template, {
                         locations: locations,
-                        groupname:selectedLocation.groupname,
-                        mac:selectedLocation.mac,
-                        apname:selectedLocation.apname,
-                        ssid:selectedLocation.ssid,
-                        bssid:selectedLocation.bssid,
-                        longitude:selectedLocation.longitude,
-                        latitude:selectedLocation.longitude
+                        groupname: selectedLocation.groupname,
+                        mac: selectedLocation.mac,
+                        apname: selectedLocation.apname,
+                        ssid: selectedLocation.ssid,
+                        bssid: selectedLocation.bssid,
+                        longitude: selectedLocation.longitude,
+                        latitude: selectedLocation.longitude
                     });
 
                     $('#add-wifi-location-modal-content').html(rendered);
@@ -313,9 +430,9 @@
             $("#add-wifi-location-modal-content").off('click').on("click", '#btn-update-wifilocation', function (event) {
                 var payload = {
                     tenantid: parseInt(Cookies.get('tenantid')),
-                    locationid:selectedLocation.locationid,
+                    locationid: selectedLocation.locationid,
                     mac: $('#edit-mac').val(),
-                    apname:$('#edit-apname').val(),
+                    apname: $('#edit-apname').val(),
                     ssid: $('#edit-ssid').val(),
                     bssid: $('#edit-bssid').val(),
                     latitude: parseFloat($('#edit-latitude').val()),
@@ -326,9 +443,9 @@
                     loadingText: 'Updating location'
                 });
                 $.post('/wifi/locationsupdate', JSON.stringify(payload), function (result) {
-                        $("#editlocation-body").loadingOverlay('remove');
-                        $('#update-wifilocation-modal').modal('hide');
-                        locationTable.ajax.reload();
+                    $("#editlocation-body").loadingOverlay('remove');
+                    $('#update-wifilocation-modal').modal('hide');
+                    locationTable.ajax.reload();
                 });
             });
         });

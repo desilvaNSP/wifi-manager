@@ -8028,3 +8028,233 @@ img.thumbnail  { position: absolute; width: 178px;height: 178px ;z-index: 20}
 table.dataTable tbody tr.selected {
     background-color: #cdf4ec !important;
 }
+
+.world-map {
+    height: 400px;
+    width: 100%;
+}
+.ol-dragbox {
+    background-color: rgba(255,255,255,0.4);
+    border-color: rgba(100,150,0,1);
+}
+
+.location-mapinfobox-container{
+    width: 250px;
+}
+
+.ol-attribution {
+    display: none;
+}
+
+
+.configuration-container {
+    position: relative;
+    margin: auto;
+    height: 100px;
+    z-index: 1;
+    perspective: 1000;
+}
+
+.configuration_card {
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: all 0.25s linear;
+}
+.swivel-effect-180 {
+    transform: rotateY(180deg);
+}
+.swivel-effect-0 {
+    transform: rotateY(0deg);
+}
+.face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+}
+.face.back {
+    display: block;
+    text-align: center;
+    background-color: #2f4050;
+    transform: rotateY(180deg);
+}
+
+.widget{
+  border-radius: 0px !important;
+}
+.configuration_card .option-icon span{
+    float: right !important;
+}
+.configuration_card .option-icon{
+    margin-top: -5px;
+}
+
+.app-listing{
+    margin-top: -43px;
+    margin-left: 5px;
+}
+
+
+
+
+/* ========================================================================
+ * loading styles
+ * ======================================================================== */
+
+.loading {
+    /*position: relative; */
+}
+
+.loading .loading-bg {
+    background: #000;
+    position: absolute;
+    opacity: 0.9;
+    height: 100%;
+    width: 100%;
+    z-index: 10000000;
+}
+
+.loading .loading-animation {
+    position: absolute;
+    z-index: 10000001;
+    top: 50%;
+    left: 50%;
+    width: 50px;
+    height: 75px;
+    -webkit-transform: translate(-50%, -50%);
+}
+
+.loading .loading-animation .loading-logo {
+    position: relative;
+}
+
+.loading .loading-animation .loading-logo .pulse-line,
+.loading .loading-animation .loading-logo .circle {
+    fill: none;
+    stroke: #fff;
+}
+
+.loading .loading-animation .loading-logo .circle {
+    stroke-dasharray: 100;
+    opacity: 0.5;
+}
+
+.loading .loading-animation .loading-logo .pulse-line {
+    stroke-dasharray: 200;
+    stroke-dashoffset: 200;
+    animation: dash 1s linear  infinite;
+    opacity: 0;
+}
+
+@keyframes dash {
+    0% {
+        opacity: 0.9;
+    }
+    10% {
+        stroke-dashoffset: 200;
+        opacity: 0.9;
+    }
+    70% {
+        stroke-dashoffset: 500;
+        opacity: 0.9;
+    }
+    80% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.loading .loading-animation .loading-logo .signal {
+    border: 5px solid #fff;
+    border-radius: 50px;
+    height: 50px;
+    width: 50px;
+    opacity: 0;
+    position:absolute;
+    top: -1px;
+    left: -4px;
+    animation: pulsate 1s ease-out infinite;
+    animation-delay: 1.0s;
+
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+@keyframes pulsate {
+    0%, 30%  {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    40% {
+        opacity: 1;
+    }
+    60% {
+        transform: scale(1.2);
+        opacity: 0;
+    }
+}
+
+.loading .loading-animation p {
+    color: #fff;
+    text-align: center;
+    font-size: 11px;
+    margin-top: 4px;
+}
+
+
+/* button loading */
+.loading-logo {
+    position: relative;
+    display: inline-block;
+    width: 3em;
+    height: 3.35em;
+    line-height: 3em;
+    vertical-align: middle;
+}
+
+.loading-logo .pulse-line,
+.loading-logo .circle {
+    fill: none;
+    stroke: #fff;
+}
+
+.loading-logo .circle {
+    stroke-dasharray: 100;
+    opacity: 0.5;
+}
+
+.loading-logo .pulse-line {
+    stroke-dasharray: 200;
+    stroke-dashoffset: 200;
+    animation: dash 3s linear  infinite;
+    opacity: 0;
+}
+
+.loading-logo  svg{
+    margin-top: 3px;
+}
+
+.loading-logo .signal {
+    border: 5px solid #fff;
+    border-radius: 50px;
+    height: 5em;
+    width: 5em;
+    opacity: 0;
+    position: absolute;
+    top: 3px;
+    animation: pulsate 1s ease-out infinite;
+    animation-delay: 1.5s;
+
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+
+}
