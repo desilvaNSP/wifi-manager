@@ -96,7 +96,7 @@ const DELETE_DASHBOARD_APP_USER string     = "DELETE FROM appusers WHERE appid=?
 
  /* App Settings */
 const UPDATE_DB_APP_ACLS string                 = "UPDATE appacls SET acl=? WHERE appid=?"
-const DELETE_OLD_DB_APP_GROUPS string           = "DELETE FROM appgroups WHERE appid=? and groupname=?"
+const DELETE_DB_APP_GROUPS string              = "DELETE FROM appgroups WHERE appid=?"
 const ADD_NEW_DB_APP_GROUPS string              = "INSERT INTO appgroups (appid,groupname) VALUES( ?, ?)"
 const GET_EXIST_DASHBOARD_APP_METRICS string    = "SELECT metricid FROM appmetrics WHERE appid=?"
 const DELETE_OLD_DB_APP_METRICS string          = "DELETE FROM appmetrics WHERE appid=? and metricid=?"

@@ -86,8 +86,8 @@
                 }
             });
             if (hasDashboardUserReadPermission) {
-                $("#add-dashboard-app-modal-content").off('click').on('change', 'input[name=input-groups]', function (e) {
-                    var payload = getCheckedElementList("input[name='input-groups']");
+                $("#add-dashboard-app-modal-content").off('click').on('change', 'input[name=input-group]', function (e) {
+                    var payload = getCheckedElementList("input[name='input-group']");
                     usersAjax = getUserLabelAjaxRequest(payload);
                 });
 
@@ -185,7 +185,7 @@
                         users: taggedUsers,
                         aggregate: aggregate,
                         filtercriteria: $('.criteria-radio:checked').val(),
-                        parameters: getAppParameterList($('.criteria-radio:checked').val()),
+                        parameters: getAppParameterList($('.criteria-radio:checked').val(), "input"),
                         metrics: getCheckedMetrices("input[name='metric']"),
                         acls: $('.acltypes-radio:checked').val()
                     };
@@ -299,7 +299,7 @@
     // App settings updates
     function dashboardSettings(event) {
         var payload, users, locations, metrics, acltypes;
-        var parametersofAppID, usersOfAppID, metricsOfAppID, aclofAppID, aggregateValue, filterCriteria, isSSIDFiltering, isGroupiltering;
+        var parametersofAppID, usersOfAppID, metricsOfAppID, aclofAppID, aggregateValue, filterCriteria, isSSIDFiltering, isGroupFiltering;
 
         var selectedAppIdForSettings = $(event).data('appid');
         var appName = $(event).data('appname');
@@ -311,11 +311,11 @@
             filterCriteria = result.filtercriteria;
             switch (filterCriteria) {
                 case "groupname" :
-                    isGroupiltering = "checked";
+                    isGroupFiltering = "checked";
                     isSSIDFiltering = "";
                     break;
                 case "ssid" :
-                    isGroupiltering = "";
+                    isGroupFiltering = "";
                     isSSIDFiltering = "checked";
                     break;
             }
@@ -358,6 +358,11 @@
                 payload = getCheckedElementList("input[name='edit-group']")
                 usersAjax = getUserLabelAjaxRequest(payload);
             });
+
+            $("#add-dashboard-app-modal-content").off('click').on('change', 'input[name=edit-ssid]', function (e) {
+                payload = getCheckedElementList("input[name='edit-ssid']")
+                usersAjax = getUserLabelAjaxRequest(payload);
+            });
         } else {
             usersAjax = true;
             sharedUsers.push(Cookies.get('username'))
@@ -375,14 +380,14 @@
                 }
                 var rendered = Mustache.render(template, {
                     appname: appName,
-                    users: users,
+                    users: usersOfAppID,
                     locations: locations,
                     ssids: ssids,
                     metrics: metrics,
                     currentusers: sharedUsers,
                     acltypes: removeEmptyString(acltypes),
                     isSSIDSelected: isSSIDFiltering,
-                    isGroupsSelected: isGroupiltering,
+                    isGroupsSelected: isGroupFiltering,
                     checkedSSIDs: function () {
                         var checkibilty;
                         for (var i in parametersofAppID) {
@@ -494,7 +499,7 @@
                     users: taggedUsers,
                     aggregate: aggregate,
                     filtercriteria: $('.criteria-radio:checked').val(),
-                    parameters: getAppParameterList($('.criteria-radio:checked').val()),
+                    parameters: getAppParameterList($('.criteria-radio:checked').val(), "edit"),
                     metrics: getCheckedMetrices("input[name='metric']"),
                     acls: $('.update-acltypes-radio:checked').val()
                 };
@@ -530,12 +535,12 @@
         return returnContainer;
     }
 
-    function getAppParameterList(criteria) {
+    function getAppParameterList(criteria, type) {
         switch (criteria) {
             case "groupname" :
-                return getCheckedElementList("input[name='input-groups']");
+                return getCheckedElementList("input[name='"+ type +"-group']");
             case "ssid" :
-                return getCheckedElementList("input[name='input-ssid']");
+                return getCheckedElementList("input[name='"+ type +"-ssid']");
         }
     }
 

@@ -178,7 +178,6 @@ type DashboardAppInfo struct {
 	FilterCriteria string           	 `db:"filtercriteria"json:"filtercriteria"`
 	Parameters     []string				 `json:"parameters"`
 	Users          []DashboardAppUser    `db:"users"json:"users"`
-	Groups         []DashboardAppGroup   `db:"groups"json:"groups"`
 	Metrics        []DashboardAppMetric  `db:"metrics"json:"metrics"`
 	Acls           string                `db:"acl"json:"acls"`
 }

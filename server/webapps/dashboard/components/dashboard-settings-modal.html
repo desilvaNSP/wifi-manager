@@ -42,7 +42,7 @@
                                                         {{#ssids}}
                                                         <div class="col-sm-6">
                                                             <label class="radio inline control-label">
-                                                                <input type="checkbox" name="input-ssid" value="{{.}}" {{checkedSSIDs}}>{{.}}
+                                                                <input type="checkbox" name="edit-ssid" value="{{.}}" {{checkedSSIDs}}>{{.}}
                                                             </label>
                                                         </div>
                                                         {{/ssids}}
@@ -86,9 +86,9 @@
                                 </div>
                                 <div class="checkbox">
                                     <ul id="username-tags">
-                                        {{#currentusers}}
-                                        <li>{{.}}</li>
-                                        {{/currentusers}}
+                                        {{#users}}
+                                        <li>{{username}}</li>
+                                        {{/users}}
                                     </ul>
                                 </div>
                             </div>
