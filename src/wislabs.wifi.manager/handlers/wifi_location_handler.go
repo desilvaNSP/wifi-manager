@@ -175,12 +175,18 @@ func DeleteAccessPoint(w http.ResponseWriter, r *http.Request){
 * return
 */
 func GetActiveInactiveAPHandler(w http.ResponseWriter, r *http.Request){
+	activePeriodTo:= r.URL.Query().Get("to");
+	activePeriodFrom := r.URL.Query().Get("from");
+	treshold, err :=  strconv.Atoi(r.URL.Query().Get("treshold"));
+	if (err != nil) {
+		log.Error("Error while reading treshold", err)
+	}
 	tenantId, err := strconv.Atoi(r.Header.Get("tenantid"))
 	if (err != nil) {
 		log.Error("Error while reading tenantid", err)
 	}
 	var countActiveAP int
-	countActiveAP, err = location.GetActiveInactiveAccessPoint(tenantId)
+	countActiveAP, err = location.GetActiveInactiveAccessPoint(tenantId, activePeriodTo, activePeriodFrom, treshold)
 	if err != nil{
 		checkErr(err, "Error occourred while getting active ap count ")
 	}

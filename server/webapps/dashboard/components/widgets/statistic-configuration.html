@@ -1,15 +1,16 @@
-<div id="configuration_card">
-    <div  class="widget {{widgetbg}} front face">
-        <div class="row">
-            <div class="col-xs-4">
-                <i class="fa fa-cloud fa-5x"></i>
+<div class="configuration_card" id="{{cardname}}">
+    <div class="widget {{widgetbg}} front face">
+        <div class="row" >
+            <div class="col-xs-3 icon-content-card">
             </div>
-            <div class="col-xs-8 text-right">
+            <div class="col-xs-9 text-right">
                 <span> {{caption}} </span>
-                <h2 class="font-bold">{{value}}</h2>
+                <h2 id="value" class="font-bold">{{value}}</h2>
             </div>
         </div>
-        <span><i class="fa fa-info-circle" aria-hidden="true"></i></span>
+        <div class="row option-icon">
+            <span ><i class="fa fa-cog" aria-hidden="true"></i></span>
+        </div>
     </div>
     <div class="widget back face center">
         <div class="option-card">
@@ -17,3 +18,9 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function(){
+
+    });
+</script>

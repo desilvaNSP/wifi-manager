@@ -89,18 +89,16 @@ func DeleteAccessPoint(mac string, tenantid int) error {
 	}
 }
 
-func GetActiveInactiveAccessPoint(tenantId int) (int, error){
+func GetActiveInactiveAccessPoint(tenantId int,activePeriodFrom string, activePeriodTo string, treshold int) (int, error){
 	dbMap := utils.GetDBConnection(commons.SUMMARY_DB_NAME);
 	defer dbMap.Db.Close()
-	var from = "2016-01-13 00:00:00"
-	var to = "2016-01-18 00:00:00"
-	var activeCount int
+	var activeCalledStations []string
 
-	err := dbMap.SelectOne(&activeCount, commons.GET_ACTIVE_APS_COUNT,from, to, tenantId)
+	_, err := dbMap.Select(&activeCalledStations, commons.GET_ACTIVE_APS_COUNT,"2016-01-10 00:00:00", "2016-01-25 00:00:00", tenantId,  treshold)
 	if err != nil {
-		return activeCount, errors.New(err.Error())
+		return len(activeCalledStations), errors.New(err.Error())
 	}
-	return activeCount, nil
+	return len(activeCalledStations), nil
 }
 
 func checkErr(err error, msg string) {
