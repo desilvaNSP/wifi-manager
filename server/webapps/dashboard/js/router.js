@@ -116,7 +116,7 @@ function renderAAAPage() {
 }
 
 function renderAlertDefinations() {
-    $.get('components/emptypage.html', function (template) {
+    $.get('components/alerts-defination.html', function (template) {
         var rendered = Mustache.render(template, {});
         $('#content-main').html(rendered)
     })
