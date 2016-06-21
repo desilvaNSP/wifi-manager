@@ -5,13 +5,12 @@ import (
 	"github.com/kirves/goradius"
 	"wislabs.wifi.manager/utils"
 	"wislabs.wifi.manager/commons"
-	log "github.com/Sirupsen/logrus"
 	"gopkg.in/gorp.v1"
 	"database/sql"
 	"strconv"
 	"errors"
-	"strings"
 	"net"
+	"strings"
 	"bytes"
 )
 
@@ -61,7 +60,7 @@ func GetInstanceConfigsById(instanceId int, tenantId int) (dao.RadiusServer, err
 	return radiusServerConfigs, err
 }
 
-func CreateNASClientOnServer(radiusServerConfigs dao.RadiusServer, nasClientInfo dao.NasClient) error{
+func CreateNASClient(radiusServerConfigs dao.RadiusServer, nasClientInfo dao.NasClient) error{
 	dbMap, errDb := GetRadiusServerDBConnection(radiusServerConfigs);
 	defer dbMap.Db.Close()
 	if errDb != nil{
@@ -70,12 +69,40 @@ func CreateNASClientOnServer(radiusServerConfigs dao.RadiusServer, nasClientInfo
 	stmtIns, err := dbMap.Db.Prepare(commons.ADD_NAS_CLIENT)
 	defer stmtIns.Close()
 	if err != nil {
-		return errors.New("Error occourred while insert radius server into radiusservers table| Stack : " + err.Error() )
+		return errors.New("Error occourred while creating nas client | Stack : " + err.Error() )
 	}
-	_, err = stmtIns.Exec(nasClientInfo.NasName, nasClientInfo.ShortName, nasClientInfo.NasType, nasClientInfo.NasPorts, nasClientInfo.Secret, nasClientInfo.NasServer, nasClientInfo.Community, nasClientInfo.Description);
+	_, err = stmtIns.Exec(nasClientInfo.NasName, nasClientInfo.ShortName, nasClientInfo.NasType, nasClientInfo.NasPorts, nasClientInfo.Secret);
 	return err
 }
 
+func UpdateNASClient(radiusServerConfigs dao.RadiusServer, nasClientInfo dao.NasClient) error{
+	dbMap, errDb := GetRadiusServerDBConnection(radiusServerConfigs);
+	defer dbMap.Db.Close()
+	if errDb != nil{
+		return errors.New("Error occourred while connection to DB server |"+" DB Server IP :"+radiusServerConfigs.DBHostIp +":"+strconv.Itoa(radiusServerConfigs.DBHostPort)+" | Stack : " + errDb.Error() )
+	}
+	stmtIns, err := dbMap.Db.Prepare(commons.UPDATE_NAS_CLIENT)
+	defer stmtIns.Close()
+	if err != nil {
+		return errors.New("Error occourred while update nas client | Stack : " + err.Error() )
+	}
+	_, err = stmtIns.Exec(nasClientInfo.ShortName, nasClientInfo.NasType, nasClientInfo.NasPorts, nasClientInfo.Secret, nasClientInfo.NasClientID);
+	return err
+}
+
+func DeleteNASClient(radiusServerConfigs dao.RadiusServer, nasClientId int) error{
+	dbMap, errDb := GetRadiusServerDBConnection(radiusServerConfigs);
+	defer dbMap.Db.Close()
+	if errDb != nil{
+		return errors.New("Error occourred while connection to DB server |"+" DB Server IP :"+radiusServerConfigs.DBHostIp +":"+strconv.Itoa(radiusServerConfigs.DBHostPort)+" | Stack : " + errDb.Error() )
+	}
+	_, err := dbMap.Exec(commons.DELETE_NAS_CLIENT, nasClientId)
+	if (err != nil) {
+		return err
+	}else {
+		return nil
+	}
+}
 
 func GetRadiusServerClients(radiusServerConfig dao.RadiusServer) ([]dao.NasClient, error){
 	dbMap, errDb := GetRadiusServerDBConnection(radiusServerConfig);
@@ -141,6 +168,7 @@ func IsNASIpExistsInRadius(radiusServerConfigs dao.RadiusServer, ipAddress strin
 	}
 	for _, nasName := range allNasNames {
 		result, err := checkIpBetweenIPRange(ipAddress,rangeSize,nasName)
+		println(result)
 		if err != nil {
 		}
 		if(result){
@@ -163,80 +191,41 @@ func GetRadiusServerDBConnection(radiusServerConfig dao.RadiusServer) (*gorp.DbM
 }
 
 
-func checkIpBetweenIPRange(ip string,rangeSize int, iprange string) (bool, error){
+func checkIpBetweenIPRange(requestIP string,rangeSize int, existsIP string) (bool, error){
 	var slices []string
-	slices = strings.Split(iprange, "/")
-	var endLessDBIp string
-	var err error
-	if len(slices)>1 {
-		netMask, _ := strconv.Atoi(slices[1])
-		endLessDBIp, err = getEndPointOfIpRange(slices[0],netMask);
-		if err != nil{
-			return false, err
+	if rangeSize != 0 {
+		var requestIPString string
+		requestIPString = requestIP+"/"+strconv.Itoa(rangeSize)
+		_, requestNet, _ := net.ParseCIDR(requestIPString)
+		slices = strings.Split(existsIP, "/")
+		if len(slices)>1 {
+			_, existsNet, _ := net.ParseCIDR(existsIP)
+			return intersectBetweenCIDR(requestNet, existsNet),nil
+		} else {
+			existsNet := net.ParseIP(slices[0])
+			return intersectBetweenCIDRandIP(existsNet,requestNet),nil
 		}
-		var (
-			ip1 = net.ParseIP(slices[0])
-			ip2 = net.ParseIP(endLessDBIp)
-		)
-		trial := net.ParseIP(ip)
-		if trial.To4() == nil {
-			return false, nil
+	}else{
+		requestNet := net.ParseIP(requestIP)
+		slices = strings.Split(existsIP, "/")
+		if len(slices)>1 {
+			_, existsNet, _ := net.ParseCIDR(existsIP)
+			return intersectBetweenCIDRandIP(requestNet, existsNet),nil
+		} else {
+			existsNet := net.ParseIP(slices[0])
+			return intersectBetweenIP(requestNet, existsNet),nil
 		}
-		if rangeSize > 0{
-			var endLessUserEnterIp string
-			endLessUserEnterIp, err = getEndPointOfIpRange(ip,rangeSize);
-			if err != nil{
-				return false, err
-			}
-			var (
-				ip3 = net.ParseIP(ip)
-				ip4 = net.ParseIP(endLessUserEnterIp)
-			)
-			if ( bytes.Compare(ip1, ip4) > 0)  || (bytes.Compare(ip2, ip3) < 0 ){
-				return false, nil
-			}
-			return true, nil
-		}else{
-			if bytes.Compare(trial, ip1) >= 0 && bytes.Compare(trial, ip2) <= 0 {
-				return true, nil
-			}
-			return false, nil
-		}
-	}else {
-		var ip1 = net.ParseIP(slices[0])
-		trial := net.ParseIP(ip)
-		if trial.To4() == nil {
-			return false, nil
-		}
-		if rangeSize > 0{
-			var endLessUserEnterIp string
-			endLessUserEnterIp, err = getEndPointOfIpRange(ip,rangeSize);
-			if err != nil{
-				return false, err
-			}
-			var (
-				ip3 = net.ParseIP(ip)
-				ip4 = net.ParseIP(endLessUserEnterIp)
-			)
-			if ( bytes.Compare(ip1, ip3) >= 0)  && (bytes.Compare(ip4, ip1) >= 0 ){
-				return true, nil
-			}
-			return false, nil
-		}else if bytes.Compare(trial, ip1) == 0 {
-				return true, nil
-		}
-		return false, nil
 	}
 }
 
+func intersectBetweenCIDR(CIDR1, CIDR2 *net.IPNet) bool {
+	return CIDR2.Contains(CIDR1.IP) || CIDR1.Contains(CIDR2.IP)
+}
 
-func getEndPointOfIpRange(ip string, netMask int) (string, error) {
-	ipaddress := net.ParseIP(ip)
-	ipaddress = ipaddress.To4()
-	if ipaddress == nil {
-		log.Error("non ipv4 address")
-		return "", errors.New("Non ipv4 address")
-	}
-	ipaddress[3] += byte(netMask)
-	return ipaddress.String(), nil
+func intersectBetweenCIDRandIP(IP net.IP, CIDR *net.IPNet) bool {
+	return CIDR.Contains(IP)
+}
+
+func intersectBetweenIP(IP1 net.IP, IP2 net.IP) bool {
+	return bytes.Compare(IP1, IP2) == 0
 }

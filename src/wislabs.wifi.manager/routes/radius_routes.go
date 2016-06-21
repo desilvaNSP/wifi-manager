@@ -66,6 +66,20 @@ var RadiusRoutes = Routes{
 		"POST",
 		"/radius/server/client",
 		true,
-		dashboard_handlers.CreateNASClientOnServerHandler,
+		dashboard_handlers.CreateNASClientHanlder,
+	},
+	Route{
+		"Updating NAS Clients in radius server",
+		"PUT",
+		"/radius/server/client",
+		true,
+		dashboard_handlers.UpdateNASClientHanlder,
+	},
+	Route{
+		"Updating NAS Clients in radius server",
+		"DELETE",
+		"/radius/{instanceid}/{nasclientid}",
+		true,
+		dashboard_handlers.DeleteNASClientHanlder,
 	},
 }

@@ -54,9 +54,6 @@
                                             <th>Type</th>
                                             <th>Ports</th>
                                             <th>Secret</th>
-                                            <th>Server</th>
-                                            <th>Community</th>
-                                            <th>Description</th>
                                             <th>Settings</th>
                                             <!--<th>Test</th>-->
                                         </tr>
@@ -132,7 +129,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="btn-edit-radiusclient">Save</button>
+                <button type="button" class="btn btn-primary" id="btn-edit-radiusserver">Save</button>
             </div>
         </div>
     </div>
@@ -252,25 +249,6 @@
                                    name="inputsecret">
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="form-group col-lg-6">
-                            <label for="nas-client-server">Server</label>
-                            <input type="text" class="form-control" id="nas-client-server"
-                                   name="inputserver">
-                        </div>
-                        <div class="form-group col-lg-6">
-                            <label for="nas-client-community">Community</label>
-                            <input type="text" class="form-control" id="nas-client-community"
-                                   name="inputcommunity">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="form-group col-lg-12">
-                            <label for="nas-client-description">Description</label>
-                                    <textarea class="form-control" id="nas-client-description"
-                                              name="inputdescription"></textarea>
-                        </div>
-                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -280,68 +258,59 @@
         </div>
     </div>
 </div>
-
-<!-- NAS Client Test Connection-->
-<!--<div class="modal fade" id="wutest-connection-modal" tabindex="-1" role="dialog" aria-hidden="true">
+<!-- Update NAS Client-->
+<div class="modal fade" id="edit-nasclient-modal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
                         class="sr-only">Close</span></button>
-                <h4 class="modal-title">Radius Client Connection Testing</h4>
+                <h4 class="modal-title">Update NAS Client</h4>
             </div>
-            <div class="modal-body" id="wu-connection-test-body">
-                <form role="form" id="wu-connection-test-form">
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <div class="row">
-                                <div class="form-group col-lg-6">
-                                    <label for="panel-info-hostip">Server IP</label>
-                                    <input type="text" class="form-control" id="panel-info-hostip"
-                                           name="testhostipaddress">
-                                </div>
-                                <div class="form-group col-lg-6">
-                                    <label for="panel-info-nasip">NAS IP</label>
-                                    <input type="text" class="form-control" id="panel-info-nasip"
-                                           name="testnasipaddress" id="input-radius-test-nasip">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-lg-6">
-                                    <label for="panel-info-authport">Auth Port</label>
-                                    <input type="text" class="form-control" id="panel-info-authport"
-                                           name="testauthport">
-                                </div>
-                                <div class="form-group col-lg-6">
-                                    <label for="panel-info-secret">Secret Key</label>
-                                    <input type="text" class="form-control" id="panel-info-secret" name="testsecret"
-                                           disabled>
-                                </div>
-                            </div>
+            <div class="modal-body" id="edit-nasclient-body">
+                <form role="form" id="edit-nasclient-form">
+                    <div class="row">
+                        <div class="form-group col-lg-12">
+                            <label for="nas-client-nasip">NAS IP Address</label>
+                            <input type="text" class="form-control" id="edit-nas-nasip"
+                                   name="editnasip" disabled>
                         </div>
                     </div>
                     <div class="row">
                         <div class="form-group col-lg-6">
-                            <label for="input-radius-test-username">User Name</label>
-                            <input class="form-control" type="input" name="testusernameinput"
-                                   id="input-radius-test-username">
+                            <label for="nas-client-shortname">NAS Short Name</label>
+                            <input type="text" class="form-control" id="edit-nas-shortname"
+                                   name="editshortname">
                         </div>
                         <div class="form-group col-lg-6">
-                            <label for="input-radius-test-password">Password</label>
-                            <input class="form-control" type="password" name="testpasswordinput"
-                                   id="input-radius-test-password">
+                            <label for="nas-client-type">NAS Type</label>
+                            <input type="text" class="form-control" id="edit-nas-type"
+                                   name="editype">
                         </div>
                     </div>
-                    <div class="alert fade in msg-output-testconnection">
+                    <div class="row">
+                        <div class="form-group col-lg-6">
+                            <label for="nas-client-authport">Auth Port</label>
+                            <input type="text" class="form-control" id="edit-nas-authport"
+                                   name="editauthport" value="1812"
+                                   onblur="if (this.value == '') {this.value = '1812';}"
+                                   onfocus="if (this.value == '1812') {this.value = '';}">
+                        </div>
+                        <div class="form-group col-lg-6">
+                            <label for="nas-client-secret">Secret Key</label>
+                            <input type="text" class="form-control" id="edit-nas-secret"
+                                   name="editsecret">
+                        </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="btn-input-testconnection">Test Connection</button>
+                <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="btn-update-nasclient">Update NAS Client</button>
             </div>
         </div>
     </div>
-</div>-->
+</div>
 
 <!-- Radius server Deletion-->
 <div class="modal fade" id="confirm-deleteradius-modal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -363,6 +332,26 @@
     </div>
 </div>
 
+<!-- NAS Client Deletion-->
+<div class="modal fade" id="confirm-deletenasclient-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
+                        class="sr-only">Close</span></button>
+                <h4 class="modal-title">Delete NAS Client</h4>
+            </div>
+            <div class="modal-body" id="deletenasclient-body">
+                <p><strong>Are you sure you want to delete the NAS cliet?</strong></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">No</button>
+                <button type="button" class="btn btn-primary" id="delete-nasclient">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     $(document).ready(function () {
         var serverOriginUrl = window.location.origin;
@@ -374,11 +363,13 @@
         var currentServerObject = {};
         var selectedServerNasClients;
 
+
         $.validator.addMethod('IP4Checker', function (value) {
-            var ip = /^(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[0-9]{2}|[0-9])(\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[0-9]{2}|[0-9])){3}$/;
-            var iprange = /((\b|\.)(0|1|2(?!5(?=6|7|8|9)|6|7|8|9))?\d{1,2}){4}(-((\b|\.)(0|1|2(?!5(?=6|7|8|9)|6|7|8|9))?\d{1,2}){4}|\/((0|1|2|3(?=1|2))\d|\d))\b/g;
-            return value.match(ip) || value.match(iprange);
-        }, 'Invalid IP address');
+            var IP = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/;
+            var CIDR = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$/;
+            return value.match(IP) || value.match(CIDR);
+        }, 'Invalid IP or CIDR address');
+
 
         $.validator.addMethod("checkIpRangerExists",
                 function (value, element) {
@@ -459,12 +450,9 @@
                 {data: 'nastype'},
                 {data: 'nasport'},
                 {data: 'secret'},
-                {data: 'server'},
-                {data: 'community'},
-                {data: 'description'},
                 {
                     "data": null,
-                    "defaultContent": "<div class='btn-group'><button class='btn btn-white btn-xs dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fa fa-gear'></i></button><ul class='dropdown-menu'><li><a href='#' id='setting-edit-radiusserver'>Edit</a></li><li><a href='#' id='setting-delete-radiusinst'>Delete</a></li></ul></div>",
+                    "defaultContent": "<div class='btn-group'><button class='btn btn-white btn-xs dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fa fa-gear'></i></button><ul class='dropdown-menu'><li><a href='#' id='setting-edit-nasclient'>Edit</a></li><li><a href='#' id='setting-delete-nasclient'>Delete</a></li></ul></div>",
                     "width": "1%",
                     "className": 'center',
                     "sortable": false
@@ -498,34 +486,9 @@
 
 
         var addradiusclientvalidator;
-        /*var nasClientTestValidation;*/
+        var editNasClientValidator;
         var editradiusclientvalidator;
         var addNasClientValidator;
-
-        /*nasClientTestValidation = $("#wu-connection-test-form").validate({
-         rules: {
-         testusernameinput: {
-         required: true
-         },
-         testpasswordinput: {
-         required: true
-         },
-         testnasipaddress: {
-         required: true
-         },
-         messages: {
-         testusernameinput: {
-         required: "Please Enter valid user name"
-         },
-         testpasswordinput: {
-         required: "Please Enter valid Password"
-         },
-         testnasipaddress: {
-         required: "Please Enter NAS Ip address or range"
-         }
-         }
-         }
-         });*/
 
         addNasClientValidator = $("#add-nasclient-form").validate({
             rules: {
@@ -556,6 +519,32 @@
                     required: "Please enter Auth Port"
                 },
                 inputsecret: {
+                    required: "Please enter SECRET"
+                }
+            }
+        });
+
+        editNasClientValidator = $("#edit-nasclient-form").validate({
+            rules: {
+                editshortname: {
+                    required: true
+                },
+                editauthport: {
+                    required: true,
+                    number: true
+                },
+                editsecret: {
+                    required: true
+                }
+            },
+            messages: {
+                editshortname: {
+                    required: "Please enter a Short Name for Instance"
+                },
+                editauthport: {
+                    required: "Please enter Auth Port"
+                },
+                editsecret: {
                     required: "Please enter SECRET"
                 }
             }
@@ -711,9 +700,6 @@
                 nasClientObject.nastype = $('#nas-client-type').val();
                 nasClientObject.nasport = parseInt($('#nas-client-authport').val());
                 nasClientObject.secret = $('#nas-client-secret').val();
-                nasClientObject.server = $('#nas-client-server').val();
-                nasClientObject.community = $('#nas-client-community').val();
-                nasClientObject.description = $('#nas-client-description').val();
 
                 var payload = {
                     dbServer: currentServerObject,
@@ -751,51 +737,6 @@
 
             });
         }
-
-
-        /*var selectNasClient;
-         $('.dataTables-nasclientlist tbody').on('click', '#test-connection', function () {
-         selectNasClient = nasClientsTable.row($(this).parents('tr')).data();
-         $('#panel-info-hostip').val(currnetselectedServer);
-         $('#panel-info-nasip').val(selectNasClient.nasname);
-         $('#panel-info-authport').val(selectNasClient.nasport);
-         $('#panel-info-secret').val(selectNasClient.secret);
-         $('.msg-output-testconnection').hide();
-         $('#wutest-connection-modal').modal()
-         });
-
-         $("#btn-input-testconnection").on('click', function () {
-         alert('test');
-         if($('#wu-connection-test-form').valid()){
-         var payload = {
-         dbhostip:$('#panel-info-hostip').val(),
-         nasname:$('#panel-info-nasip').val(),
-         secret:$('#panel-info-secret').val(),
-         authport:$('#panel-info-authport').val(),
-         username:$('#input-radius-test-username').val(),
-         password:$('#input-radius-test-password').val()
-         };
-         console.log(payload);
-         $.post('/radius/user/connection',JSON.stringify(payload), function (result) {
-         if (result){
-         $('.msg-output-testconnection').html("Healthy Connection.");
-         $('.msg-output-testconnection').addClass('alert-success').fadeIn();
-         setTimeout(function(){
-         $('.msg-output-testconnection').removeClass('alert-success').fadeOut();
-         $('#wutest-connection-modal').modal('hide');
-         },1000);
-         }else{
-         $('.msg-output-testconnection').html("Connection Testing is failed.");
-         $('.msg-output-testconnection').addClass('alert-danger').fadeIn();
-         setTimeout(function(){
-         $('.msg-output-testconnection').removeClass('alert-danger').fadeOut();
-         $('#wutest-connection-modal').modal('hide');
-         },1000);
-         }
-         });
-         }
-         });*/
-
 
         var currentUpdateRow;
         var selectedRadiusInstance;
@@ -836,7 +777,7 @@
             $('#edit-radiuserver-modal').modal('show');
         });
 
-        $("#btn-edit-radiusclient").on("click", function (event) {
+        $("#btn-edit-radiusserver").on("click", function (event) {
             if ($('#aaa-ins-editform').valid()) {
                 var payload = {
                     InsId: selectedRadiusInstance.InsId,
@@ -864,6 +805,77 @@
                     }
                 });
             }
+        });
+
+        var selectedNASClient;
+        $('.dataTables-nasclientlist tbody').on('click', '#setting-edit-nasclient', function () {
+            currentUpdateRow = $(this).parents('tr');
+            selectedNASClient = nasClientsTable.row($(this).parents('tr')).data();
+            $('#edit-nas-nasip').val(selectedNASClient.nasname);
+            $('#edit-nas-shortname').val(selectedNASClient.shortname);
+            $('#edit-nas-type').val(selectedNASClient.nastype);
+            $('#edit-nas-authport').val(selectedNASClient.nasport);
+            $('#edit-nas-secret').val(selectedNASClient.secret);
+            $('#edit-nasclient-modal').modal('show');
+        });
+
+        $("#btn-update-nasclient").on("click", function (event) {
+            if ($('#edit-nasclient-form').valid()) {
+                var nasClientObject = {};
+                nasClientObject.nasid = selectedNASClient.nasid;
+                nasClientObject.nasname = $('#edit-nas-nasip').val();
+                nasClientObject.shortname = $('#edit-nas-shortname').val();
+                nasClientObject.nastype = $('#edit-nas-type').val();
+                nasClientObject.nasport = parseInt($('#edit-nas-authport').val());
+                nasClientObject.secret = $('#edit-nas-secret').val();
+
+                var payload = {
+                    dbServer: currentServerObject,
+                    nasClient: nasClientObject
+                };
+                $.ajax({
+                    url: '/radius/server/client',
+                    type: 'PUT',
+                    data: JSON.stringify(payload),
+                    beforeSend: function () {
+                        $("#edit-nasclient-body").loadingOverlay({
+                            loadingText: 'Updating NAS Client'
+                        });
+                    },
+                    success: function () {
+                        $("#edit-nasclient-body").loadingOverlay('remove');
+                        $('#edit-nasclient-modal').modal('hide');
+                        renderNASClientTable(currentServerObject.InsId);
+                    },
+                    error: function (e) {
+                    }
+                });
+            }
+        });
+
+        $('.dataTables-nasclientlist tbody').on('click', '#setting-delete-nasclient', function () {
+            selectedNASClient= nasClientsTable.row($(this).parents('tr')).data();
+            $('#confirm-deletenasclient-modal').modal('show')
+        });
+
+        $('#delete-nasclient').on("click", function () {
+            $.ajax({
+                url: '/radius/'+currentServerObject.InsId +'/'+ selectedNASClient.nasid,
+                type: 'DELETE',
+                beforeSend: function () {
+                    $("#deletenasclient-body").loadingOverlay({
+                        loadingText: 'Deleting NAS Client' + selectedNASClient.shortname
+                    });
+                },
+                success: function () {
+                    $("#deletenasclient-body").loadingOverlay('remove');
+                    $('#confirm-deletenasclient-modal').modal('hide');
+                    renderNASClientTable(currentServerObject.InsId);
+                },
+                error: function (e) {
+                }
+            });
+            return false;
         });
     });
 </script>
