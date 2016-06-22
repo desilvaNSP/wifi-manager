@@ -89,7 +89,6 @@ func GetAccessPointAggregatedDataFromTo(constrains dao.Constrains) [] dao.Access
 	args := getArgs(&constrains)
 	filterQuery := buildQueryComponent(&constrains)
 	query = query + filterQuery + " GROUP BY calledstationmac"
-
 	_, err := dbMap.Select(&accessPointData, query, args...)
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic

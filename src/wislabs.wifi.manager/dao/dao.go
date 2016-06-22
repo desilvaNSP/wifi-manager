@@ -263,9 +263,6 @@ type NasClient struct {
 	NasType     string                `db:"type"json:"nastype"`
 	NasPorts    utils.NullInt64                `db:"ports"json:"nasport"`
 	Secret      utils.NullString                `db:"secret"json:"secret"`
-	NasServer   utils.NullString                `db:"server"json:"server"`
-	Community   utils.NullString                    `db:"community"json:"community"`
-	Description utils.NullString                    `db:"description"json:"description"`
 }
 
 type  NasClientTestInfo struct {
