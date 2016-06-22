@@ -1,10 +1,37 @@
+<div class="feature-details-container">
+    <div class="row">
+        <div id="widget-active-accespoint" class="configuration-container col-lg-3">
+            <div class="sk-spinner sk-spinner-three-bounce">
+                <div class="sk-bounce1"></div>
+                <div class="sk-bounce2"></div>
+                <div class="sk-bounce3"></div>
+            </div>
+        </div>
+        <div id="widget-inactive-accespoint" class="configuration-container col-lg-3">
+            <div class="sk-spinner sk-spinner-three-bounce">
+                <div class="sk-bounce1"></div>
+                <div class="sk-bounce2"></div>
+                <div class="sk-bounce3"></div>
+            </div>
+        </div>
+        <div id="widget-distinct-mac" class="configuration-container col-lg-3">
+            <div class="sk-spinner sk-spinner-three-bounce">
+                <div class="sk-bounce1"></div>
+                <div class="sk-bounce2"></div>
+                <div class="sk-bounce3"></div>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Access point Map -->
 <div class="row">
     <div class="col-lg-12">
         <div class="ibox-content float-e-margins">
             <h2>Access Point Map</h2>
-
-            <div id="world-map" style="height: 300px;"></div>
+            <div id="world-map" class="world-map">
+                <div id="popup"></div>
+            </div>
+            <div id="info">&nbsp;</div>
         </div>
     </div>
 </div>
@@ -43,8 +70,7 @@
                         <th>AP Name</th>
                         <th>SSID</th>
                         <th>BSSID</th>
-                        <th>Longitude</th>
-                        <th>Latitude</th>
+                        <th>Address</th>
                         <th>Settings</th>
                     </tr>
                     <tr>
@@ -53,7 +79,6 @@
                         <th></th>
                         <th></th>
                         <th>SSID</th>
-                        <th></th>
                         <th></th>
                         <th></th>
                         <th></th>
@@ -88,41 +113,55 @@
 <div id="add-wifi-location-modal-content"></div>
 
 <script>
-    $(document).ready(function () {
-        var serverOriginUrl = window.location.origin;
-        var mapData = {
-            "US": 498,
-            "SA": 200,
-            "CA": 1300,
-            "DE": 220,
-            "FR": 540,
-            "CN": 120,
-            "AU": 760,
-            "BR": 550,
-            "IN": 200,
-            "GB": 120,
-            "RU": 2000
-        };
+    _activePeriodFrom = 0, _activePeriodTo = 0;
 
-        $('#world-map').vectorMap({
-            map: 'world_mill_en',
-            backgroundColor: "transparent",
-            regionStyle: {
-                initial: {
-                    fill: '#e4e4e4',
-                    "fill-opacity": 1,
-                    stroke: 'none',
-                    "stroke-width": 0,
-                    "stroke-opacity": 0
-                }
-            },
-            series: {
-                regions: [{
-                    values: mapData,
-                    scale: ["#1ab394", "#22d6b1"],
-                    normalizeFunction: 'polynomial'
-                }]
-            }
+    $(document).ready(function () {
+
+        _activePeriodTo = moment().format('YYYY-MM-DD')
+        _activePeriodFrom = moment().subtract(500, 'days').format('YYYY-MM-DD');
+        var threshold = 2
+
+
+        renderFeatureDetailsWidgets({
+            url: '/wifi/locations/activeapcounts?from=' + _activePeriodFrom + '&to=' + _activePeriodTo + '&treshold=' + threshold,
+            templateUrl: 'activeap-details.html',
+            containerId: '#widget-active-accespoint'
+        });
+        renderFeatureDetailsWidgets({
+            url: '/wifi/locations/inactiveapcounts?from=' + _activePeriodFrom + '&to=' + _activePeriodTo + '&treshold=' + threshold,
+            templateUrl: 'inactive-details.html',
+            containerId: '#widget-inactive-accespoint'
+        });
+        renderFeatureDetailsWidgets({
+            url: '/wifi/locations/distinctmaccount?from=' + _activePeriodFrom + '&to=' + _activePeriodTo,
+            templateUrl: 'distinctmac-details.html',
+            containerId: '#widget-distinct-mac'
+        });
+
+        var serverOriginUrl = window.location.origin;
+
+        var map = new ol.Map({
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                })
+            ],
+            renderer: 'canvas',
+            target: 'world-map',
+            view: new ol.View({
+                center: [0, 0],
+                zoom: 2
+            })
+        });
+
+        var iconStyle = new ol.style.Style({
+            image: new ol.style.Icon(({
+                anchor: [0.5, 46],
+                anchorXUnits: 'fraction',
+                anchorYUnits: 'pixels',
+                opacity: 0.75,
+                src: 'map-data/icon.png'
+            }))
         });
 
         var locationTable = $('.dataTables-location').DataTable({
@@ -136,6 +175,8 @@
                 "error": function (e) {
                 },
                 "dataSrc": function (d) {
+                    updateMarkers(d, map, iconStyle);
+                    console.log(d)
                     return d
                 }
             },
@@ -146,8 +187,7 @@
                 {"data": "apname", "width": "5%"},
                 {"data": "ssid", "width": "5%"},
                 {"data": "bssid", "width": "10%"},
-                {"data": "longitude", "width": "5%"},
-                {"data": "latitude", "width": "5%"},
+                {"data": "address", "width": "5%"},
                 {
                     "data": null,
                     "defaultContent": "<div class='btn-group'><button class='btn btn-white btn-xs dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fa fa-gear'></i></button><ul class='dropdown-menu'><li><a href='#' id='setting-edit-location'>Edit</a></li><li><a href='#' id='setting-delete-location'>Delete</a></li></ul></div>",
@@ -224,7 +264,7 @@
             $.ajax({
                 url: '/wifi/' + Cookies.get('tenantid') + '/locations/' + selectedLocation.mac + '/' + selectedLocation.ssid + '/' + selectedLocation.groupname,
                 type: 'DELETE',
-                beforeSend:function(){
+                beforeSend: function () {
                     $("#deletelocation-body").loadingOverlay({
                         loadingText: 'Updating location'
                     });
@@ -256,17 +296,17 @@
                 }
             });
             var updateWifiLocationFromValidator;
-            $.when(locationsAjax).done(function(){
+            $.when(locationsAjax).done(function () {
                 $.get('components/wifi-locationupdate-modal.html', function (template) {
                     var rendered = Mustache.render(template, {
                         locations: locations,
-                        groupname:selectedLocation.groupname,
-                        mac:selectedLocation.mac,
-                        apname:selectedLocation.apname,
-                        ssid:selectedLocation.ssid,
-                        bssid:selectedLocation.bssid,
-                        longitude:selectedLocation.longitude,
-                        latitude:selectedLocation.longitude
+                        groupname: selectedLocation.groupname,
+                        mac: selectedLocation.mac,
+                        apname: selectedLocation.apname,
+                        ssid: selectedLocation.ssid,
+                        bssid: selectedLocation.bssid,
+                        longitude: selectedLocation.longitude,
+                        latitude: selectedLocation.longitude
                     });
 
                     $('#add-wifi-location-modal-content').html(rendered);
@@ -292,13 +332,8 @@
                                 minlength: 17,
                                 maxlength: 17,
                             },
-                            longitude: {
-                                required: false,
-                                number: true
-                            },
-                            latitude: {
-                                required: false,
-                                number: true
+                            address:{
+                                required : true
                             }
                         },
                         messages: {
@@ -311,27 +346,41 @@
 
             // update wifi location
             $("#add-wifi-location-modal-content").off('click').on("click", '#btn-update-wifilocation', function (event) {
-                var payload = {
-                    tenantid: parseInt(Cookies.get('tenantid')),
-                    locationid:selectedLocation.locationid,
-                    mac: $('#edit-mac').val(),
-                    apname:$('#edit-apname').val(),
-                    ssid: $('#edit-ssid').val(),
-                    bssid: $('#edit-bssid').val(),
-                    latitude: parseFloat($('#edit-latitude').val()),
-                    longitude: parseFloat($('#edit-longitude').val()),
-                    groupname: $('#edit-group-name').val()
-                };
-                $("#editlocation-body").loadingOverlay({
-                    loadingText: 'Updating location'
-                });
-                $.post('/wifi/locationsupdate', JSON.stringify(payload), function (result) {
-                        $("#editlocation-body").loadingOverlay('remove');
-                        $('#update-wifilocation-modal').modal('hide');
-                        locationTable.ajax.reload();
+                var currentLocationLngLat;
+                var locationAddress =  $('#edit-address').val();
+                geocodeAddress(locationAddress,function(lnglatobj,valid) {
+                    currentLocationLngLat = lnglatobj;
+                    if (!valid) {
+                        updateWifiLocationFromValidator.showErrors({
+                            "geoaddress": "Invalid geo location address"
+                        });
+                    }
+                    if (updateWifiLocationFromValidator.valid()){
+                        var payload = {
+                            tenantid: parseInt(Cookies.get('tenantid')),
+                            locationid: selectedLocation.locationid,
+                            mac: $('#edit-mac').val(),
+                            apname: $('#edit-apname').val(),
+                            ssid: $('#edit-ssid').val(),
+                            bssid: $('#edit-bssid').val(),
+                            address:locationAddress,
+                            latitude: currentLocationLngLat.lat(),
+                            longitude: currentLocationLngLat.lng(),
+                            groupname: $('#edit-group-name').val()
+                        };
+                        $("#editlocation-body").loadingOverlay({
+                            loadingText: 'Updating location'
+                        });
+                        $.post('/wifi/locationsupdate', JSON.stringify(payload), function (result) {
+                            $("#editlocation-body").loadingOverlay('remove');
+                            $('#update-wifilocation-modal').modal('hide');
+                            locationTable.ajax.reload();
+                        });
+                    }
                 });
             });
         });
+
 
         $("#add-wifilocation-btn").on('click', function () {
             var locations;
@@ -363,46 +412,53 @@
                                 minlength: 17,
                                 maxlength: 17,
                             },
-                            longitude: {
-                                required: false,
-                                number: true
-                            },
-                            latitude: {
-                                required: false,
-                                number: true
+                            geoaddress: {
+                                required: true
                             }
                         },
                         messages: {
                             mac: "Please enter a correct MAC address in xx-xx-xx-xx-xx-xx form",
-                            bssid: "Please enter a correct BSSID address in xx-xx-xx-xx-xx-xx form"
+                            bssid: "Please enter a correct BSSID address in xx-xx-xx-xx-xx-xx form",
+                            geoaddress: "please enter geo location address"
                         }
                     });
                 });
             });
 
             $("#add-wifi-location-modal-content").off('click').on("click", '#btn-add-wifilocation', function (event) {
-                if (addWifiLocationFromValidator.valid()) {
-                    var payload = {
-                        tenantid: parseInt(Cookies.get('tenantid')),
-                        mac: $('#input-mac').val(),
-                        apname: $('#input-apname').val(),
-                        ssid: $('#input-ssid').val(),
-                        bssid: $('#input-bssid').val(),
-                        latitude: parseFloat($('#input-latitude').val()),
-                        longitude: parseFloat($('#input-longitude').val()),
-                        groupname: $('#input-group-name').val()
-                    };
-                    $("#addlocation-body").loadingOverlay({
-                        loadingText: 'Creating Location'
-                    });
-                    $.post('/wifi/locations', JSON.stringify(payload), function (result) {
-                        $("#addlocation-body").loadingOverlay('remove');
-                        $('#add-wifilocation-modal').modal('hide');
-                        locationTable.ajax.reload();
-                    });
-                }
-                return false;
-            });
+                var currentLocationLngLat;
+                var locationAddress =  $('#input-geoaddress').val();
+                geocodeAddress(locationAddress,function(lnglatobj,valid){
+                    currentLocationLngLat = lnglatobj;
+                    if (!valid){
+                        addWifiLocationFromValidator.showErrors({
+                            "geoaddress": "Invalid geo location address"
+                        });
+                    }
+                    if (addWifiLocationFromValidator.valid()) {
+                        var payload = {
+                            tenantid: parseInt(Cookies.get('tenantid')),
+                            mac: $('#input-mac').val(),
+                            apname: $('#input-apname').val(),
+                            ssid: $('#input-ssid').val(),
+                            bssid: $('#input-bssid').val(),
+                            address: locationAddress,
+                            latitude: currentLocationLngLat.lat(),
+                            longitude: currentLocationLngLat.lng(),
+                            groupname: $('#input-group-name').val()
+                        };
+                        $("#addlocation-body").loadingOverlay({
+                            loadingText: 'Creating Location'
+                        });
+                        $.post('/wifi/locations', JSON.stringify(payload), function (result) {
+                            $("#addlocation-body").loadingOverlay('remove');
+                            $('#add-wifilocation-modal').modal('hide');
+                            locationTable.ajax.reload();
+                        });
+                    }
+                    return false;
+                });
+                });
         });
 
         $("#add-wifigroup-btn").on('click', function () {
@@ -443,5 +499,31 @@
             });
         });
     });
+
+    function renderFeatureDetailsWidgets(details) {
+        var detailsRequest, count;
+        detailsRequest = $.get(details.url, function (data) {
+            count = data;
+        });
+        $.when(detailsRequest).done(function () {
+            $.get('components/widgets/featuredetails-widgets/' + details.templateUrl, function (template) {
+                var rendered = Mustache.render(template, {
+                    value: count
+                });
+                $(details.containerId).html(rendered);
+            });
+        });
+    }
+
+    function geocodeAddress(address,callback) {
+        var geocoder = new google.maps.Geocoder();
+        geocoder.geocode({'address': address}, function(results, status) {
+            if (status === google.maps.GeocoderStatus.OK) {
+                callback(results[0].geometry.location,true)
+            }else{
+                callback(null,false)
+            }
+        });
+    }
 </script>
 

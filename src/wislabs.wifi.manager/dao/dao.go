@@ -153,6 +153,7 @@ type ApLocation struct {
     APName     utils.NullString                   `db:"apname"json:"apname"`
     BSSID      string                  `db:"bssid"json:"bssid"`
     MAC        string                  `db:"mac"json:"mac"`
+	Address	   utils.NullString		`db:"address"json:"address"`
     Longitude  utils.NullFloat64   `db:"longitude"json:"longitude"`
     Latitude   utils.NullFloat64    `db:"latitude"json:"latitude"`
     GroupName  string              `db:"groupname"json:"groupname"`

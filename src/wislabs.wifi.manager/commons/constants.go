@@ -63,16 +63,18 @@ const IS_EXISTS_USER_NAME_IN_GROUP string  = "SELECT EXISTS(SELECT username FROM
 const IS_VALID_USER_IN_RADIUS string  = "SELECT EXISTS(SELECT username FROM radcheck WHERE username=? and value=?) as checkuser";
 
 /* AP locations */
-const ADD_AP_LOCATION string 	          = "INSERT INTO aplocations (tenantid, ssid, mac, apname, bssid, longitude, latitude, groupid,  groupname) VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ? )"
-const UPDATE_AP_LOCATION string           ="UPDATE aplocations SET ssid=?, apname=?, bssid=?, longitude=?, latitude=?, groupid=?, groupname=? WHERE locationid=? and tenantid=? "
+const ADD_AP_LOCATION string 	          = "INSERT INTO aplocations (tenantid, ssid, mac, apname, bssid, address, longitude, latitude, groupid,  groupname) VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )"
+const UPDATE_AP_LOCATION string           ="UPDATE aplocations SET ssid=?, apname=?, bssid=?, address = ?, longitude=?, latitude=?, groupid=?, groupname=? WHERE locationid=? and tenantid=? "
 const ADD_AP_GROUP string 	 	  = "INSERT INTO apgroups (tenantid, groupname, groupsymbol) VALUES( ?, ?, ?)"
-const GET_ALL_AP_LOCATIONS string         = "SELECT tenantid, locationid, ssid, mac, apname, bssid, longitude, latitude, groupname FROM aplocations WHERE tenantid=?"
+const GET_ALL_AP_LOCATIONS string         = "SELECT tenantid, locationid, ssid, mac, apname, bssid, address, longitude, latitude, groupname FROM aplocations WHERE tenantid=?"
 const GET_ALL_AP_GROUPS string	          = "SELECT distinct(groupname) FROM apgroups WHERE tenantid=?"
 const GET_AP_GROUP_SSIDS string	          = "SELECT distinct(ssid) FROM aplocations WHERE tenantid=? AND groupname IN"
 const DELETE_AP_LOCATION string           = "DELETE FROM aplocations WHERE ssid=? AND mac=? AND groupname=? AND tenantid=?"
 const DELETE_AP_GROUP string 	          = "DELETE FROM aplocations WHERE groupname=? AND tenantid=?"
 const DELETE_AP string 			  = "DELETE FROM aplocations WHERE mac=? AND tenantid=?"
-
+const GET_ACTIVE_APS_COUNT        = "SELECT acttable.calledstationmac FROM (SELECT DISTINCT calledstationmac, date FROM dailyacct where date >= ? AND date <= ? AND tenantid = ? GROUP BY calledstationmac, date) AS acttable GROUP BY acttable.calledstationmac HAVING COUNT(*) >? "
+const GET_INACTIVE_APS_COUNT        = "SELECT acttable.calledstationmac FROM (SELECT DISTINCT calledstationmac, date FROM dailyacct where date >= ? AND date <= ? AND tenantid = ? GROUP BY calledstationmac, date) AS acttable GROUP BY acttable.calledstationmac HAVING COUNT(*) <= ? "
+const GET_DISTINCT_MAC  = "SELECT acttable.calledstationmac FROM (SELECT DISTINCT calledstationmac, date FROM dailyacct where date >= ? AND date <= ? AND tenantid = ? GROUP BY calledstationmac , date) AS acttable GROUP BY acttable.calledstationmac"
 /* Dashboard Apps */
 const GET_DASHBOARD_APP string 		   = "SELECT appid, tenantid, name, aggregate FROM apps WHERE tenantid=? AND name=?"
 const GET_DASHBOARD_APP_GROUPS string      = "SELECT groupname FROM appgroups WHERE appid=?"

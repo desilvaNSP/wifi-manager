@@ -61,4 +61,25 @@ var WifiLocationRoutes = Routes{
 		true,
 		dashboard_handlers.GetSSIDsOfAPGroups,
 	},
+	Route{
+		"GetCountActiveInactiveAccessPoints",
+		"GET",
+		"/wifi/locations/activeapcounts",
+		true,
+		dashboard_handlers.GetActiveAPHandler,
+	},
+	Route{
+		"GetCountActiveInactiveAccessPoints",
+		"GET",
+		"/wifi/locations/inactiveapcounts",
+		true,
+		dashboard_handlers.GetInactiveAPHandler,
+	},
+	Route{
+		"GetCountActiveInactiveAccessPoints",
+		"GET",
+		"/wifi/locations/distinctmaccount",
+		true,
+		dashboard_handlers.GetDistinctMacCountHandler,
+	},
 }

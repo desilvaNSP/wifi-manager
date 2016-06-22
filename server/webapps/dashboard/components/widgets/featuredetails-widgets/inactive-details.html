@@ -1,0 +1,53 @@
+<div class="feature-detail-card" id="inactiveap">
+    <div class="widget red-bg front face">
+        <div class="row">
+            <div class="col-xs-3 icon-content-card">
+                <i class="fa fa-chain-broken -o fa-5x"></i>
+            </div>
+            <div class="col-xs-9 text-right">
+                <span>Inactive Access Points</span>
+                <h2 class="widget-summary-value font-bold">{{value}}</h2>
+            </div>
+        </div>
+        <div class="row option-icon">
+            <span><i class="fa fa-cog" aria-hidden="true"></i></span>
+        </div>
+    </div>
+    <div class="widget back face center">
+        <div class="option-card">
+            <div class="form-group row option-form">
+                <label class="col-lg-3">Limitation</label>
+                <div class="col-sm-9"><input class="input-s-sm" id="input-threshold-inactiveap" placeholder="">
+                </div>
+            </div>
+        </div>
+        <div class="row option-done">
+            <span><i class="fa fa-floppy-o bg-color-white" aria-hidden="true"></i></span>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        var activeapRequest, countOfActiveAPs;
+        var inactiveapcard = $('#inactiveap');
+        inactiveapcard.find('.option-icon').on('click', function () {
+            inactiveapcard.addClass('swivel-effect-180');
+            if (inactiveapcard.hasClass('swivel-effect-0')) {
+                inactiveapcard.removeClass('swivel-effect-0');
+            }
+        });
+
+        inactiveapcard.find('.option-done').on('click', function () {
+            inactiveapcard.addClass('swivel-effect-0');
+            var threshold = $('input#input-threshold-inactiveap').val();
+            activeapRequest = $.get('/wifi/locations/inactiveapcounts?from=' + _activePeriodFrom + '&to=' + _activePeriodTo + '&treshold=' + threshold, function (data) {
+                countOfActiveAPs = data;
+            });
+            $.when(activeapRequest).done(function () {
+                inactiveapcard.find('.widget-summary-value').html(countOfActiveAPs);
+            });
+        });
+    });
+</script>

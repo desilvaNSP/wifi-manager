@@ -6,8 +6,8 @@ import (
 	"encoding/json"
 	"net/http"
 	_ "github.com/go-sql-driver/mysql"
+	log "github.com/Sirupsen/logrus"
 	"github.com/gorilla/mux"
-	"log"
 	"wislabs.wifi.manager/controllers/location"
 	"strconv"
 	"strings"
@@ -76,6 +76,7 @@ func AddWiFiLocationHandler(w http.ResponseWriter, r *http.Request) {
 	var apLocation dao.ApLocation
 	err := decoder.Decode(&apLocation)
 	if (err != nil) {
+		println(err.Error())
 		log.Fatalln("Error while decoding location json")
 	}
 	location.AddWiFiLocation(&apLocation)
@@ -182,3 +183,89 @@ func DeleteAccessPoint(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}
 }
+
+/**
+* GET
+* @path /wifi/locations/activeapcounts
+* return
+*/
+
+func GetActiveAPHandler(w http.ResponseWriter, r *http.Request) {
+	activePeriodTo := r.URL.Query().Get("to");
+	activePeriodFrom := r.URL.Query().Get("from");
+	treshold, err := strconv.Atoi(r.URL.Query().Get("treshold"));
+	if (err != nil) {
+		log.Error("Error while reading treshold", err)
+	}
+	tenantId, err := strconv.Atoi(r.Header.Get("tenantid"))
+	if (err != nil) {
+		log.Error("Error while reading tenantid", err)
+	}
+	var countActiveAP int
+	countActiveAP, err = location.GetActiveAccessPoint(tenantId, activePeriodTo, activePeriodFrom, treshold)
+	if err != nil {
+		checkErr(err, "Error occourred while getting active ap count ")
+	}
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(countActiveAP); err != nil {
+		panic(err)
+	}
+}
+
+/**
+* GET
+* @path /wifi/locations/inactiveapcounts
+* return
+*/
+
+func GetInactiveAPHandler(w http.ResponseWriter, r *http.Request) {
+	activePeriodTo := r.URL.Query().Get("to");
+	activePeriodFrom := r.URL.Query().Get("from");
+	treshold, err := strconv.Atoi(r.URL.Query().Get("treshold"));
+	if (err != nil) {
+		log.Error("Error while reading treshold", err)
+	}
+	tenantId, err := strconv.Atoi(r.Header.Get("tenantid"))
+	if (err != nil) {
+		log.Error("Error while reading tenantid", err)
+	}
+	var countInactiveAP int
+	countInactiveAP, err = location.GetInactiveAccessPoint(tenantId, activePeriodTo, activePeriodFrom, treshold)
+	if err != nil {
+		checkErr(err, "Error occourred while getting inactive ap count ")
+	}
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(countInactiveAP); err != nil {
+		panic(err)
+	}
+}
+
+/**
+* GET
+* @path /wifi/locations/distinctmaccount
+* return
+*/
+
+func GetDistinctMacCountHandler(w http.ResponseWriter, r *http.Request) {
+	activePeriodTo := r.URL.Query().Get("to");
+	activePeriodFrom := r.URL.Query().Get("from");
+	tenantId, err := strconv.Atoi(r.Header.Get("tenantid"))
+	if (err != nil) {
+		log.Error("Error while reading tenantid", err)
+	}
+	var distinctMac int
+	distinctMac, err = location.GetDistinctMacCount(tenantId, activePeriodTo, activePeriodFrom)
+	if err != nil {
+		checkErr(err, "Error occourred while getting active ap count ")
+	}
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(distinctMac); err != nil {
+		panic(err)
+	}
+}
+
+
+

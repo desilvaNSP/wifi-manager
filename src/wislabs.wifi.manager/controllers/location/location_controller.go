@@ -7,6 +7,7 @@ import (
 	"wislabs.wifi.manager/commons"
 	"wislabs.wifi.manager/controllers/dashboard"
 	"strings"
+	"errors"
 )
 
 func GetAllLocations(tenantid int) []dao.ApLocation {
@@ -47,11 +48,14 @@ func GetSSIDsOfLocationGroups(groupnames []string, tenantId int) []string {
 }
 
 func AddWiFiLocation(location *dao.ApLocation) {
-	dbMap := utils.GetDBConnection("dashboard");
+	dbMap := utils.GetDBConnection(commons.DASHBOARD_DB);
 	defer dbMap.Db.Close()
 
 	stmtIns, err := dbMap.Db.Prepare(commons.ADD_AP_LOCATION)
-	_, err = stmtIns.Exec(location.TenantId, location.SSID, location.MAC, location.APName, location.BSSID, location.Longitude, location.Latitude, dashboard.GetApGroupId(location.TenantId, location.GroupName), location.GroupName)
+	_, err = stmtIns.Exec(location.TenantId, location.SSID, location.MAC, location.APName, location.BSSID,  location.Address, location.Longitude, location.Latitude, dashboard.GetApGroupId(location.TenantId, location.GroupName), location.GroupName)
+	if err != nil {
+		println(err.Error())
+	}
 	checkErr(err, "Error occured while adding AP location")
 	defer stmtIns.Close()
 }
@@ -60,7 +64,7 @@ func UpdateWifiLocation(location *dao.ApLocation) {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 	stmtIns, err := dbMap.Db.Prepare(commons.UPDATE_AP_LOCATION)
-	_, err = stmtIns.Exec(location.SSID, location.APName, location.BSSID, location.Longitude, location.Latitude, dashboard.GetApGroupId(location.TenantId, location.GroupName), location.GroupName, location.LocationId, location.TenantId)
+	_, err = stmtIns.Exec(location.SSID, location.APName, location.BSSID, location.Address, location.Longitude, location.Latitude, dashboard.GetApGroupId(location.TenantId, location.GroupName), location.GroupName, location.LocationId, location.TenantId)
 	checkErr(err, "Error occured while updating AP location")
 	defer stmtIns.Close()
 }
@@ -106,6 +110,39 @@ func DeleteAccessPoint(mac string, tenantid int) error {
 	} else {
 		return nil
 	}
+}
+
+func GetActiveAccessPoint(tenantId int, activePeriodFrom string, activePeriodTo string, treshold int) (int, error) {
+	dbMap := utils.GetDBConnection(commons.SUMMARY_DB);
+	defer dbMap.Db.Close()
+	var activeCalledStations []utils.NullString
+	_, err := dbMap.Select(&activeCalledStations, commons.GET_ACTIVE_APS_COUNT, activePeriodFrom, activePeriodTo, tenantId, treshold)
+	if err != nil {
+		return len(activeCalledStations), errors.New(err.Error())
+	}
+	return len(activeCalledStations), nil
+}
+
+func GetInactiveAccessPoint(tenantId int, activePeriodFrom string, activePeriodTo string, treshold int) (int, error) {
+	dbMap := utils.GetDBConnection(commons.SUMMARY_DB);
+	defer dbMap.Db.Close()
+	var inactiveCalledStations []utils.NullString
+	_, err := dbMap.Select(&inactiveCalledStations, commons.GET_INACTIVE_APS_COUNT, activePeriodFrom, activePeriodTo, tenantId, treshold)
+	if err != nil {
+		return len(inactiveCalledStations), errors.New(err.Error())
+	}
+	return len(inactiveCalledStations), nil
+}
+
+func GetDistinctMacCount(tenantId int, activePeriodFrom string, activePeriodTo string) (int, error) {
+	dbMap := utils.GetDBConnection(commons.SUMMARY_DB);
+	defer dbMap.Db.Close()
+	var activeCalledStations []utils.NullString
+	_, err := dbMap.Select(&activeCalledStations, commons.GET_DISTINCT_MAC, activePeriodFrom, activePeriodTo, tenantId)
+	if err != nil {
+		return len(activeCalledStations), errors.New(err.Error())
+	}
+	return len(activeCalledStations), nil
 }
 
 func checkErr(err error, msg string) {
