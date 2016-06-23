@@ -8291,3 +8291,7 @@ table.dataTable tbody tr.selected {
 .ol-attribution {
     display: none;
 }
+
+.datatable-toolbtns{
+    margin-right: 30px !important;
+}
