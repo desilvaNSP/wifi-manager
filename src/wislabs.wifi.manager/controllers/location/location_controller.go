@@ -53,9 +53,6 @@ func AddWiFiLocation(location *dao.ApLocation) {
 
 	stmtIns, err := dbMap.Db.Prepare(commons.ADD_AP_LOCATION)
 	_, err = stmtIns.Exec(location.TenantId, location.SSID, location.MAC, location.APName, location.BSSID,  location.Address, location.Longitude, location.Latitude, dashboard.GetApGroupId(location.TenantId, location.GroupName), location.GroupName)
-	if err != nil {
-		println(err.Error())
-	}
 	checkErr(err, "Error occured while adding AP location")
 	defer stmtIns.Close()
 }
@@ -112,37 +109,20 @@ func DeleteAccessPoint(mac string, tenantid int) error {
 	}
 }
 
-func GetActiveAccessPoint(tenantId int, activePeriodFrom string, activePeriodTo string, treshold int) (int, error) {
+func GetAccessPointFeatureDetails(constraints dao.AccessPointConstraints) (int, error){
 	dbMap := utils.GetDBConnection(commons.SUMMARY_DB);
 	defer dbMap.Db.Close()
-	var activeCalledStations []utils.NullString
-	_, err := dbMap.Select(&activeCalledStations, commons.GET_ACTIVE_APS_COUNT, activePeriodFrom, activePeriodTo, tenantId, treshold)
-	if err != nil {
-		return len(activeCalledStations), errors.New(err.Error())
+	var selectedResult []utils.NullString
+	var err error;
+	if constraints.Threshold != 0 {
+		_, err = dbMap.Select(&selectedResult,constraints.Query, constraints.From, constraints.To, constraints.TenantId, constraints.Threshold)
+	}else {
+		_, err = dbMap.Select(&selectedResult,constraints.Query, constraints.From, constraints.To, constraints.TenantId)
 	}
-	return len(activeCalledStations), nil
-}
-
-func GetInactiveAccessPoint(tenantId int, activePeriodFrom string, activePeriodTo string, treshold int) (int, error) {
-	dbMap := utils.GetDBConnection(commons.SUMMARY_DB);
-	defer dbMap.Db.Close()
-	var inactiveCalledStations []utils.NullString
-	_, err := dbMap.Select(&inactiveCalledStations, commons.GET_INACTIVE_APS_COUNT, activePeriodFrom, activePeriodTo, tenantId, treshold)
 	if err != nil {
-		return len(inactiveCalledStations), errors.New(err.Error())
+		return len(selectedResult), errors.New(err.Error())
 	}
-	return len(inactiveCalledStations), nil
-}
-
-func GetDistinctMacCount(tenantId int, activePeriodFrom string, activePeriodTo string) (int, error) {
-	dbMap := utils.GetDBConnection(commons.SUMMARY_DB);
-	defer dbMap.Db.Close()
-	var activeCalledStations []utils.NullString
-	_, err := dbMap.Select(&activeCalledStations, commons.GET_DISTINCT_MAC, activePeriodFrom, activePeriodTo, tenantId)
-	if err != nil {
-		return len(activeCalledStations), errors.New(err.Error())
-	}
-	return len(activeCalledStations), nil
+	return len(selectedResult), nil
 }
 
 func checkErr(err error, msg string) {

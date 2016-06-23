@@ -8074,7 +8074,7 @@ table.dataTable tbody tr.selected {
     float: right !important;
 }
 .feature-detail-card .option-icon{
-    margin-top: -5px;
+    margin-top: 10px;
 }
 
 .app-listing{
@@ -8107,7 +8107,7 @@ table.dataTable tbody tr.selected {
     font-size: smaller
 }
 .option-card{
-    margin: 10px 0px 10px;
+    margin: 0px 0px 10px;
 }
 .app-listing{
     margin-top: -43px;

@@ -122,6 +122,8 @@
                     Cookies.set("tenantid", result.tenantid)
                     Cookies.set("tenantdomain", userRealm[1])
                     Cookies.set("jwt", result.token)
+                    Cookies.set("activeap-treshold", 5 );
+                    Cookies.set("inactiveap-treshold", 5 );
                     window.location.href = "/dashboard/"
                 });
             }

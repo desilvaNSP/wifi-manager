@@ -286,3 +286,10 @@ type SummaryChangePercentage struct {
 	Status 	   string		`json:"status"`
 }
 
+type AccessPointConstraints struct {
+	TenantId     	int
+	From     		string
+	To     			string
+	Threshold       int
+	Query 			string
+}

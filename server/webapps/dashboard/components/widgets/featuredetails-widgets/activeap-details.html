@@ -22,21 +22,27 @@
                 </div>
             </div>
             <div class="col-xs-9 text-right">
-                <span>Active Access Points</span>
-                <h2 class="widget-summary-value font-bold">{{value}}</h2>
+                <div class="row">
+                    <span>Active Access Points</span>
+                    <h2 class="widget-summary-value font-bold">{{value}}</h2>
+                </div>
+                <div class="row option-icon">
+                    <span><i class="fa fa-cog" aria-hidden="true"></i></span>
+                </div>
             </div>
-        </div>
-        <div class="row option-icon">
-            <span><i class="fa fa-cog" aria-hidden="true"></i></span>
         </div>
     </div>
     <div class="widget back face center">
         <div class="option-card">
-            <div class="form-group row option-form">
-                <label class="col-lg-3">Limitation</label>
-                <div class="col-sm-9"><input class="input-s-sm" id="input-threshold-activeap" placeholder="">
+            <form class="apactive-set-form">
+                <div class="form-group row option-form">
+                    <label class="col-lg-4">Max Trial Period</label>
+                    <div class="col-sm-8"><input class="input-s-sm" name="threshold" id="input-threshold-activeap" value="{{threshold}}"
+                                                 onblur="if (this.value == '' || this.value =='0') {this.value = Cookies.set('activeap-treshold')}"
+                                                 onfocus="this.value = ''"/>
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
         <div class="row option-done">
             <span><i class="fa fa-floppy-o bg-color-white" aria-hidden="true"></i></span>
@@ -58,8 +64,9 @@
 
         activeapcard.find('.option-done').on('click', function () {
             activeapcard.addClass('swivel-effect-0');
-            var threshold = $('input#input-threshold-activeap').val();
-            activeapRequest = $.get('/wifi/locations/activeapcounts?from=' + _activePeriodFrom + '&to=' + _activePeriodTo + '&treshold=' + threshold, function (data) {
+            var activeThreshold = $('input#input-threshold-activeap').val();
+            Cookies.set("activeap-treshold",activeThreshold);
+            activeapRequest = $.get('/wifi/ap/activecount?from=' + _apPeriodFrom + '&to=' + _apPeriodTo + '&threshold=' + Cookies.get("activeap-treshold"), function (data) {
                 countOfActiveAPs = data;
             });
             $.when(activeapRequest).done(function () {

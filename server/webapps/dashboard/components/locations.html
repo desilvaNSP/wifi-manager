@@ -108,25 +108,26 @@
 
 <div id="add-wifi-location-modal-content"></div>
 
-<script>
-    _activePeriodFrom = 0, _activePeriodTo = 0 , threshold = 0;
+<script type="">
+
+    _apPeriodFrom = 0, _apPeriodTo = 0;
 
     $(document).ready(function () {
 
         var locationTable;
         var mapConfigs;
-        var serverOriginUrl = window.location.origin;
 
-        threshold = 2;
-        _activePeriodTo = moment().format('YYYY-MM-DD')
-        _activePeriodFrom = moment().subtract(500, 'days').format('YYYY-MM-DD');
+         _apPeriodTo = moment().format('YYYY-MM-DD')
+         _apPeriodFrom = moment().subtract(500, 'days').format('YYYY-MM-DD');
+
+        var serverOriginUrl = window.location.origin;
 
 
         initFeatureWidgets();
 
         mapConfigs = initAccessPointMap();
 
-        locationTable = initLocationTable(serverOriginUrl);
+        locationTable = initLocationTable(serverOriginUrl, mapConfigs);
 
         $('.dataTables-location tbody').on('click', '#setting-delete-location', function () {
             loadDeleteLocationModal(locationTable, $(this).parents('tr'))
@@ -143,17 +144,19 @@
      */
     function initFeatureWidgets() {
         renderFeatureDetailsWidgets({
-            url: '/wifi/locations/activeapcounts?from=' + _activePeriodFrom + '&to=' + _activePeriodTo + '&treshold=' + threshold,
+            url: '/wifi/ap/activecount?from=' + _apPeriodFrom + '&to=' + _apPeriodTo + '&threshold=' + Cookies.get("activeap-treshold"),
             templateUrl: 'activeap-details.html',
-            containerId: '#widget-active-accespoint'
+            containerId: '#widget-active-accespoint',
+            defaultTreshold: Cookies.get("activeap-treshold")
         });
         renderFeatureDetailsWidgets({
-            url: '/wifi/locations/inactiveapcounts?from=' + _activePeriodFrom + '&to=' + _activePeriodTo + '&treshold=' + threshold,
+            url: '/wifi/ap/inactivecount?from=' + _apPeriodFrom + '&to=' + _apPeriodTo + '&threshold=' + Cookies.get("inactiveap-treshold"),
             templateUrl: 'inactive-details.html',
-            containerId: '#widget-inactive-accespoint'
+            containerId: '#widget-inactive-accespoint',
+            defaultTreshold: Cookies.get("inactiveap-treshold")
         });
         renderFeatureDetailsWidgets({
-            url: '/wifi/locations/distinctmaccount?from=' + _activePeriodFrom + '&to=' + _activePeriodTo,
+            url: '/wifi/ap/distinctcount?from=' + _apPeriodFrom + '&to=' + _apPeriodTo,
             templateUrl: 'distinctmac-details.html',
             containerId: '#widget-distinct-mac'
         });
@@ -164,7 +167,7 @@
      * Initialization of Access point map using Openlayer map
      * @return {Object} mapConfigs
      */
-    function initAccessPointMap(){
+    function initAccessPointMap() {
         var mapConfigs = {};
         mapConfigs.map = new ol.Map({
             layers: [
@@ -198,7 +201,7 @@
      * @param {string} serverOriginUrl
      * @return {Object} locationTable
      */
-    function initLocationTable(serverOriginUrl) {
+    function initLocationTable(serverOriginUrl, mapConfigs) {
         var locationTable = $('.dataTables-location').DataTable({
             responsive: true,
             orderCellsTop: true,
@@ -210,7 +213,7 @@
                 "error": function (e) {
                 },
                 "dataSrc": function (d) {
-                    /* updateMarkers(d, map, iconStyle);*/
+                    updateMarkers(d, mapConfigs.map, mapConfigs.iconStyle);
                     return d
                 }
             },
@@ -437,6 +440,7 @@
                     apname: selectedLocation.apname,
                     ssid: selectedLocation.ssid,
                     bssid: selectedLocation.bssid,
+                    address: selectedLocation.address,
                     longitude: selectedLocation.longitude,
                     latitude: selectedLocation.latitude
                 });
@@ -521,7 +525,6 @@
             });
         }
     }
-
 
     /**
      * Load modal for delete ap location
@@ -662,6 +665,7 @@
             }
         });
     }
+
 
 </script>
 
