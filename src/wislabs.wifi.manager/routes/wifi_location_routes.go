@@ -41,11 +41,18 @@ var WifiLocationRoutes = Routes{
 		dashboard_handlers.AddWiFiLocationHandler,
 	},
 	Route{
-		"Update WiFi Locations AccessPoints",
-		"POST",
-		"/wifi/locationsupdate",
+		"Update WiFi Locations Instances",
+		"PUT",
+		"/wifi/locations",
 		true,
 		dashboard_handlers.UpdateWiFiLocationHandler,
+	},
+	Route{
+		"Update WiFi APs",
+		"PUT",
+		"/wifi/updateaps",
+		true,
+		dashboard_handlers.UpdateAPsHandler,
 	},
 	Route{
 		"Add WiFi Group",
@@ -61,4 +68,33 @@ var WifiLocationRoutes = Routes{
 		true,
 		dashboard_handlers.GetSSIDsOfAPGroups,
 	},
+	Route{
+		"Check ssids is exist with the mac",
+		"GET",
+		"/wifi/locations/{mac}/{ssid}",
+		true,
+		dashboard_handlers.IsSSIDExist,
+	},
+	Route{
+		"GET aps details associated with the location",
+		"GET",
+		"/wifi/locations/{mac}",
+		true,
+		dashboard_handlers.GetAPsByMac,
+	},
+	Route{
+		"GET all MACS",
+		"GET",
+		"/wifi/macs",
+		true,
+		dashboard_handlers.GetMACs,
+	},
+	Route{
+		"GET all APS",
+		"GET",
+		"/wifi/aps",
+		true,
+		dashboard_handlers.GetAPs,
+	},
+
 }

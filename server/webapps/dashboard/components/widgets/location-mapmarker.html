@@ -1,8 +1,18 @@
 <div class='location-mapinfobox-container'>
-    <h4>Access Point <h5>{{apname}}</h5></h4>
+    <h3>{{apname}}</h3>
     <hr/>
-    <p>Mac Address    : {{mac}}</p>
-    <p>Group Name   : {{groupname}}</p>
-    <p>BSSID  : {{bssid}}</p>
-    <p>SSID      : {{ssid}}</p>
+    <div class="mapinfobox-inside">
+        <div class="row">
+            <label class="col-sm-4">Mac :</label><span>{{mac}}</span>
+        </div>
+        <div class="row">
+            <label class="col-sm-4">Address:</label><span>{{address}}</span>
+        </div>
+        <div class="row">
+            <label class="col-sm-5">Longitude:</label><span>{{longitude}}</span>
+        </div>
+        <div class="row">
+            <label class="col-sm-5">Latitude :</label><span>{{latitude}}</span>
+        </div>
+    </div>
 </div>

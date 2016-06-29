@@ -101,8 +101,7 @@ func GetLongLatLocationByMacAddress(mac string) dao.LongLatMac {
 	dbMap := utils.GetDBConnection("dashboard");
 	defer dbMap.Db.Close()
 	var longlatbymac dao.LongLatMac
-
-	query := "SELECT longitude as longitude, latitude as latitude, mac as mac, apname as apname from aplocations where mac=?"
+	query := "SELECT longitude as longitude, latitude as latitude, mac as mac, apname as apname from aps where mac=?"
 	err := dbMap.SelectOne(&longlatbymac, query, mac)
 	if err != nil {
 		return longlatbymac

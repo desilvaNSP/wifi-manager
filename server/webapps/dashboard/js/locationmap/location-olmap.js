@@ -1,16 +1,16 @@
 var markers = [];
 
-
 function updateMarkers(data, map, iconStyle){
+
     markers = $.map(data, function(item){
         return new ol.Feature({
-            geometry: new ol.geom.Point(ol.proj.transform([item.latitude,item.longitude], 'EPSG:4326',
+            geometry: new ol.geom.Point(ol.proj.transform([item.longitude,item.latitude], 'EPSG:4326',
                 'EPSG:3857')),
             apname: item.apname,
-            bssid: item.bssid,
             mac: item.mac,
-            groupname:item.groupname,
-            ssid:item.ssid
+            address:item.address,
+            longitude:item.longitude,
+            latitude:item.latitude
         });
     });
 

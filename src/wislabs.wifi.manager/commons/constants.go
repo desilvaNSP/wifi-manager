@@ -63,11 +63,18 @@ const IS_EXISTS_USER_NAME_IN_GROUP string  = "SELECT EXISTS(SELECT username FROM
 const IS_VALID_USER_IN_RADIUS string  = "SELECT EXISTS(SELECT username FROM radcheck WHERE username=? and value=?) as checkuser";
 
 /* AP locations */
-const ADD_AP_LOCATION string 	          = "INSERT INTO aplocations (tenantid, ssid, mac, apname, bssid, address, longitude, latitude, groupid,  groupname) VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )"
-const UPDATE_AP_LOCATION string           ="UPDATE aplocations SET ssid=?, apname=?, bssid=?, address = ?, longitude=?, latitude=?, groupid=?, groupname=? WHERE locationid=? and tenantid=? "
-const ADD_AP_GROUP string 	 	  = "INSERT INTO apgroups (tenantid, groupname, groupsymbol) VALUES( ?, ?, ?)"
-const GET_ALL_AP_LOCATIONS string         = "SELECT tenantid, locationid, ssid, mac, apname, bssid, address, longitude, latitude, groupname FROM aplocations WHERE tenantid=?"
+const ADD_AP_LOCATION string 	          = "INSERT INTO aplocations (tenantid, ssid, mac, bssid, groupid,  groupname) VALUES(?, ?, ?, ?, ?, ?)"
+const ADD_APS  string 					  = "INSERT INTO aps (tenantid, apname, address, longitude, latitude, mac) VALUES (?, ?, ?, ?, ?, ?)"
+const UPDATE_AP_LOCATION string           = "UPDATE aplocations SET bssid=?, ssid=?, groupid=?, groupname=? WHERE mac=? and ssid=? and tenantid=? "
+const UPDATE_APS string					  = "UPDATE aps SET apname =?, address=?, longitude=?, latitude=? WHERE mac=? and tenantid=?"
+const ADD_AP_GROUP string 	 	  		  = "INSERT INTO apgroups (tenantid, groupname, groupsymbol) VALUES( ?, ?, ?)"
+const GET_ALL_AP_LOCATIONS string         = "SELECT tenantid, ssid, mac, bssid, groupname, (SELECT apname FROM aps  WHERE aps.mac=apl.mac) as apname , (SELECT address FROM aps  WHERE aps.mac=apl.mac) as address FROM aplocations as apl WHERE tenantid=?"
+const GET_ALL_APS string				  = "SELECT * FROM aps WHERE tenantid=?"
+const GET_APS_ON_LOCATION string 	      = "SELECT apname, address, longitude, latitude FROM aps WHERE mac= ? and tenantid= ?"
+const IS_MAC_EXISTS string                = "SELECT EXISTS(SELECT mac FROM aps WHERE mac=? and tenantid = ?) as checkmac"
 const GET_ALL_AP_GROUPS string	          = "SELECT distinct(groupname) FROM apgroups WHERE tenantid=?"
+const GET_ALL_APS_MACS  string 	  		  = "SELECT mac FROM aps WHERE tenantid = ?"
+const IS_EXISTS_SSID_ON_MAC string		  = "SELECT EXISTS(SELECT ssid FROM aplocations WHERE mac=? and ssid=? and tenantid = ?) as checkssid"
 const GET_AP_GROUP_SSIDS string	          = "SELECT distinct(ssid) FROM aplocations WHERE tenantid=? AND groupname IN"
 const DELETE_AP_LOCATION string           = "DELETE FROM aplocations WHERE ssid=? AND mac=? AND groupname=? AND tenantid=?"
 const DELETE_AP_GROUP string 	          = "DELETE FROM aplocations WHERE groupname=? AND tenantid=?"
