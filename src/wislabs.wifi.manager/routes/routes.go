@@ -21,6 +21,7 @@ func init() {
 		WifiUserRoutes,
 		WifiUsageRoutes,
 		WifiLocationRoutes,
+		WifiAPRoutes,
 		DashboardUserRoutes,
 		DashoardAppRoutes,
 		RadiusRoutes,
