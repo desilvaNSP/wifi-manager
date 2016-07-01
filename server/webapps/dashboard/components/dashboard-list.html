@@ -218,54 +218,82 @@
 
         $('#app-grid').on('click', '.app-anchor', function (event) {
             event.preventDefault();
+            var appSettings
             var appName = $(this).attr('data-appname');
             var appId = $(this).attr('data-appid');
-            var aggregate = $(this).attr('data-aggregation');
-            var filtercriteria = $(this).attr('data-filtercriteria');
-            window.aggregate = aggregate;
-            window.filtercriteria = filtercriteria;
 
-            $.get('components/dashboard.html', function (template) {
-                switch (window.filtercriteria) {
-                    case "groupname" :
-                        $.get('/dashboard/apps/' + appId + '/groups', function (result) {
 
-                            window.appId = appId;
-                            window.appName = appName;
-                            window.datagroups = result;
-                            window.originaldatagroups = result;
-                            var rendered;
-                            if (aggregate == 'yes') {
-                                rendered = Mustache.render(template, {appId: appId, datagroups: appName});
-                            } else {
-                                window.appName = datagroups[0];
-                                rendered = Mustache.render(template, {appId: appId, datagroups: result});
-                            }
-                            $grid.shuffle('destroy');
-                            $('.container-dashboard').remove('#app-grid');
-                            $('.container-dashboard').html(rendered);
-                        });
-                        break;
-                    case "ssid" :
-                        $.get('/dashboard/apps/' + appId + '/filterparameters', function (result) {
-                            window.appId = appId;
-                            window.appName = appName;
-                            window.datagroups = result;
-                            window.originaldatagroups = result;
-                            var rendered;
-                            if (aggregate == 'yes') {
-                                rendered = Mustache.render(template, {appId: appId, datagroups: appName});
-                            } else {
-                                window.appName = result[0];
-                                rendered = Mustache.render(template, {appId: appId, datagroups: result});
-                            }
-                            $grid.shuffle('destroy');
-                            $('.container-dashboard').remove('#app-grid');
-                            $('.container-dashboard').html(rendered);
-                        });
-                }
-                $.get('/dashboard/apps/' + appId + '/acl', function (result) {
-                    window.aclvalue = result;
+            var getAppsSettings = $.get('/dashboard/apps/'+ appId +'/appsettings', function(result){
+                appSettings = result;
+                window.aggregate = appSettings.aggregate;
+                window.filtercriteria = appSettings.filtercriteria;
+            });
+            $.when(getAppsSettings).done(function(){
+                $.get('components/dashboard.html', function (template) {
+                    switch (window.filtercriteria) {
+                        case "groupname" :
+                            $.get('/dashboard/apps/' + appId + '/groups', function (result) {
+                                window.appId = appId;
+                                window.appName = appName;
+                                window.datagroups = result;
+                                window.originaldatagroups = result;
+                                var rendered;
+                                if ( window.aggregate == 'yes') {
+                                    rendered = Mustache.render(template, {
+                                        appId: appId,
+                                        datagroups: window.appName,
+                                        checkAggreate: function () {
+                                            return "checked";
+                                        }
+                                    });
+                                } else {
+                                    window.appName = datagroups[0];
+                                    rendered = Mustache.render(template, {
+                                        appId: appId,
+                                        datagroups: result,
+                                        checkAggreate: function () {
+                                            return "unchecked";
+                                        }
+                                    });
+                                }
+                                $grid.shuffle('destroy');
+                                $('.container-dashboard').remove('#app-grid');
+                                $('.container-dashboard').html(rendered);
+                            });
+                            break;
+                        case "ssid" :
+                            $.get('/dashboard/apps/' + appId + '/filterparameters', function (result) {
+                                window.appId = appId;
+                                window.appName = appName;
+                                window.datagroups = result;
+                                window.originaldatagroups = result;
+                                var rendered;
+                                if (aggregate == 'yes') {
+                                    rendered = Mustache.render(template, {
+                                        appId: appId,
+                                        datagroups: appName,
+                                        checkAggreate: function () {
+                                            return "checked";
+                                        }
+                                    });
+                                } else {
+                                    window.appName = result[0];
+                                    rendered = Mustache.render(template, {
+                                        appId: appId,
+                                        datagroups: result,
+                                        checkAggreate: function () {
+                                            return "unchecked";
+                                        }
+                                    });
+                                }
+                                $grid.shuffle('destroy');
+                                $('.container-dashboard').remove('#app-grid');
+                                $('.container-dashboard').html(rendered);
+                            });
+                    }
+                    $.get('/dashboard/apps/' + appId + '/acl', function (result) {
+                        window.aclvalue = result;
+                    });
                 });
             });
         });

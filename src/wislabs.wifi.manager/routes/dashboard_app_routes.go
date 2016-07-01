@@ -34,7 +34,7 @@ var DashoardAppRoutes = Routes{
 		dashboard_handlers.GetAclsOfApp,
 	},
 	Route{
-		"Get Dashboard App Acl",
+		"Get Dashboard App Aggregate",
 		"GET",
 		"/dashboard/apps/{appid}/aggregate",
 		true,
