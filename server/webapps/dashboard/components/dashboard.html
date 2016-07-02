@@ -93,7 +93,7 @@
             },
             autoApply:true
         }, function(start, end) {
-            saveResult(start,end)
+            saveResult(start,end);
             if(selectedtabid=="overview"){
                 renderMetrics();
             }else if(selectedtabid=="apreport"){
@@ -106,10 +106,8 @@
         function saveResult (from,to) {
 
             $('#time-range-dashboard span').html(from.format('YYYY - MM - DD') + ' | ' + to.format('YYYY - MM - DD'));
-            /*from_ = from.format('YYYY-MM-DD');
-            to_ = to.format('YYYY-MM-DD');*/
-            from_ = "2016-01-10";
-            to_ = "2016-01-20";
+            from_ = from.format('YYYY-MM-DD');
+            to_ = to.format('YYYY-MM-DD');
             var period = Math.floor(moment.duration(moment(to_,"YYYY-MM-DD").diff(moment(from_,"YYYY-MM-DD"))).asDays());
             _prefrom = moment(moment(from_).subtract(period, "days")).format('YYYY-MM-DD');
             _preto = moment(from_).subtract(1, "days").format("YYYY-MM-DD");
@@ -162,7 +160,7 @@
 
         $('#chk-aggregate-option').on('change', function (e) {
             var that = this;
-            var getCriteriaParameters
+            var getCriteriaParameters;
             var criteriaParameters ;
             var selectOptions;
             switch (window.filtercriteria) {
@@ -177,7 +175,7 @@
                     });
                     break;
             }
-            $.when(getCriteriaParameters).done(function () {
+            getCriteriaParameters.done(function () {
                 if (that.checked) {
                     window.aggregate = 'yes';
                     window.datagroups = criteriaParameters;
@@ -202,7 +200,6 @@
                     renderRealTime();
                 }
             });
-
         });
     });
 </script>
