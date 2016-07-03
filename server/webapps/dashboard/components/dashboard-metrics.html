@@ -479,7 +479,7 @@
                 doc.text(40, titleTop, $(this).data("title"));
                 doc.addImage(imageData, 'JPEG', 80, chartTop, pieCharWidth, pieCharHeight);
             });
-            doc.save('home-dashboard.pdf');
+            doc.save(window.appName+'-'+ moment().format('YYYY-MM-DD')+'.pdf');
         });
 
         $(
@@ -638,6 +638,7 @@
                     var fileName = "dashboard.csv";
 
                     $('#exportCSV').click(function () {
+                        fileName = window.appName+'-'+ moment().format('YYYY-MM-DD')+".csv";
 
                         var $modal = $('.js-loading-bar'), $bar = $modal.find('.progress-bar');
                         $bar.css('width', '0%').attr('aria-valuenow', 0);
