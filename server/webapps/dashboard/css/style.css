@@ -8077,11 +8077,6 @@ table.dataTable tbody tr.selected {
     margin-top: 10px;
 }
 
-.app-listing{
-    margin-top: -43px;
-    margin-left: 5px;
-}
-
 .feature-details-container{
     height: 105px;
     margin: 0px 10px 0px;
@@ -8109,10 +8104,6 @@ table.dataTable tbody tr.selected {
 }
 .option-card{
     margin: 0px 0px 10px;
-}
-.app-listing{
-    margin-top: -43px;
-    margin-left: 5px;
 }
 
 
