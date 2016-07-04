@@ -206,12 +206,12 @@ func GetAccessPointAggregatedDataFromToHandler(w http.ResponseWriter, r*http.Req
 *
 */
 
-func GetTopTenAccessPointInUsersFromToHandler(w http.ResponseWriter, r*http.Request){
+func GetTopAccessPointsByUserCountHandler(w http.ResponseWriter, r*http.Request){
 	decoder := json.NewDecoder(r.Body)
 	var constrains dao.Constrains
 	decoder.Decode(&constrains)
 
-	topTenSummary, err := wifi.GetTopAccessPointInTotalUsers(constrains)
+	topTenSummary, err := wifi.GetTopAccessPointsByUserCount(constrains)
 	if err != nil {
 		checkErr(err, "Error occuring while getting Top accespoint in Users")
 	}
@@ -228,12 +228,12 @@ func GetTopTenAccessPointInUsersFromToHandler(w http.ResponseWriter, r*http.Requ
 *
 */
 
-func GetTopTenAPInSumOutputOctetsFromToHandler(w http.ResponseWriter, r*http.Request){
+func GetTopAccessPointsByUploadHandler(w http.ResponseWriter, r*http.Request){
 	decoder := json.NewDecoder(r.Body)
 	var constrains dao.Constrains
 	decoder.Decode(&constrains)
 
-	topTenSummary, err := wifi.GetTopAccessPointInSumOutputOctets(constrains)
+	topTenSummary, err := wifi.GetTopAccessPointsByUpload(constrains)
 	if err != nil {
 		checkErr(err, "Error occuring while getting Top accespoint in Downloads")
 	}
@@ -250,12 +250,12 @@ func GetTopTenAPInSumOutputOctetsFromToHandler(w http.ResponseWriter, r*http.Req
 *
 */
 
-func GetTopTenAPInSumInputOctetsFromToHandler(w http.ResponseWriter, r*http.Request){
+func GetTopAccessPointsByDownloadHandler(w http.ResponseWriter, r*http.Request){
 	decoder := json.NewDecoder(r.Body)
 	var constrains dao.Constrains
 	decoder.Decode(&constrains)
 
-	topTenSummary, err := wifi.GetTopAccessPointInSumInputOctets(constrains)
+	topTenSummary, err := wifi.GetTopAccessPointsByDownload(constrains)
 	if err != nil {
 		checkErr(err, "Error occuring while getting Top accespoint in Uploads")
 	}
@@ -265,8 +265,6 @@ func GetTopTenAPInSumInputOctetsFromToHandler(w http.ResponseWriter, r*http.Requ
 		panic(err)
 	}
 }
-
-
 
 /**
 * POST

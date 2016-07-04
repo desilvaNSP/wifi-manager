@@ -1795,6 +1795,12 @@ a.list-group-item.active:focus {
     float: right;
 }
 
+.stat-percent span {
+    color: #314f6b;
+    font-weight: 400;
+    padding-right: 5px;
+}
+
 .stat-list li {
     margin-top: 15px;
     position: relative;
@@ -8385,11 +8391,16 @@ table.dataTable tbody tr.selected {
     font-weight: 300;
 }
 
-
 .typeahead.dropdown-menu>.active>a{
     background-color: #12A6A8 !important;
 }
 
 .google-map-error{
     margin-top: 15px;
+}
+.text-level-up{
+    color: #1ab394;
+}
+.text-level-down{
+     color: #b35f68;;
 }

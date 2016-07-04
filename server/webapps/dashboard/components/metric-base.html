@@ -14,5 +14,7 @@
 </div>
 <div class="ibox-content">
     <h1 class="no-margins" style="padding-left: 15%">{{{value}}}</h1>
-    <div class="stat-percent font-bold text-navy">{{percentage}}% <i class="fa fa-level-{{{status}}}"></i></div>
+    <div class="stat-percent font-bold text-navy"><span>{{percentage}}%</span><i class="fa fa-level-{{{status}}} text-level-{{{status}}}" data-toggle="tooltip"
+                                                                                 data-placement="right"
+                                                                                 title="Level {{{status}}}"></i></div>
 </div>
