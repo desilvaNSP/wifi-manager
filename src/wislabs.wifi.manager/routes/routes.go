@@ -458,6 +458,27 @@ var routes = Routes{
 		dashboard_handlers.GetAccessPointAggregatedDataFromToHandler,
 	},
 	Route{
+		"Get Access Point Details Dashboard",
+		"POST",
+		"/wifi/summary/toptenapinusers",
+		true,
+		dashboard_handlers.GetTopTenAccessPointInUsersFromToHandler,
+	},
+	Route{
+		"Get Access Point Details Dashboard",
+		"POST",
+		"/wifi/summary/toptenapinuploads",
+		true,
+		dashboard_handlers.GetTopTenAPInSumInputOctetsFromToHandler,
+	},
+	Route{
+		"Get Access Point Details Dashboard",
+		"POST",
+		"/wifi/summary/toptenapindownloads",
+		true,
+		dashboard_handlers.GetTopTenAPInSumOutputOctetsFromToHandler,
+	},
+	Route{
 		"Check Wifi user Valid In Radius",
 		"GET",
 		"/radius/users/{username}",

@@ -14,6 +14,7 @@
                 data: convertToHighChartSeries(data, 1048576)
             };
             avgDownloadsTimeSeriesData.push(locationDist);
+            console.log(avgDownloadsTimeSeriesData)
             renderTimeSeries('#daily-user-downloads-series', 'Downloads', 'Downloads(MB)', avgDownloadsTimeSeriesData);
         });
 

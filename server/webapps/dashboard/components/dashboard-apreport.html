@@ -32,12 +32,13 @@
         </div>
     </div>
 </div>
-<div class="row" id="map-body">
-    <div class="col-lg-12">
-        <section id="widget-grid" class="map-containner">
-            <div class="row">
+<!-- Downloads and Uploads -->
+<section id={{widgetid}} class="widget-container secondone">
+    <div class="row" id="map-body">
+        <div class="col-lg-12">
+            <div class="row map-containner">
                 <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <div class="jarviswidget" id="wid-id-map" data-widget-refresh="2000" data-widget-colorbutton="false">
+                    <div class="jarviswidget" id="wid-id-0" data-widget-refresh="2000" data-widget-colorbutton="false">
                         <header>
                             <h2>Location Map</h2>
                         </header>
@@ -58,36 +59,123 @@
                     </div>
                 </article>
             </div>
-        </section>
+        </div>
     </div>
-</div>
+    <div class="row">
+        <article class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <div class="jarviswidget" id="wid-id-1" data-widget-refresh="2000"
+                 data-widget-load="components/widgets/apsummary-inuploads-series.html" data-widget-colorbutton="false"
+                 data-id="apsummary-inuploads">
+                <header>
+                    <h2>Top 10 Access Point In Total Uploads</h2>
+                </header>
+                <div>
+                    <!-- widget edit box -->
+                    <div class="jarviswidget-editbox">
+                        <!-- This area used as dropdown edit box -->
+                        <input class="form-control" type="text">
+                        <span class="note"><i class="fa fa-check text-success"></i> Change title to update and save instantly!</span>
+                    </div>
+                    <!-- end widget edit box -->
+
+                    <!-- widget content -->
+                    <div class="widget-body toptenap-widgets">
+                        <div>
+                            <div class="sk-spinner sk-spinner-three-bounce">
+                                <div class="sk-bounce1"></div>
+                                <div class="sk-bounce2"></div>
+                                <div class="sk-bounce3"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end widget content -->
+                </div>
+            </div>
+        </article>
+        <article class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <div class="jarviswidget" id="wid-id-2" data-widget-refresh="2000"
+                 data-widget-load="components/widgets/apsummary-indownloads-series.html" data-widget-colorbutton="false"
+                 data-id="apsummary-indownloads">
+                <header>
+                    <h2>Top 10 Access Point In Total Downloads</h2>
+                </header>
+                <div>
+                    <!-- widget edit box -->
+                    <div class="jarviswidget-editbox">
+                        <!-- This area used as dropdown edit box -->
+                        <input class="form-control" type="text">
+                        <span class="note"><i class="fa fa-check text-success"></i> Change title to update and save instantly!</span>
+                    </div>
+                    <!-- end widget edit box -->
+
+                    <!-- widget content -->
+                    <div class="widget-body toptenap-widgets">
+                        <div>
+                            <div class="sk-spinner sk-spinner-three-bounce">
+                                <div class="sk-bounce1"></div>
+                                <div class="sk-bounce2"></div>
+                                <div class="sk-bounce3"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end widget content -->
+                </div>
+            </div>
+        </article>
+    </div>
+</section>
 <script>
     $(document).ready(function () {
 
-        var map,heatmap;
-        var apDataArray= [];
-        var longlatDataArray= [];
+        var map, heatmap;
+        var apDataArray = [];
+        var longlatDataArray = [];
         var heatmapDownloadDimesionData = [];
         var heatmapUploadDimesionData = [];
         var allMarkers = [];
         var infoBoxes = [];
+        var fullscreenchartid;
 
         var serverOriginUrl = window.location.origin;
         var payload = {
             from: from_,
             to: to_,
             acl: window.aclvalue,
-            criteria : window.filtercriteria,
+            criteria: window.filtercriteria,
             parameters: window.datagroups,
             tenantid: parseInt(Cookies.get("tenantid"))
         };
 
+        initializeWidgets();
+        pageSetUp();
+
+        function initializeWidgets(){
+            $('#widget-grid').jarvisWidgets({
+                toggleClass: 'fa fa-minus | fa fa-plus',
+                deleteClass: 'fa fa-times',
+                editClass: 'fa fa-cog | fa fa-save',
+                fullscreenClass: 'fa fa-expand | fa fa-compress',
+                refreshButtonClass: 'fa fa-refresh',
+                grid: 'article',
+                onFullscreen: function () {
+                    if (!fullscreenchartid) {
+                        var selectedwidgetid = $("#jarviswidget-fullscreen-mode >:first-child").data("id");
+                        fullscreenchartid = selectedwidgetid;
+                        $("#" + selectedwidgetid).highcharts().reflow();
+                    } else {
+                        $("#" + fullscreenchartid).highcharts().reflow();
+                        fullscreenchartid = "";
+                    }
+                }
+            });
+        }
 
         function formatBytes(bytes) {
-            return  numeral(bytes).format('0.00b')
+            return numeral(bytes).format('0.00b')
         }
+
         function formatIntoMinitue(time) {
-            return  Math.floor(time / 60) + " Min";
+            return Math.floor(time / 60) + " Min";
         }
 
         var accespointTable = $('.dataTables-accesspoint').DataTable({
@@ -96,11 +184,11 @@
             autoWidth: false,
             lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
             "ajax": {
-                "url": serverOriginUrl +"/wifi/summary/accespoint",
+                "url": serverOriginUrl + "/wifi/summary/accespoint",
                 "type": "POST",
                 "contentType": "application/json",
-                "data": function(d){
-                    return  JSON.stringify(payload);
+                "data": function (d) {
+                    return JSON.stringify(payload);
                 },
                 "error": function (e) {
                 },
@@ -122,25 +210,25 @@
             ],
             "columnDefs": [
                 {
-                    "render": function ( data ) {
+                    "render": function (data) {
                         return formatBytes(data);
                     },
                     "targets": 2
                 },
                 {
-                    "render": function ( data ) {
+                    "render": function (data) {
                         return formatBytes(data);
                     },
                     "targets": 3
                 },
                 {
-                    "render": function ( data ) {
+                    "render": function (data) {
                         return formatBytes(data);
                     },
                     "targets": 6
                 },
                 {
-                    "render": function ( data ) {
+                    "render": function (data) {
                         return formatIntoMinitue(data);
                     },
                     "targets": 7
@@ -181,30 +269,30 @@
             }
         });
 
-        $('.dataTables-accesspoint tbody').on( 'click', 'tr', function () {
-            if ( $(this).hasClass('selected') ) {
+        $('.dataTables-accesspoint tbody').on('click', 'tr', function () {
+            if ($(this).hasClass('selected')) {
                 $(this).removeClass('selected');
             }
             else {
                 accespointTable.$('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
                 var accesPointData = accespointTable.row(this).data();
-                var long =null ,latitude=null;
-                $.each(longlatDataArray,function(i,obj){
-                    if(obj.mac ==accesPointData.calledstationmac){
+                var long = null, latitude = null;
+                $.each(longlatDataArray, function (i, obj) {
+                    if (obj.mac == accesPointData.calledstationmac) {
                         latitude = obj.latitude;
                         long = obj.longitude;
                         return false;
                     }
                 });
                 var selectedMarker = allMarkers[0];
-                var selectedIndex=0;
-                var i=0;
-                allMarkers.forEach(function(marker) {
-                    if(long == marker.position.lat() && latitude == marker.position.lng()){
-                        selectedMarker=marker;
-                        selectedIndex=i;
-                    }else{
+                var selectedIndex = 0;
+                var i = 0;
+                allMarkers.forEach(function (marker) {
+                    if (long == marker.position.lat() && latitude == marker.position.lng()) {
+                        selectedMarker = marker;
+                        selectedIndex = i;
+                    } else {
                         infoBoxes[i].close();
                     }
                     i++;
@@ -212,7 +300,7 @@
                 map.setCenter(selectedMarker.position);
                 infoBoxes[selectedIndex].open(map, selectedMarker);
             }
-        } );
+        });
 
         function initMap() {
 
@@ -223,26 +311,26 @@
             });
             new DropDownControl();
 
-            generatePoistionAnchors(map,longlatDataArray,apDataArray);
+            generatePoistionAnchors(map, longlatDataArray, apDataArray);
             setupHeadMapData();
             heatmap = new google.maps.visualization.HeatmapLayer({
                 data: heatmapDownloadDimesionData,
                 map: map,
-                radius:40
+                radius: 40
             });
         }
 
 
-        function generatePoistionAnchors(map,longlatObjs,apDataObjs){
+        function generatePoistionAnchors(map, longlatObjs, apDataObjs) {
             for (var key in apDataObjs) {
                 if (apDataObjs.hasOwnProperty(key)) {
                     var obj = longlatObjs[key];
                     var marker = new google.maps.Marker({
-                        position: new google.maps.LatLng(obj.latitude, obj.longitude) ,
+                        position: new google.maps.LatLng(obj.latitude, obj.longitude),
                         map: map
                     });
                     allMarkers.push(marker);
-                    attachContentForInfobox(marker,apDataObjs[key]);
+                    attachContentForInfobox(marker, apDataObjs[key]);
                 }
             }
         }
@@ -255,7 +343,7 @@
                     content: renderdContent
                 });
                 infoBoxes.push(infowindow);
-                marker.addListener('click', function() {
+                marker.addListener('click', function () {
                     infowindow.open(marker.get('map'), marker);
                 });
             });
@@ -278,11 +366,11 @@
             var index = 0;
             apDataArray.forEach(function () {
                 var downloadObj = {
-                    location: new google.maps.LatLng(longlatDataArray[index].latitude,longlatDataArray[index].longitude),
+                    location: new google.maps.LatLng(longlatDataArray[index].latitude, longlatDataArray[index].longitude),
                     weight: apDataArray[index].totaloutputoctets
                 };
                 var uploadObj = {
-                    location: new google.maps.LatLng(longlatDataArray[index].latitude,longlatDataArray[index].longitude),
+                    location: new google.maps.LatLng(longlatDataArray[index].latitude, longlatDataArray[index].longitude),
                     weight: apDataArray[index].totalinputoctets
                 };
                 heatmapDownloadDimesionData.push(downloadObj);
@@ -301,8 +389,8 @@
             container.id = "select_box";
             var selMap = document.createElement("select");
             selMap.id = "selMap";
-            selMap.className="form-control";
-            selMap.title ="Change Map Type";
+            selMap.className = "form-control";
+            selMap.title = "Change Map Type";
 
             selMap.options[0] = new Option("Toggle HeatMap", 0);
             selMap.options[1] = new Option("Download HeatMap", 1);
@@ -313,20 +401,21 @@
             container.appendChild(selMap);
             map.controls[g.ControlPosition.TOP_RIGHT].push(container);
 
-            g.event.addDomListener(selMap, "change", function() {
+            g.event.addDomListener(selMap, "change", function () {
                 var numSel = selMap.selectedIndex;
-                if( numSel==0 ){
+                if (numSel == 0) {
                     toggleHeatmap();
-                }else if (numSel == 1){
+                } else if (numSel == 1) {
                     heatmap.setMap(map);
                     heatmap.setData(heatmapDownloadDimesionData);
-                }else if (numSel == 2){
+                } else if (numSel == 2) {
                     heatmap.setMap(map);
                     heatmap.setData(heatmapUploadDimesionData);
                 }
                 this.blur();
             });
         }
+
 
     });
 

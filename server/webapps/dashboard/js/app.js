@@ -279,4 +279,49 @@ function renderTimeSeries(element, toolTipHeader, yAxisTitle, dataSeries) {
     });
 }
 
+function renderAPSummarySeries(element,chartOptions) {
+    $(element).highcharts({
+        chart: {
+            type: chartOptions.chartType
+        },
+        title: {
+            text: ''
+        },
+        xAxis: {
+            categories: chartOptions.ySeriousTag
+        },
+        yAxis: {
+            title: {
+                text: chartOptions.yaxixLabel
+            },
+            min: 0
+        },
+        tooltip: {
+            valueSuffix: chartOptions.yaxixLabel
+        },
+        plotOptions: {
+            bar: {
+                dataLabels: {
+                    enabled: true,
+                    formatter: function(){
+                        return formatBytes(this.y);
+                    }
+                }
+            }
+        },
+        credits: {
+            enabled: false
+        },
+        series: [{
+            name: 'Top Access Points',
+            data: chartOptions.seriousData,
+            color: chartOptions.barColor,
+        }]
+    });
+
+    function formatBytes(bytes) {
+        return numeral(bytes).format('0.00b')
+    }
+}
+
 

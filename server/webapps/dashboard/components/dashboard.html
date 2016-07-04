@@ -118,10 +118,13 @@
         }
 
         function renderMetrics() {
+            $('.widget-container').removeAttr('id');
             var userPermissions = JSON.parse(Cookies.get('userpermissions'));
             var hasDashboardCSVDownloadPermission = false;
             $.get('components/dashboard-metrics.html', function (template) {
-                var rendered = Mustache.render(template, {});
+                var rendered = Mustache.render(template, {
+                    widgetid :'widget-grid'
+                });
                 $('#dashboard-metric-content').html(rendered);
                 $.each(userPermissions, function (key, value) {
                     if (value.name == 'csv_download') {
@@ -138,8 +141,11 @@
         }
 
         function renderAPreport(){
+            $('.widget-container').removeAttr('id');
             $.get('components/dashboard-apreport.html', function (template) {
-                var rendered = Mustache.render(template, {});
+                var rendered = Mustache.render(template, {
+                    widgetid :'widget-grid'
+                });
                 $('#dashboard-apreport-content').html(rendered);
             })
         }

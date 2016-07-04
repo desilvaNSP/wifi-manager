@@ -200,6 +200,73 @@ func GetAccessPointAggregatedDataFromToHandler(w http.ResponseWriter, r*http.Req
 	}
 }
 
+/**
+* POST
+* @path /wifi/summary/accespoint
+*
+*/
+
+func GetTopTenAccessPointInUsersFromToHandler(w http.ResponseWriter, r*http.Request){
+	decoder := json.NewDecoder(r.Body)
+	var constrains dao.Constrains
+	decoder.Decode(&constrains)
+
+	topTenSummary, err := wifi.GetTopAccessPointInTotalUsers(constrains)
+	if err != nil {
+		checkErr(err, "Error occuring while getting Top accespoint in Users")
+	}
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(topTenSummary); err != nil {
+		panic(err)
+	}
+}
+
+/**
+* POST
+* @path /wifi/summary/accespoint
+*
+*/
+
+func GetTopTenAPInSumOutputOctetsFromToHandler(w http.ResponseWriter, r*http.Request){
+	decoder := json.NewDecoder(r.Body)
+	var constrains dao.Constrains
+	decoder.Decode(&constrains)
+
+	topTenSummary, err := wifi.GetTopAccessPointInSumOutputOctets(constrains)
+	if err != nil {
+		checkErr(err, "Error occuring while getting Top accespoint in Downloads")
+	}
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(topTenSummary); err != nil {
+		panic(err)
+	}
+}
+
+/**
+* POST
+* @path /wifi/summary/accespoint
+*
+*/
+
+func GetTopTenAPInSumInputOctetsFromToHandler(w http.ResponseWriter, r*http.Request){
+	decoder := json.NewDecoder(r.Body)
+	var constrains dao.Constrains
+	decoder.Decode(&constrains)
+
+	topTenSummary, err := wifi.GetTopAccessPointInSumInputOctets(constrains)
+	if err != nil {
+		checkErr(err, "Error occuring while getting Top accespoint in Uploads")
+	}
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(topTenSummary); err != nil {
+		panic(err)
+	}
+}
+
+
 
 /**
 * POST
