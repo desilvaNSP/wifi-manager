@@ -153,16 +153,33 @@ type Constrains struct {
 	Parameters []string 		 `json:"parameters"`
 }
 
-type ApLocation struct {
+type ApLocationSSIDs struct {
     TenantId   int                  `db:"tenantid"json:"tenantid"`
-    LocationId int64              `db:"locationid"json:"locationid"`
-    SSID       string                  `db:"ssid"json:"ssid"`
-    APName     utils.NullString                   `db:"apname"json:"apname"`
+    SSID       []string                  `json:"ssids"`
     BSSID      string                  `db:"bssid"json:"bssid"`
     MAC        string                  `db:"mac"json:"mac"`
-    Longitude  utils.NullFloat64   `db:"longitude"json:"longitude"`
-    Latitude   utils.NullFloat64    `db:"latitude"json:"latitude"`
     GroupName  string              `db:"groupname"json:"groupname"`
+	APs     	APs             `json:"aps"`
+}
+
+type ApLocation struct {
+	TenantId   int                  `db:"tenantid"json:"tenantid"`
+	SSID       string                  `db:"ssid"json:"ssid"`
+	BSSID      string                  `db:"bssid"json:"bssid"`
+	MAC        string                  `db:"mac"json:"mac"`
+	GroupName  string              `db:"groupname"json:"groupname"`
+	APName     utils.NullString     `db:"apname"json:"apname"`
+	Address	   utils.NullString     `db:"address"json:"address"`
+	APs     	APs             `json:"aps"`
+}
+
+type APs struct {
+	TenantId   int                  `db:"tenantid"json:"tenantid"`
+	MAC        string                  `db:"mac"json:"mac"`
+	APName     utils.NullString     `db:"apname"json:"apname"`
+	Address	   utils.NullString		`db:"address"json:"address"`
+	Longitude  utils.NullFloat64   	`db:"longitude"json:"longitude"`
+	Latitude   utils.NullFloat64    `db:"latitude"json:"latitude"`
 }
 
 type ApGroup struct {
@@ -269,9 +286,6 @@ type NasClient struct {
 	NasType     string                `db:"type"json:"nastype"`
 	NasPorts    utils.NullInt64                `db:"ports"json:"nasport"`
 	Secret      utils.NullString                `db:"secret"json:"secret"`
-	NasServer   utils.NullString                `db:"server"json:"server"`
-	Community   utils.NullString                    `db:"community"json:"community"`
-	Description utils.NullString                    `db:"description"json:"description"`
 }
 
 type  NasClientTestInfo struct {
@@ -295,3 +309,10 @@ type SummaryChangePercentage struct {
 	Status 	   string		`json:"status"`
 }
 
+type AccessPointConstraints struct {
+	TenantId     	int
+	From     		string
+	To     			string
+	Threshold       int
+	Query 			string
+}

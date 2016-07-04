@@ -1,0 +1,69 @@
+<div class="modal inmodal" id="update-aps-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content animated fadeIn">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
+                        class="sr-only">Close</span></button>
+                <h4 class="modal-title">Update APs</h4>
+                <small>Update APs details on particular mac address</small>
+            </div>
+            <div class="modal-body" id="editapslocation-body">
+                <form role="form" id="update-aps-form">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        <div class="form-group">
+                                            <label for="editaps-mac">Mac</label>
+                                            <input type="text" class="form-control" id="editaps-mac" name="mac"
+                                                   placeholder="MAC" autocomplete="off"required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="editaps-apname">APName</label>
+                                            <input type="text" class="form-control" id="editaps-apname" name="apname" placeholder="AP Name" >
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="form-group col-lg-6">
+                                                <label for="editaps-longitude">Longitude</label>
+                                                <input type="text" class="form-control" id="editaps-longitude" name="longitude"
+                                                       placeholder="Longitude">
+                                            </div>
+                                            <div class="form-group col-lg-6">
+                                                <label for="editaps-latitude">Latitude</label>
+                                                <input type="text" class="form-control" id="editaps-latitude" name="latitude"
+                                                       placeholder="Latitude">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <button class="btn btn-white col-lg-offset-9 col-lg-2" id="locate-bylatlng-editapsform" type="button">Locate</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <label>Location Map</label>
+                                <div class="row">
+                                    <input id="editaps-ap-address" class="ap-address controls" type="text" placeholder="Enter a AP location"/>
+                                    <div id="editaps-location-googlemap"></div>
+                                </div>
+                                <div class="row">
+                                    <div class="alert alert-danger fade in google-map-error" id="editaps-errmsg-apaddr" style="display: none">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="btn-updateaps">Update Location</button>
+            </div>
+        </div>
+    </div>
+</div>

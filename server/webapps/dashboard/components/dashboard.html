@@ -21,7 +21,9 @@
                      <i class="fa fa-bars"></i>
                      <span class="caret"></span>
                  </a>
-                 <ul class="dropdown-menu pull-right">
+                 <ul class="dropdown-menu pull-right metrics-settings-dropdown">
+                     <li><a href="#"><input type="checkbox" id="chk-aggregate-option" {{checkAggreate}}/>&nbsp;Aggregate Locations</a></li>
+                     <li role="separator" class="divider"></li>
                      <li><a id="exportpdf" href="#">PDF Download</a></li>
                      <li><a id="exportCSV" href="#">CSV Download</a></li>
                  </ul>
@@ -91,7 +93,7 @@
             },
             autoApply:true
         }, function(start, end) {
-            saveResult(start,end)
+            saveResult(start,end);
             if(selectedtabid=="overview"){
                 renderMetrics();
             }else if(selectedtabid=="apreport"){
@@ -102,6 +104,7 @@
         });
 
         function saveResult (from,to) {
+
             $('#time-range-dashboard span').html(from.format('YYYY - MM - DD') + ' | ' + to.format('YYYY - MM - DD'));
             from_ = from.format('YYYY-MM-DD');
             to_ = to.format('YYYY-MM-DD');
@@ -152,7 +155,6 @@
 
         $('#select-wifilocation').on('change', function (e) {
             window.datagroups = [this.value];
-            window.appName = [this.value];
             if(selectedtabid=="overview"){
                 renderMetrics();
             }else if(selectedtabid=="apreport"){
@@ -160,6 +162,50 @@
             }else if(selectedtabid=="realtimereport"){
                 renderRealTime();
             }
+        });
+
+        $('#chk-aggregate-option').on('change', function (e) {
+            var that = this;
+            var getCriteriaParameters;
+            var criteriaParameters ;
+            var selectOptions;
+            switch (window.filtercriteria) {
+                case "groupname" :
+                    getCriteriaParameters = $.get('/dashboard/apps/' + appId + '/groups', function (result) {
+                        criteriaParameters = result;
+                    });
+                    break;
+                case "ssid" :
+                    getCriteriaParameters = $.get('/dashboard/apps/' + appId + '/filterparameters', function (result) {
+                        criteriaParameters = result;
+                    });
+                    break;
+            }
+            getCriteriaParameters.done(function () {
+                if (that.checked) {
+                    window.aggregate = 'yes';
+                    window.datagroups = criteriaParameters;
+                    selectOptions = [window.appName];
+                } else {
+                    window.aggregate = 'no';
+                    window.datagroups = [criteriaParameters[0]];
+                    selectOptions = criteriaParameters;
+                }
+                $('#select-wifilocation').find('option').remove().end();
+                $.each(selectOptions, function (key, value) {
+                    $('#select-wifilocation')
+                            .append($("<option></option>")
+                                    .attr("value", value)
+                                    .text(value));
+                });
+                if (selectedtabid == "overview") {
+                    renderMetrics();
+                } else if (selectedtabid == "apreport") {
+                    renderAPreport();
+                } else if (selectedtabid == "realtimereport") {
+                    renderRealTime();
+                }
+            });
         });
     });
 </script>

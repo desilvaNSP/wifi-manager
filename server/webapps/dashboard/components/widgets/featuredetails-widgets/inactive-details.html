@@ -1,0 +1,58 @@
+<div class="feature-detail-card" id="inactiveap">
+    <div class="widget red-bg front face">
+        <div class="row">
+            <div class="col-xs-3 icon-content-card">
+                <i class="fa fa-chain-broken -o fa-5x"></i>
+            </div>
+            <div class="col-xs-9 text-right">
+                <span>Inactive Access Points</span>
+                <h2 class="widget-summary-value font-bold">{{value}}</h2>
+                <div class="row option-icon">
+                    <span><i class="fa fa-cog" aria-hidden="true"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="widget back face center">
+        <div class="option-card">
+            <form class="gadget-settings-form">
+                <div class="form-group row option-form">
+                    <label class="col-sm-6">Max Activated Dates</label>
+                    <div class="col-sm-6"><input class="input-s-sm" id="input-threshold-inactiveap" value="{{threshold}}"
+                                                 onblur="if (this.value == '' || this.value =='0') {this.value = Cookies.set('activeap-treshold')}"
+                                                 onfocus="this.value = ''"/>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="row option-done">
+            <span><i class="fa fa-floppy-o bg-color-white" aria-hidden="true"></i></span>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        var activeapRequest, countOfActiveAPs;
+        var inactiveapcard = $('#inactiveap');
+        inactiveapcard.find('.option-icon').on('click', function () {
+            inactiveapcard.addClass('swivel-effect-180');
+            if (inactiveapcard.hasClass('swivel-effect-0')) {
+                inactiveapcard.removeClass('swivel-effect-0');
+            }
+        });
+
+        inactiveapcard.find('.option-done').on('click', function () {
+            inactiveapcard.addClass('swivel-effect-0');
+            var inactivetreshold = $('input#input-threshold-inactiveap').val();
+            Cookies.set("inactiveap-treshold", inactivetreshold);
+            activeapRequest = $.get('/wifi/ap/inactivecount?from=' + _apPeriodFrom + '&to=' + _apPeriodTo + '&threshold=' + Cookies.get("inactiveap-treshold"), function (data) {
+                countOfActiveAPs = data;
+            });
+            $.when(activeapRequest).done(function () {
+                inactiveapcard.find('.widget-summary-value').html(countOfActiveAPs);
+            });
+        });
+    });
+</script>

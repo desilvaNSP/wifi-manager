@@ -337,7 +337,7 @@
 
         function attachContentForInfobox(marker, obj) {
             var renderdContent = "";
-            $.get('components/widgets/location-map-details.html', function (template) {
+            $.get('components/widgets/featuredetails-widgets/location-map-details.html', function (template) {
                 renderdContent = Mustache.render(template, obj);
                 var infowindow = new google.maps.InfoWindow({
                     content: renderdContent
@@ -347,8 +347,6 @@
                     infowindow.open(marker.get('map'), marker);
                 });
             });
-
-
         }
 
         function toggleHeatmap() {

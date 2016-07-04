@@ -150,7 +150,7 @@ func UpdateRadiusServerHandler(w http.ResponseWriter, r*http.Request)  {
 * @path /radius/server/client
 *
 */
-func CreateNASClientOnServerHandler(w http.ResponseWriter, r*http.Request){
+func CreateNASClientHanlder(w http.ResponseWriter, r*http.Request){
 	decoder := json.NewDecoder(r.Body)
 	var nasClientServerInfo dao.NASClientDBServer
 	err := decoder.Decode(&nasClientServerInfo)
@@ -162,9 +162,58 @@ func CreateNASClientOnServerHandler(w http.ResponseWriter, r*http.Request){
 	radiusServerConfigs =  nasClientServerInfo.RadiusServerInfo;
 	nasClientInfo =  nasClientServerInfo.NASClientInfo
 
-	err_db := radius.CreateNASClientOnServer(radiusServerConfigs, nasClientInfo);
+	err_db := radius.CreateNASClient(radiusServerConfigs, nasClientInfo);
 	if err_db!= nil {
 		checkErr(err_db,"Error happening while create radius server")
+	}
+	w.WriteHeader(http.StatusOK)
+}
+
+/**
+* PUT
+* @path /radius/server/client
+*
+*/
+func UpdateNASClientHanlder(w http.ResponseWriter, r*http.Request){
+	decoder := json.NewDecoder(r.Body)
+	var nasClientServerInfo dao.NASClientDBServer
+	err := decoder.Decode(&nasClientServerInfo)
+	if err != nil {
+		panic("Error while decoding json")
+	}
+	var radiusServerConfigs dao.RadiusServer
+	var nasClientInfo dao.NasClient
+	radiusServerConfigs =  nasClientServerInfo.RadiusServerInfo;
+	nasClientInfo =  nasClientServerInfo.NASClientInfo
+
+	err_db := radius.UpdateNASClient(radiusServerConfigs, nasClientInfo);
+	if err_db!= nil {
+		checkErr(err_db,"Error happening while create radius server")
+	}
+	w.WriteHeader(http.StatusOK)
+}
+
+/**
+* DELETE
+* @path /radius/{instanceid}/{nasclientid}
+*
+*/
+func DeleteNASClientHanlder(w http.ResponseWriter, r*http.Request){
+	vars := mux.Vars(r)
+	nasClientId, _ := strconv.Atoi(vars["nasclientid"])
+	instanceId, _ := strconv.Atoi(vars["instanceid"])
+
+	tenantId, err := strconv.Atoi(r.Header.Get("tenantid"))
+	if (err != nil) {
+		log.Error("Error while reading tenantid", err)
+	}
+	radiusConfig, err := radius.GetInstanceConfigsById(instanceId, tenantId)
+	if err != nil {
+		checkErr(err,"Error while get server instance configs by ID")
+	}
+	errOnDelete := radius.DeleteNASClient(radiusConfig, nasClientId)
+	if errOnDelete != nil {
+		checkErr(errOnDelete,"Error while deleting radius server.")
 	}
 	w.WriteHeader(http.StatusOK)
 }
