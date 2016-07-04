@@ -7967,6 +7967,11 @@ img.thumbnail  { position: absolute; width: 178px;height: 178px ;z-index: 20}
     width: auto !important;
     height: 400px !important;
 }
+.map-containner #jarviswidget-fullscreen-mode #map{
+    width: auto !important;
+    height: 600px !important;
+}
+
 .btn-tools{
     margin-top: -5px !important;
 }
@@ -8035,6 +8040,9 @@ table.dataTable tbody tr.selected {
     background-color: #cdf4ec !important;
 }
 
+.toptenap-widgets .chart-wrapper{
+    height:300px;
+}
 
 /* ========================================================================
  * feature-details-widget styles

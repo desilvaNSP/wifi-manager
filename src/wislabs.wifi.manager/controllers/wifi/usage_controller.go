@@ -5,6 +5,7 @@ import (
 	"wislabs.wifi.manager/dao"
 	"strconv"
 	"wislabs.wifi.manager/commons"
+	"errors"
 )
 
 func SummaryDetailsFromTo(constrains dao.Constrains) [][]string {
@@ -300,6 +301,79 @@ func GetAvgDailySessionTimePerUserFromTo(constrains dao.Constrains) [] dao.NameV
 		panic(err.Error())
 	}
 	return totalDailyDownloads
+}
+
+func GetTopAccessPointsByUserCount(constrains dao.Constrains) ([] dao.APSummaryDetails, error) {
+	dbMap := utils.GetDBConnection(commons.SUMMARY_DB);
+	defer dbMap.Db.Close()
+	var topTenAcessPointsInUsers[] dao.APSummaryDetails
+
+	query := "SELECT calledstationmac as calledstationmac, " +
+	"COUNT(DISTINCT username) as summaryvalue " +
+	"FROM dailyacct " +
+	"WHERE date >= ? AND date <= ? AND tenantid=? "
+
+	if len(constrains.ACL) > 0 {
+		query = query + " AND acl=? "
+	}
+	args := getArgs(&constrains)
+	filterQuery := buildQueryComponent(&constrains)
+	query = query + filterQuery + " GROUP BY calledstationmac ORDER BY summaryvalue DESC LIMIT 10"
+
+	_, err := dbMap.Select(&topTenAcessPointsInUsers, query, args...)
+	if err != nil {
+		return nil, errors.New("Error occourred while getting top access points comparing total wifi users | Stack : " + err.Error() )
+	}
+	return topTenAcessPointsInUsers, nil
+}
+
+
+func GetTopAccessPointsByDownload(constrains dao.Constrains) ([] dao.APSummaryDetails, error) {
+	dbMap := utils.GetDBConnection(commons.SUMMARY_DB);
+	defer dbMap.Db.Close()
+	var topTenAPInSumInputOctets[] dao.APSummaryDetails
+
+	query := "SELECT calledstationmac as calledstationmac, " +
+	"SUM(inputoctets) as summaryvalue " +
+	"FROM dailyacct " +
+	"WHERE date >= ? AND date <= ? AND tenantid=? "
+
+	if len(constrains.ACL) > 0 {
+		query = query + " AND acl=? "
+	}
+	args := getArgs(&constrains)
+	filterQuery := buildQueryComponent(&constrains)
+	query = query + filterQuery + " GROUP BY calledstationmac ORDER BY summaryvalue DESC LIMIT 10"
+
+	_, err := dbMap.Select(&topTenAPInSumInputOctets, query, args...)
+	if err != nil {
+		return nil, errors.New("Error occourred while getting top access points comparing total downloads  | Stack : " + err.Error() )
+	}
+	return topTenAPInSumInputOctets, nil
+}
+
+func GetTopAccessPointsByUpload(constrains dao.Constrains) ([] dao.APSummaryDetails, error) {
+	dbMap := utils.GetDBConnection(commons.SUMMARY_DB);
+	defer dbMap.Db.Close()
+	var topTenAPInSumOutputOctets[] dao.APSummaryDetails
+
+	query := "SELECT calledstationmac as calledstationmac, " +
+	"SUM(outputoctets) as summaryvalue " +
+	"FROM dailyacct " +
+	"WHERE date >= ? AND date <= ? AND tenantid=? "
+
+	if len(constrains.ACL) > 0 {
+		query = query + " AND acl=? "
+	}
+	args := getArgs(&constrains)
+	filterQuery := buildQueryComponent(&constrains)
+	query = query + filterQuery + " GROUP BY calledstationmac ORDER BY summaryvalue DESC LIMIT 10"
+
+	_, err := dbMap.Select(&topTenAPInSumOutputOctets, query, args...)
+	if err != nil {
+		return nil, errors.New("Error occourred while getting top access points on total uploads | Stack : " + err.Error() )
+	}
+	return topTenAPInSumOutputOctets, nil
 }
 
 func buildQueryComponent(constrains *dao.Constrains) (string) {

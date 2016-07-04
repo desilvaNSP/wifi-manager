@@ -42,6 +42,13 @@ type AccessPoint struct {
     APName                utils.NullString           `db:"apname"json:"apname"`
 }
 
+
+type APSummaryDetails struct {
+	CalledStationMac     utils.NullString         `db:"calledstationmac"json:"calledstationmac"`
+	Value                int64                     `db:"summaryvalue"json:"summaryvalue"`
+}
+
+
 type LocationAccessPoint struct {
     AccessPointData AccessPoint
     LongLatMacData  LongLatMac

@@ -1,0 +1,26 @@
+<div class="chart-wrapper">
+    <div class="chart-inner">
+        <div id="apsummary-indownloads" class="" data-title="" style="width:100%; height: 100%;"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $.post('/wifi/summary/toptenapindownloads', JSON.stringify(payload), function (data, status) {
+            var ySeriousTag = [];
+            var seriousData = [];
+            $.map(data, function (val, i) {
+                ySeriousTag.push(val.calledstationmac);
+                seriousData.push(val.summaryvalue);
+            });
+            var chartOptions = {
+                chartType:'bar',
+                barColor:'#1ab394',
+                seriousData:seriousData,
+                ySeriousTag:ySeriousTag,
+                yaxixLabel:'Downloads'
+            }
+            renderAPSummarySeries('#apsummary-indownloads',chartOptions);
+        });
+    });
+</script>

@@ -96,4 +96,25 @@ var WifiUsageRoutes = Routes{
 		true,
 		dashboard_handlers.GetTotalSessionCountTimeFromToHandler,
 	},
+	Route{
+		"Get Access Point Details Dashboard",
+		"POST",
+		"/wifi/summary/toptenapinusers",
+		true,
+		dashboard_handlers.GetTopAccessPointsByUserCountHandler,
+	},
+	Route{
+		"Get Access Point Details Dashboard",
+		"POST",
+		"/wifi/summary/toptenapindownloads",
+		true,
+		dashboard_handlers.GetTopAccessPointsByDownloadHandler,
+	},
+	Route{
+		"Get Access Point Details Dashboard",
+		"POST",
+		"/wifi/summary/toptenapinuploads",
+		true,
+		dashboard_handlers.GetTopAccessPointsByUploadHandler,
+	},
 }
