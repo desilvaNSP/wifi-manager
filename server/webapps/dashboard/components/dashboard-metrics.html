@@ -481,21 +481,9 @@
             });
             doc.save(window.appName+'-'+ moment().format('YYYY-MM-DD')+'.pdf');
         });
-
         $(
                 function () {
                     pageSetUp();
-                    var payload = {
-                        from: from_,
-                        to: to_,
-                        prefrom: _prefrom,
-                        preto: _preto,
-                        criteria : window.filtercriteria,
-                        parameters : window.datagroups,
-                        acl: window.aclvalue,
-                        tenantid: parseInt(Cookies.get("tenantid"))
-                    };
-                    window.payload = payload
                     var totaldownloads = 0, totaluploads = 0, uniqueuserscount = 0
                     var totaldownloadsPrevoius = 0, totaluploadsPrevious = 0, uniqueuserscountPrevious = 0
 

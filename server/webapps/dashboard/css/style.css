@@ -8040,6 +8040,10 @@ table.dataTable tbody tr.selected {
     background-color: #cdf4ec !important;
 }
 
+table.dataTable tbody tr{
+    cursor: pointer;
+}
+
 .toptenap-widgets .chart-wrapper{
     height:300px;
 }
@@ -8403,4 +8407,58 @@ table.dataTable tbody tr.selected {
 }
 .text-level-down{
      color: #b35f68;;
+}
+
+
+
+/* ========================================================================
+ * AP reports location map slider css
+ * ======================================================================== */
+
+#heatmap-controlers {
+    z-index:100;
+    background-color: rgba(255,255,255,.8);
+    width: 770px;
+    position:absolute;
+    bottom:10px;
+    left:10px;
+    cursor: move;
+    border-radius: 4px ;
+}
+#heatmap-controlers > div {
+    height: 55px;
+}
+
+#radius-label, #opacity-label, #max-label {
+    margin-top: 10px;
+}
+
+#radius-slider, #opacity-slider, #max-slider {
+    width:220px;
+    margin-top: 4px;
+
+}
+.ui-widget-header {
+    background: #7192C6 !important;
+}
+
+#project {
+    font-size: 10pt;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+#heatmap-controlers .ui-slider-horizontal {
+    height: .3em;
+}
+
+#heatmap-controlers .ui-slider .ui-slider-handle {
+    width: .8em !important;
+    border-radius: 0px !important;
+}
+#radius-slider .ui-slider-handle,
+#opacity-slider .ui-slider-handle,
+#max-slider .ui-slider-handle {
+    cursor:pointer;
+    float: right;
 }

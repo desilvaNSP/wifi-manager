@@ -54,6 +54,20 @@
                             <div class="widget-body">
                                 <div id="map"></div>
                             </div>
+                            <div id="heatmap-controlers">
+                                <div class="col-sm-4">
+                                    <div id="radius-label">radius: 20</div>
+                                    <div id="radius-slider"></div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div id="opacity-label">opacity: 0.5</div>
+                                    <div id="opacity-slider"></div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div id="max-label">max: -</div>
+                                    <div id="max-slider"></div>
+                                </div>
+                            </div>
                             <!-- end widget content -->
                         </div>
                     </div>
@@ -130,21 +144,13 @@
         var map, heatmap;
         var apDataArray = [];
         var longlatDataArray = [];
-        var heatmapDownloadDimesionData = [];
-        var heatmapUploadDimesionData = [];
         var allMarkers = [];
         var infoBoxes = [];
         var fullscreenchartid;
 
+        var dropDownSelection = 1;
+
         var serverOriginUrl = window.location.origin;
-        var payload = {
-            from: from_,
-            to: to_,
-            acl: window.aclvalue,
-            criteria: window.filtercriteria,
-            parameters: window.datagroups,
-            tenantid: parseInt(Cookies.get("tenantid"))
-        };
 
         initializeWidgets();
         pageSetUp();
@@ -188,7 +194,7 @@
                 "type": "POST",
                 "contentType": "application/json",
                 "data": function (d) {
-                    return JSON.stringify(payload);
+                    return JSON.stringify(window.payload);
                 },
                 "error": function (e) {
                 },
@@ -303,20 +309,92 @@
         });
 
         function initMap() {
-
             map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 20,
-                center: {lat: 37.782551, lng: -122.445368},
-                mapTypeId: google.maps.MapTypeId.ROADMAP
+                zoom: 14,
+                center: {lat: -33.865143, lng: 151.209900},
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                minZoom:4
             });
             new DropDownControl();
 
             generatePoistionAnchors(map, longlatDataArray, apDataArray);
-            setupHeadMapData();
+            setupHeatMapData(dropDownSelection);
+        }
+
+        function setupHeatMapData(selection) {
+            var index = 0;
+            var formatedMax;
+            var heatData = [];
+            var dicAttr = { 1:'totalinputoctets', 2: 'totaloutputoctets', 3:'totalusers'};
+            var max = apDataArray[0][dicAttr[selection]];
+            apDataArray.forEach(function () {
+                max = Math.max(max, apDataArray[index][dicAttr[selection]]);
+                heatData.push({
+                    location: new google.maps.LatLng(longlatDataArray[index].latitude, longlatDataArray[index].longitude),
+                    weight: apDataArray[index][dicAttr[selection]]
+                });
+                index++;
+            });
+            if(selection == 1 || selection == 2){
+                formatedMax = formatBytes(numberWithCommas(max))
+            }else{
+                formatedMax = numberWithCommas(max)
+            }
+            $("#max-label").html("max: "+ formatedMax);
+            $("#max-slider").slider("option","max",max);
+            $("#max-slider").slider("option","value",max);
+
+            drawHeatmap(heatData)
+        }
+
+        function drawHeatmap(heatmapdata) {
+            if(heatmap) heatmap.setMap(null);
             heatmap = new google.maps.visualization.HeatmapLayer({
-                data: heatmapDownloadDimesionData,
-                map: map,
-                radius: 40
+                data: heatmapdata,
+                radius: $("#radius-slider").slider("value"),
+                opacity: $("#opacity-slider").slider("value")
+            });
+            heatmap.setMap(map);
+        }
+
+
+        function toggleHeatmap() {
+            heatmap.setMap(heatmap.getMap() ? null : map);
+        }
+
+        function numberWithCommas(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+
+        function DropDownControl() {
+            var gMap = google.maps;
+            var container = document.createElement("div");
+            container.style.margin = "7px";
+            container.id = "select_box";
+            var selMap = document.createElement("select");
+            selMap.id = "selMap";
+            selMap.className = "form-control";
+            selMap.title = "Change Map Type";
+
+            selMap.options[0] = new Option("Toggle HeatMap", 0);
+            selMap.options[1] = new Option("Download HeatMap", 1);
+            selMap.options[2] = new Option("Upload HeatMap", 2);
+            selMap.options[3] = new Option("User Density HeatMap", 3);
+
+            selMap.selectedIndex = 1;
+
+            container.appendChild(selMap);
+            map.controls[gMap.ControlPosition.TOP_RIGHT].push(container);
+
+            gMap.event.addDomListener(selMap, "change", function () {
+                dropDownSelection = selMap.selectedIndex;
+                if (dropDownSelection == 0) {
+                    toggleHeatmap();
+                } else {
+                    setupHeatMapData(dropDownSelection)
+                }
+                this.blur();
             });
         }
 
@@ -349,10 +427,6 @@
             });
         }
 
-        function toggleHeatmap() {
-            heatmap.setMap(heatmap.getMap() ? null : map);
-        }
-
         function formatAPData(data) {
             for (ap in data) {
                 apDataArray.push(data[ap].AccessPointData);
@@ -360,61 +434,55 @@
             }
         }
 
-        function setupHeadMapData() {
-            var index = 0;
-            apDataArray.forEach(function () {
-                var downloadObj = {
-                    location: new google.maps.LatLng(longlatDataArray[index].latitude, longlatDataArray[index].longitude),
-                    weight: apDataArray[index].totaloutputoctets
-                };
-                var uploadObj = {
-                    location: new google.maps.LatLng(longlatDataArray[index].latitude, longlatDataArray[index].longitude),
-                    weight: apDataArray[index].totalinputoctets
-                };
-                heatmapDownloadDimesionData.push(downloadObj);
-                heatmapUploadDimesionData.push(uploadObj);
-                index++;
+        $(function() {
+            $( "#heatmap-controlers" ).draggable({
+                containment: "parent"
             });
-        }
-
-
-        function DropDownControl() {
-
-            var g = google.maps;
-
-            var container = document.createElement("div");
-            container.style.margin = "7px";
-            container.id = "select_box";
-            var selMap = document.createElement("select");
-            selMap.id = "selMap";
-            selMap.className = "form-control";
-            selMap.title = "Change Map Type";
-
-            selMap.options[0] = new Option("Toggle HeatMap", 0);
-            selMap.options[1] = new Option("Download HeatMap", 1);
-            selMap.options[2] = new Option("Upload HeatMap", 2);
-
-            selMap.selectedIndex = 0;
-
-            container.appendChild(selMap);
-            map.controls[g.ControlPosition.TOP_RIGHT].push(container);
-
-            g.event.addDomListener(selMap, "change", function () {
-                var numSel = selMap.selectedIndex;
-                if (numSel == 0) {
-                    toggleHeatmap();
-                } else if (numSel == 1) {
-                    heatmap.setMap(map);
-                    heatmap.setData(heatmapDownloadDimesionData);
-                } else if (numSel == 2) {
-                    heatmap.setMap(map);
-                    heatmap.setData(heatmapUploadDimesionData);
+            $("#radius-slider").slider({
+                orientation: "horizontal",
+                range: "min",
+                min: 1,
+                max: 50,
+                value: 25,
+                slide: function (event, ui) {
+                    $("#radius-label").html("radius: " + ui.value);
+                    if (heatmap == null) return;
+                    heatmap.set('radius', ui.value);
                 }
-                this.blur();
             });
-        }
 
+            $("#opacity-slider").slider({
+                orientation: "horizontal",
+                range: "min",
+                min: 0,
+                max: 100,
+                value: 50,
+                slide: function (event, ui) {
+                    $("#opacity-label").html("opacity: " + ui.value / 100);
+                    if (heatmap == null) return;
+                    heatmap.set('opacity', ui.value / 100);
+                }
+            });
 
+            $("#max-slider").slider({
+                orientation: "horizontal",
+                range: "min",
+                min: 0,
+                max: 1,
+                value: 0,
+                slide: function (event, ui) {
+                    var value = 0;
+                    if (dropDownSelection == 1 || dropDownSelection == 2){
+                        value = formatBytes(numberWithCommas(ui.value))
+                    }else{
+                        value = numberWithCommas(ui.value);
+                    }
+                    $("#max-label").html("max: " + value);
+                    if (heatmap == null) return;
+                    heatmap.set('maxIntensity', ui.value);
+                }
+            });
+        });
     });
 
 </script>
