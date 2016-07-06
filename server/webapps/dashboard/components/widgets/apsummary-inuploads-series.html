@@ -7,8 +7,6 @@
 <script type="text/javascript">
     $(function () {
         $.post('/wifi/summary/toptenapinuploads', JSON.stringify(payload), function (data, status) {
-            console.log("toptenapinuploads")
-            console.log(data)
             var ySeriousTag = [];
             var seriousData = [];
             $.map(data, function (val, i) {

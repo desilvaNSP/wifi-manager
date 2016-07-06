@@ -18,6 +18,26 @@ create new files config.yaml and redis.conf respectively and have your preferred
 * Point your browser to https://localhost:8081/dashboard/
 * Username : admin@isl.com Password: admin
 
+#### Binary installation guide for linux x64 based systems
+
+1. Download and extract wifi-manager.zip in to a desired location
+2. Create 3 databsaes with name dashboard, summary, portal
+Note :  if you wish to use a dummy data set to test the system, ignore step 3 & 4  and follo instructions (Only for dummy dataset)
+
+3. Update the database conection configurations in wifi-manager/resources/scripts/setup_configs.sh
+4. Execute wifi-manager/resources/scripts/setup.sh - This will instal the initial database
+
+Only for dummy dataset.
+* Extract dummy data files (portal.sql.zip, summary.sql.zip, dashboard.sql.zip) in wifi-manager/sql/dummydata folder.
+* Import each dummy data set by sourcing the data file
+    Ex :  mysql> USER portal;
+          mysql> source portal.sql;
+
+5. Update the databse configurations in  wifi-manager/configs/congifs.yaml
+6. Start the server by running  wifi-manager/bin/server.sh start
+
+
+
 #### Adding  a dummy data set
 
 * A dummy data set is located under wifi-manager/server/resources/sql/dummydata folder

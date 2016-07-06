@@ -415,17 +415,16 @@
 
         function attachContentForInfobox(marker, obj) {
             var renderdContent = "";
-            console.log(obj);
             $.get('components/widgets/featuredetails-widgets/location-map-details.html', function (template) {
                 renderdContent = Mustache.render(template, {
-                    totalsessions: 7064,
-                    totalusers: 631,
-                    avgdataperuser: formatIntoMinitue(obj.avgdataperuser),
+                    totalsessions:  obj.totalsessions,
+                    totalusers:  obj.totalusers,
+                    avgdataperuser: formatBytes(obj.avgdataperuser),
                     avgdatapersessiontime: formatIntoMinitue(obj.avgdatapersessiontime),
                     totalinputoctets: formatBytes(obj.totalinputoctets),
                     totaloutputoctets:  formatBytes(obj.totaloutputoctets),
-                    calledstationmac: "2C-C5-D3-18-23-A0",
-                    apname: ""
+                    calledstationmac: obj.calledstationmac,
+                    apname: obj.apname
                 });
                 var infowindow = new google.maps.InfoWindow({
                     content: renderdContent
