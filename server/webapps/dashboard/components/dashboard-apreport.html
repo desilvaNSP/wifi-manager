@@ -207,8 +207,8 @@
             columns: [
                 {"data": "calledstationmac", "width": "10%"},
                 {"data": "apname", "width": "10%"},
-                {"data": "totalinputoctets", "width": "8%"},
                 {"data": "totaloutputoctets", "width": "8%"},
+                {"data": "totalinputoctets", "width": "8%"},
                 {"data": "totalsessions", "width": "5%"},
                 {"data": "totalusers", "width": "5%"},
                 {"data": "avgdataperuser", "width": "8%"},
@@ -416,7 +416,16 @@
         function attachContentForInfobox(marker, obj) {
             var renderdContent = "";
             $.get('components/widgets/featuredetails-widgets/location-map-details.html', function (template) {
-                renderdContent = Mustache.render(template, obj);
+                renderdContent = Mustache.render(template, {
+                    totalsessions:  obj.totalsessions,
+                    totalusers:  obj.totalusers,
+                    avgdataperuser: formatBytes(obj.avgdataperuser),
+                    avgdatapersessiontime: formatIntoMinitue(obj.avgdatapersessiontime),
+                    totalinputoctets: formatBytes(obj.totalinputoctets),
+                    totaloutputoctets:  formatBytes(obj.totaloutputoctets),
+                    calledstationmac: obj.calledstationmac,
+                    apname: obj.apname
+                });
                 var infowindow = new google.maps.InfoWindow({
                     content: renderdContent
                 });
