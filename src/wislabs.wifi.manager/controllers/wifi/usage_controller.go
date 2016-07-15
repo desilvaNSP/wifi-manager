@@ -57,8 +57,8 @@ func SummaryDetailsFromTo(constrains dao.Constrains) [][]string {
 		CSVcontent[i][5] = strconv.Itoa(dailyAccData[i].Sessionmaxduration)
 		CSVcontent[i][6] = strconv.Itoa(dailyAccData[i].Sessionminduration)
 		CSVcontent[i][7] = strconv.Itoa(dailyAccData[i].Sessionavgduration)
-		CSVcontent[i][8] = strconv.FormatInt(dailyAccData[i].Inputoctets, 10)
-		CSVcontent[i][9] = strconv.FormatInt(dailyAccData[i].Outputoctets, 10)
+		CSVcontent[i][8] = strconv.FormatInt(dailyAccData[i].Outputoctets, 10)
+		CSVcontent[i][9] = strconv.FormatInt(dailyAccData[i].Inputoctets, 10)
 		CSVcontent[i][10] = dailyAccData[i].Nasipaddress
 		CSVcontent[i][11] = dailyAccData[i].Framedipaddress
 		CSVcontent[i][12] = dailyAccData[i].Calledstationid
@@ -75,8 +75,8 @@ func GetAccessPointAggregatedDataFromTo(constrains dao.Constrains) [] dao.Access
 	var accessPointData[] dao.AccessPoint
 
 	query := "SELECT calledstationmac as calledstationmac," +
-	"SUM(outputoctets) as totaloutputoctets," +
-	"SUM(inputoctets) as totalinputoctets," +
+	"SUM(inputoctets) as totaloutputoctets," +
+	"SUM(outputoctets) as totalinputoctets," +
 	"SUM(noofsessions) as totalsessions ," +
 	"COUNT(DISTINCT username) as totalusers," +
 	"SUM(inputoctets)/COUNT(DISTINCT username) as avgdataperuser," +
@@ -114,7 +114,7 @@ func GetAggregatedDownloadsFromTo(constrains dao.Constrains) [] dao.NameValue {
 	dbMap := utils.GetDBConnection("summary");
 	defer dbMap.Db.Close()
 	var totalDailyDownloads[] dao.NameValue
-	query := "SELECT SUM(inputoctets) as value, date as name FROM dailyacct where date >= ? AND date <= ? AND tenantid=? "
+	query := "SELECT SUM(outputoctets) as value, date as name FROM dailyacct where date >= ? AND date <= ? AND tenantid=? "
 	if len(constrains.ACL) > 0 {
 		query = query + " AND acl=? "
 	}
@@ -133,7 +133,7 @@ func GetAggregatedUploadsFromTo(constrains dao.Constrains) [] dao.NameValue {
 	dbMap := utils.GetDBConnection("summary");
 	defer dbMap.Db.Close()
 	var totalDailyDownloads[] dao.NameValue
-	query := "SELECT SUM(outputoctets) as value ,date as name FROM dailyacct where date >= ? AND date <= ? AND tenantid=? "
+	query := "SELECT SUM(inputoctets) as value ,date as name FROM dailyacct where date >= ? AND date <= ? AND tenantid=? "
 	if len(constrains.ACL) > 0 {
 		query = query + " AND acl=? "
 	}
@@ -153,7 +153,7 @@ func GetAvgDailyDownloadsPerUserFromTo(constrains dao.Constrains) [] dao.NameVal
 	dbMap := utils.GetDBConnection("summary");
 	defer dbMap.Db.Close()
 	var totalDailyDownloads[] dao.NameValue
-	query := "SELECT SUM(inputoctets)/COUNT(DISTINCT username) as value ,date as name FROM dailyacct where date >= ? AND date <= ? AND tenantid=? "
+	query := "SELECT SUM(outputoctets)/COUNT(DISTINCT username) as value ,date as name FROM dailyacct where date >= ? AND date <= ? AND tenantid=? "
 	if len(constrains.ACL) > 0 {
 		query = query + " AND acl=? "
 	}
@@ -172,7 +172,7 @@ func GetDownloadsFromTo(constrains dao.Constrains) (int64, int64) {
 	dbMap := utils.GetDBConnection("summary");
 	defer dbMap.Db.Close()
 	var err error
-	query := "SELECT SUM(inputoctets) FROM dailyacct where date >= ? AND date <= ? AND tenantid = ? "
+	query := "SELECT SUM(outputoctets) FROM dailyacct where date >= ? AND date <= ? AND tenantid = ? "
 	if len(constrains.ACL) > 0 {
 		query = query + " AND acl=? "
 	}
@@ -201,7 +201,7 @@ func GetUploadsFromTo(constrains dao.Constrains) (int64, int64) {
 	dbMap := utils.GetDBConnection("summary");
 	defer dbMap.Db.Close()
 	var err error
-	query := "SELECT SUM(outputoctets) FROM dailyacct where date >= ? AND date <= ? AND tenantid = ? "
+	query := "SELECT SUM(inputoctets) FROM dailyacct where date >= ? AND date <= ? AND tenantid = ? "
 	if len(constrains.ACL) > 0 {
 		query = query + " AND acl=? "
 	}
@@ -334,7 +334,7 @@ func GetTopAccessPointsByDownload(constrains dao.Constrains) ([] dao.APSummaryDe
 	var topTenAPInSumInputOctets[] dao.APSummaryDetails
 
 	query := "SELECT calledstationmac as calledstationmac, " +
-	"SUM(inputoctets) as summaryvalue " +
+	"SUM(outputoctets) as summaryvalue " +
 	"FROM dailyacct " +
 	"WHERE date >= ? AND date <= ? AND tenantid=? "
 
@@ -358,7 +358,7 @@ func GetTopAccessPointsByUpload(constrains dao.Constrains) ([] dao.APSummaryDeta
 	var topTenAPInSumOutputOctets[] dao.APSummaryDetails
 
 	query := "SELECT calledstationmac as calledstationmac, " +
-	"SUM(outputoctets) as summaryvalue " +
+	"SUM(inputoctets) as summaryvalue " +
 	"FROM dailyacct " +
 	"WHERE date >= ? AND date <= ? AND tenantid=? "
 

@@ -32,14 +32,14 @@ type SummaryDailyAcctAll struct {
 }
 
 type AccessPoint struct {
-    TotalSessions         int                 `db:"totalsessions"json:"totalsessions"`
-    TotalUsers            int                     `db:"totalusers"json:"totalusers"`
-    AvgdataperUser        utils.NullString      `db:"avgdataperuser"json:"avgdataperuser"`
-    Avgdatapersessiontime utils.NullString   `db:"avgdatapersessiontime"json:"avgdatapersessiontime"`
-    Totalinputoctets      int64            `db:"totalinputoctets"json:"totalinputoctets"`
-    Totaloutputoctets     int64            `db:"totaloutputoctets"json:"totaloutputoctets"`
-    Calledstationmac      utils.NullString         `db:"calledstationmac"json:"calledstationmac"`
-    APName                utils.NullString           `db:"apname"json:"apname"`
+	TotalSessions         int                 `db:"totalsessions"json:"totalsessions"`
+	TotalUsers            int                     `db:"totalusers"json:"totalusers"`
+	AvgdataperUser        utils.NullString      `db:"avgdataperuser"json:"avgdataperuser"`
+	Avgdatapersessiontime utils.NullString   `db:"avgdatapersessiontime"json:"avgdatapersessiontime"`
+	TotalDownloads        int64               `db:"totalinputoctets"json:"totaldownloads"`
+	TotalUploads          int64            `db:"totaloutputoctets"json:"totaluploads"`
+	Calledstationmac      utils.NullString         `db:"calledstationmac"json:"calledstationmac"`
+	APName                utils.NullString           `db:"apname"json:"apname"`
 }
 
 
