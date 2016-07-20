@@ -19,12 +19,12 @@
                     <tr>
                         <th>AP mac</th>
                         <th>AP Name</th>
-                        <th>Total Uploads</th>
-                        <th>Total Downloads</th>
+                        <th>Total Downloads (GB)</th>
+                        <th>Total Uploads (GB)</th>
                         <th>Total Sessions</th>
                         <th>Total Users</th>
-                        <th>Avg Data Usage per User</th>
-                        <th>Avg User session time</th>
+                        <th>Avg Data Usage per User (MB)</th>
+                        <th>Avg User session time (Minutes)</th>
                     </tr>
                     </thead>
                 </table>
@@ -38,9 +38,9 @@
         <div class="col-lg-12">
             <div class="row map-containner">
                 <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <div class="jarviswidget" id="wid-id-0" data-widget-refresh="2000" data-widget-colorbutton="false">
+                    <div class="jarviswidget" id="wid-id-0" data-widget-refresh="2000" data-widget-colorbutton="false" data-id="locationmap">
                         <header>
-                            <h2>Location Map</h2>
+                            <h2>Heat Map</h2>
                         </header>
                         <div>
                             <!-- widget edit box -->
@@ -167,21 +167,37 @@
                     if (!fullscreenchartid) {
                         var selectedwidgetid = $("#jarviswidget-fullscreen-mode >:first-child").data("id");
                         fullscreenchartid = selectedwidgetid;
-                        $("#" + selectedwidgetid).highcharts().reflow();
+                        if(selectedwidgetid != "locationmap"){
+                            $("#" + selectedwidgetid).highcharts().reflow();
+                        }else{
+                            var heightContent = $("div.map-containner div[role='content']").height();
+                            $(".map-containner #map").height(heightContent);
+                            google.maps.event.trigger(map, 'resize')
+                        }
                     } else {
-                        $("#" + fullscreenchartid).highcharts().reflow();
-                        fullscreenchartid = "";
+                        if(fullscreenchartid != "locationmap"){
+                            $("#" + fullscreenchartid).highcharts().reflow();
+                            fullscreenchartid = "";
+                        }else{
+                            $(".map-containner #map").height(400);
+                            google.maps.event.trigger(map, 'resize');
+                            fullscreenchartid = "";
+                        }
                     }
                 }
             });
         }
 
         function formatBytes(bytes) {
-            return numeral(bytes).format('0.00b')
+            return (bytes/1073741824).toFixed(2);
+        }
+        function formatAvgUsageBytes(bytes) {
+            return (bytes/1048576).toFixed(2);
         }
 
+
         function formatIntoMinitue(time) {
-            return Math.floor(time / 60) + " Min";
+            return Math.floor(time / 60);
         }
 
         var accespointTable = $('.dataTables-accesspoint').DataTable({
@@ -207,8 +223,8 @@
             columns: [
                 {"data": "calledstationmac", "width": "10%"},
                 {"data": "apname", "width": "10%"},
-                {"data": "totaloutputoctets", "width": "8%"},
-                {"data": "totalinputoctets", "width": "8%"},
+                {"data": "totalinputoctets","width": "8%"},
+                {"data": "totaloutputoctets", "width": "8%" },
                 {"data": "totalsessions", "width": "5%"},
                 {"data": "totalusers", "width": "5%"},
                 {"data": "avgdataperuser", "width": "8%"},
@@ -216,20 +232,20 @@
             ],
             "columnDefs": [
                 {
-                    "render": function (data) {
+                    "targets": 2,
+                    "render": function (data){
+                          return formatBytes(data);
+                    }
+                },
+                {
+                    "targets": 3,
+                    "render": function (data){
                         return formatBytes(data);
-                    },
-                    "targets": 2
+                    }
                 },
                 {
                     "render": function (data) {
-                        return formatBytes(data);
-                    },
-                    "targets": 3
-                },
-                {
-                    "render": function (data) {
-                        return formatBytes(data);
+                        return formatAvgUsageBytes(data);
                     },
                     "targets": 6
                 },
@@ -285,7 +301,7 @@
                 var accesPointData = accespointTable.row(this).data();
                 var long = null, latitude = null;
                 $.each(longlatDataArray, function (i, obj) {
-                    if (obj.mac == accesPointData.calledstationmac) {
+                    if (obj.mac.toLowerCase() == accesPointData.calledstationmac.toLowerCase()) {
                         latitude = obj.latitude;
                         long = obj.longitude;
                         return false;
@@ -295,7 +311,7 @@
                 var selectedIndex = 0;
                 var i = 0;
                 allMarkers.forEach(function (marker) {
-                    if (long == marker.position.lat() && latitude == marker.position.lng()) {
+                    if (latitude== marker.position.lat() && long == marker.position.lng()) {
                         selectedMarker = marker;
                         selectedIndex = i;
                     } else {
@@ -336,13 +352,13 @@
                 index++;
             });
             if(selection == 1 || selection == 2){
-                formatedMax = formatBytes(numberWithCommas(max))
+                formatedMax = formatBytes(max/2) + " GB"
             }else{
-                formatedMax = numberWithCommas(max)
+                formatedMax = numberWithCommas((max/2).toFixed(0))
             }
             $("#max-label").html("max: "+ formatedMax);
             $("#max-slider").slider("option","max",max);
-            $("#max-slider").slider("option","value",max);
+            $("#max-slider").slider("option","value",max/2);
 
             drawHeatmap(heatData)
         }
@@ -377,10 +393,10 @@
             selMap.className = "form-control";
             selMap.title = "Change Map Type";
 
-            selMap.options[0] = new Option("Toggle HeatMap", 0);
-            selMap.options[1] = new Option("Download HeatMap", 1);
-            selMap.options[2] = new Option("Upload HeatMap", 2);
-            selMap.options[3] = new Option("User Density HeatMap", 3);
+            selMap.options[0] = new Option("Clear", 0);
+            selMap.options[1] = new Option("Download", 1);
+            selMap.options[2] = new Option("Upload", 2);
+            selMap.options[3] = new Option("User", 3);
 
             selMap.selectedIndex = 1;
 
@@ -478,11 +494,11 @@
                 range: "min",
                 min: 0,
                 max: 1,
-                value: 0,
+                value: 0.5,
                 slide: function (event, ui) {
                     var value = 0;
                     if (dropDownSelection == 1 || dropDownSelection == 2){
-                        value = formatBytes(numberWithCommas(ui.value))
+                        value = formatBytes(ui.value) + " GB"
                     }else{
                         value = numberWithCommas(ui.value);
                     }

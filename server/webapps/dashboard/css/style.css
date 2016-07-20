@@ -7965,11 +7965,7 @@ img.thumbnail  { position: absolute; width: 178px;height: 178px ;z-index: 20}
 
 .map-containner  #map{
     width: auto !important;
-    height: 400px !important;
-}
-.map-containner #jarviswidget-fullscreen-mode #map{
-    width: auto !important;
-    height: 600px !important;
+    height: 400px;
 }
 
 .btn-tools{
@@ -8287,7 +8283,7 @@ table.dataTable tbody tr{
 }
 
 .world-map {
-    height: 400px;
+    height: 500px;
     width: 100%;
 }
 
@@ -8461,4 +8457,10 @@ table.dataTable tbody tr{
 #max-slider .ui-slider-handle {
     cursor:pointer;
     float: right;
+}
+
+.map-infobox-container{
+    line-height:1.35;
+    overflow:hidden;
+    white-space:nowrap;
 }

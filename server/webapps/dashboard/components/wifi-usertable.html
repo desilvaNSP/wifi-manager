@@ -164,8 +164,6 @@
                             '<button class="ColVis_Button ColVis_MasterButton" id="refreshTable">Refresh</button>' +
                         '</div>';
 
-
-        $().appendTo('div.dt-toolbar');
         $(indicatorHtml).appendTo('div.dt-toolbar');
         $('#refreshTable').on('click',function(){
             userTable.api().ajax.reload();
