@@ -33,7 +33,7 @@ func GetUserCountOfDownloadsOver(constrains dao.Constrains, threshold int) (int6
 	dbMap := utils.GetDBConnection(commons.SUMMARY_DB);
 	defer dbMap.Db.Close()
 	var err error
-	query := "SELECT count(DISTINCT username) FROM dailyacct where date >= ? AND date <= ? AND tenantid= ? AND inputoctets >= ?"
+	query := "SELECT count(DISTINCT username) FROM dailyacct where date >= ? AND date <= ? AND tenantid= ? AND outputoctets >= ?"
 
 	if len(constrains.ACL) > 0 {
 		query = query + " AND acl=? "

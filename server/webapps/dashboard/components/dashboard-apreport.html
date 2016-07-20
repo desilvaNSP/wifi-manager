@@ -81,7 +81,7 @@
                  data-widget-load="components/widgets/apsummary-inuploads-series.html" data-widget-colorbutton="false"
                  data-id="apsummary-inuploads">
                 <header>
-                    <h2>Top 10 Access Point In Total Uploads</h2>
+                    <h2>Top 10 Access Point By Total Uploads</h2>
                 </header>
                 <div>
                     <!-- widget edit box -->
@@ -111,7 +111,7 @@
                  data-widget-load="components/widgets/apsummary-indownloads-series.html" data-widget-colorbutton="false"
                  data-id="apsummary-indownloads">
                 <header>
-                    <h2>Top 10 Access Point In Total Downloads</h2>
+                    <h2>Top 10 Access Point By Total Downloads</h2>
                 </header>
                 <div>
                     <!-- widget edit box -->
@@ -223,8 +223,8 @@
             columns: [
                 {"data": "calledstationmac", "width": "10%"},
                 {"data": "apname", "width": "10%"},
-                {"data": "totalinputoctets","width": "8%"},
-                {"data": "totaloutputoctets", "width": "8%" },
+                {"data": "totaldownloads","width": "8%"},
+                {"data": "totaluploads", "width": "8%" },
                 {"data": "totalsessions", "width": "5%"},
                 {"data": "totalusers", "width": "5%"},
                 {"data": "avgdataperuser", "width": "8%"},
@@ -341,7 +341,7 @@
             var index = 0;
             var formatedMax;
             var heatData = [];
-            var dicAttr = { 1:'totalinputoctets', 2: 'totaloutputoctets', 3:'totalusers'};
+            var dicAttr = { 1:'totaldownloads', 2: 'totaluploads', 3:'totalusers'};
             var max = apDataArray[0][dicAttr[selection]];
             apDataArray.forEach(function () {
                 max = Math.max(max, apDataArray[index][dicAttr[selection]]);
@@ -437,8 +437,8 @@
                     totalusers:  obj.totalusers,
                     avgdataperuser: formatBytes(obj.avgdataperuser),
                     avgdatapersessiontime: formatIntoMinitue(obj.avgdatapersessiontime),
-                    totalinputoctets: formatBytes(obj.totalinputoctets),
-                    totaloutputoctets:  formatBytes(obj.totaloutputoctets),
+                    totaldownloads: formatBytes(obj.totaldownloads),
+                    totaluploads:  formatBytes(obj.totaluploads),
                     calledstationmac: obj.calledstationmac,
                     apname: obj.apname
                 });
