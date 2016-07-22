@@ -142,14 +142,17 @@
     $(document).ready(function () {
 
         var map, heatmap;
+
         var apDataArray = [];
         var longlatDataArray = [];
+
         var allMarkers = {};
         var infoBoxes = {};
+        var selectedInfoBox = null;
+
         var fullscreenchartid;
 
         var dropDownSelection = 1;
-
         var serverOriginUrl = window.location.origin;
 
         initializeWidgets();
@@ -291,7 +294,6 @@
             }
         });
 
-        var selectedInfoBox = null;
         $('.dataTables-accesspoint tbody').on('click', 'tr', function () {
             if ($(this).hasClass('selected')) {
                 $(this).removeClass('selected');
@@ -434,7 +436,11 @@
                 });
                 infoBoxes[obj.calledstationmac] = infowindow;
                 marker.addListener('click', function () {
+                    if(selectedInfoBox != null){
+                        selectedInfoBox.close()
+                    }
                     infowindow.open(marker.get('map'), marker);
+                    selectedInfoBox = infowindow;
                 });
             });
         }
