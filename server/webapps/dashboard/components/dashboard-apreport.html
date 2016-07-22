@@ -144,8 +144,8 @@
         var map, heatmap;
         var apDataArray = [];
         var longlatDataArray = [];
-        var allMarkers = [];
-        var infoBoxes = [];
+        var allMarkers = {};
+        var infoBoxes = {};
         var fullscreenchartid;
 
         var dropDownSelection = 1;
@@ -291,36 +291,23 @@
             }
         });
 
+        var selectedInfoBox = null;
         $('.dataTables-accesspoint tbody').on('click', 'tr', function () {
             if ($(this).hasClass('selected')) {
                 $(this).removeClass('selected');
             }
             else {
+                if(selectedInfoBox != null){
+                    selectedInfoBox.close();
+                }
                 accespointTable.$('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
                 var accesPointData = accespointTable.row(this).data();
-                var long = null, latitude = null;
-                $.each(longlatDataArray, function (i, obj) {
-                    if (obj.mac.toLowerCase() == accesPointData.calledstationmac.toLowerCase()) {
-                        latitude = obj.latitude;
-                        long = obj.longitude;
-                        return false;
-                    }
-                });
-                var selectedMarker = allMarkers[0];
-                var selectedIndex = 0;
-                var i = 0;
-                allMarkers.forEach(function (marker) {
-                    if (latitude== marker.position.lat() && long == marker.position.lng()) {
-                        selectedMarker = marker;
-                        selectedIndex = i;
-                    } else {
-                        infoBoxes[i].close();
-                    }
-                    i++;
-                });
+                var selectedMarker;
+                selectedMarker = allMarkers[accesPointData.calledstationmac];
+                selectedInfoBox =  infoBoxes[accesPointData.calledstationmac];
                 map.setCenter(selectedMarker.position);
-                infoBoxes[selectedIndex].open(map, selectedMarker);
+                selectedInfoBox.open(map, selectedMarker);
             }
         });
 
@@ -423,7 +410,7 @@
                         position: new google.maps.LatLng(obj.latitude, obj.longitude),
                         map: map
                     });
-                    allMarkers.push(marker);
+                    allMarkers[apDataObjs[key].calledstationmac] = marker;
                     attachContentForInfobox(marker, apDataObjs[key]);
                 }
             }
@@ -435,7 +422,7 @@
                 renderdContent = Mustache.render(template, {
                     totalsessions:  obj.totalsessions,
                     totalusers:  obj.totalusers,
-                    avgdataperuser: formatBytes(obj.avgdataperuser),
+                    avgdataperuser: formatAvgUsageBytes(obj.avgdataperuser),
                     avgdatapersessiontime: formatIntoMinitue(obj.avgdatapersessiontime),
                     totaldownloads: formatBytes(obj.totaldownloads),
                     totaluploads:  formatBytes(obj.totaluploads),
@@ -445,7 +432,7 @@
                 var infowindow = new google.maps.InfoWindow({
                     content: renderdContent
                 });
-                infoBoxes.push(infowindow);
+                infoBoxes[obj.calledstationmac] = infowindow;
                 marker.addListener('click', function () {
                     infowindow.open(marker.get('map'), marker);
                 });
