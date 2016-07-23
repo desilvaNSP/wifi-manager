@@ -32,15 +32,32 @@
         </div>
     </div>
 </div>
+
+
 <!-- Downloads and Uploads -->
 <section id={{widgetid}} class="widget-container secondone">
     <div class="row" id="map-body">
         <div class="col-lg-12">
             <div class="row map-containner">
                 <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <div class="jarviswidget" id="wid-id-0" data-widget-refresh="2000" data-widget-colorbutton="false" data-id="locationmap">
+                    <div class="jarviswidget" id="wid-id-0"  data-widget-colorbutton="false" data-widget-editbutton="false" data-id="locationmap">
                         <header>
-                            <h2>Heat Map</h2>
+                            <h2 id="heat-mapheadername">Heatmap based on APs Downloads</h2>
+                            <div class="widget-toolbar">
+                                <div class="dropdown">
+                                    <button class="btn btn-xs btn-white dropdown-toggle" type="button" data-toggle="dropdown">
+                                        <i class="fa fa-cogs" aria-hidden="true"></i>
+                                        <span class="caret"></span></button>
+                                    <ul class="dropdown-menu pull-right" id="hearmap-dropdown">
+                                        <li data-id="1"><a href="#">Heatmap based on APs Downloads</a></li>
+                                        <li data-id="2"><a href="#">Heatmap based on APs Uploads</a></li>
+                                        <li data-id="3"><a href="#">Heatmap based on APs User Count</a></li>
+                                        <li role="separator" class="divider"></li>
+                                        <li data-id="0"><a href="#">Clear Heatmap</a></li>
+                                        <li data-id="4"><a href="#">Download Map PDF</a></li>
+                                    </ul>
+                                </div>
+                            </div>
                         </header>
                         <div>
                             <!-- widget edit box -->
@@ -151,12 +168,30 @@
         var selectedInfoBox = null;
 
         var fullscreenchartid;
+        var fullScreenEnble = false;
 
         var dropDownSelection = 1;
         var serverOriginUrl = window.location.origin;
 
         initializeWidgets();
         pageSetUp();
+
+        $('#hearmap-dropdown li').on('click', function(ev){
+            ev.preventDefault();
+            var elementname =  parseInt($(this).data('id'));
+            dropDownSelection = elementname;
+            if (dropDownSelection == 0) {
+                $('#heat-mapheadername').html("Heat Map");
+                toggleHeatmap();
+            }else if(dropDownSelection == 4){
+                exportHeatmapPDF();
+            }else {
+                var headername = $(this).find('a').html();
+                $('#heat-mapheadername').html(headername);
+                setupHeatMapData(dropDownSelection)
+            }
+            this.blur();
+        });
 
         function initializeWidgets() {
             $('#widget-grid').jarvisWidgets({
@@ -168,6 +203,7 @@
                 grid: 'article',
                 onFullscreen: function () {
                     if (!fullscreenchartid) {
+                        fullScreenEnble = true;
                         var selectedwidgetid = $("#jarviswidget-fullscreen-mode >:first-child").data("id");
                         fullscreenchartid = selectedwidgetid;
                         if(selectedwidgetid != "locationmap"){
@@ -178,6 +214,7 @@
                             google.maps.event.trigger(map, 'resize')
                         }
                     } else {
+                        fullScreenEnble = false;
                         if(fullscreenchartid != "locationmap"){
                             $("#" + fullscreenchartid).highcharts().reflow();
                             fullscreenchartid = "";
@@ -197,7 +234,6 @@
         function formatAvgUsageBytes(bytes) {
             return (bytes/1048576).toFixed(2);
         }
-
 
         function formatIntoMinitue(time) {
             return Math.floor(time / 60);
@@ -320,7 +356,6 @@
                 mapTypeId: google.maps.MapTypeId.ROADMAP,
                 minZoom:4
             });
-            new DropDownControl();
 
             generatePoistionAnchors(map, longlatDataArray, apDataArray);
             setupHeatMapData(dropDownSelection);
@@ -348,7 +383,6 @@
             $("#max-label").html("max: "+ formatedMax);
             $("#max-slider").slider("option","max",max);
             $("#max-slider").slider("option","value",max/2);
-
             drawHeatmap(heatData)
         }
 
@@ -370,39 +404,6 @@
         function numberWithCommas(x) {
             return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
-
-
-        function DropDownControl() {
-            var gMap = google.maps;
-            var container = document.createElement("div");
-            container.style.margin = "7px";
-            container.id = "select_box";
-            var selMap = document.createElement("select");
-            selMap.id = "selMap";
-            selMap.className = "form-control";
-            selMap.title = "Change Map Type";
-
-            selMap.options[0] = new Option("Clear", 0);
-            selMap.options[1] = new Option("Download", 1);
-            selMap.options[2] = new Option("Upload", 2);
-            selMap.options[3] = new Option("User", 3);
-
-            selMap.selectedIndex = 1;
-
-            container.appendChild(selMap);
-            map.controls[gMap.ControlPosition.TOP_RIGHT].push(container);
-
-            gMap.event.addDomListener(selMap, "change", function () {
-                dropDownSelection = selMap.selectedIndex;
-                if (dropDownSelection == 0) {
-                    toggleHeatmap();
-                } else {
-                    setupHeatMapData(dropDownSelection)
-                }
-                this.blur();
-            });
-        }
-
 
         function generatePoistionAnchors(map, longlatObjs, apDataObjs) {
             for (var key in apDataObjs) {
@@ -450,6 +451,59 @@
                 apDataArray.push(data[ap].AccessPointData);
                 longlatDataArray.push(data[ap].LongLatMacData);
             }
+        }
+
+
+        function exportHeatmapPDF(){
+            var element = $('#map');
+            var pdfFormat = "a4";
+            if(fullScreenEnble){
+                pdfFormat = "legal"
+            }
+            var pdfOptions = {
+                orientation: "landscape", // One of "portrait" or "landscape" (or shortcuts "p" (Default), "l")
+                unit: "mm",              //Measurement unit to be used when coordinates are specified. One of "pt" (points), "mm" (Default), "cm", "in"
+                format: pdfFormat            //One of 'a3', 'a4' (Default),'a5' ,'letter' ,'legal'
+            };
+
+            var doc = new jsPDF(pdfOptions);
+
+            var heatmapName= "Heatmap based on APs Downloads";
+
+            if(dropDownSelection==1){
+                heatmapName =  "Heatmap based on APs Downloads"
+            }else if (dropDownSelection==2){
+                heatmapName =  "Heatmap based on APs Uploads"
+            }else if(dropDownSelection== 3){
+                heatmapName =  "Heatmap based on APs User Count"
+            }else{
+                heatmapName =  "Location Map"
+            }
+            doc.setFontSize(14);
+            doc.text(25, 20, heatmapName);
+
+            doc.setFontSize(12);
+            doc.text(125, 20, "Area/Site/AP : " + $('#select-wifilocation').val());
+            doc.setFontSize(12);
+            doc.text(175, 20, "Statistics from " + payload.from + " to " + payload.to);
+
+
+            var pageWidth = doc.internal.pageSize.width-20;
+            var width  =  pageWidth;
+
+            html2canvas(element, {
+                useCORS: true,
+                onrendered: function(canvas) {
+                    var imgWidth = element.width();
+                    var imgHeight = element.height();
+
+                    var height =  (pageWidth * imgHeight)/ imgWidth
+                    var imgData = canvas.toDataURL(
+                            'image/png');
+                    doc.addImage(imgData, 'PNG', 10, 30 , width, height);
+                    doc.save('heatmap-'+window.appName+'-'+ moment().format('YYYY-MM-DD')+'.pdf');
+                }
+            });
         }
 
         $(function() {
