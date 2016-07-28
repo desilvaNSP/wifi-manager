@@ -7,7 +7,7 @@
 <script type="text/javascript">
     $(function () {
         dailyUsersTimeSeriesData = []
-        $.post('/wifi/users/dailycountseries', JSON.stringify(payload), function (data, status) {
+        $.post('wifi/users/dailycountseries', JSON.stringify(payload), function (data, status) {
             var locationDist = {type: 'spline', name: window.appName, data: convertToHighChartSeries(data, 1)};
             dailyUsersTimeSeriesData.push(locationDist);
             renderTimeSeries('#time-series-daily-users', 'Users', "Count", dailyUsersTimeSeriesData);
@@ -18,7 +18,7 @@
             $.each(window.originaldatagroups, function (i, val) {
                 var payload2 = payload
                 payload2.groupnames = [val]
-                $.post('/wifi/users/dailycountseries', JSON.stringify(payload2), function (data, status) {
+                $.post('wifi/users/dailycountseries', JSON.stringify(payload2), function (data, status) {
                     var locationDist = {type: 'spline', name: val, data: convertToHighChartSeries(data, 1)}
                     downloadsTimeSeriesData.push(locationDist);
                 });

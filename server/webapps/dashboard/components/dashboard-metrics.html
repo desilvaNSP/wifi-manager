@@ -487,7 +487,7 @@
                     var totaldownloads = 0, totaluploads = 0, uniqueuserscount = 0
                     var totaldownloadsPrevoius = 0, totaluploadsPrevious = 0, uniqueuserscountPrevious = 0
 
-                    var renderTotalDownloads = $.post('/wifi/usage/downloads', JSON.stringify(payload), function (data, status) {
+                    var renderTotalDownloads = $.post('wifi/usage/downloads', JSON.stringify(payload), function (data, status) {
                         totaldownloads = data.value;
                         totaldownloadsPrevoius = data.prevalue;
                         totalDownloadFormat = numeral(data.value).format('0.00b')
@@ -503,7 +503,7 @@
                         })
                     });
 
-                    var renderTotalUploads = $.post('/wifi/usage/uploads', JSON.stringify(payload), function (data, status) {
+                    var renderTotalUploads = $.post('wifi/usage/uploads', JSON.stringify(payload), function (data, status) {
                         totaluploads = data.value;
                         totaluploadsPrevious = data.prevalue;
                         totalUploadFormat = numeral(data.value).format('0.00b');
@@ -519,7 +519,7 @@
                         })
                     });
 
-                    var renderTotalUserCount = $.post('/wifi/users/count', JSON.stringify(payload), function (data, status) {
+                    var renderTotalUserCount = $.post('wifi/users/count', JSON.stringify(payload), function (data, status) {
                         uniqueuserscount = (data.value === 0 ? 1 : data.value);
                         uniqueuserscountPrevious = (data.prevalue === 0 ? 1 : data.prevalue);
                         totalUserFormat = uniqueuserscount.toString();
@@ -535,7 +535,7 @@
                         })
                     });
 
-                    $.post('/wifi/sessions/avg', JSON.stringify(payload), function (data, status) {
+                    $.post('wifi/sessions/avg', JSON.stringify(payload), function (data, status) {
                         $.get('components/metric-base.html', function (template) {
                             avgUserSessionTimeFormat = numeral(data.value).format('00:00:00');
                             var rendered = Mustache.render(template, {
@@ -549,7 +549,7 @@
                         })
                     });
 
-                    $.post('/wifi/sessions/count', JSON.stringify(payload), function (data, status) {
+                    $.post('wifi/sessions/count', JSON.stringify(payload), function (data, status) {
                         $.get('components/metric-base.html', function (template) {
                             totalSessionFormat = data.value.toString();
                             var rendered = Mustache.render(template, {
@@ -563,7 +563,7 @@
                         })
                     });
 
-                    $.post('/wifi/users/countbydownlods/1000000', JSON.stringify(payload), function (data, status) {
+                    $.post('wifi/users/countbydownlods/1000000', JSON.stringify(payload), function (data, status) {
                         $.get('components/metric-base.html', function (template) {
                             noofUniqueUserFormat = data.value.toString();
                             var rendered = Mustache.render(template, {
@@ -604,7 +604,7 @@
                         })
                     });
 
-                    $.post('/wifi/users/returncount', JSON.stringify(payload), function (data, status) {
+                    $.post('wifi/users/returncount', JSON.stringify(payload), function (data, status) {
                         $.get('components/metric-base.html', function (template) {
                             returningUserFormat = data.value.toString();
                             var rendered = Mustache.render(template, {
@@ -639,7 +639,7 @@
                             }
                             valeur = valeur + 20
                         }, 200);
-                        $.post('/wifi/summary/downloadrawdata', JSON.stringify(payload), function (data, status) {
+                        $.post('wifi/summary/downloadrawdata', JSON.stringify(payload), function (data, status) {
                             clearInterval(progresbarInterval);
                             $bar.css('width', '100%').attr('aria-valuenow', 100);
                             setTimeout(function () {

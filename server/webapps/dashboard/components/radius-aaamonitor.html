@@ -385,7 +385,7 @@
                     $.ajax({
                         type: "GET",
                         async: false,
-                        url: serverOriginUrl + '/radius/' + currentServerObject.InsId + '/validnas?ipstring='+IpRangeStartPoint+'&rangesize='+rangeSize,
+                        url: 'radius/' + currentServerObject.InsId + '/validnas?ipstring='+IpRangeStartPoint+'&rangesize='+rangeSize,
                         success: function (checkavalibility) {
                             valid = (checkavalibility == true) ? false : true;
                         }
@@ -398,7 +398,7 @@
         var aaaListData;
         aaaTable = $('.dataTables-aaalist').DataTable({
             ajax: {
-                "url": serverOriginUrl + '/radius/radiusdetails',
+                "url": 'radius/radiusdetails',
                 "type": "GET",
                 "error": function (e) {
                 },

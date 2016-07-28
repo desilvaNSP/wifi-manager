@@ -2,7 +2,7 @@ function renderSidebar(username) {
     $.get('components/sidebar.html', function (template) {
             $.get('/dashboard/' + Cookies.get('tenantid') + '/users/' + username, function (result) {
                 var rendered = Mustache.render(template, {data: result});
-                $('#side-navigation').html(rendered);
+                $('#sidebar-wrapper').html(rendered);
             });
         }
     );

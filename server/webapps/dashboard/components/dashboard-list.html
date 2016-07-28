@@ -4,14 +4,18 @@
             <div class="input-group">
                 <input id="search-dashboard-app" type="text" class="form-control" placeholder="Search for...">
               <span class="input-group-btn">
-                <button class="btn btn-default" type="button">Go!</button>
+                <button class="btn btn-default btn-raised" type="button">Go!</button>
               </span>
             </div>
             <!-- /input-group -->
         </div>
         <!-- /.col-lg-6 -->
         <div class="col-lg-1">
-            <button class="btn btn-default" type="button" id="add-dashboard-btn">Add New</button>
+            <div class="input-group">
+                <span class="input-group-btn">
+                    <button class="btn btn-default btn-raised" type="button" id="add-dashboard-btn">Add New</button>
+                </span>
+            </div>
         </div>
     </div>
     <div class="row row-centered app-listing" id="app-grid"></div>
@@ -113,7 +117,7 @@
             });
 
             $.when(locationsAjax).done(function () {
-                ssidsAjax = $.get('/dashboard/users/'+ Cookies.get('username')+'/ssids', function (result) {
+                ssidsAjax = $.get('/dashboard/users/' + Cookies.get('username') + '/ssids', function (result) {
                     ssids = result
                 });
             });
@@ -223,12 +227,12 @@
             var appId = $(this).attr('data-appid');
 
 
-            var getAppsSettings = $.get('/dashboard/apps/'+ appId +'/appsettings', function(result){
+            var getAppsSettings = $.get('/dashboard/apps/' + appId + '/appsettings', function (result) {
                 appSettings = result;
                 window.aggregate = appSettings.aggregate;
                 window.filtercriteria = appSettings.filtercriteria;
             });
-            $.when(getAppsSettings).done(function(){
+            $.when(getAppsSettings).done(function () {
                 $.get('components/dashboard.html', function (template) {
                     switch (window.filtercriteria) {
                         case "groupname" :
@@ -238,7 +242,7 @@
                                 window.datagroups = result;
                                 window.originaldatagroups = result;
                                 var rendered;
-                                if ( window.aggregate == 'yes') {
+                                if (window.aggregate == 'yes') {
                                     rendered = Mustache.render(template, {
                                         appId: appId,
                                         datagroups: window.appName,
@@ -359,7 +363,7 @@
         });
 
         $.when(locationsAjax).done(function () {
-            ssidsAjax = $.get('/dashboard/users/'+ Cookies.get('username')+'/ssids', function (result) {
+            ssidsAjax = $.get('/dashboard/users/' + Cookies.get('username') + '/ssids', function (result) {
                 ssids = result
             });
         });
@@ -566,9 +570,9 @@
     function getAppParameterList(criteria, type) {
         switch (criteria) {
             case "groupname" :
-                return getCheckedElementList("input[name='"+ type +"-group']");
+                return getCheckedElementList("input[name='" + type + "-group']");
             case "ssid" :
-                return getCheckedElementList("input[name='"+ type +"-ssid']");
+                return getCheckedElementList("input[name='" + type + "-ssid']");
         }
     }
 

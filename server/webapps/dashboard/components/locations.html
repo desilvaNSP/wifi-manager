@@ -164,19 +164,19 @@
      */
     function renderFeatureWidgets() {
         renderFeatureDetailsWidgets({
-            url: '/wifi/ap/activecount?from=' + _apPeriodFrom + '&to=' + _apPeriodTo + '&threshold=' + Cookies.get("activeap-treshold"),
+            url: 'wifi/ap/activecount?from=' + _apPeriodFrom + '&to=' + _apPeriodTo + '&threshold=' + Cookies.get("activeap-treshold"),
             templateUrl: 'activeap-details.html',
             containerId: '#widget-active-accespoint',
             defaultTreshold: Cookies.get("activeap-treshold")
         });
         renderFeatureDetailsWidgets({
-            url: '/wifi/ap/inactivecount?from=' + _apPeriodFrom + '&to=' + _apPeriodTo + '&threshold=' + Cookies.get("inactiveap-treshold"),
+            url: 'wifi/ap/inactivecount?from=' + _apPeriodFrom + '&to=' + _apPeriodTo + '&threshold=' + Cookies.get("inactiveap-treshold"),
             templateUrl: 'inactive-details.html',
             containerId: '#widget-inactive-accespoint',
             defaultTreshold: Cookies.get("inactiveap-treshold")
         });
         renderFeatureDetailsWidgets({
-            url: '/wifi/ap/distinctcount?from=' + _apPeriodFrom + '&to=' + _apPeriodTo,
+            url: 'wifi/ap/distinctcount?from=' + _apPeriodFrom + '&to=' + _apPeriodTo,
             templateUrl: 'distinctmac-details.html',
             containerId: '#widget-distinct-mac'
         });
@@ -222,7 +222,7 @@
      */
     function refreshAPLocationMap() {
         var allaps;
-        $.get('/wifi/aps', function (result) {
+        $.get('wifi/aps', function (result) {
             allaps = result;
             updateMarkers(allaps, mapConfigs.map, mapConfigs.iconStyle);
         });
@@ -248,7 +248,7 @@
                     $.ajax({
                         type: "GET",
                         async: false,
-                        url: '/wifi/locations/' + mac + '/' + value,
+                        url: 'wifi/locations/' + mac + '/' + value,
                         success: function (isValid) {
                             result = (isValid == 1) ? false : true;
                         }
@@ -271,7 +271,7 @@
             autoWidth: false,
             lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
             "ajax": {
-                "url": serverOriginUrl + "/wifi/" + Cookies.get("tenantid") + "/locations",
+                "url":  "wifi/" + Cookies.get("tenantid") + "/locations",
                 "type": "GET",
                 "error": function (e) {
                 },
@@ -357,7 +357,7 @@
             }
         });
 
-        $.get('/wifi/' + Cookies.get('tenantid') + '/locations/groups', function (locationGroups) {
+        $.get('wifi/' + Cookies.get('tenantid') + '/locations/groups', function (locationGroups) {
             $('.dataTables-location').dataTable().columnFilter({
                 sPlaceHolder: "head:before",
                 aoColumns: [
@@ -381,7 +381,7 @@
                 $(this).addClass('selected');
             }
             var aps;
-            $.get('/wifi/locations/' + apInstance.mac, function (result) {
+            $.get('wifi/locations/' + apInstance.mac, function (result) {
                 aps = result;
                 mapConfigs.map.getView().setCenter(ol.proj.transform([aps.longitude, aps.latitude],
                         'EPSG:4326', 'EPSG:3857'));
@@ -398,10 +398,10 @@
      */
     function loadAddLocationModal(locationTable) {
         var locations, allMacs;
-        var locationsAjax = $.get('/wifi/' + Cookies.get('tenantid') + '/locations/groups', function (result) {
+        var locationsAjax = $.get('wifi/' + Cookies.get('tenantid') + '/locations/groups', function (result) {
             locations = result;
         });
-        var getMACS = $.get('/wifi/macs', function (result) {
+        var getMACS = $.get('wifi/macs', function (result) {
             allMacs = result;
         });
 
@@ -457,7 +457,7 @@
     function loadMapLongAndLatForExistingMac(macAddress, jAPName) {
         var aps;
         var LngLat = {};
-        $.get('/wifi/locations/' + macAddress, function (result) {
+        $.get('wifi/locations/' + macAddress, function (result) {
             aps = result;
             LngLat.lng = aps.longitude;
             LngLat.lat = aps.latitude;
@@ -528,7 +528,7 @@
             $("#addlocation-body").loadingOverlay({
                 loadingText: 'Creating Location'
             });
-            $.post('/wifi/locations', JSON.stringify(payload), function (result) {
+            $.post('wifi/locations', JSON.stringify(payload), function (result) {
                 $("#addlocation-body").loadingOverlay('remove');
                 $('#add-wifilocation-modal').modal('hide');
                 locationTable.ajax.reload();
@@ -551,7 +551,7 @@
 
         selectedLocation = locationTable.row(jqRawElement).data();
 
-        var locationsAjax = $.get('/wifi/' + Cookies.get('tenantid') + '/locations/groups', function (result) {
+        var locationsAjax = $.get('wifi/' + Cookies.get('tenantid') + '/locations/groups', function (result) {
             locations = result;
             var index = locations.indexOf(selectedLocation.groupname);
             if (index > -1) {
@@ -559,7 +559,7 @@
             }
         });
 
-        var getAPsOnLocation = $.get('/wifi/locations/' + selectedLocation.mac, function (result) {
+        var getAPsOnLocation = $.get('wifi/locations/' + selectedLocation.mac, function (result) {
             aps = result;
         });
 
@@ -611,7 +611,7 @@
                 groupname: $('#edit-group-name').val()
             };
             $.ajax({
-                url: '/wifi/locations',
+                url: 'wifi/locations',
                 type: 'PUT',
                 contentType: "application/json",
                 data: JSON.stringify(payload),
@@ -638,7 +638,7 @@
     function loadUpdateAPsModal(locationTable) {
         var updateLocationFromValidator;
         var allMacs;
-        var getMACS = $.get('/wifi/macs', function (result) {
+        var getMACS = $.get('wifi/macs', function (result) {
             allMacs = result;
         });
 
@@ -716,7 +716,7 @@
                 address: $('#editaps-ap-address').val()
             };
             $.ajax({
-                url: '/wifi/updateaps',
+                url: 'wifi/updateaps',
                 type: 'PUT',
                 contentType: "application/json",
                 data: JSON.stringify(payload),
@@ -761,7 +761,7 @@
      */
     function deleteSelectedLocation(locationTable, selectedLocation) {
         $.ajax({
-            url: '/wifi/' + Cookies.get('tenantid') + '/locations/' + selectedLocation.mac + '/' + selectedLocation.ssid + '/' + selectedLocation.groupname,
+            url: 'wifi/' + Cookies.get('tenantid') + '/locations/' + selectedLocation.mac + '/' + selectedLocation.ssid + '/' + selectedLocation.groupname,
             type: 'DELETE',
             beforeSend: function () {
                 $("#deletelocation-body").loadingOverlay({
@@ -811,7 +811,7 @@
                 groupname: $('#input-group-name').val(),
                 groupsymbol: $('#input-group-symbol').val()
             };
-            $.post('/wifi/locations/groups', JSON.stringify(payload), function (result) {
+            $.post('wifi/locations/groups', JSON.stringify(payload), function (result) {
                 $('#add-wifigroup-modal').modal('hide');
                 locationTable.ajax.reload();
             });

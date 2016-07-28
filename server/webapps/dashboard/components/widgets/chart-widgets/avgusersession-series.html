@@ -7,7 +7,7 @@
 <script type="text/javascript">
     $(function () {
         avgUserSessionTimeSeriesData = []
-        $.post('/wifi/usage/dailyavgusersessiontime', JSON.stringify(payload), function (data, status) {
+        $.post('wifi/usage/dailyavgusersessiontime', JSON.stringify(payload), function (data, status) {
             var locationDist = {type: 'spline', name: window.appName, data: convertToHighChartSeries(data, 60)}
             avgUserSessionTimeSeriesData.push(locationDist);
             renderTimeSeries('#avg-user-sessions-series', 'Sessions', "Time (Min)", avgUserSessionTimeSeriesData);
@@ -18,7 +18,7 @@
             $.each(window.originaldatagroups, function (i, val) {
                 var payload2 = payload
                 payload2.groupnames = [val]
-                $.post('/wifi/usage/dailyavgusersessiontime', JSON.stringify(payload2), function (data, status) {
+                $.post('wifi/usage/dailyavgusersessiontime', JSON.stringify(payload2), function (data, status) {
                     var locationDist = {type: 'spline', name: val, data: convertToHighChartSeries(data, 60)}
                     avgUserSessionTimeSeriesData.push(locationDist);
                 });

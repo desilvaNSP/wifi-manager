@@ -87,7 +87,7 @@
                 processing: "<div class='sk-spinner sk-spinner-three-bounce'><div class='sk-bounce1'></div><div class='sk-bounce2'></div><div class='sk-bounce3'></div></div>"
             },
             ajax: {
-                "url": serverOriginUrl + "/wifi/users",
+                "url":  "wifi/users",
                 "type": "GET",
                 "error": function (e) {
                 },
@@ -168,7 +168,7 @@
         $('#refreshTable').on('click',function(){
             userTable.api().ajax.reload();
         });
-        $.get('/wifi/' + Cookies.get('tenantid') + '/locations/groups', function (locationGroups) {
+        $.get('wifi/' + Cookies.get('tenantid') + '/locations/groups', function (locationGroups) {
             locationGroups.push('Master');
             userTable.columnFilter({
                 sPlaceHolder: "head:before",
@@ -206,7 +206,7 @@
                     $.ajax({
                         type:"GET",
                         async: false,
-                        url: serverOriginUrl + "/wifi/users/"+value+"/"+username,
+                        url: "wifi/users/"+value+"/"+username,
                         success: function(checkavalibility) {
                             result = (checkavalibility == 1) ? false : true;
                         }
@@ -221,7 +221,7 @@
 
         $('#delete-wifi-user').on("click", function (event) {
             $.ajax({
-                url: '/wifi/' + Cookies.get('tenantid') + '/users/' + selectedWifiUser.username +'/'+ selectedWifiUser.groupname,
+                url: 'wifi/' + Cookies.get('tenantid') + '/users/' + selectedWifiUser.username +'/'+ selectedWifiUser.groupname,
                 type: 'DELETE',
                 beforeSend:function(){
                     $("#userdelete-body").loadingOverlay({
@@ -249,7 +249,7 @@
         var addWifiUserFormValidation;
         $("#add-wifiuser-btn").on('click', function () {
             var locationsGroups;
-            var getLocationGroups = $.get('/wifi/' + Cookies.get('tenantid') + '/locations/groups', function (result) {
+            var getLocationGroups = $.get('wifi/' + Cookies.get('tenantid') + '/locations/groups', function (result) {
                 locationsGroups = result;
             });
             $.when(getLocationGroups).done(function () {
@@ -304,7 +304,7 @@
                     loadingText: 'Wait! Creating User'
                 });
                 e.preventDefault();
-                $.post('/wifi/users', JSON.stringify(payload), function (result) {
+                $.post('wifi/users', JSON.stringify(payload), function (result) {
                     $("#add-wifiuser-body").loadingOverlay('remove');
                     $('#add-wifiuser-modal').modal('hide');
                     userTable.api().ajax.reload();
@@ -317,7 +317,7 @@
         $('.dataTables-user tbody').on('click', '#setting-edit-user', function () {
             selectedWifiUser = userTable.api().row($(this).parents('tr')).data();
             var locationsGroups;
-            var getLocationGroups = $.get('/wifi/' + Cookies.get('tenantid') + '/locations/groups', function (result) {
+            var getLocationGroups = $.get('wifi/' + Cookies.get('tenantid') + '/locations/groups', function (result) {
                 locationsGroups = result;
             });
             var radiusValid, radiusStatusBtnStyle, radiusStatusMessage;
@@ -415,7 +415,7 @@
                         accounting:accounting
                     };
                     $.ajax({
-                        url: '/wifi/users',
+                        url: 'wifi/users',
                         type: 'PUT',
                         contentType: "application/json",
                         data: JSON.stringify(payload),

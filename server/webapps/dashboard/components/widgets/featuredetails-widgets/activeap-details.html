@@ -64,7 +64,7 @@
             activeapcard.addClass('swivel-effect-0');
             var activeThreshold = $('input#input-threshold-activeap').val();
             Cookies.set("activeap-treshold",activeThreshold);
-            activeapRequest = $.get('/wifi/ap/activecount?from=' + _apPeriodFrom + '&to=' + _apPeriodTo + '&threshold=' + Cookies.get("activeap-treshold"), function (data) {
+            activeapRequest = $.get('wifi/ap/activecount?from=' + _apPeriodFrom + '&to=' + _apPeriodTo + '&threshold=' + Cookies.get("activeap-treshold"), function (data) {
                 countOfActiveAPs = data;
             });
             $.when(activeapRequest).done(function () {

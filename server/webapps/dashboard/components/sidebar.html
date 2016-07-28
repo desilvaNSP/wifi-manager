@@ -1,87 +1,67 @@
-<nav class="navbar-default navbar-static-side" role="navigation">
-    <div class="sidebar-collapse">
-        <ul class="nav" id="side-menu">
-            <li class="nav-header">
-                <div class="dropdown profile-element">
-                     <span>
-                            <img alt="image" class="img-circle" src="img/profile_small.jpg"/>
-                     </span>
-                    <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-		                    <span class="clear"> <span class="block m-t-xs"> <strong
-                                    class="font-bold">{{data.username}}</strong>
-		                     </span> <span class="text-muted text-xs block">{{data.email}} <b class="caret"></b></span> </span>
-                    </a>
-                    <ul class="dropdown-menu animated fadeInRight m-t-xs">
-                        <li><a href="#" id="href-user-profile" class="">Profile</a></li>
-                        <li><a href="#" class="logout">Logout</a></li>
-                    </ul>
+<ul class="nav sidebar-nav" id="side-menu">
+    <li class="sidebar-brand">
+        <div class="">
+            <div class="row" style="padding-top: 20px;">
+                <div class="col-xs-6 col-xs-offset-3">
+                    <img src="img/ic_analytics.svg"
+                         style="margin-bottom: 1px;margin-top: 2px; width: 60px;  vertical-align: middle;">
                 </div>
-                <div class="logo-element">
-                    WIFI+
+            </div>
+            <div class="row">
+                <div class="col-xs-12" style="font-weight: 400;">
+                    Analyzer
                 </div>
-            </li>
-            <li>
-                <a href="#" id="href-dashboard"><i class="fa fa-th-large"></i> <span
-                        class="nav-label">Dashboard</span></span><span class="fa arrow"></span></a>
-                <ul class="nav nav-second-level">
-                    <li><a href="#" id="href-list-dashboard">List All</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#"><i class="fa fa-table"></i> <span class="nav-label">Tables</span><span
-                        class="fa arrow"></span></a>
-                <ul class="nav nav-second-level">
-                    <li><a href="#" id="href-wifiuser-tables">WiFi Users</a></li>
-                    <li><a href="#" id="href-alarms">Alarms</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#" id="href-locations"><i class="fa fa-map-marker"></i> <span
-                        class="nav-label">Locations</span> </a>
-            </li>
-            <li>
-                <a href="#" id="href-alerts"><i class="fa fa-line-chart"></i> <span
-                        class="nav-label">Alerts</span> </a>
-            </li>
-            <li>
-                <a href="#" id="href-reports"><i class="fa fa-file-text"></i> <span class="nav-label">Reports</span>
-                </a>
-            </li>
-            <li>
-                <a href="#" id="href-realtime"><i class="fa fa-lightbulb-o"></i> <span class="nav-label">Realtime</span>
-                </a>
-            </li>
-            <li>
-                <a href="#" id="href-campaigns"><i class="fa fa-shopping-cart"></i> <span
-                        class="nav-label">Ad Campaigns</span> </a>
-            </li>
-            <li>
-                <a href="#"><i class="fa fa-cogs"></i> <span class="nav-label">Settings</span><span
-                        class="fa arrow"></span></a>
-                <ul class="nav nav-second-level">
-                    <li><a href="#" id="href-dashboarduser-tables">Dashboard Users</a></li>
-                    <li><a href="#" id="href-aaa">AAA</a></li>
-                </ul>
-            </li>
+            </div>
+        </div>
+    </li>
+    <hr/>
+    <li>
+        <a href="#" id="href-dashboard"><i class="fa fa-th-large"></i> <span
+                class="nav-label">Dashboard</span></span><span class="fa arrow"></span></a>
+        <ul class="nav nav-second-level">
+            <li><a href="#" id="href-list-dashboard">List All</a></li>
         </ul>
-    </div>
-</nav>
+    </li>
+    <li>
+        <a href="#"><i class="fa fa-table"></i> <span class="nav-label">Tables</span><span
+                class="fa arrow"></span></a>
+        <ul class="nav nav-second-level">
+            <li><a href="#" id="href-wifiuser-tables">WiFi Users</a></li>
+            <li><a href="#" id="href-alarms">Alarms</a></li>
+        </ul>
+    </li>
+    <li>
+        <a href="#" id="href-locations"><i class="fa fa-map-marker"></i> <span
+                class="nav-label">Locations</span> </a>
+    </li>
+    <li>
+        <a href="#" id="href-alerts"><i class="fa fa-line-chart"></i> <span
+                class="nav-label">Alerts</span> </a>
+    </li>
+    <li>
+        <a href="#" id="href-reports"><i class="fa fa-file-text"></i> <span class="nav-label">Reports</span>
+        </a>
+    </li>
+    <li>
+        <a href="#" id="href-realtime"><i class="fa fa-lightbulb-o"></i> <span class="nav-label">Realtime</span>
+        </a>
+    </li>
+    <li>
+        <a href="#" id="href-campaigns"><i class="fa fa-shopping-cart"></i> <span
+                class="nav-label">Ad Campaigns</span> </a>
+    </li>
+    <li>
+        <a href="#"><i class="fa fa-cogs"></i> <span class="nav-label">Settings</span><span
+                class="fa arrow"></span></a>
+        <ul class="nav nav-second-level">
+            <li><a href="#" id="href-dashboarduser-tables">Dashboard Users</a></li>
+            <li><a href="#" id="href-aaa">AAA</a></li>
+        </ul>
+    </li>
+</ul>
+
 <script>
     $(document).ready(function () {
-        // MetsiMenu
-        $('#side-menu').metisMenu();
-
-        // Open close right sidebar
-        $('.right-sidebar-toggle').click(function () {
-            $('#right-sidebar').toggleClass('sidebar-open');
-        });
-
-        // Initialize slimscroll for right sidebar
-        $('.sidebar-container').slimScroll({
-            height: '100%',
-            railOpacity: 0.4,
-            wheelStep: 10
-        });
 
         $("#href-wifiuser-tables").click(function () {
             renderWifiUserTable()
@@ -126,7 +106,7 @@
                 url: '/dashboard/logout',
                 type: 'POST',
                 success: function () {
-                    Cookies.remove('jwt', { secure: true });
+                    Cookies.remove('jwt', {secure: true});
                     window.location.href = "/dashboard/login"
                 },
                 error: function (e) {
