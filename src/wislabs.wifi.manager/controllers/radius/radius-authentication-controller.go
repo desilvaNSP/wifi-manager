@@ -168,7 +168,6 @@ func IsNASIpExistsInRadius(radiusServerConfigs dao.RadiusServer, ipAddress strin
 	}
 	for _, nasName := range allNasNames {
 		result, err := checkIpBetweenIPRange(ipAddress,rangeSize,nasName)
-		println(result)
 		if err != nil {
 		}
 		if(result){
