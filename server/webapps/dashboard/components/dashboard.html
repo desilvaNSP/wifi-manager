@@ -1,69 +1,70 @@
- <div class="row">
-     <div class="col-lg-offset-5 col-lg-7">
-         <div class="form-group col-lg-4">
-             <p align="center"> Site </p>
-             <select class="form-control" id="select-wifilocation">
-                 {{#datagroups}}
-                 <option>{{.}}</option>
-                 {{/datagroups}}
-             </select>
-         </div>
-         <div class="form-group col-lg-6">
-             <p align="center"> Time Range </p>
-             <div id="time-range-dashboard"  class="pull-right">
-                 <i class="glyphicon glyphic on-calendar fa fa-calendar"></i>&nbsp;
-                 <span></span> <b class="caret"></b>
-             </div>
-         </div>
-         <div class="form-group col-lg-1 download-metrics-buttons">
-             <div class="btn-group">
-                 <a data-toggle="dropdown" class="btn btn-white btn-bitbucket dropdown-toggle">
-                     <i class="fa fa-bars"></i>
-                     <span class="caret"></span>
-                 </a>
-                 <ul class="dropdown-menu pull-right metrics-settings-dropdown">
-                     <li><a href="#"><input type="checkbox" id="chk-aggregate-option" {{checkAggreate}}/>&nbsp;Aggregate Locations</a></li>
-                     <li role="separator" class="divider"></li>
-                     <li><a id="exportpdf" href="#">PDF Download</a></li>
-                     <li><a id="exportCSV" href="#">CSV Download</a></li>
-                 </ul>
-             </div>
-         </div>
-     </div>
+<div class="row">
+    <div class="col-md-3 col-md-offset-4">
+        <p align="center"> Site </p>
+        <select class="form-control" id="select-wifilocation">
+            {{#datagroups}}
+            <option>{{.}}</option>
+            {{/datagroups}}
+        </select>
+    </div>
+    <div class="col-md-4">
+        <p align="center"> Time Range </p>
+        <div id="time-range-dashboard" class="pull-right">
+            <i class="glyphicon glyphic on-calendar fa fa-calendar"></i>&nbsp;
+            <span></span> <b class="caret"></b>
+        </div>
+    </div>
+    <div class="col-md-1">
+        <div class="navbar-collapse collapse navbar-responsive-collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="" data-target="#" class="dropdown-toggle btn" data-toggle="dropdown"><i
+                            class="material-icons">menu</i></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#"><input type="checkbox" id="chk-aggregate-option" {{checkAggreate}}/>&nbsp;Aggregate
+                            Locations</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a id="exportpdf" href="#">PDF Download</a></li>
+                        <li><a id="exportCSV" href="#">CSV Download</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
 </div>
 
- <div id="dashboard-tabs">
-     <ul class="nav nav-tabs">
-         <li class="active">
-             <a  href="#overview-content" data-toggle="tab" data-id="overview">Overview</a>
-         </li>
-         <li><a href="#apreort-content" data-toggle="tab" data-id="apreport">AP Reports</a>
-         </li>
-         <!--<li><a href="#realtime-content" data-toggle="tab" data-id="realtimereport">Real Time</a>-->
-         <!--</li>-->
-     </ul>
-     <div class="tab-content">
-         <div class="tab-pane active" id="overview-content">
-             <div id="metrics-container">
-                 <div id="dashboard-metric-content" class="row">
+<div id="dashboard-tabs">
+    <ul class="nav nav-tabs">
+        <li class="active">
+            <a href="#overview-content" data-toggle="tab" data-id="overview">Overview</a>
+        </li>
+        <li><a href="#apreort-content" data-toggle="tab" data-id="apreport">AP Reports</a>
+        </li>
+        <!--<li><a href="#realtime-content" data-toggle="tab" data-id="realtimereport">Real Time</a>-->
+        <!--</li>-->
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane active" id="overview-content">
+            <div id="metrics-container">
+                <div id="dashboard-metric-content" class="row">
 
-                 </div>
-             </div>
-         </div>
-         <div class="tab-pane" id="apreort-content">
-             <div id="apreport-container">
-                 <div id="dashboard-apreport-content" class="row">
-                 </div>
-             </div>
-         </div>
-         <div class="tab-pane" id="realtime-content">
-             <div id="realtime-container">
-                 <div id="dashboard-realtime-content" class="row">
-                 </div>
-             </div>
-         </div>
-     </div>
- </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" id="apreort-content">
+            <div id="apreport-container">
+                <div id="dashboard-apreport-content" class="row">
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" id="realtime-content">
+            <div id="realtime-container">
+                <div id="dashboard-realtime-content" class="row">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script type="text/javascript">
 
@@ -72,25 +73,25 @@
         to: '',
         prefrom: '',
         preto: '',
-        criteria : window.filtercriteria,
-        parameters : window.datagroups,
+        criteria: window.filtercriteria,
+        parameters: window.datagroups,
         acl: window.aclvalue,
         tenantid: parseInt(Cookies.get("tenantid"))
     };
     window.payload = payload;
 
     $(document).ready(function () {
-
-        var selectedtabid ="overview";
+        $.material.init();
+        var selectedtabid = "overview";
         saveResult(moment().subtract(29, 'days'), moment());
         renderMetrics();
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             selectedtabid = $(this).data("id");
-            if(selectedtabid=="overview"){
+            if (selectedtabid == "overview") {
                 renderMetrics();
-            }else if(selectedtabid=="apreport"){
+            } else if (selectedtabid == "apreport") {
                 renderAPreport();
-            }else if(selectedtabid=="realtimereport"){
+            } else if (selectedtabid == "realtimereport") {
                 renderRealTime();
             }
         });
@@ -104,23 +105,23 @@
                 'This Month': [moment().startOf('month'), moment().endOf('month')],
                 'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
             },
-            autoApply:true
-        }, function(start, end) {
-            saveResult(start,end);
-            if(selectedtabid=="overview"){
+            autoApply: true
+        }, function (start, end) {
+            saveResult(start, end);
+            if (selectedtabid == "overview") {
                 renderMetrics();
-            }else if(selectedtabid=="apreport"){
+            } else if (selectedtabid == "apreport") {
                 renderAPreport();
-            }else if(selectedtabid=="realtimereport"){
+            } else if (selectedtabid == "realtimereport") {
                 renderRealTime();
             }
         });
 
-        function saveResult (from,to) {
+        function saveResult(from, to) {
             $('#time-range-dashboard span').html(from.format('YYYY - MM - DD') + ' | ' + to.format('YYYY - MM - DD'));
             payload.from = from.format('YYYY-MM-DD');
             payload.to = to.format('YYYY-MM-DD');
-            var period = Math.floor(moment.duration(moment(payload.to,"YYYY-MM-DD").diff(moment(payload.from,"YYYY-MM-DD"))).asDays());
+            var period = Math.floor(moment.duration(moment(payload.to, "YYYY-MM-DD").diff(moment(payload.from, "YYYY-MM-DD"))).asDays());
             payload.prefrom = moment(moment(payload.from).subtract(period, "days")).format('YYYY-MM-DD');
             payload.preto = moment(payload.from).subtract(1, "days").format("YYYY-MM-DD");
             window.payload = payload;
@@ -156,11 +157,11 @@
 
         }
 
-        function renderAPreport(){
+        function renderAPreport() {
             $('.widget-container').removeAttr('id');
             $.get('components/dashboard-apreport.html', function (template) {
                 var rendered = Mustache.render(template, {
-                    widgetid :'widget-grid'
+                    widgetid: 'widget-grid'
                 });
                 $('#dashboard-apreport-content').html(rendered);
             })
@@ -169,11 +170,11 @@
         $('#select-wifilocation').on('change', function (e) {
             window.datagroups = [this.value];
             payload.parameters = window.datagroups;
-            if(selectedtabid=="overview"){
+            if (selectedtabid == "overview") {
                 renderMetrics();
-            }else if(selectedtabid=="apreport"){
+            } else if (selectedtabid == "apreport") {
                 renderAPreport();
-            }else if(selectedtabid=="realtimereport"){
+            } else if (selectedtabid == "realtimereport") {
                 renderRealTime();
             }
         });
@@ -181,7 +182,7 @@
         $('#chk-aggregate-option').on('change', function (e) {
             var that = this;
             var getCriteriaParameters;
-            var criteriaParameters ;
+            var criteriaParameters;
             var selectOptions;
             switch (window.filtercriteria) {
                 case "groupname" :
