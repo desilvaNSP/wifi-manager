@@ -89,4 +89,11 @@ var DashoardAppRoutes = Routes{
 		true,
 		dashboard_handlers.GetAclTypes,
 	},
+	Route{
+		"Upload appicon on app",
+		"PUT",
+		"/dashboard/{appid}/upload",
+		true,
+		dashboard_handlers.UploadAppIconHandler,
+	},
 }
