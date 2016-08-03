@@ -47,6 +47,7 @@
     var $grid, $sizer;
     var deleteAppId;
     var tagUserComponent;
+    var appIconFormData;
     $(document).ready(function () {
         locationsAjax = $.get('/dashboard/' + Cookies.get('tenantid') + '/users/' + Cookies.get('username'), function (result) {
             locations = result.apgroups
@@ -174,6 +175,20 @@
                             }
                         }
                     });
+                    appIconFormData = null;
+                    $(":file").change(function() {
+                        var file = this.files[0],  name = file.name, size = file.size, type = file.type;
+                        var imageType = new Array("image/png","image/jpeg", "image/gif", "image/bmp");
+                        if(jQuery.inArray(type, imageType )  == -1) {
+                            var errors = { appimage: "Valid file formats are jpg,jpeg and png" };
+                            addDashboardFromValidator.showErrors(errors);
+                            return false;
+                        }  else {
+                            appIconFormData = new FormData();
+                            appIconFormData.append('appimage', $('input[type=file]')[0].files[0]);
+                        }
+
+                    });
                 });
             });
 
@@ -197,28 +212,36 @@
                         loadingText: 'Creating ' + payloadadd.name + ' Dashboard'
                     });
                     $.post('/dashboard/apps', JSON.stringify(payloadadd), function (result) {
-                        $("#adddbmodal-body").loadingOverlay('remove');
-                        $('#add-dashboard-modal').modal('hide');
-                        $grid.shuffle('destroy');
-                        renderDashboardApps();
+                        var appid =  result;
+                        if(appIconFormData != null){
+                            $.ajax({
+                                url: '/dashboard/'+appid+'/upload',
+                                type: 'PUT',
+                                data: appIconFormData,
+                                cache: false,
+                                contentType: false,
+                                processData: false,
+                                success: function (data) {
+                                    $("#adddbmodal-body").loadingOverlay('remove');
+                                    $('#add-dashboard-modal').modal('hide');
+                                    $grid.shuffle('destroy');
+                                    renderDashboardApps();
+                                },
+                                error: function (e) {
+                                }
+                            });
+                        }else{
+                            $("#adddbmodal-body").loadingOverlay('remove');
+                            $('#add-dashboard-modal').modal('hide');
+                            $grid.shuffle('destroy');
+                            renderDashboardApps();
+                        }
                     });
                 }
                 return false;
             });
         });
 
-        function renderDashboardApps() {
-            $.get('/dashboard/' + Cookies.get('tenantid') + '/apps/' + Cookies.get('username'), function (result) {
-                $.get('components/dashboard-app.html', function (template) {
-                    var rendered = Mustache.render(template, {apps: result});
-                    $('#app-grid').html(rendered);
-                    $grid.shuffle({
-                        itemSelector: '.col-xs-6',
-                        sizer: $sizer
-                    });
-                });
-            });
-        }
 
         $('#app-grid').on('click', '.app-anchor', function (event) {
             event.preventDefault();
@@ -402,6 +425,7 @@
 
         taggedUsers = [];
 
+        var updateAppIconFormData;
         var updateDashboardFromValidator;
         $.when(usersAjax, locationsAjax, metricsAjax, aclTypes, allAppSettings).done(function () {
             $.get('components/dashboard-settings-modal.html', function (template) {
@@ -516,6 +540,21 @@
                         }
                     }
                 });
+
+                updateAppIconFormData = null;
+                $('input[name="updateappimage"]').change(function() {
+                    var file = this.files[0],  name = file.name, size = file.size, type = file.type;
+                    var imageType = new Array("image/png","image/jpeg", "image/gif", "image/bmp");
+                    if(jQuery.inArray(type, imageType )  == -1) {
+                        var errors = { updateappimage: "Valid file formats are jpg,jpeg and png" };
+                        updateDashboardFromValidator.showErrors(errors);
+                        return false;
+                    }  else {
+                        updateAppIconFormData = new FormData();
+                        updateAppIconFormData.append('appimage', $('input[name="updateappimage"]')[0].files[0]);
+                    }
+
+                });
             });
         });
 
@@ -546,8 +585,29 @@
                         });
                     },
                     success: function (result) {
-                        $("#settingsdbmodal-body").loadingOverlay('remove');
-                        $('#settings-dashboard-modal').modal('hide');
+                        if(updateAppIconFormData != null){
+                            $.ajax({
+                                url: '/dashboard/'+payloadupdate.appid+'/upload',
+                                type: 'PUT',
+                                data: updateAppIconFormData,
+                                cache: false,
+                                contentType: false,
+                                processData: false,
+                                success: function (data) {
+                                    $("#settingsdbmodal-body").loadingOverlay('remove');
+                                    $('#settings-dashboard-modal').modal('hide');
+                                    $grid.shuffle('destroy');
+                                    renderDashboardApps();
+                                },
+                                error: function (e) {
+                                }
+                            });
+                        }else{
+                            $("#settingsdbmodal-body").loadingOverlay('remove');
+                            $('#settings-dashboard-modal').modal('hide');
+                            $grid.shuffle('destroy');
+                            renderDashboardApps();
+                        }
                     },
                     error: function (e) {
                     }
@@ -650,5 +710,27 @@
             }
         });
     }
+
+    function renderDashboardApps() {
+        $.get('/dashboard/' + Cookies.get('tenantid') + '/apps/' + Cookies.get('username'), function (result) {
+            $.get('components/dashboard-app.html', function (template) {
+                var rendered = Mustache.render(template, {
+                    apps: result,
+                    checkappicon: function(){
+                        if (this.appicon == null || this.appicon == '') {
+                            this.appicon = 'default.png';
+                        }
+                        return this.appicon;
+                    }
+                });
+                $('#app-grid').html(rendered);
+                $grid.shuffle({
+                    itemSelector: '.col-xs-6',
+                    sizer: $sizer
+                });
+            });
+        });
+    }
+
 
 </script>

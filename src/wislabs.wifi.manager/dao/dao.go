@@ -214,7 +214,8 @@ type DashboardApp struct {
 	TenantId       int                 `db:"tenantid"json:"tenantid"`
 	Name           string              `db:"name"json:"name"`
 	Aggregate      string              `db:"aggregate"json:"aggregate"`
-	FilterCriteria string         `db:"filtercriteria"json:"filtercriteria"`
+	FilterCriteria string              `db:"filtercriteria"json:"filtercriteria"`
+	AppIcon		   utils.NullString	   `db:"appicon"json:"appicon"`
 }
 
 type DashboardAppUser struct {

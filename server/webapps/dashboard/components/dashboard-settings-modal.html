@@ -18,6 +18,12 @@
                                            name="appName"
                                            placeholder="Name" required value="{{appname}}" disabled>
                                 </div>
+                                <form enctype="multipart/form-data" id="appiconform">
+                                    <div class="form-group">
+                                        <input id="inputFile" multiple="" type="file" name="updateappimage" id="choose-appicon-update">
+                                        <input readonly="" class="form-control" placeholder="Choose app icon..." type="text">
+                                    </div>
+                                </form>
                                 <!-- Start data scopes -->
                                 <div class="form-group">
                                     <label>Data Scopes</label>
@@ -101,17 +107,6 @@
                                     </div>
                                 </div>
                                 <!-- End data scopes -->
-
-                                <div class="form-group">
-                                    <label>Shared with</label>
-                                </div>
-                                <div class="checkbox">
-                                    <ul id="username-tags">
-                                        {{#users}}
-                                        <li>{{username}}</li>
-                                        {{/users}}
-                                    </ul>
-                                </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="form-group">
@@ -130,6 +125,16 @@
                                         </div>
                                         {{/metrics}}
                                     </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Shared with</label>
+                                </div>
+                                <div class="checkbox">
+                                    <ul id="username-tags">
+                                        {{#users}}
+                                        <li>{{username}}</li>
+                                        {{/users}}
+                                    </ul>
                                 </div>
                                 <div class="form-group">
                                     <div class="panel panel-default">

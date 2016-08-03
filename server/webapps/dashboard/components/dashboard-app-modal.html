@@ -18,9 +18,13 @@
                                     <input type="text" class="form-control" id="input-dashboard-name" name="appName"
                                            placeholder="Name">
                                 </div>
-                                <div class="form-group">
-                                    <label for="exampleInputFile">Icon</label>
-                                    <input type="file" id="exampleInputFile">
+                                <form enctype="multipart/form-data" id="appiconform">
+                                    <div class="form-group">
+                                        <input id="inputFile" multiple="" type="file" name="appimage" id="choose-appicon">
+                                        <input readonly="" class="form-control" placeholder="Choose app icon..." type="text">
+                                    </div>
+                                </form>
+                                <div class="appicon-containner">
                                 </div>
 
                                 <!-- Start data scopes -->
@@ -103,17 +107,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- End data scopes -->
-                                <div class="form-group">
-                                    <label>Share with</label>
-                                </div>
-                                <div class="checkbox">
-                                    <ul id="username-tags">
-                                        {{#currentuser}}
-                                        <li>{{.}}</li>
-                                        {{/currentuser}}
-                                    </ul>
-                                </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="form-group">
@@ -131,6 +124,17 @@
                                         </div>
                                         {{/metrics}}
                                     </div>
+                                </div>
+                                <!-- End data scopes -->
+                                <div class="form-group">
+                                    <label>Share with</label>
+                                </div>
+                                <div class="checkbox">
+                                    <ul id="username-tags">
+                                        {{#currentuser}}
+                                        <li>{{.}}</li>
+                                        {{/currentuser}}
+                                    </ul>
                                 </div>
                                 <div class="form-group">
                                     <div class="panel panel-default">
