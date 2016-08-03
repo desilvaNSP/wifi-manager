@@ -92,7 +92,7 @@ const GET_DASHBOARD_APP_FILTER_PARAMS string   = "SELECT parameter FROM appfilte
 const GET_DASHBOARD_APP_METRICS string     = "SELECT metricid, name FROM metrics WHERE metricid IN (SELECT metricid FROM appmetrics WHERE appid=?)"
 const GET_DASHBOARD_USERS_IN_GROUP string  = "SELECT DISTINCT(username) FROM users WHERE tenantid =? and userid IN (SELECT userid FROM userapgroups WHERE groupid IN (SELECT groupid from apgroups WHERE groupname IN "
 const GET_DASHBOARD_APP_USERS string       = "SELECT tenantid, appid, username FROM appusers WHERE appid=?"
-const GET_DASHBOARD_USER_APPS string       = "SELECT tenantid, appid, name, aggregate, filtercriteria FROM apps WHERE appid IN (SELECT appid FROM appusers WHERE username=? AND tenantid=?)"
+const GET_DASHBOARD_USER_APPS string       = "SELECT tenantid, appid, name, aggregate, filtercriteria, appicon FROM apps WHERE appid IN (SELECT appid FROM appusers WHERE username=? AND tenantid=?)"
 const ADD_DASHBOARD_APP string 		       = "INSERT INTO apps (tenantid, name, aggregate, filtercriteria) VALUES( ?, ?, ?, ?)"
 const ADD_DASHBOARD_APP_USER string        = "INSERT INTO appusers (tenantid, appid, username) VALUES(?, ?, ? )"
 const ADD_DASHBOARD_APP_METRIC string      = "INSERT INTO appmetrics (appid, metricid) VALUES( ?, ? )"
@@ -102,6 +102,7 @@ const ADD_DASHBOARD_ACLS string            = "INSERT INTO appacls (appid,acl) VA
 const DELETE_DASHBOARD_APP string          = "DELETE FROM apps WHERE appid=? AND tenantid=?"
 const DELETE_DASHBOARD_APP_FILTER_PARAMS string  = "DELETE FROM appfilterparams WHERE appid=?"
 const DELETE_DASHBOARD_APP_USER string     = "DELETE FROM appusers WHERE appid=? AND username=?"
+const STORE_APP_ICON_PATH string 			   = "UPDATE apps SET appicon = ? WHERE appid=? and tenantid=?"
 
  /* App Settings */
 const UPDATE_DB_APP_ACLS string                 = "UPDATE appacls SET acl=? WHERE appid=?"

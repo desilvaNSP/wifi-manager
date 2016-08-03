@@ -9,6 +9,8 @@ import (
 	"wislabs.wifi.manager/controllers/dashboard"
 	"strconv"
 	"wislabs.wifi.manager/dao"
+	"os"
+	"io"
 )
 
 /**
@@ -23,8 +25,12 @@ func CreateDashboardApp(w http.ResponseWriter, r *http.Request) {
 	if (err != nil) {
 		log.Error("Error while decoding location json")
 	}
-	dashboard.CreateNewDashboardApp(dashboardApp)
+	appId := dashboard.CreateNewDashboardApp(dashboardApp)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(appId); err != nil {
+		panic(err)
+	}
 }
 /**
 * PUT
@@ -274,3 +280,63 @@ func DeleteDashboardApp(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}
 }
+
+func UploadAppIconHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	appId, err := strconv.Atoi(vars["appid"])
+	if (err != nil) {
+		log.Error(err.Error())
+	}
+	tenantId, err := strconv.Atoi(r.Header.Get("tenantid"))
+	if (err != nil) {
+		log.Error("Error while reading tenantid", err)
+	}
+	err2 := r.ParseMultipartForm(100000)
+	if err2 != nil {
+		log.Error("Error while parsing formdata", err2)
+		http.Error(w, err2.Error(), http.StatusInternalServerError)
+		return
+	}
+	m := r.MultipartForm
+
+	files := m.File["appimage"]
+	for i, _ := range files {
+		file, err := files[i].Open()
+		defer file.Close()
+		if err != nil {
+			log.Error("Error while opening file", err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		var appIconName = strconv.Itoa(tenantId)+strconv.Itoa(appId)+"appname.png"
+		var iconPathName = "../webapps/dashboard/repositories/" + appIconName
+
+		if _, err := os.Stat(iconPathName); os.IsNotExist(err) {
+			dashboard.StoreAppIconpath(appId, tenantId, appIconName)
+		}else{
+			err = os.Remove(iconPathName)
+			if err != nil {
+				log.Error("Error while removing existing file", err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			dashboard.StoreAppIconpath(appId, tenantId, appIconName)
+		}
+
+		dst, err := os.Create(iconPathName)
+		defer dst.Close()
+		if err != nil {
+			log.Error("Error while creating new file", err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		//copy the uploaded file to the destination file
+		if _, err := io.Copy(dst, file); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+	w.Write([]byte("Profile photo successfully updates"))
+}
+
+

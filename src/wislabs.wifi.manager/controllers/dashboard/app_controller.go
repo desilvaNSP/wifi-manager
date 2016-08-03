@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-func CreateNewDashboardApp(dashboardAppInfo dao.DashboardAppInfo) {
+func CreateNewDashboardApp(dashboardAppInfo dao.DashboardAppInfo) int64{
 	appId, err := AddDashboardApp(&dashboardAppInfo)
 	if (err == nil) {
 		switch (dashboardAppInfo.FilterCriteria){
@@ -22,6 +22,7 @@ func CreateNewDashboardApp(dashboardAppInfo dao.DashboardAppInfo) {
 		AddDashboardAppMetrics(&dashboardAppInfo.Metrics, appId)
 		AddDashboardAppAcls(dashboardAppInfo.Acls, appId)
 	}
+	return  appId
 }
 
 func UpdateDashBoardAppSettings(dashboardAppInfo dao.DashboardAppInfo) {
@@ -463,4 +464,19 @@ func checkContainsUsers(username string, users []dao.DashboardAppUser) bool {
 		}
 	}
 	return false
+}
+
+func StoreAppIconpath(appid  int,tenantid int,iconPath string){
+	dbMap := utils.GetDBConnection("dashboard");
+	defer dbMap.Db.Close()
+
+	stmtIns, err := dbMap.Db.Prepare(commons.STORE_APP_ICON_PATH)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	_, err = stmtIns.Exec(iconPath,appid,tenantid)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	defer stmtIns.Close()
 }
