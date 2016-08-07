@@ -7,7 +7,7 @@ import (
 
 type NameValue struct {
     Name  string  `db:"name"json:"name"`
-    Value float64  `db:"value"json:"value"`
+    Value utils.NullFloat64  `db:"value"json:"value"`
 }
 
 type SummaryDailyAcctAll struct {
@@ -36,8 +36,8 @@ type AccessPoint struct {
 	TotalUsers            int                     `db:"totalusers"json:"totalusers"`
 	AvgdataperUser        utils.NullString      `db:"avgdataperuser"json:"avgdataperuser"`
 	Avgdatapersessiontime utils.NullString   `db:"avgdatapersessiontime"json:"avgdatapersessiontime"`
-	TotalDownloads        int64               `db:"totalinputoctets"json:"totaldownloads"`
-	TotalUploads          int64            `db:"totaloutputoctets"json:"totaluploads"`
+	TotalDownloads        utils.NullInt64                `db:"totalinputoctets"json:"totaldownloads"`
+	TotalUploads          utils.NullInt64             `db:"totaloutputoctets"json:"totaluploads"`
 	Calledstationmac      utils.NullString         `db:"calledstationmac"json:"calledstationmac"`
 	APName                utils.NullString           `db:"apname"json:"apname"`
 }
@@ -45,7 +45,7 @@ type AccessPoint struct {
 
 type APSummaryDetails struct {
 	CalledStationMac     utils.NullString         `db:"calledstationmac"json:"calledstationmac"`
-	Value                int64                     `db:"summaryvalue"json:"summaryvalue"`
+	Value                utils.NullInt64                      `db:"summaryvalue"json:"summaryvalue"`
 }
 
 
