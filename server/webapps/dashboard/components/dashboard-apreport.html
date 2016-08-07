@@ -32,8 +32,6 @@
         </div>
     </div>
 </div>
-
-
 <!-- Downloads and Uploads -->
 <section id={{widgetid}} class="widget-container secondone">
     <div class="row" id="map-body">
@@ -72,17 +70,29 @@
                                 <div id="map"></div>
                             </div>
                             <div id="heatmap-controlers">
-                                <div class="col-sm-4">
-                                    <div id="radius-label">radius: 20</div>
-                                    <div id="radius-slider"></div>
+                                <div class="col-lg-7">
+                                    <div class="col-sm-4">
+                                        <div id="radius-label">radius: 20</div>
+                                        <div id="radius-slider"></div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div id="opacity-label">opacity: 0.5</div>
+                                        <div id="opacity-slider"></div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div id="max-label">max: -</div>
+                                        <div id="max-slider"></div>
+                                    </div>
                                 </div>
-                                <div class="col-sm-4">
-                                    <div id="opacity-label">opacity: 0.5</div>
-                                    <div id="opacity-slider"></div>
-                                </div>
-                                <div class="col-sm-4">
-                                    <div id="max-label">max: -</div>
-                                    <div id="max-slider"></div>
+                                <div class="legent-container col-lg-5">
+                                    <div id="legend">
+                                        <div id="legendGradient"></div>
+                                        <div class="ruler">
+                                            <span class="center col-lg-4">Low</span>
+                                            <span class="center col-lg-4">Middle</span>
+                                            <span class="center col-lg-4">High</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <!-- end widget content -->
@@ -158,7 +168,7 @@
 <script>
     $(document).ready(function () {
 
-        var map, heatmap;
+        var map, heatmap, heatmapgradient;
 
         var apDataArray = [];
         var longlatDataArray = [];
@@ -394,8 +404,40 @@
                 opacity: $("#opacity-slider").slider("value")
             });
             heatmap.setMap(map);
+            setGradient();
+            setLegendGradient();
+        }
+        function setGradient() {
+            heatmapgradient = [
+                'rgba(14, 249, 11,0)',
+                'rgba(37, 227, 13,1)',
+                'rgba(60, 206, 16,1)',
+                'rgba(83, 185, 19,1)',
+                'rgba(106, 163, 21,1)',
+                'rgba(129, 142, 24,1)',
+                'rgba(152, 121, 27,1)',
+                'rgba(175, 99, 29,1)',
+                'rgba(198, 78, 32,1)',
+                'rgba(221, 57, 35,1)',
+                'rgba(245, 36, 38,1)'
+            ];
+            heatmap.set('gradient', heatmapgradient);
         }
 
+        function setLegendGradient() {
+            var gradient2 = heatmap.get('gradient');
+            console.log(gradient2)
+            var gradientCss = '(left ,'+ gradient2[0];
+            for (var i = 1; i < gradient2.length; ++i) {
+                gradientCss += ', ' + gradient2[i];
+            }
+            gradientCss += ')';
+
+            $('#legendGradient').css('background', '-webkit-linear-gradient' + gradientCss);
+            $('#legendGradient').css('background', '-moz-linear-gradient' + gradientCss);
+            $('#legendGradient').css('background', '-o-linear-gradient' + gradientCss);
+            $('#legendGradient').css('background', 'linear-gradient' + gradientCss);
+        }
 
         function toggleHeatmap() {
             heatmap.setMap(heatmap.getMap() ? null : map);
@@ -467,6 +509,7 @@
             };
 
             var doc = new jsPDF(pdfOptions);
+            var topMargin = 20;
 
             var heatmapName= "Heatmap based on APs Downloads";
 
@@ -483,25 +526,57 @@
             doc.text(25, 20, heatmapName);
 
             doc.setFontSize(12);
-            doc.text(125, 20, "Area/Site/AP : " + $('#select-wifilocation').val());
+            doc.text(125, topMargin, "Area/Site/AP : " + $('#select-wifilocation').val());
             doc.setFontSize(12);
-            doc.text(175, 20, "Statistics from " + payload.from + " to " + payload.to);
+            doc.text(175, topMargin, "Statistics from " + payload.from + " to " + payload.to);
 
 
             var pageWidth = doc.internal.pageSize.width-20;
             var width  =  pageWidth;
 
+            //get transform value
+            var transform=$(".gm-style>div:first>div").css("transform")
+            var comp=transform.split(",") //split up the transform matrix
+            var mapleft=parseFloat(comp[4]) //get left value
+            var maptop=parseFloat(comp[5])  //get top value
+            $(".gm-style>div:first>div").css({ //get the map container. not sure if stable
+                "transform":"none",
+                "left":mapleft,
+                "top":maptop,
+            });
+
+            topMargin += 10;
             html2canvas(element, {
                 useCORS: true,
                 onrendered: function(canvas) {
                     var imgWidth = element.width();
                     var imgHeight = element.height();
 
-                    var height =  (pageWidth * imgHeight)/ imgWidth
+                    var height =  (width * imgHeight)/ imgWidth
                     var imgData = canvas.toDataURL(
                             'image/png');
-                    doc.addImage(imgData, 'PNG', 10, 30 , width, height);
-                    doc.save('heatmap-'+window.appName+'-'+ moment().format('YYYY-MM-DD')+'.pdf');
+                    $(".gm-style>div:first>div").css({
+                        left:0,
+                        top:0,
+                        "transform":transform
+                    });
+                    doc.addImage(imgData, 'PNG', 10, topMargin , width, height);
+
+                    topMargin += (height+10);
+                    width  =  width/3;
+                    html2canvas($('#legend'), {
+                        onrendered: function(canvas) {
+                            var legendWidth = $('#legend').width();
+                            var legendHeight = $('#legend').height();
+
+                            var elementheight =  (width * legendHeight)/ legendWidth
+
+                            var legendImageData = canvas.toDataURL(
+                                    'image/png');
+                            doc.addImage(legendImageData, 'PNG', 10, topMargin , width, elementheight);
+                            doc.save('heatmap-'+window.appName+'-'+ moment().format('YYYY-MM-DD')+'.pdf');
+                        }
+                    });
                 }
             });
         }
