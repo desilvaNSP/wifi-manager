@@ -38,9 +38,24 @@
         <div class="col-lg-12">
             <div class="row map-containner">
                 <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <div class="jarviswidget" id="wid-id-0" data-widget-refresh="2000" data-widget-colorbutton="false" data-id="locationmap">
+                    <div class="jarviswidget" id="wid-id-0"  data-widget-colorbutton="false" data-widget-editbutton="false" data-id="locationmap">
                         <header>
-                            <h2>Heat Map</h2>
+                            <h2 id="heat-mapheadername">Heatmap based on APs Downloads</h2>
+                            <div class="widget-toolbar">
+                                <div class="dropdown">
+                                    <button class="btn btn-xs btn-white dropdown-toggle" type="button" data-toggle="dropdown">
+                                        <i class="fa fa-cogs" aria-hidden="true"></i>
+                                        <span class="caret"></span></button>
+                                    <ul class="dropdown-menu pull-right" id="hearmap-dropdown">
+                                        <li data-id="1"><a href="#">Heatmap based on APs Downloads</a></li>
+                                        <li data-id="2"><a href="#">Heatmap based on APs Uploads</a></li>
+                                        <li data-id="3"><a href="#">Heatmap based on APs User Count</a></li>
+                                        <li role="separator" class="divider"></li>
+                                        <li data-id="0"><a href="#">Clear Heatmap</a></li>
+                                        <li data-id="4"><a href="#">Download Map PDF</a></li>
+                                    </ul>
+                                </div>
+                            </div>
                         </header>
                         <div>
                             <!-- widget edit box -->
@@ -55,17 +70,29 @@
                                 <div id="map"></div>
                             </div>
                             <div id="heatmap-controlers">
-                                <div class="col-sm-4">
-                                    <div id="radius-label">radius: 20</div>
-                                    <div id="radius-slider"></div>
+                                <div class="col-lg-7">
+                                    <div class="col-sm-4">
+                                        <div id="radius-label">radius: 20</div>
+                                        <div id="radius-slider"></div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div id="opacity-label">opacity: 0.5</div>
+                                        <div id="opacity-slider"></div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div id="max-label">max: -</div>
+                                        <div id="max-slider"></div>
+                                    </div>
                                 </div>
-                                <div class="col-sm-4">
-                                    <div id="opacity-label">opacity: 0.5</div>
-                                    <div id="opacity-slider"></div>
-                                </div>
-                                <div class="col-sm-4">
-                                    <div id="max-label">max: -</div>
-                                    <div id="max-slider"></div>
+                                <div class="legent-container col-lg-5">
+                                    <div id="legend">
+                                        <div id="legendGradient"></div>
+                                        <div class="ruler">
+                                            <span class="center col-lg-4">Low</span>
+                                            <span class="center col-lg-4">Middle</span>
+                                            <span class="center col-lg-4">High</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <!-- end widget content -->
@@ -141,19 +168,40 @@
 <script>
     $(document).ready(function () {
 
-        var map, heatmap;
+        var map, heatmap, heatmapgradient;
+
         var apDataArray = [];
         var longlatDataArray = [];
+
         var allMarkers = {};
         var infoBoxes = {};
+        var selectedInfoBox = null;
+
         var fullscreenchartid;
+        var fullScreenEnble = false;
 
         var dropDownSelection = 1;
-
         var serverOriginUrl = window.location.origin;
 
         initializeWidgets();
         pageSetUp();
+
+        $('#hearmap-dropdown li').on('click', function(ev){
+            ev.preventDefault();
+            var elementname =  parseInt($(this).data('id'));
+            dropDownSelection = elementname;
+            if (dropDownSelection == 0) {
+                $('#heat-mapheadername').html("Heat Map");
+                toggleHeatmap();
+            }else if(dropDownSelection == 4){
+                exportHeatmapPDF();
+            }else {
+                var headername = $(this).find('a').html();
+                $('#heat-mapheadername').html(headername);
+                setupHeatMapData(dropDownSelection)
+            }
+            this.blur();
+        });
 
         function initializeWidgets() {
             $('#widget-grid').jarvisWidgets({
@@ -165,6 +213,7 @@
                 grid: 'article',
                 onFullscreen: function () {
                     if (!fullscreenchartid) {
+                        fullScreenEnble = true;
                         var selectedwidgetid = $("#jarviswidget-fullscreen-mode >:first-child").data("id");
                         fullscreenchartid = selectedwidgetid;
                         if(selectedwidgetid != "locationmap"){
@@ -175,6 +224,7 @@
                             google.maps.event.trigger(map, 'resize')
                         }
                     } else {
+                        fullScreenEnble = false;
                         if(fullscreenchartid != "locationmap"){
                             $("#" + fullscreenchartid).highcharts().reflow();
                             fullscreenchartid = "";
@@ -194,7 +244,6 @@
         function formatAvgUsageBytes(bytes) {
             return (bytes/1048576).toFixed(2);
         }
-
 
         function formatIntoMinitue(time) {
             return Math.floor(time / 60);
@@ -234,7 +283,7 @@
                 {
                     "targets": 2,
                     "render": function (data){
-                          return formatBytes(data);
+                        return formatBytes(data);
                     }
                 },
                 {
@@ -291,7 +340,6 @@
             }
         });
 
-        var selectedInfoBox = null;
         $('.dataTables-accesspoint tbody').on('click', 'tr', function () {
             if ($(this).hasClass('selected')) {
                 $(this).removeClass('selected');
@@ -318,7 +366,6 @@
                 mapTypeId: google.maps.MapTypeId.ROADMAP,
                 minZoom:4
             });
-            new DropDownControl();
 
             generatePoistionAnchors(map, longlatDataArray, apDataArray);
             setupHeatMapData(dropDownSelection);
@@ -346,7 +393,6 @@
             $("#max-label").html("max: "+ formatedMax);
             $("#max-slider").slider("option","max",max);
             $("#max-slider").slider("option","value",max/2);
-
             drawHeatmap(heatData)
         }
 
@@ -358,8 +404,62 @@
                 opacity: $("#opacity-slider").slider("value")
             });
             heatmap.setMap(map);
+            setGradient();
+            setLegendGradient();
+        }
+        function setGradient() {
+            var heatmapgradient = [
+                'rgba(255,0,0,1)',
+                'rgba(255,16,0,1)',
+                'rgba(255,32,0,1)',
+                'rgba(255,48,0,1)',
+                'rgba(255,64,0,1)',
+                'rgba(255,80,0,1)',
+                'rgba(255,96,0,1)',
+                'rgba(255,112,0,1)',
+                'rgba(255,128,0,1)',
+                'rgba(255,144,0,1)',
+                'rgba(255,160,0,1)',
+                'rgba(255,176,0,1)',
+                'rgba(255,192,0,1)',
+                'rgba(255,208,0,1)',
+                'rgba(255,224,0,1)',
+                'rgba(255,240,0,1)',
+                'rgba(255,255,0,1)',
+                'rgba(240,255,0,1)',
+                'rgba(224,255,0,1)',
+                'rgba(208,255,0,1)',
+                'rgba(192,255,0,1)',
+                'rgba(176,255,0,1)',
+                'rgba(160,255,0,1)',
+                'rgba(144,255,0,1)',
+                'rgba(128,255,0,1)',
+                'rgba(112,255,0,1)',
+                'rgba(96,255,0,1)',
+                'rgba(80,255,0,1)',
+                'rgba(64,255,0,1)',
+                'rgba(48,255,0,1)',
+                'rgba(32,255,0,1)',
+                'rgba(16,255,0,1)',
+                'rgba(0,255,0,0)',
+            ];
+            heatmapgradient = heatmapgradient.reverse();
+            heatmap.set('gradient', heatmapgradient);
         }
 
+        function setLegendGradient() {
+            var gradient2 = heatmap.get('gradient');
+            var gradientCss = '(left ,'+ gradient2[0];
+            for (var i = 1; i < gradient2.length; ++i) {
+                gradientCss += ', ' + gradient2[i];
+            }
+            gradientCss += ')';
+
+            $('#legendGradient').css('background', '-webkit-linear-gradient' + gradientCss);
+            $('#legendGradient').css('background', '-moz-linear-gradient' + gradientCss);
+            $('#legendGradient').css('background', '-o-linear-gradient' + gradientCss);
+            $('#legendGradient').css('background', 'linear-gradient' + gradientCss);
+        }
 
         function toggleHeatmap() {
             heatmap.setMap(heatmap.getMap() ? null : map);
@@ -368,39 +468,6 @@
         function numberWithCommas(x) {
             return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
-
-
-        function DropDownControl() {
-            var gMap = google.maps;
-            var container = document.createElement("div");
-            container.style.margin = "7px";
-            container.id = "select_box";
-            var selMap = document.createElement("select");
-            selMap.id = "selMap";
-            selMap.className = "form-control";
-            selMap.title = "Change Map Type";
-
-            selMap.options[0] = new Option("Clear", 0);
-            selMap.options[1] = new Option("Download", 1);
-            selMap.options[2] = new Option("Upload", 2);
-            selMap.options[3] = new Option("User", 3);
-
-            selMap.selectedIndex = 1;
-
-            container.appendChild(selMap);
-            map.controls[gMap.ControlPosition.TOP_RIGHT].push(container);
-
-            gMap.event.addDomListener(selMap, "change", function () {
-                dropDownSelection = selMap.selectedIndex;
-                if (dropDownSelection == 0) {
-                    toggleHeatmap();
-                } else {
-                    setupHeatMapData(dropDownSelection)
-                }
-                this.blur();
-            });
-        }
-
 
         function generatePoistionAnchors(map, longlatObjs, apDataObjs) {
             for (var key in apDataObjs) {
@@ -434,7 +501,11 @@
                 });
                 infoBoxes[obj.calledstationmac] = infowindow;
                 marker.addListener('click', function () {
+                    if(selectedInfoBox != null){
+                        selectedInfoBox.close()
+                    }
                     infowindow.open(marker.get('map'), marker);
+                    selectedInfoBox = infowindow;
                 });
             });
         }
@@ -444,6 +515,81 @@
                 apDataArray.push(data[ap].AccessPointData);
                 longlatDataArray.push(data[ap].LongLatMacData);
             }
+        }
+
+
+        function exportHeatmapPDF(){
+            var element = $('#map');
+            var pdfFormat = "a4";
+            if(fullScreenEnble){
+                pdfFormat = "legal"
+            }
+            var pdfOptions = {
+                orientation: "landscape", // One of "portrait" or "landscape" (or shortcuts "p" (Default), "l")
+                unit: "mm",              //Measurement unit to be used when coordinates are specified. One of "pt" (points), "mm" (Default), "cm", "in"
+                format: pdfFormat            //One of 'a3', 'a4' (Default),'a5' ,'letter' ,'legal'
+            };
+
+            var doc = new jsPDF(pdfOptions);
+            var topMargin = 20;
+
+            var heatmapName= $("#heat-mapheadername").text();
+
+            doc.setFontSize(14);
+            doc.text(10, topMargin, heatmapName);
+
+            doc.setFontSize(12);
+            doc.text(100, topMargin, "Area/Site/AP : " + $('#select-wifilocation').val());
+            doc.setFontSize(12);
+            doc.text(200, topMargin, "Statistics from " + payload.from + " to " + payload.to);
+
+
+            var pageWidth = doc.internal.pageSize.width-20;
+            var width  =  pageWidth;
+
+            //get transform value
+            var transform=$(".gm-style>div:first>div").css("transform")
+            var comp=transform.split(",") //split up the transform matrix
+            var mapleft=parseFloat(comp[4]) //get left value
+            var maptop=parseFloat(comp[5])  //get top value
+            $(".gm-style>div:first>div").css({ //get the map container. not sure if stable
+                "transform":"none",
+                "left":mapleft,
+                "top":maptop,
+            });
+
+            topMargin += 10;
+            html2canvas(element, {
+                useCORS: true,
+                onrendered: function(canvas) {
+                    var imgWidth = element.width();
+                    var imgHeight = element.height();
+
+                    var height =  (width * imgHeight)/ imgWidth;
+                    var imgData = canvas.toDataURL('image/png');
+                    $(".gm-style>div:first>div").css({
+                        left:0,
+                        top:0,
+                        "transform":transform
+                    });
+                    doc.addImage(imgData, 'PNG', 10, topMargin , width, height);
+
+                    topMargin += (height+10);
+                    width  =  width/3;
+                    html2canvas($('#legend'), {
+                        onrendered: function(canvas) {
+                            var legendWidth = $('#legend').width();
+                            var legendHeight = $('#legend').height();
+
+                            var elementheight =  (width * legendHeight)/ legendWidth;
+
+                            var legendImageData = canvas.toDataURL('image/png');
+                            doc.addImage(legendImageData, 'PNG', 100, topMargin , width, 5 );
+                            doc.save('heatmap-'+window.appName+'-'+ moment().format('YYYY-MM-DD')+'.pdf');
+                        }
+                    });
+                }
+            });
         }
 
         $(function() {

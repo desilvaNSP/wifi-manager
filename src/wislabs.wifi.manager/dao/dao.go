@@ -36,15 +36,15 @@ type AccessPoint struct {
 	TotalUsers            int                     `db:"totalusers"json:"totalusers"`
 	AvgdataperUser        utils.NullString      `db:"avgdataperuser"json:"avgdataperuser"`
 	Avgdatapersessiontime utils.NullString   `db:"avgdatapersessiontime"json:"avgdatapersessiontime"`
-	TotalDownloads        utils.NullInt64               `db:"totalinputoctets"json:"totaldownloads"`
-	TotalUploads          utils.NullInt64            `db:"totaloutputoctets"json:"totaluploads"`
+	TotalDownloads        utils.NullInt64                `db:"totalinputoctets"json:"totaldownloads"`
+	TotalUploads          utils.NullInt64             `db:"totaloutputoctets"json:"totaluploads"`
 	Calledstationmac      utils.NullString         `db:"calledstationmac"json:"calledstationmac"`
 	APName                utils.NullString           `db:"apname"json:"apname"`
 }
 
 type APSummaryDetails struct {
-	CalledStationMac utils.NullString         `db:"calledstationmac"json:"calledstationmac"`
-	Value            utils.NullInt64                     `db:"summaryvalue"json:"summaryvalue"`
+	CalledStationMac     utils.NullString         `db:"calledstationmac"json:"calledstationmac"`
+	Value                utils.NullInt64                      `db:"summaryvalue"json:"summaryvalue"`
 }
 
 type LocationAccessPoint struct {
