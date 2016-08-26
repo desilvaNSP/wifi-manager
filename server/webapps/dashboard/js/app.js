@@ -34,7 +34,7 @@ $(document).ajaxSend(function (event, request, settings) {
 
 $(document).ready(function () {
     if (!Cookies.get("jwt")) {
-        window.location.href = "/console/login";
+        window.location.href = "/dashboard/login";
         return
     } else {
         storeLoggedInUserPermissions()
