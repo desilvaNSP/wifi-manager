@@ -91,7 +91,7 @@
     $(document).ready(function () {
         $.material.init();
         var selectedtabid = "overview";
-        saveResult(moment().subtract(29, 'days'), moment());
+        saveResult(moment("2016-06-01"), moment("2016-06-30"));
         renderMetrics();
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             selectedtabid = $(this).data("id");
