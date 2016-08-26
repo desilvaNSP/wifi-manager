@@ -1,0 +1,303 @@
+<!-- Downloads and Uploads -->
+
+<div class="row">
+    <div class="col-lg-6" height="270px" >
+        <div class="ibox float-e-margins" id="socail-gadget6">
+            <div class="ibox-content">
+               <!-- <a class="twitter-timeline" height="400px" href="https://twitter.com/spg">Tweets by spg</a> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"> </script>
+           -->
+                <a class="twitter-timeline" height="270px" href="https://twitter.com/Marriott">Tweets by Marriott</a> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-xs-3">
+                        <i class="fa fa-facebook-square fa-3x" aria-hidden="true"></i>
+                    </div>
+                    <div class="col-xs-3">
+                        <small class="stats-label">Pages / Visit</small>
+                        <h4>236 321.80</h4>
+                    </div>
+                    <div class="col-xs-3">
+                        <small class="stats-label">New facebook fans</small>
+                        <h4>460</h4>
+                    </div>
+                    <div class="col-xs-3">
+                        <small class="stats-label">Last Week Visits</small>
+                        <h4>432.021</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-xs-3">
+                        <i class="fa fa-google-plus-square fa-3x" aria-hidden="true"></i>
+                    </div>
+                    <div class="col-xs-3">
+                        <small class="stats-label">Pages / Visit</small>
+                        <h4>643 321.10</h4>
+                    </div>
+                    <div class="col-xs-3">
+                        <small class="stats-label">New google+ follows</small>
+                        <h4>92</h4>
+                    </div>
+                    <div class="col-xs-3">
+                        <small class="stats-label">Last Week Visits</small>
+                        <h4>564.554</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-xs-3">
+                        <i class="fa fa-twitter-square fa-3x" aria-hidden="true"></i>
+                    </div>
+                    <div class="col-xs-3">
+                        <small class="stats-label">Pages / Visit</small>
+                        <h4>436 547.20</h4>
+                    </div>
+                    <div class="col-xs-3">
+                        <small class="stats-label">New Twitter Followers</small>
+                        <h4>150</h4>
+                    </div>
+                    <div class="col-xs-3">
+                        <small class="stats-label">Last Week Visits</small>
+                        <h4>124.990</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-4">
+        <div class="ibox float-e-margins" id="socail-gadget3">
+            <div class="ibox-content">
+                <div id="social3" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="ibox float-e-margins" id="socail-gadget2">
+            <div class="ibox-content">
+                <div id="social2" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-4">
+        <div class="ibox float-e-margins" id="socail-gadget1">
+            <div class="ibox-content">
+                <div id="social1" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="ibox float-e-margins" id="socail-gadget4">
+            <div class="ibox-content">
+                <div id="social4" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $('#social1').highcharts({
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie'
+            },
+            title: {
+                text: 'Vists by Social Network'
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: false
+                    },
+                    showInLegend: true
+                }
+            },
+            series: [{
+                name: 'Brands',
+                colorByPoint: true,
+                data: [{
+                    name: 'Facebook',
+                    y: 56.33,
+                    sliced: true,
+                    selected: true
+                }, {
+                    name: 'Twitter',
+                    y: 24.03
+                }, {
+                    name: 'Google+',
+                    y: 10.38
+                }, {
+                    name: 'Linkedn',
+                    y: 4.77
+                }, {
+                    name: 'Others',
+                    y: 0.91
+                }]
+            }]
+        });
+        // Age categories
+        var categories = ['0-4', '5-9', '10-14', '15-19',
+            '20-24', '25-29', '30-34', '35-39', '40-44',
+            '45-49', '50-54', '55-59', '60-64', '65-69',
+            '70-74', '75-79', '80-84', '85-89', '90-94',
+            '95-99', '100 + '];
+        $('#social2').highcharts({
+            chart: {
+                type: 'bar'
+            },
+            title: {
+                text: 'Facebook Impression Demographics'
+            },
+            subtitle: {
+                text: 'Source: <a href="http://populationpyramid.net/germany/2015/">Population Pyramids of the World from 1950 to 2100</a>'
+            },
+            xAxis: [{
+                categories: categories,
+                reversed: false,
+                labels: {
+                    step: 1
+                }
+            }, { // mirror axis on right side
+                opposite: true,
+                reversed: false,
+                categories: categories,
+                linkedTo: 0,
+                labels: {
+                    step: 1
+                }
+            }],
+            yAxis: {
+                title: {
+                    text: null
+                },
+                labels: {
+                    formatter: function () {
+                        return Math.abs(this.value) + '%';
+                    }
+                }
+            },
+
+            plotOptions: {
+                series: {
+                    stacking: 'normal'
+                }
+            },
+
+            tooltip: {
+                formatter: function () {
+                    return '<b>' + this.series.name + ', age ' + this.point.category + '</b><br/>' +
+                            'Population: ' + Highcharts.numberFormat(Math.abs(this.point.y), 0);
+                }
+            },
+
+            series: [{
+                name: 'Male',
+                data: [-22, -30, -40, -50, -60, -40, -70,
+                    -90, -34, -23, -45, -56, -90, -56,
+                    -26, -45, -56, -90, -78, -34, -59]
+            }, {
+                name: 'Female',
+                data: [20, 45, 90, 30, 34, 34, 45, 80,
+                    56, 23, 57, 89, 45, 78,  56, 23,48, 54, 78, 34, 45]
+            }]
+        });
+        $('#social3').highcharts({
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie'
+            },
+            title: {
+                text: 'Social Vists by Loyality'
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: false
+                    },
+                    showInLegend: true
+                }
+            },
+            series: [{
+                name: 'Brands',
+                colorByPoint: true,
+                data: [{
+                    name: 'Facebook',
+                    y: 50,
+                    sliced: true,
+                    selected: true
+                }, {
+                    name: 'Twitter',
+                    y: 30,
+                }, {
+                    name: 'Google+',
+                    y: 15
+                }, {
+                    name: 'Linkedn',
+                    y: 10
+                }, {
+                    name: 'Others',
+                    y: 5
+                }]
+            }]
+        });
+        $('#social4').highcharts({
+            chart: {
+                type: 'line'
+            },
+            title: {
+                text: 'Comments Summery on Facebook'
+            },
+            subtitle: {
+            },
+            xAxis: {
+                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            },
+            yAxis: {
+                title: {
+                    text: 'Temperature (°C)'
+                }
+            },
+            plotOptions: {
+                line: {
+                    dataLabels: {
+                        enabled: true
+                    },
+                    enableMouseTracking: false
+                }
+            },
+            series: [{
+                name: 'Negative Comments (Mean)',
+                data: [7.0, 6.9, 9.5, 14.5, 18.4, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
+            }, {
+                name: 'Positive Comments (Mean)',
+                data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
+            }]
+        });
+    });
+</script>

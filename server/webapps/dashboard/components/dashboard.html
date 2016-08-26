@@ -40,6 +40,8 @@
         </li>
         <li><a href="#apreort-content" data-toggle="tab" data-id="apreport">AP Reports</a>
         </li>
+        <li><a href="#social-content" data-toggle="tab" data-id="social-overview">Social Reports</a>
+        </li>
         <!--<li><a href="#realtime-content" data-toggle="tab" data-id="realtimereport">Real Time</a>-->
         <!--</li>-->
     </ul>
@@ -54,6 +56,12 @@
         <div class="tab-pane" id="apreort-content">
             <div id="apreport-container">
                 <div id="dashboard-apreport-content" class="row">
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" id="social-content">
+            <div id="social-container">
+                <div id="dashboard-social-content" class="row">
                 </div>
             </div>
         </div>
@@ -91,6 +99,8 @@
                 renderMetrics();
             } else if (selectedtabid == "apreport") {
                 renderAPreport();
+            } else if (selectedtabid == "social-overview") {
+                renderSocialOverview();
             } else if (selectedtabid == "realtimereport") {
                 renderRealTime();
             }
@@ -112,6 +122,8 @@
                 renderMetrics();
             } else if (selectedtabid == "apreport") {
                 renderAPreport();
+            } else if (selectedtabid == "social-overview") {
+                renderSocialOverview();
             } else if (selectedtabid == "realtimereport") {
                 renderRealTime();
             }
@@ -157,6 +169,16 @@
 
         }
 
+        function renderSocialOverview(){
+            $('.widget-container').removeAttr('id');
+            $.get('components/dashboard-social.html', function (template) {
+                var rendered = Mustache.render(template, {
+                    widgetid: 'widget-grid'
+                });
+                $('#dashboard-social-content').html(rendered);
+            })
+        }
+
         function renderAPreport() {
             $('.widget-container').removeAttr('id');
             $.get('components/dashboard-apreport.html', function (template) {
@@ -174,6 +196,8 @@
                 renderMetrics();
             } else if (selectedtabid == "apreport") {
                 renderAPreport();
+            } else if (selectedtabid == "social-overview") {
+                renderSocialOverview();
             } else if (selectedtabid == "realtimereport") {
                 renderRealTime();
             }
@@ -218,6 +242,8 @@
                     renderMetrics();
                 } else if (selectedtabid == "apreport") {
                     renderAPreport();
+                } else if (selectedtabid == "social-overview") {
+                    renderSocialOverview();
                 } else if (selectedtabid == "realtimereport") {
                     renderRealTime();
                 }
