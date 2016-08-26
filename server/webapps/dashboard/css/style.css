@@ -3141,6 +3141,7 @@ body.rtls.top-navigation .footer.fixed {
     position: relative;
     margin-bottom: 2em;
     cursor: pointer;
+    border: black 1px solid;
 }
 
 .cloud-app-listing i {
