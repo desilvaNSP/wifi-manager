@@ -168,7 +168,7 @@
 <script>
     $(document).ready(function () {
 
-        var map, heatmap;
+        var map, heatmap, heatmapgradient;
 
         var apDataArray = [];
         var longlatDataArray = [];
@@ -181,8 +181,6 @@
         var fullScreenEnble = false;
 
         var dropDownSelection = 1;
-        var mapTypeSelecton = 1;
-
         var serverOriginUrl = window.location.origin;
 
         var heatmapgradient = [
@@ -237,8 +235,7 @@
             }else {
                 var headername = $(this).find('a').html();
                 $('#heat-mapheadername').html(headername);
-                mapTypeSelecton = dropDownSelection;
-                setupHeatMapData(mapTypeSelecton)
+                setupHeatMapData(dropDownSelection);
             }
             this.blur();
         });
@@ -323,7 +320,7 @@
                 {
                     "targets": 2,
                     "render": function (data){
-                          return formatBytes(data);
+                        return formatBytes(data);
                     }
                 },
                 {
@@ -448,6 +445,45 @@
             setLegendGradient();
         }
         function setGradient() {
+            var heatmapgradient = [
+                'rgba(255,0,0,1)',
+                'rgba(255,16,0,1)',
+                'rgba(255,32,0,1)',
+                'rgba(255,48,0,1)',
+                'rgba(255,64,0,1)',
+                'rgba(255,80,0,1)',
+                'rgba(255,96,0,1)',
+                'rgba(255,112,0,1)',
+                'rgba(255,128,0,1)',
+                'rgba(255,144,0,1)',
+                'rgba(255,160,0,1)',
+                'rgba(255,176,0,1)',
+                'rgba(255,192,0,1)',
+                'rgba(255,208,0,1)',
+                'rgba(255,224,0,1)',
+                'rgba(255,240,0,1)',
+                'rgba(255,255,0,1)',
+                'rgba(240,255,0,1)',
+                'rgba(224,255,0,1)',
+                'rgba(208,255,0,1)',
+                'rgba(192,255,0,1)',
+                'rgba(176,255,0,1)',
+                'rgba(160,255,0,1)',
+                'rgba(144,255,0,1)',
+                'rgba(128,255,0,1)',
+                'rgba(112,255,0,1)',
+                'rgba(96,255,0,1)',
+                'rgba(80,255,0,1)',
+                'rgba(64,255,0,1)',
+                'rgba(48,255,0,1)',
+                'rgba(32,255,0,1)',
+                'rgba(16,255,0,1)',
+                'rgba(0,255,0,0)',
+            ];
+            heatmapgradient = heatmapgradient.reverse();
+            heatmap.set('gradient', heatmapgradient);
+        }
+        function setGradient() {
             heatmap.set('gradient', heatmapgradient);
         }
 
@@ -459,6 +495,13 @@
             }
             gradientCss += ')';
 
+        function setLegendGradient() {
+            var gradient2 = heatmap.get('gradient');
+            var gradientCss = '(left ,'+ gradient2[0];
+            for (var i = 1; i < gradient2.length; ++i) {
+                gradientCss += ', ' + gradient2[i];
+            }
+            gradientCss += ')';
             $('#legendGradient').css('background', '-webkit-linear-gradient' + gradientCss);
             $('#legendGradient').css('background', '-moz-linear-gradient' + gradientCss);
             $('#legendGradient').css('background', '-o-linear-gradient' + gradientCss);
@@ -537,28 +580,16 @@
             var doc = new jsPDF(pdfOptions);
             var topMargin = 20;
 
-            var heatmapName= "Heatmap based on APs Downloads";
 
-            console.log(mapTypeSelecton);
-            if(mapTypeSelecton==1){
-                heatmapName =  "Heatmap based on APs Downloads"
-            }else if (mapTypeSelecton==2){
-                heatmapName =  "Heatmap based on APs Uploads"
-            }else if(mapTypeSelecton== 3){
-                heatmapName =  "Heatmap based on APs User Count"
-            }else{
-                heatmapName =  "Location Map"
-            }
+            var heatmapName= $("#heat-mapheadername").text();
+
             doc.setFontSize(14);
-            doc.text(15, 20, heatmapName);
+            doc.text(10, topMargin, heatmapName);
 
             doc.setFontSize(12);
-            topMargin += 15
-            doc.text(15, topMargin, "Area/Site/AP : " + $('#select-wifilocation').val());
+            doc.text(100, topMargin, "Area/Site/AP : " + $('#select-wifilocation').val());
             doc.setFontSize(12);
-            topMargin += 15
-            doc.text(15, topMargin, "Statistics from " + payload.from + " to " + payload.to);
-
+            doc.text(200, topMargin, "Statistics from " + payload.from + " to " + payload.to);
 
             var pageWidth = doc.internal.pageSize.width-20;
             var width  =  pageWidth;
@@ -581,9 +612,9 @@
                     var imgWidth = element.width();
                     var imgHeight = element.height();
 
-                    var height =  (width * imgHeight)/ imgWidth
-                    var imgData = canvas.toDataURL(
-                            'image/png');
+                    var height =  (width * imgHeight)/ imgWidth;
+                    var imgData = canvas.toDataURL('image/png');
+
                     $(".gm-style>div:first>div").css({
                         left:0,
                         top:0,
@@ -598,11 +629,11 @@
                             var legendWidth = $('#legend').width();
                             var legendHeight = $('#legend').height();
 
-                            var elementheight =  (width * legendHeight)/ legendWidth
+                            var elementheight =  (width * legendHeight)/ legendWidth;
 
-                            var legendImageData = canvas.toDataURL(
-                                    'image/png');
-                            doc.addImage(legendImageData, 'PNG', 10, topMargin , width, elementheight);
+                            var legendImageData = canvas.toDataURL('image/png');
+                            doc.addImage(legendImageData, 'PNG', 100, topMargin , width, 5 );
+>>>>>>> upstream/master
                             doc.save('heatmap-'+window.appName+'-'+ moment().format('YYYY-MM-DD')+'.pdf');
                         }
                     });

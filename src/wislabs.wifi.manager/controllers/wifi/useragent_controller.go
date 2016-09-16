@@ -27,7 +27,7 @@ func GetBrowserStats(constrains dao.Constrains) []dao.NameValue {
 	}
 
 	for i := 0; i < len(values); i++ {
-		usersByOS[i] = dao.NameValue{browser[i], values[i].Float64}
+		usersByOS[i] = dao.NameValue{browser[i], utils.NullFloat64{values[i]}}
 	}
 	//checkErr(err, "Select failed")
 	return usersByOS
@@ -54,7 +54,7 @@ func GetUsersByOS(constrains dao.Constrains) []dao.NameValue {
 	}
 
 	for i := 0; i < len(values); i++ {
-		usersByOS[i] = dao.NameValue{os[i], values[i].Float64}
+		usersByOS[i] = dao.NameValue{os[i], utils.NullFloat64{values[i]}}
 	}
 	//checkErr(err, "Select failed")
 	return usersByOS
@@ -81,7 +81,7 @@ func GetUsersByDevice(constrains dao.Constrains) []dao.NameValue {
 	}
 
 	for i := 0; i < len(values); i++ {
-		usersByDevice[i] = dao.NameValue{device[i], values[i].Float64}
+		usersByDevice[i] = dao.NameValue{device[i], utils.NullFloat64{values[i]}}
 	}
 	//checkErr(err, "Select failed")
 	return usersByDevice

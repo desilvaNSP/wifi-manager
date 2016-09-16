@@ -7,23 +7,23 @@ import (
 
 type NameValue struct {
     Name  string  `db:"name"json:"name"`
-    Value float64  `db:"value"json:"value"`
+    Value utils.NullFloat64  `db:"value"json:"value"`
 }
 
 type SummaryDailyAcctAll struct {
     Tenantid             int            `db:"tenantid"json:"tenantid"`
-    Username             string            `db:"username"json:"username"`
+    Username             utils.NullString            `db:"username"json:"username"`
     Date                 utils.NullString    `db:"date"json:"date"`
     Noofsessions         int            `db:"noofsessions"json:"noofsessions"`
     Totalsessionduration int            `db:"totalsessionduration"json:"totalsessionduration"`
     Sessionmaxduration   int            `db:"sessionmaxduration"json:"sessionmaxduration"`
     Sessionminduration   int            `db:"sessionminduration"json:"sessionminduration"`
     Sessionavgduration   int            `db:"sessionavgduration"json:"sessionavgduration"`
-    Inputoctets          int64            `db:"inputoctets"json:"inputoctets"`
-    Outputoctets         int64            `db:"outputoctets"json:"outputoctets"`
-    Nasipaddress         string            `db:"nasipaddress"json:"nasipaddress"`
-    Framedipaddress      string            `db:"framedipaddress"json:"framedipaddress"`
-    Calledstationid      string            `db:"calledstationid"json:"calledstationid"`
+    Inputoctets          utils.NullInt64             `db:"inputoctets"json:"inputoctets"`
+    Outputoctets         utils.NullInt64             `db:"outputoctets"json:"outputoctets"`
+    Nasipaddress         utils.NullString            `db:"nasipaddress"json:"nasipaddress"`
+    Framedipaddress      utils.NullString            `db:"framedipaddress"json:"framedipaddress"`
+    Calledstationid      utils.NullString            `db:"calledstationid"json:"calledstationid"`
     Ssid                 utils.NullString            `db:"ssid"json:"ssid"`
     Calledstationmac     utils.NullString            `db:"calledstationmac"json:"calledstationmac"`
     Groupname            utils.NullString            `db:"groupname"json:"groupname"`
@@ -36,8 +36,8 @@ type AccessPoint struct {
 	TotalUsers            int                     `db:"totalusers"json:"totalusers"`
 	AvgdataperUser        utils.NullString      `db:"avgdataperuser"json:"avgdataperuser"`
 	Avgdatapersessiontime utils.NullString   `db:"avgdatapersessiontime"json:"avgdatapersessiontime"`
-	TotalDownloads        int64               `db:"totalinputoctets"json:"totaldownloads"`
-	TotalUploads          int64            `db:"totaloutputoctets"json:"totaluploads"`
+	TotalDownloads        utils.NullInt64                `db:"totalinputoctets"json:"totaldownloads"`
+	TotalUploads          utils.NullInt64             `db:"totaloutputoctets"json:"totaluploads"`
 	Calledstationmac      utils.NullString         `db:"calledstationmac"json:"calledstationmac"`
 	APName                utils.NullString           `db:"apname"json:"apname"`
 }
@@ -45,7 +45,7 @@ type AccessPoint struct {
 
 type APSummaryDetails struct {
 	CalledStationMac     utils.NullString         `db:"calledstationmac"json:"calledstationmac"`
-	Value                int64                     `db:"summaryvalue"json:"summaryvalue"`
+	Value                utils.NullInt64                      `db:"summaryvalue"json:"summaryvalue"`
 }
 
 
