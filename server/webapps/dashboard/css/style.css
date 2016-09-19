@@ -8434,16 +8434,24 @@ table.dataTable tbody tr{
 }
 
 
+.ruler{
+    padding-top:5px;
+}
+
 #heatmap-controlers  #legend {
     position: relative;
-    height: 30px;
+    height: 35px;
     margin: 15px 35px 5px;
+    width: 465px;
 }
 
 #heatmap-controlers #legendGradient {
     width: 100%;
     height: 15px;
-    border: 1px solid black;
+}
+
+#heatmap-controlers img {
+    border: 1px black solid;
 }
 
 #radius-label, #opacity-label, #max-label {
