@@ -45,6 +45,7 @@ type AccessPoint struct {
 
 type APSummaryDetails struct {
 	CalledStationMac     utils.NullString         `db:"calledstationmac"json:"calledstationmac"`
+	APName				 utils.NullString		  `db:"apname"json:"apname"`
 	Value                utils.NullInt64                      `db:"summaryvalue"json:"summaryvalue"`
 }
 
