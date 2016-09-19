@@ -212,12 +212,20 @@ func GetTopAccessPointsByUserCountHandler(w http.ResponseWriter, r*http.Request)
 	decoder.Decode(&constrains)
 
 	topTenSummary, err := wifi.GetTopAccessPointsByUserCount(constrains)
+	summaries := make([]dao.APSummaryDetails, len(topTenSummary))
+	for index, record := range topTenSummary {
+		var longLatPoint dao.LongLatMac
+		longLatPoint =  wifi.GetLongLatLocationByMacAddress(record.CalledStationMac.String)
+		summaries[index].CalledStationMac = record.CalledStationMac
+		summaries[index].APName = longLatPoint.APName
+		summaries[index].Value =  record.Value
+	}
 	if err != nil {
 		checkErr(err, "Error occuring while getting Top accespoint in Users")
 	}
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(topTenSummary); err != nil {
+	if err := json.NewEncoder(w).Encode(summaries); err != nil {
 		panic(err)
 	}
 }
@@ -234,12 +242,20 @@ func GetTopAccessPointsByUploadHandler(w http.ResponseWriter, r*http.Request){
 	decoder.Decode(&constrains)
 
 	topTenSummary, err := wifi.GetTopAccessPointsByUpload(constrains)
+	summaries := make([]dao.APSummaryDetails, len(topTenSummary))
+	for index, record := range topTenSummary {
+		var longLatPoint dao.LongLatMac
+		longLatPoint =  wifi.GetLongLatLocationByMacAddress(record.CalledStationMac.String)
+		summaries[index].CalledStationMac = record.CalledStationMac
+		summaries[index].APName = longLatPoint.APName
+		summaries[index].Value =  record.Value
+	}
 	if err != nil {
 		checkErr(err, "Error occuring while getting Top accespoint in Downloads")
 	}
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(topTenSummary); err != nil {
+	if err := json.NewEncoder(w).Encode(summaries); err != nil {
 		panic(err)
 	}
 }
@@ -256,12 +272,20 @@ func GetTopAccessPointsByDownloadHandler(w http.ResponseWriter, r*http.Request){
 	decoder.Decode(&constrains)
 
 	topTenSummary, err := wifi.GetTopAccessPointsByDownload(constrains)
+	summaries := make([]dao.APSummaryDetails, len(topTenSummary))
+	for index, record := range topTenSummary {
+		var longLatPoint dao.LongLatMac
+		longLatPoint =  wifi.GetLongLatLocationByMacAddress(record.CalledStationMac.String)
+		summaries[index].CalledStationMac = record.CalledStationMac
+		summaries[index].APName = longLatPoint.APName
+		summaries[index].Value =  record.Value
+	}
 	if err != nil {
 		checkErr(err, "Error occuring while getting Top accespoint in Uploads")
 	}
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(topTenSummary); err != nil {
+	if err := json.NewEncoder(w).Encode(summaries); err != nil {
 		panic(err)
 	}
 }
