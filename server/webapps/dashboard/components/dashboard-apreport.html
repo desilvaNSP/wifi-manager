@@ -475,13 +475,15 @@
             for (var key in apDataObjs) {
                 if (apDataObjs.hasOwnProperty(key)) {
                     var obj = longlatObjs[key];
-                    var marker = new google.maps.Marker({
-                        position: new google.maps.LatLng(obj.latitude, obj.longitude),
-                        map: map
-                    });
-                    allMarkers[apDataObjs[key].calledstationmac] = marker;
-                    attachContentForInfobox(marker, apDataObjs[key]);
-                    fitToMapBounds(marker);
+                    if(!(obj.latitude == 0  && obj.longitude == 0)){
+                        var marker = new google.maps.Marker({
+                            position: new google.maps.LatLng(obj.latitude, obj.longitude),
+                            map: map
+                        });
+                        allMarkers[apDataObjs[key].calledstationmac] = marker;
+                        attachContentForInfobox(marker, apDataObjs[key]);
+                        fitToMapBounds(marker);
+                    }
                 }
             }
             map.fitBounds(mapBounds);
@@ -594,12 +596,12 @@
                     doc.addImage(imgData, 'PNG', 10, topMargin , width, height);
 
                     var elementLegend = $('#legend');
-                    topMargin += (height+10);
+                    topMargin += (height+20);
                     html2canvas(elementLegend, {
                         onrendered: function(canvas) {
                             var legendImageData = canvas.toDataURL(
                                     'image/png');
-                            doc.addImage(legendImageData, 'PNG', 10, topMargin , 100, 7.5);
+                            doc.addImage(legendImageData, 'PNG', 25, topMargin , 100, 7.5);
                             doc.save('heatmap-'+window.appName+'-'+ moment().format('YYYY-MM-DD')+'.pdf');
                         }
                     });

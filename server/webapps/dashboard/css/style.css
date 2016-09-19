@@ -8414,7 +8414,7 @@ table.dataTable tbody tr{
 #heatmap-controlers {
     z-index:100;
     background-color: rgba(255,255,255,.8);
-    width: 99%;
+    width: 95%;
     position:absolute;
     bottom:10px;
     left:10px;
